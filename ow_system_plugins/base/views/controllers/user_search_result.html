@@ -1,0 +1,23 @@
+{if isset($menu)}
+	{$menu}
+{/if}
+
+{literal}
+<script language="javascript" type="text/javascript">
+    $(function(){
+        $(".back_to_search_button").click(
+            function() { window.location = {/literal}"{$searchUrl}"{literal} }
+        );
+   });
+</script>
+{/literal}
+
+{if !empty($listType)}{add_content key="base.content.user_list_top" listType=$listType}{/if}
+
+{block_decorator name="box" type="empty" style="margin-bottom:20px"}
+    {decorator name="button" buttonName="back_to_search" class="back_to_search_button ow_ic_left_arrow" langLabel="base+user_search_back_to_search"}
+{/block_decorator}
+
+{add_content key="base.content.user_search.after_back"}
+
+{$cmp}

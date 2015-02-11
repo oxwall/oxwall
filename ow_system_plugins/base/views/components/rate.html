@@ -1,0 +1,13 @@
+{block_decorator name='box' addClass='ow_stdmargin' langLabel = 'base+rates_box_cap_label' iconClass='ow_ic_star'}
+<div id="rate_{$cmpId}">
+   <div class="ow_smallmargin">
+   	<span class="ow_small">{text key='base+your_rate_label'}</span>
+      <div class="rates_cont clearfix">
+      {section name=foo loop=$maxRate}
+         <a href="javascript://" class="rate_item" id="{$cmpId}_rate_item_{$smarty.section.foo.iteration}">&nbsp;</a>
+      {/section}
+      </div>
+   </div>
+   <div class="total_score">{$totalScore}</div>
+</div>
+{/block_decorator}

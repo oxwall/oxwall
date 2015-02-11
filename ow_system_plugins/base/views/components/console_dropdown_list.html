@@ -1,0 +1,7 @@
+<a href="javascript://" class="ow_console_item_link">{$label}</a>
+
+<span {if empty($counter.number)}style="display: none;"{/if} class="ow_count_wrap OW_ConsoleItemCounter" >
+    <span class="{if $counter.active}ow_count_active{/if} ow_count_bg OW_ConsoleItemCounterPlace">
+        <span class="ow_count OW_ConsoleItemCounterNumber" {if empty($counter.number)}style="visibility: hidden;"{/if}>{$counter.number}</span>
+    </span>
+</span>

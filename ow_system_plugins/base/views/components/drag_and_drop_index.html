@@ -1,0 +1,87 @@
+{script}{literal}
+    DND_InterfaceFix.fix('.place_section');
+{/literal}{/script}
+
+{style}{literal}
+    #place_components .component {
+        float: left;
+    }
+
+    .configurable_component .ow_box_icons {
+        float: right;
+        padding-top: 6px;
+    }
+
+    .configurable_component h3 {
+        float: left;
+    }
+
+{/literal}{/style}
+
+{add_content key='base.widget_panel.content.top' placeName=$placeName}
+{add_content key='base.`$placeName`.content.top'}
+
+{if $allowCustomize}
+    {block_decorator name='box' addClass='ow_highbox ow_stdmargin index_customize_box' type="empty"}
+            <div class="ow_center">
+                {decorator name='button' langLabel='base+widgets_customize_btn' class='ow_ic_gear_wheel' id="goto_customize_btn"}
+            </div>
+    {/block_decorator}
+{/if}
+
+<div class="ow_dragndrop_sections ow_stdmargin" id="place_sections">
+
+    <div class="clearfix">
+        <div class="ow_dragndrop_content">
+
+            <div class="place_section">
+
+                {if isset($componentList.section.top)}
+                    {foreach from=$componentList.section.top item="component"}
+                        {dd_component uniqName=$component.uniqName render=true}
+                    {/foreach}
+                {/if}
+
+            </div>
+
+            <div class="clearfix" style="overflow: hidden;">
+
+                <div class="ow_left place_section {if isset($activeScheme.leftCssClass)}{$activeScheme.leftCssClass}{/if}">
+
+                    {if isset($componentList.section.left)}
+                        {foreach from=$componentList.section.left item="component"}
+                            {dd_component uniqName=$component.uniqName render=true}
+                        {/foreach}
+                    {/if}
+
+                </div>
+
+                <div class="ow_right place_section {if isset($activeScheme.rightCssClass)}{$activeScheme.rightCssClass}{/if}" ow_scheme_class="{if isset($activeScheme.rightCssClass)}{$activeScheme.rightCssClass}{/if}"  ow_place_section="right">
+
+                    {if isset($componentList.section.right)}
+                        {foreach from=$componentList.section.right item="component"}
+                            {dd_component uniqName=$component.uniqName render=true}
+                        {/foreach}
+                    {/if}
+
+                </div>
+
+             </div>
+
+            <div class="place_section">
+
+                {if isset($componentList.section.bottom)}
+                    {foreach from=$componentList.section.bottom item="component"}
+                        {dd_component uniqName=$component.uniqName render=true}
+                    {/foreach}
+                {/if}
+
+            </div>
+
+        </div>
+        {add_content key='index.add_content_bottom'}
+    </div>
+</div>
+
+{add_content key='base.widget_panel.content.bottom' placeName=$placeName}
+{add_content key='base.`$placeName`.content.bottom'}

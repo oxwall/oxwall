@@ -1,0 +1,32 @@
+{* `IC` decorator template *}
+{style}
+{literal}
+.ow_ic_toolbar span{
+    display:inline-block;
+}
+{/literal}
+{/style}
+{if $data.first}
+	<ul class="owm_regular owm_ic">
+{/if}
+
+<li>
+	<div class="owm_ic_header"><a {if !empty($data.titleHrefBlank)}target="_blank"{/if} href="{$data.titleHref}">{$data.title}</a></div>
+
+	<div class="owm_ic_description">{$data.info}</div>
+
+	{if !empty($data.toolbar)}
+  		<div class="owm_ic_toolbar owm_remark clearfix">
+  		{foreach from=$data.toolbar item='item' name='toolbar'}
+            {if !$smarty.foreach.toolbar.first && ( empty($item.class) || $item.class != 'ow_ipc_date' )} <span class="owm_delimiter">&middot;</span> {/if}
+  		    <span class="owm_nowrap{if !empty($item.class)} {$item.class}{/if}">
+                {if !empty($item.href)}<a {if !empty($item.id)} id="{$item.id}"{/if} href="{$item.href}">{/if}{$item.label}{if !empty($item.href)}</a>{/if}
+  		    </span>
+  		{/foreach}
+  		</div>
+    {/if}
+</li>
+
+{if $data.last}
+	</ul>
+{/if}

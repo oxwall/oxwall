@@ -1,0 +1,20 @@
+<header>
+<div class="owm_sidebar_right_header_menu">
+    <ul class="owm_sidebar_console clearfix">
+        {foreach from=$pages item='page' name='p'}
+        <li class="{if $smarty.foreach.p.first}owm_sidebar_console_item_active {/if}owm_sidebar_console_item owm_sidebar_console_{$page.key}">
+            <a class="owm_sidebar_console_item_url" href="javascript://" id="console-tab-{$page.key}" data-key="{$page.key}">
+                <span class="owm_sidebar_count"{if !$page.counter} style="display: none;"{/if}>
+                    <span class="owm_sidebar_count_txt">{if $page.counter}{$page.counter}{/if}</span>
+                </span>
+            </a>
+        </li>
+        {/foreach}
+    </ul>
+</div>
+</header>
+
+<section class="owm_sidebar_right_cont">
+    <div id="console_body"></div>
+    <div id="console_preloader"></div>
+</section>

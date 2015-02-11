@@ -1,0 +1,8 @@
+{* `Avatar Item` decorator template *}
+<div class="owm_avatar{if !empty($data.class)} {$data.class}{/if}">
+{if !empty($data.url)}
+<a href="{$data.url}"><img alt=""{if !empty($data.title)} title="{$data.title}"{/if} src="{$data.src}" />{if !empty($data.label)}<span class="owm_avatar_label"{if !empty($data.labelColor)} style="background-color: {$data.labelColor}"{/if}>{$data.label}</span>{/if}</a>
+{else}
+<img alt="" {if !empty($data.title)} title="{$data.title}"{/if} src="{$data.src}" />
+{/if}
+</div>

@@ -1,0 +1,9 @@
+<nav class="owm_nav_left_bottom">
+    <ul class="owm_nav_left">
+        {foreach from=$data item='item'}
+        <li class="owm_nav_left_item">
+            <a href="{$item.url}"><span>{$item.label}</span></a>
+        </li>
+        {/foreach}
+    </ul>
+</nav>

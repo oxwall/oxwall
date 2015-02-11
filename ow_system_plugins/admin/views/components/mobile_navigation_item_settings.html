@@ -1,0 +1,58 @@
+<div class="ow_mobile_nav_setting_popup">
+    {form name="settingForm"}
+    <table class="ow_table_1 ow_small ow_form ow_smallmargin">
+        <tbody>
+            <tr class="ow_alt2 ow_tr_first ">
+                <td class="ow_label">{label name="label"}</td>
+                <td class="ow_value">
+                    {input name="label"}
+                    {error name="label"}
+                </td>
+            </tr>
+            {if $custom}
+            
+            <tr class="ow_alt1 ">
+                <td class="ow_label">{label name="type"}</td>
+                <td class="ow_value">
+                    {input name="type"}
+                    {error name="type"}
+                </td>
+            </tr>
+            
+            <tr class="ow_alt2 ">
+                <td class="ow_label">{label name="title"}</td>
+                <td class="ow_value">
+                    {input name="title"}
+                    {error name="title"}
+                </td>
+            </tr>
+            <tr class="ow_alt1" id="mp-content" {if $settings.type=="external"}style="display: none;"{/if}>
+                <td class="ow_label">{label name="content"}</td>
+                <td class="ow_value">
+                    {input name="content"}
+                    {error name="content"}
+                </td>
+            </tr>
+            
+            <tr class="ow_alt2" id="mp-url" {if $settings.type=="local"}style="display: none;"{/if}>
+                <td class="ow_label">{label name="url"}</td>
+                <td class="ow_value">
+                    {input name="url"}
+                    {error name="url"}
+                </td>
+            </tr>
+            
+            <tr class="ow_alt1">
+                <td class="ow_label">{label name="visibleFor"}</td>
+                <td class="ow_value">
+                    {input name="visibleFor"}
+                </td>
+            </tr>
+            {/if}
+        </tbody>
+    </table>
+    
+    <div class="clearfix"><div class="ow_right">{submit name='save' class='ow_ic_save ow_positive'}</div></div>
+    
+    {/form}
+</div>

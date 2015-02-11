@@ -1,0 +1,11 @@
+<div class="ow_console_list_wrapper OW_ConsoleListContainer">
+    <div class="ow_nocontent OW_ConsoleListNoContent">{text key='base+no_items'}</div>
+    <ul class="ow_console_list OW_ConsoleList">
+
+    </ul>
+    <div class="ow_preloader_content ow_console_list_preloader OW_ConsoleListPreloader" style="visibility: hidden"></div>
+</div>
+
+{if !empty($viewAll)}
+    <div class="ow_console_view_all_btn_wrap"><a href="{$viewAll.url}" class="ow_console_view_all_btn">{$viewAll.label}</a></div>
+{/if}

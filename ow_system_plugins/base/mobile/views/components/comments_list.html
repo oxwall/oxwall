@@ -1,0 +1,17 @@
+<div id="{$cmpContext}">
+    {if $countToLoad > 0}
+    <div class="owm_newsfeed_comment_load_more cmnt_load_more_cont"><span class="owm_newsfeed_comment_load_txt"><span class="cmnt_load_more">+{$countToLoad}</span></span></div>
+    {/if}
+    <div class="owm_newsfeed_comment_list">
+        {foreach from=$comments item='comment'}
+        <div class="owm_newsfeed_comment_item clearfix">
+            <div class="owm_newsfeed_comment_thumb">{decorator name='avatar_item' data=$comment.avatar}</div>
+            <div class="owm_newsfeed_comment_info">
+                <div class="owm_newsfeed_comment_author"><b><a href="{$comment.profileUrl}">{$comment.displayName}</a></b></div>
+                <div class="owm_newsfeed_comment_txt">{$comment.content}</div>{$comment.content_add}
+                <div class="owm_newsfeed_comment_date">{$comment.date}</div>
+            </div>
+        </div>
+        {/foreach}
+    </div>
+</div>

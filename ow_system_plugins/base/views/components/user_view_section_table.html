@@ -1,0 +1,17 @@
+<table class="ow_table_3 ow_nomargin section_{$sectionName} data_table" {if empty($display)}style="display:none;"{/if}>
+    <tr class="ow_tr_first">
+        <tr class="ow_tr_first">
+            <th colspan="2" class="ow_section"><span>{text key="base+questions_section_`$sectionName`_label"}</span></th>
+        </tr>
+    </tr>
+    {foreach  from=$questions key='sort' item='question' name='question'}
+        {if isset( $questionsData[$question.name] ) }
+            <tr class="{if $smarty.foreach.question.last}ow_tr_last{/if}">
+                <td class="ow_label" style="width: 20%">{if empty($labels[$question.name])}{text key="base+questions_question_`$question.name`_label"}{else}{$labels[$question.name]}{/if}</td>
+                <td class="ow_value"><span class="{if !empty($question.hidden)}ow_field_eye ow_remark profile_hidden_field{/if}">{$questionsData[$question.name]}</span></td>
+            </tr>
+        {/if}
+    {/foreach}
+</table>
+
+

@@ -1,0 +1,32 @@
+<div class="ow_stdmargin">
+{form name='splash_screen'}
+<table class="ow_table_1 ow_form">
+    <tr class="ow_tr_first">
+        <th class="ow_name ow_txtleft" colspan="3">
+            <span class="ow_section_icon ow_ic_gear_wheel">{text key="admin+splash_screen_section_label"}</span>
+        </th>
+    </tr>
+    <tr class="{cycle values='ow_alt2,ow_alt1'}">
+		<td class="ow_label">{label name='splash_screen'}</td>
+		<td class="ow_value">{input name='splash_screen'}</td>
+		<td class="ow_desc">{desc name='splash_screen'}</td>
+	</tr>
+	<tr class="{cycle values='ow_alt2,ow_alt1'}">
+		<td class="ow_label">{label name='intro'}</td>
+		<td class="ow_value">{input name='intro'}</td>
+		<td class="ow_desc">{desc name='intro'}</td>
+	</tr>
+	<tr class="{cycle values='ow_alt2,ow_alt1'}">
+		<td class="ow_label">{label name='button_label'}</td>
+		<td class="ow_value">{input name='button_label'}</td>
+		<td class="ow_desc">{desc name='button_label'}</td>
+	</tr>
+	<tr class="{cycle values='ow_alt2,ow_alt1'} ow_tr_last">
+		<td class="ow_label">{label name='leave_url'}</td>
+        <td class="ow_value">{input name='leave_url'}</td>
+		<td class="ow_desc ow_small">{desc name='leave_url'}</td>
+	</tr>
+</table>
+<div class="clearfix"><div class="ow_right">{submit name='save' class='ow_button ow_ic_save ow_positive'}</div></div>
+{/form}
+</div>

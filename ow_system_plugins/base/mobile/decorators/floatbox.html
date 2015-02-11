@@ -1,0 +1,29 @@
+{* `Floatbox` decorator template *}
+{style}
+    body .owm_floatbox_wrap {
+        top: 0px;
+    }
+    
+    .owm_floatbox_preloader {
+        height: 50px;
+    }
+{/style}
+
+<div style="display: none" id="floatbox_prototype">
+
+    <div class="owm_floatbox_wrap" data-tpl="wrap">
+        <div class="owm_floatbox clearfix">
+            <header data-tpl="header">
+		 <nav id="head-navigation">
+                    <a href="javascript://" class="owm_nav_menu" data-tpl="left-btn" style="display: none;"></a>
+                    <a href="javascript://" class="owm_nav_profile" data-tpl="right-btn" style="display: none;"></a>
+                    <div class="owm_top_title" data-tpl="heading">{$data.heading}</div>
+		 </nav>
+            </header>
+            <div class="owm_floatbox_cont clearfix" data-tpl="body">
+                <div class="owm_preloader owm_floatbox_preloader"></div>
+            </div>
+        </div>
+    </div>
+
+</div>

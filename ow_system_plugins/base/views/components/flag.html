@@ -1,0 +1,17 @@
+{style}
+{literal}
+.flags-input ul li{
+    float: left;
+    width: 100px !important;
+    text-align: left;
+}
+{/literal}
+{/style}
+
+<div style="height: 40px; text-align: center; margin-top: 10px;" class="flags-container">
+{form name="flag"}
+    <div class="clearfix flags-input">
+        {input name="reason" onchange="$(this.form).submit(); $('.flags-input').hide(); $('.flags-container').addClass('ow_preloader_content');"}
+    </div>
+{/form}
+</div>

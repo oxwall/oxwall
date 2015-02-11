@@ -1,0 +1,33 @@
+<div class="ow_context_action_block clearfix {if !empty($class)}{$class}{/if}">
+    {foreach from=$actions item='a'}
+        <div class="ow_context_action">
+			{if $a.action->getLabel()}
+			{strip}<a href="{if $a.action->getUrl() != null}{$a.action->getUrl()}{else}javascript://{/if}"
+			{if $a.action->getId() != null} id="{$a.action->getId()}"{/if}
+			{if $a.action->getAttributes()} 
+				{foreach from=$a.action->getAttributes() item='attr' key='aname'} {$aname}="{$attr}"{/foreach}
+			{/if}
+			class="ow_context_action_value{if $a.action->getClass() != null} {$a.action->getClass()}{/if}">{$a.action->getLabel()}</a>{/strip}{/if}
+			{if !empty($a.subactions)}
+			<span class="ow_context_more"></span>
+
+			<!-- div class="ow_context_action_wrap" -->
+			    {capture assign='tooltipClass'}{if $a.action->getClass() != null}{$a.action->getClass()}_tooltip{/if}{/capture}
+			    
+				{block_decorator name='tooltip' addClass="`$tooltipClass` ow_small `$position`"}
+				<ul class="ow_context_action_list ow_border">
+				{foreach from=$a.subactions item='subact'}
+					<li>{strip}<a href="{if $subact->getUrl() != null}{$subact->getUrl()}{else}javascript://{/if}"
+					{if $subact->getId() != null} id="{$subact->getId()}"{/if}
+					{if $subact->getClass() != null} class="{$subact->getClass()}"{/if}
+					{if $subact->getAttributes()} 
+						{foreach from=$subact->getAttributes() item='sattr' key='name'} {$name}="{$sattr}"{/foreach}
+					{/if}>{$subact->getLabel()}</a>{/strip}</li>
+				{/foreach}
+				</ul>
+                {/block_decorator}
+			<!-- /div -->
+			{/if}
+        </div>
+    {/foreach}
+</div>

@@ -1,0 +1,104 @@
+
+{if $settings}
+<table class="ow_table_1 ow_small ow_form ow_smallmargin">
+    {foreach from=$settings key='name' item='item' name='i'}
+        {if !in_array($name, $hidden)}
+		    <tr class="{if !empty($item.class)}{$item.class}{/if} {if $item.display == 'table'}{cycle name="custom" values="ow_alt2,ow_alt1"}{/if} {if $smarty.foreach.i.first}ow_tr_first{/if}{if $smarty.foreach.i.last}ow_tr_last{/if}">
+                        {if !empty($item.label)}
+                            <td class="ow_label">{$item.label|escape:"html"}</td>
+                            <td class="ow_value">
+                        {else}
+                            <td colspan="2">
+                        {/if}
+
+                            {if $item.presentation == 'custom'}
+                                {$item.markup}
+		            {elseif $item.presentation == 'number'}
+		                <input type="text" name="{$name}" value="{$item.value}" />
+		            {elseif $item.presentation == 'text'}
+		                <input type="text" name="{$name}" value="{$item.value}" />
+		            {elseif $item.presentation == 'textarea'}
+		                <textarea name="{$name}" >{$item.value}</textarea>
+		            {elseif $item.presentation == 'checkbox'}
+		                <input type="checkbox" name="{$name}"{if $item.value} checked="checked"{/if} />
+		            {elseif $item.presentation == 'select'}
+		                <select name="{$name}">
+		                    {foreach from=$item.optionList key=value item=label}
+		                        <option value="{$value}"{if $value == $item.value}selected="selected"{/if}>{$label}</option>
+		                    {/foreach}
+		                </select>
+		            {/if}
+		            <div id="error_{$name}" class="setting_error ow_error error"></div>
+		        </td>
+		    </tr>
+        {/if}
+    {/foreach}
+</table>
+{/if}
+
+{block_decorator iconClass='ow_ic_gear_wheel' langLabel='base+widgets_fb_default_settings_label' name='box' type="empty" addClass="clearfix"}
+
+    <table class="ow_table_1 ow_small ow_form ow_smallmargin">
+        {if !in_array('title', $hidden)}
+	        <tr class="{cycle name="system" values="ow_alt2,ow_alt1"} ow_tr_first {if in_array('freeze', $hidden) &&  in_array('wrap_in_box', $hidden) && in_array('show_title', $hidden)} ow_tr_last{/if}">
+	            <td class="ow_label">{text key="base+widgets_default_settings_title"}</td>
+	            <td class="ow_value">
+	                <input type="text" name="title" {if isset($values.title)}value="{$values.title}" beforevalue="{$values.title}"{/if} />
+	                <div id="error_title" class="setting_error ow_error error"></div>
+	            </td>
+	        </tr>
+        {/if}
+        {if !in_array('show_title', $hidden)}
+	        <tr class="{cycle name="system" values="ow_alt2,ow_alt1"}{if in_array('freeze', $hidden) &&  in_array('wrap_in_box', $hidden)} ow_tr_last{/if}">
+	            <td class="ow_label">{text key="base+widgets_default_settings_show_title"}</td>
+	            <td class="ow_value">
+	                <input type="checkbox" name="show_title" {if isset($values.show_title) && $values.show_title}checked="checked"{/if} />
+                        {if !in_array("icon", $hidden)}
+                            {text key="base+widgets_default_settings_icon"}:
+                            <select class="choose_icon" name="icon" >
+                                {foreach from=$avaliableIcons item=icon}
+                                    <option value="{$icon.class}" {if isset($values.icon) && $values.icon == $icon.class}selected="selected"{/if} >
+                                        {$icon.label}
+                                    </option>
+                                {/foreach}
+                            </select>
+                        {/if}
+	            </td>
+	        </tr>
+        {/if}
+        {if !in_array('wrap_in_box', $hidden)}
+	        <tr class="{cycle name="system" values="ow_alt2,ow_alt1"} {if in_array('freeze', $hidden) && in_array('restrict_view', $hidden)} ow_tr_last{/if}">
+	            <td class="ow_label">{text key="base+widgets_default_settings_wib"}</td>
+	            <td class="ow_value">
+	                <input type="checkbox" name="wrap_in_box" {if isset($values.wrap_in_box) && $values.wrap_in_box}checked="checked"{/if} />
+	            </td>
+	        </tr>
+        {/if}
+        {if !in_array('freeze', $hidden)}
+	        <tr class="{cycle name="system" values="ow_alt2,ow_alt1"} {if in_array('restrict_view', $hidden)}ow_tr_last{/if}">
+	            <td class="ow_label">{text key="base+widgets_default_settings_freeze"}</td>
+	            <td class="ow_value">
+	                <input type="checkbox" name="freeze" {if isset($values.freeze) && $values.freeze}checked="checked"{/if} />
+	            </td>
+	        </tr>
+        {/if}
+
+        {if !in_array('restrict_view', $hidden)}
+	        <tr class="{cycle name="system" values="ow_alt2,ow_alt1"} ow_tr_last" id="ws_restrict_view">
+	            <td class="ow_label">{text key="base+widgets_default_settings_restrict_view"}</td>
+	            <td class="ow_value">
+	                <input type="checkbox" name="restrict_view" {if isset($values.restrict_view) && $values.restrict_view}checked="checked"{/if} onclick="$('#ws_access_restrictions')[this.checked ? 'show' : 'hide'](); $('#ws_restrict_view')[this.checked ? 'removeClass' : 'addClass']('ow_tr_last');" />
+	            </td>
+	        </tr>
+                <tr class="{cycle name="system" values="ow_alt2,ow_alt1"} ow_tr_last" id="ws_access_restrictions" {if !isset($values.restrict_view) || !$values.restrict_view}style="display: none;"{/if}>
+	            <td class="ow_label">{text key="base+widgets_default_settings_access_restrictions"}</td>
+	            <td class="ow_value">
+                        {foreach from=$roleList item="role"}
+                        <input type="checkbox" class="ow_vertical_middle" value="{$role->id}" name="access_restrictions[]" {if !isset($values.access_restrictions) || in_array($role->id, $values.access_restrictions)}checked="checked"{/if} />
+                            {text key="base+authorization_role_`$role->name`"}
+                        {/foreach}
+	            </td>
+	        </tr>
+        {/if}
+    </table>
+{/block_decorator}

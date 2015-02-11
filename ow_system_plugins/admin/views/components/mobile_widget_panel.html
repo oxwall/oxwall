@@ -1,0 +1,144 @@
+{style}
+
+.ow_mobile_dd_sections {
+    width: 300px;
+}
+
+.ow_mobile_dd_sections_left,
+.ow_mobile_dd_sections_right {
+}
+
+.ow_mobile_dd_sections_left .ow_highbox,
+.ow_mobile_dd_sections_menu_new,
+.ow_mobile_dd_sections_menu_hidden {
+    padding: 0px 11px 16px;
+}
+
+.ow_mobile_dd_sections_left .ow_highbox {
+    padding-top: 6px; 
+}
+
+.ow_mobile_dd_sections_menu_new {
+    padding-bottom: 15px; 
+    border-bottom: 1px solid #ccc; 
+    margin-bottom: 5px;
+}
+
+.ow_mobile_dd_sections_left {
+    margin-right: 8px;
+}
+
+.ow_mobile_dd_sections_right {
+    border-left: 1px solid #CCCCCC;
+    margin-left: 8px;
+    margin-top: 5px;
+}
+
+.ow_mobile_dd_sections_menu_label {
+    color: #ccc; 
+    padding: 6px; 
+    text-transform: uppercase;
+}
+
+.ow_mobile_dd_sections_menu_bottom .ow_mobile_dd_sections_menu_label {
+    padding-top: 40px;
+}
+
+.ow_mobile_dd_sections_menu_hidden .ow_mobile_dd_sections_menu_label {
+    padding-bottom: 7px;
+}
+
+.ow_mobile_dd_sections .ow_dnd_schem_item {
+    padding-left: 5px;
+}
+
+.ow_mobile_dd_sections .dd_delete,
+.ow_mobile_dd_sections .dd_edit {
+    display: inline-block;
+    width: 18px;
+    height: 18px;
+    background-repeat: no-repeat;
+}
+
+.ow_mobile_dd_sections .component .schem_component .action .dd_delete:hover,
+.ow_mobile_dd_sections .component .schem_component .action .dd_edit:hover {
+    text-decoration: none;
+}
+
+.ow_mobile_dd_sections .ow_dnd_schem_item span.action {
+    right: 3px;
+    top: 7px;
+    width: 40px;
+}
+
+.ow_mobile_nav_setting_popup {
+    width: 500px;
+}
+
+/* My classes */
+
+.ow_mobile_dd_sections div.ow_dnd_schem_item {
+    background-image: none;
+}
+
+.ow_mobile_dnd_section {
+    min-height: 34px;
+}
+
+{/style}
+
+<div style="display: none" id="fb_settings">
+     <div class="settings_title">
+        {text key="base+widgets_fb_setting_box_title"}
+     </div>
+     <div class="settings_content component_settings" style="min-height: 300px;"></div>
+     <div class="settings_controls component_controls">
+         {decorator name="button" class="dd_save ow_ic_save" langLabel="admin+save_btn_label"}
+     </div>
+ </div>
+
+<div class="ow_dragndrop_sections ow_stdmargin ow_superwide ow_automargin">
+    <div class="clearfix" style="overflow: hidden;">
+        
+        <div class="ow_mobile_dd_sections ow_left ow_column_equal_fix">
+            <div class="ow_mobile_dd_sections_left">
+                <div class="ow_highbox">
+                    <div class="ow_mobile_dd_sections_menu_top" id="place_sections">
+                        <div class="ow_mobile_dd_sections_menu_label">{text key="mobile+admin_widgets_main_section_label"}</div>
+                        <div class="ow_mobile_dnd_section place_section" ow_place_section="mobile.main">
+                            {if isset($componentList.section["mobile.main"])}
+                                {foreach from=$componentList.section["mobile.main"] item="component"}
+                                    {dd_component uniqName=$component.uniqName render=true}
+                                {/foreach}
+                            {/if}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="ow_mobile_dd_sections ow_left ow_column_equal_fix right_section ow_narrow">
+            <div class="ow_mobile_dd_sections_right">
+
+                <div class="ow_mobile_dd_sections_menu_new ow_mobile_dnd_section" id="clonable_components">
+                    {foreach from=$componentList.clonable item="component"}
+                        {dd_component uniqName=$component.uniqName isClone=$component.clone}
+                    {/foreach}
+                </div>
+
+                <div class="ow_mobile_dd_sections_menu_hidden">   
+                    <div class="ow_mobile_dd_sections_menu_label">{text key="mobile+admin_widgets_hidden_section_label"}</div>
+
+                    <div class="ow_mobile_dnd_section" id="place_components">
+                        {foreach from=$componentList.place item="component"}
+                            {dd_component uniqName=$component.uniqName isClone=$component.clone}
+                        {/foreach}
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+
+     </div>
+</div>

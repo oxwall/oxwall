@@ -1,0 +1,13 @@
+<div class="ow_paging clearfix ow_smallmargin">
+    <span>{text key='base+pages_label'}</span>
+    {assign var='p' value='0' }
+    {if $less}<a href="{$url}&{$prefix}page=1">{text key="base+paging_label_first"}</a>{/if}
+    {if $prev}<a href="{$url}&{$prefix}page={math equation='x-1' x=$page}">{text key="base+paging_label_prev"}</a>{/if}
+    {if $less}<span>...</span>{/if}
+    {section name="paging" loop=$page_shortcut_count+1 start=1 step=1}
+    	{math equation="x + y" x=$start  y=$smarty.section.paging.index assign='p'}{if $p<=$count}<a {if $p == $page }class="active"{/if} href="{$url}&{$prefix}page={$p}">{$p}</a>{/if}
+    {/section}
+    {if $more}<span>...</span>{/if}
+    {if $next}<a href="{$url}&{$prefix}page={math equation='x+1' x=$page}">{text key='base+paging_label_next'}</a>{/if}
+    {if $more}<a href="{$url}&{$prefix}page={$count}">{text key='base+paging_label_last'}</a>{/if}
+</div>

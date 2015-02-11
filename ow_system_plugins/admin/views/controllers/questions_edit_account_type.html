@@ -1,0 +1,61 @@
+{script}
+{literal}
+window.editLangValue = function editLangValue(_prefix, _key, _callback){
+
+    if ( !window.question_langs_floatbox_display )
+    {
+        window.question_langs_floatbox_display = true;
+
+        $.post( '{/literal}{url_for for="ADMIN_CTRL_Languages:ajaxEditLanguageValuesForm"}{literal}?prefix='+_prefix+'&key='+_key, {}, function(json){
+            if(document['ajaxLangValueEditForms'] == undefined)
+                    {
+                        document['ajaxLangValueEditForms'] = [];
+                    }
+
+
+            document['ajaxLangValueEditForms'][_prefix+'-'+_key] = new OW_FloatBox({$title: '{/literal}{text key="admin+questions_edit_account_type_name_title"}{literal}', $contents: json['markup'], width: 556});
+                    document['ajaxLangValueEditForms'][_prefix+'-'+_key+'callback'] = _callback;
+
+            document['ajaxLangValueEditForms'][_prefix+'-'+_key].bind("close", function() {
+                window.question_langs_floatbox_display = false;
+            });
+
+            OW.addScriptFiles(json['include_js'], function(){ OW.addScript(json['js']); });
+
+        }, 'json');
+    }
+}
+{/literal}
+{/script}
+{$contentMenu}
+
+<div class="ow_automargin">
+<table class="ow_table_2 ow_stdmargin account_type">
+     <tr class="ow_tr_first">
+        <th>{text key='admin+question_column_account_type'}</th>
+        <th>{text key='admin+question_column_exclusive_questions'}</th>
+        <th width="40"></th>
+    </tr>
+    {foreach from=$accountTypes  item='accountType' name='accountType'}
+        {capture name="evenstyle"}{cycle values="ow_alt1,ow_alt2"}{/capture}
+            <tr  width="100%" class="{$smarty.capture.evenstyle} account_type_tr ow_admin_profile_question_dnd_cursor {if $smarty.foreach.accountType.last}ow_tr_last{/if}" account_type_name="{$accountType.name}">
+                <td width="70%" class="{$smarty.capture.evenstyle} ow_txtleft account_type_value">{account_type_lang name=$accountType.name } <a class="ow_lbutton ow_green default_account_type_button" {if !$smarty.foreach.accountType.first}style="display:none;"{/if} href="javascript://">default</a></td>
+                <td width="15%"  class="{$smarty.capture.evenstyle}">{$accountType.questionCount}</td>
+                <td width="15%"  class="{$smarty.capture.evenstyle} ow_nowrap">
+                    <div class="quest_buttons" style="height:20px;">
+                         <a class="ow_lbutton ow_lbutton edit_accont_type" style="display:none;" href="javascript://">{text key='admin+btn_label_edit'}</a>
+                        {if $accountTypeCount > 1 }
+                            <a class="ow_lbutton ow_red delete_accont_type {if $smarty.foreach.accountType.first}default_account_type{/if}" style="display:none;" href="{$deleteUrlList[$accountType.name]}" >{text key='admin+btn_label_delete'}</a>
+                        {/if}
+                    </div>
+                </td>
+            </tr>
+    {/foreach}
+</table>
+
+{block_decorator name="box" style="text-align:center;" type='empty' iconClass="ow_ic_add" langLabel='admin+questions_add_new_account_type'}
+    {form name="add_account_type_form"}
+        {input name='account_type' style="width:auto;"}&nbsp;{submit class="ow_ic_add" name='account_type_submit'}
+    {/form}
+{/block_decorator}
+</div>

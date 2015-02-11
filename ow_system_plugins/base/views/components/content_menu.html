@@ -1,0 +1,7 @@
+<div class="ow_content_menu_wrap">
+<ul class="ow_content_menu clearfix">
+ 	{foreach from=$data item='item' name='contentMenu'}
+    <li class="{$item.class} {if $item.active} active{/if}"><a href="{$item.url}"><span{if $item.iconClass} class="{$item.iconClass}"{/if}>{$item.label}</span></a></li>
+	{/foreach}
+</ul>
+</div>

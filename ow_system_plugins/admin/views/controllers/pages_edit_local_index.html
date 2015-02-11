@@ -1,0 +1,82 @@
+{capture assign="back_url"}{url_for_route for="admin_pages_main"}{/capture}
+
+<div class="ow_stdmargin">{decorator name="button" class="ow_ic_left_arrow" onclick="location.href='`$back_url`';" langLabel="base+pages_back"}</div>
+
+{form name="edit-form"}
+<input id="edit-form-command" type="hidden" name="command" value="save" />
+<table class="ow_form ow_table_1">
+
+    <tr id="title-tr" class="{cycle values="ow_alt2,ow_alt1"} ow_tr_first">
+        <td class="ow_label">
+        	{label name="title"}
+       	</td>
+        <td class="ow_value">
+        	{input name="title"}
+        	<br />{error name="title"}
+        </td>
+        <td></td>
+    </tr>
+
+    <tr id="title-tr" class="{cycle values="ow_alt2,ow_alt1"}">
+        <td class="ow_label">
+        	{label name="name"}
+       	</td>
+        <td class="ow_value">
+        	{input name="name"}
+        	<br />{error name="name"}
+        </td>
+        <td></td>                
+    </tr>
+
+    <tr id="title-tr" class="{cycle values="ow_alt2,ow_alt1"}">
+        <td class="ow_label">
+        	{label name="url"}
+       	</td>
+        <td class="ow_value">
+        	http://yoursite.com/{input name="url" style="width: 200px;margin-left: 6px;"}<br />
+        	<br />{error name="url"}
+        </td>
+        <td></td>                
+      </tr>
+
+    <tr class="{cycle values="ow_alt2,ow_alt1"}" >
+        <td class="ow_label">{label name="visible-for"}</td>
+        <td class="ow_value">
+        	{input name="visible-for"}
+        	<br />{error name="visible-for"}
+       </td>
+        <td></td>       
+    </tr>
+
+    <tr  id="title-tr" class="{cycle values="ow_alt2,ow_alt1"}">
+        <td class="ow_label">
+        	{label name="meta-tags"}
+       	</td>
+        <td class="ow_value">
+        	{input name="meta-tags"}
+        	<br />{error name="meta-tags"}
+        </td>
+        <td class="ow_description ow_small" style="width: 30%;">{desc name="meta-tags"}</td>                
+    </tr>
+
+    <tr id="title-tr" class="{cycle values="ow_alt2,ow_alt1"} ow_tr_last">
+        <td class="ow_label">
+        	{label name="content"}
+       	</td>
+        <td class="ow_value">
+        	{input name="content"}
+        	<br />{error name="content"}
+        </td>
+        <td class="ow_description ow_small">{desc name="content"}</td>
+    </tr>
+
+ </table>
+<div class="clearfix ow_stdmargin ow_btn_delimiter">
+    <div class="ow_right">
+        {capture assign="del_js"}if(confirm('{text key='admin+are_you_sure'}')) location.href='{url_for for="ADMIN_CTRL_PagesEditLocal:delete:[id=>`$id`]"}';{/capture}
+        {decorator name="button" class="ow_red ow_ic_delete ow_negative" extraString="onclick=\"`$del_js`\"" langLabel="admin+delete_btn_label"}
+        
+        {submit name="save" class="ow_positive"}
+    </div>
+</div>    
+{/form}

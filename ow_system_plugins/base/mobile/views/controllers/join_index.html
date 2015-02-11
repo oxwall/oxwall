@@ -1,0 +1,186 @@
+{style}
+
+.owm_join_photo_upload .owm_upload_photo_attach_wrap
+{
+    padding:0px;
+}
+
+.owm_join_photo_button
+{
+    position: absolute;
+    top: 9px;
+    left: 10px;
+}
+
+.owm_join_photo_button_label
+{
+    padding-left: 63px;
+    margin-right: 8px;
+    min-width:53px;
+    float:left;
+}
+
+.owm_join_photo_button_img
+{
+    min-width: 100px;
+    float: left;
+}
+
+{/style}
+
+{script}
+    $("input[name=userPhoto]").change(function() {
+        var img = $('.join_photo_upload #photo-file-prevew');
+        var img_span = img.parents(".join_photo_upload .owm_upload_img_name_label");
+
+        var changeLabel = $('.join_photo_upload .owm_upload_replace_label');
+        var uploadLabel = $('.join_photo_upload .owm_upload_choose_label');
+        var icon = $('.join_photo_upload .join_photo_button a');
+
+        var name = img_span.find("span");
+
+        name.text("");
+        img_span.hide();
+
+        if (!this.files || !this.files[0]) {
+            return
+        };
+
+        if ( window.FileReader ) {
+            var reader = new FileReader();
+
+            reader.onload = function (e) {
+                img.attr('src', e.target.result);
+                img_span.css('display','table');
+                changeLabel.css('display','table');
+                uploadLabel.hide();
+                icon.parents('div:eq(0)').addClass('owm_upload_photo_attach_wrap');
+            }
+            
+            reader.readAsDataURL(this.files[0]);
+        } else {
+            name.text(this.files[0].name);
+        }
+    });
+{/script}
+
+<div class="owm_join_form">
+    {if isset($notValidInviteCode)}
+    <div class="owm_padding">
+        {block_decorator name="box" type="empty" addClass="ow_center" style="padding:15px;"}
+            {text key="base+join_not_valid_invite_code"}
+        {/block_decorator}
+    </div>
+    {else}
+        {if $step == 1}
+            <div class="owm_padding">
+                <div class="owm_padding owm_info owm_std_margin_top">{text key="mobile+mobile_join_promo"}</div>
+            </div>
+
+            {if !empty($joinConnectHook)}
+                {foreach from=$joinConnectHook item='item'}
+                  <div class="owm_btn_wide owm_std_margin_top">
+                    {$item}
+                  </div>
+                {/foreach}
+            {/if}
+        {/if}
+        
+        {form name=joinForm}
+            {if $displayAccountType==true}
+                <div class="owm_field_container owm_std_margin_bottom">
+                    <div class="owm_form_label owm_small_margin_bottom">{label name='accountType'}<span class="owm_required_star">*</span></div>
+                    <div class="owm_field_wrap owm_select_wrap">{input name='accountType'}</div>
+                    <div class="owm_error_txt">{error name='accountType'}</div>
+                </div>
+            {/if}
+
+            {foreach from=$questionArray key='section' item='questions' name='section'}
+                {if !empty($section) }
+                    <div class="owm_field_container owm_section owm_std_margin_bottom">
+                        <span class="owm_section_label">{text key="base+questions_section_`$section`_label"}</span><div class="owm_section_border"></div>
+                    </div>
+                {/if}
+                {foreach from=$questions item='question' name='question'}
+
+                    {if in_array( $question.presentation, array('text', 'password') ) }
+                        <div class="owm_field_container owm_small_margin_bottom {* if !empty($question.required)}owm_field_required{/if *} {if !empty($question.trClass)}{$question.trClass}{/if}">
+                            <div class="{if !empty($presentationToClass[$question.presentation]) }{$presentationToClass[$question.presentation]}{else}owm_field_wrap{/if}">{input name=$question.name}</div>
+                            <div class="owm_error_txt">{error name=$question.name}</div>
+                        </div>
+                    {else}
+                        <div class="owm_field_container owm_std_margin_bottom {* if !empty($question.required)}owm_field_required{/if *} {if !empty($question.trClass)}{$question.trClass}{/if}">
+                            <div class="owm_form_label owm_small_margin_bottom">{label name=$question.name}</div>
+                            <div class="{if !empty($presentationToClass[$question.presentation]) }{$presentationToClass[$question.presentation]}{else}owm_field_wrap{/if}">
+                                {input name=$question.name}
+                            </div>
+                            <div class="owm_error_txt">{error name=$question.name}</div>
+                        </div>
+                    {/if}
+
+                    {if $question.name=='password'}
+                        <div class="owm_field_container owm_small_margin_bottom {* owm_field_required *} {if !empty($question.trClass)}{$question.trClass}{/if}">
+                            <div class="{if !empty($presentationToClass[$question.presentation]) }{$presentationToClass[$question.presentation]}{else}owm_field_wrap{/if}">{input name='repeatPassword'}</div>
+                            <div class="owm_error_txt">{error name='repeatPassword'}</div>
+                        </div>
+                    {/if}
+                 
+                {/foreach}
+            {/foreach}
+
+            {if $isLastStep}
+                
+                {if $display_photo}
+                    <div class="owm_field_container join_photo_upload owm_upload_photo_browse_wrap clearfix owm_bg_color_3 {* if $requiredPhotoUpload}owm_field_required{/if *} owm_field_wrap">
+                        <div class="owm_join_photo_button">
+                            <a class="owm_upload_photo_choose_btn" href="javascript://"><input name="userPhoto" id="{$photoUploadId}" type="file" accept="image/*"></a>
+                        </div>
+                        <div class="owm_join_photo_button_label">
+                            <span class="owm_upload_choose_label"><span>{label name='userPhoto'}{if $requiredPhotoUpload}<span class="owm_required_star">*</span>{/if}</span></span>
+                            <span class="owm_upload_replace_label"><span>{label name='userPhoto'}{if $requiredPhotoUpload}<span class="owm_required_star">*</span>{/if}</span></span>
+                        </div>
+                        <div class="owm_join_photo_button_img">
+                            <span class="owm_upload_img_name_label" style="display:none;"><img id="photo-file-prevew" style="height: 44px;"><span></span></span>
+                        </div>
+                    </div>
+                    <div class="owm_error_txt">{error name='userPhoto'}</div>                    
+                {/if}
+
+                {if $display_terms_of_use}
+
+                    <div class="owm_section owm_std_margin_bottom">
+                        <span class="owm_section_label">{text key="base+questions_section_terms_of_use_label"}</span><div class="owm_section_border"></div>
+                    </div>
+
+                    <div class="owm_field_container owm_small_margin_bottom {* owm_field_required *}">
+
+                        <div class="owm_form_label owm_small_margin_bottom ">{label name='termOfUse'}<span class="owm_required_star">*</span></div>
+
+                        <div class="owm_checkbox_wrap owm_simple_checkbox">
+                            {input name='termOfUse'}
+                        </div>
+                        <div class="owm_error_txt">{error name='termOfUse'}</div>
+                    </div>
+                    
+                {/if}
+
+                {if $display_captcha}
+                    <div class="owm_section owm_std_margin_bottom">
+                        <span class="owm_section_label">{text key="base+questions_section_captcha_label"}</span><div class="owm_section_border"></div>
+                    </div>
+
+                    <div class="owm_field_container owm_small_margin_bottom {* owm_field_required *}">
+                        <div class="owm_checkbox_wrap">{input name='captchaField'}<span class="owm_required_star">*</span></div>
+                        <div class="owm_error_txt">{error name='captchaField'}</div>
+                    </div>
+                {/if}
+
+            {/if}
+
+            <div class="owm_btn_wide owm_std_margin_top">
+                {submit name='joinSubmit'}
+            </div>
+        {/form}
+    {/if}
+</div>
+

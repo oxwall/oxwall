@@ -1,0 +1,28 @@
+{style}
+    .ca-dropdown {
+        display: none;
+    }
+{/style}
+
+<div class="owm_context_action ca-dropdown-wrap" id="{$uniqId}">
+    <a class="owm_context_arr_down ca-dropdown-btn" href="javascript://">
+        {if !empty($label)}
+            <span class="owm_context_arr_label">{$label}</span>
+        {/if}
+        <span class="owm_context_arr_c"></span>
+    </a>
+        
+    <div class="owm_context_action_wrap owm_context_pos_right ca-dropdown">
+        <div class="owm_context_action_body">
+            <ul class="owm_context_action_list owm_newsfeed_context_list">
+                {foreach from=$buttons item="item"}
+                    <li>
+                        <a {$item.attrs}>
+                            <span class="owm_context_action_list_item_c">{$item.label}</span>
+                        </a>
+                    </li>
+                {/foreach}
+            </ul>
+        </div>
+    </div>
+</div>

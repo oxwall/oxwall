@@ -1,0 +1,32 @@
+{style}
+{literal}
+.ow_active_plugins tr, .ow_inactive_plugins tr{
+    border-top:1px solid #ccc;
+}
+.ow_plugin_controls{
+    display:none;
+}
+{/literal}
+{/style}
+{block_decorator name='box' type='empty' addClass='ow_stdmargin' iconClass='ow_ic_trash' langLabel='admin+manage_plugins_available_box_cap_label'}
+{if empty($plugins)}
+    {text key='admin+plugins_manage_no_available_items'}
+{else}
+   <table class="ow_superwide ow_inactive_plugins" style="margin:0 auto;">
+      {foreach from=$plugins item='plugin'}
+      <tr class="ow_high2" {literal}onmouseover="$('span.ow_plugin_controls', $(this)).css({display:'block'});" onmouseout="$('span.ow_plugin_controls', $(this)).css({display:'none'});"{/literal}>
+         <td style="padding: 10px 15px;">
+            <b>{$plugin.title}</b>
+            <div class="ow_small">{$plugin.description}</div>
+         </td>
+         <td class="ow_small" style="text-align:right;width:180px;vertical-align:middle;">
+             <span class="ow_plugin_controls">
+                {if $plugin.inst_url}<a class="ow_lbutton ow_green" href="{$plugin.inst_url}">{text key='admin+manage_plugins_install_button_label'}</a>{/if}
+                {if $plugin.del_url}<a class="ow_lbutton ow_red" href="{$plugin.del_url}" onclick="return confirm('{text key='admin+manage_plugins_delete_confirm_message' pluginName=$plugin.title}');">{text key='admin+manage_plugins_delete_button_label'}</a>{/if}
+             </span>
+         </td>
+      </tr>
+      {/foreach}
+   </table>
+{/if}
+{/block_decorator}

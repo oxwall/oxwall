@@ -1,0 +1,173 @@
+{script}
+{literal}
+$(function(){
+    $('#add_new_text_btn').click(function(){$('#add_new_text').trigger('click')})
+});
+{/literal}
+{/script}
+{$menu}
+{literal}
+<style>
+	input[type="text"].grey-text{color: #BBB;}
+	textarea.once{height:30px;}
+	
+    .lang_value{
+        width: 395px;
+        overflow: hidden;
+    }
+    
+</style>
+{/literal}
+    		<div class="ow_anno ow_std_margin" style="text-align:center;">
+	                {text key="admin+you_are_editing"}
+                <select onchange="location.href = '{$languageSwitchUrl}&language='+this.value;">
+                	{foreach from=$langs item='lang'}
+                	<option {if $language->getTag() == $lang->getTag() }selected="selected"{/if} value="{$lang->getTag()}">{$lang->getLabel()}</option>
+                	{/foreach}
+                </select>
+                
+                {text key="admin+check_other_langs" url="?mod=langs"}
+                
+            </div>
+            
+            <div class="ow_stdmargin clearfix">
+                <div class="ow_left" style="margin: 6px 10px;{if empty($devMode)} display: none;{/if}">
+                	{decorator name='button' langLabel='admin+add_new_text' class='ow_ic_add' id="add_new_text_btn"}
+                    <a style="display: none;" id="add_new_text" onclick="new OW_FloatBox({ldelim}$title: '{text key="admin+title_add_new_text"}', $contents: $('#new-key-form'), width: '550px', icon_class: 'ow_ic_add'{rdelim})">{text key="admin+add_new_text"}</a>
+                </div>
+
+            	<div class="ow_box ow_right">
+                	{text key="admin+show"}
+
+                    <select onchange="location.href='{$section_switch_url}&prefix='+$(this).val();">
+                        <option {if $current_prefix == 'all'}selected="selected"{/if} value="all">{text key="admin+all_sections"}</option>
+                        {foreach from=$prefixes item='prefix'}
+                        <option {if $current_prefix == $prefix->prefix}selected="selected"{/if} value="{$prefix->prefix}" > {$prefix->label}</option>
+                        {/foreach}
+                        <option disabled="disabled">-</option>
+                        <option {if $current_prefix == 'missing-text'}selected="selected"{/if} value="missing-text">
+                        	{text key="admin+missing_text"}
+                        </option>
+                    </select>
+
+                    &nbsp;&nbsp;<b>OR</b>&nbsp;&nbsp;
+
+                    <form id="search_form" style="display: inline" onsubmit="location.href = '{$searchFormActionUrl}&search='+ $('#search_inp').val()+( $('#search_in_inp:checked').length > 0 ? '&in_keys=y': ''); return false;">
+                        <input id="search_inp" name="search" type="text" value="{$current_search}" style="width: 200px" class="grey-text" onfocus={literal}"if(this.flag == undefined){this.flag = false; $(this).removeClass('grey-text').attr('value', '')}"{/literal} />
+                        {if !empty($devMode)}<input id="search_in_inp" name="search_in_keys" {if !empty($searchInKeys) && $searchInKeys == 'y'}checked="checked"{/if} type="checkbox" /> <label>in keys</label>{/if}
+                        {decorator name='button'  langLabel='admin+go' class="ow_ic_lens" type='submit'}
+                    </form>
+                </div>
+
+            </div>
+			{if $isSearchResults}
+           	<div class="ow_anno ow_std_margin">
+               <div style="text-align:center;">
+               	{if $list|@count > 0}
+               		{text key="admin+search_results_for_keyword" keyword="`$current_search`"}
+             	{else}
+             		{text key="admin+search_no_results_for_keyword" keyword="`$current_search`"}
+               	{/if}
+               	</div>
+            </div>
+            {else}            
+            	{if $list|@count == 0}
+		           	<div class="ow_anno ow_std_margin">
+		               <div style="text-align:center;">
+		               		{ text key="admin+no_values" } 
+		               	</div>
+		            </div>
+            	{/if}
+            {/if}
+            
+			<center>{$paging}</center>
+            
+<form method="POST" id="main-form">
+                      
+			<table class="ow_table_1 ow_form" style="width:100%;">
+                <tr class="ow_tr_first">
+                	<th style="width:47%;text-align:left;">{text key="admin+original_value" label=$origLabel tag=$origTag }</th>
+                	<th style="width:47%;text-align:left;">{text key="admin+translation" label=$label tag=$tag}</th>
+                    <th style="width:6%;"></th>
+                </tr>
+                <!-- custom section -->
+               <!-- end of custom section -->
+
+<input type="hidden" name="command" value="edit-values" />
+{foreach from=$list item='item'}
+                <tr>
+                	<td colspan="3" style="text-align:center;"><h3>{$item.label}</h3></td>
+                </tr>
+                
+                {foreach from=$item.data item='item_d2' name='item_d2'}
+                <tr class="{cycle values='ow_alt2, ow_alt1'} {if $smarty.foreach.item_d2.last}ow_tr_last{/if}" onmouseover="$('span.del-cont', this).show();" onmouseout="$('span.del-cont', this).hide();">
+                	<td class="ow_label" style="text-align:left;">
+                        <div class="lang_value">
+                        {if $item_d2.origValue }
+                			{$item_d2.origValue->value|escape:"html":"utf-8"}
+                		{/if}
+                        </div>
+						<div style="margin-top: 10px;" class="ow_small"><span style="padding: 1px 3px;" class="ow_mild_green">{ldelim}text key='{$item.prefix}+{$item_d2.key}'{rdelim}</span></div>                	
+                	</td>
+                    <td class="ow_value">
+                    	{if $item_d2.value }
+                    		<textarea name="values[{$item_d2.value->keyId}]" class="once" {literal}onclick="if(this.once === undefined){this.once = true; $(this).removeClass('once')}"{/literal}>{$item_d2.value->value}</textarea>
+                    	{else}
+							<textarea name="missing[{$item.prefix}][{$item_d2.key}]" class="once"></textarea>
+                    	{/if}
+                   	</td>
+                    <td class="ns-hover-block">
+                    	<div style="width: 50px;">
+	                    	<span class="del-cont" style="display: none;">
+	                    	
+	                    	{if !$devMode && $item.prefix == 'ow_custom' || $devMode }
+	                    	<a class="ow_lbutton ow_red" href="{url_for for="ADMIN_CTRL_Languages:deletekey"}?prefix={$item.prefix}&key={$item_d2.key}" 
+	                    		onclick="return(confirm('{text key="admin+are_you_sure"}'));">
+	                    		{text key="admin+delete"}
+	                   		</a>
+	                   		{/if}
+	                   		</span>
+                   		</div>
+                	</td>
+                </tr>
+                {/foreach}
+{/foreach}
+            </table>    
+			<div class="clearfix ow_stdmargin"><div class="ow_right">{decorator name="button" langLabel="admin+save_this_page" class="ow_ic_save ow_positive" extraString='onclick="this.form.submit()"'}</div></div>        
+</form>
+			<center>{$paging}</center>
+            
+<!-- begin -->
+<div style="display:none;">
+	<div id="new-key-form">
+	{form name="form"}
+	{input name="language"}
+	<input type="hidden" name="command" value="add-key">
+	<table class="ow_table_1 ow_form" style="width: 100%">
+			<tr class="ow_alt2 ow_tr_first" style="{if !$devMode}display: none;{/if}">
+				<td class="ow_label">{label name='prefix'}</td>
+				<td class="ow_value">
+					{input name='prefix'}
+					<br />{error name='prefix'}
+				</td>
+			</tr>
+			<tr class="ow_alt1" style="{if !$devMode}display: none;{/if}">
+				<td class="ow_label">{label name='key'}</td>
+				<td class="ow_value">
+					{input name='key'}
+					<br />{error name='key'}
+				</td>
+			</tr>
+		<tr class="ow_alt2 ow_tr_last">
+			<td class="ow_label ow_nowrap">{label name='value'}</td>
+			<td class="ow_value">
+				{input name='value' style='height: 150px'}
+				<br />{error name='value'}
+			</td>
+		</tr >
+	</table>
+    <div class="clearfix ow_submit"><div class="ow_right">{submit name="submit" class="ow_positive"}</div></div>
+	{/form}
+	</div>
+</div>
+<!-- end -->

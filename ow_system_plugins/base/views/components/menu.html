@@ -1,0 +1,3 @@
+<ul class="{$class} clearfix">
+{foreach from=$data item='item'}<li class="{$item.class}{if !empty($item.active)} active{/if}"><a href="{$item.url}"{if $item.new_window} target="_blank"{/if}><span>{$item.label}</span></a></li>{/foreach}
+</ul>

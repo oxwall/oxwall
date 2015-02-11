@@ -1,0 +1,31 @@
+{script}
+
+var p = $("#{$uniqId}");
+
+p.on("click", "[data-tab]", function() {
+    $("[data-tab]", p).removeClass("active");
+    $("[data-content]", p).hide();
+    var tab = $(this).addClass("active").data("tab");
+    $("[data-content=" + tab + "]", p).show();
+});
+
+{/script}
+<div id="{$uniqId}">
+    <div class="clearfix">
+        <div class="ow_box_menu">
+            {foreach from=$items item="item"}
+                <a href="javascript://" {if $item.active} class="active"{/if} data-tab="{$item.name}">
+                   <span>{$item.label}</span>
+                </a>
+            {/foreach}
+        </div>
+    </div>
+
+    <div class="ow_moderation_panel_content">
+        {foreach from=$items item="item"}
+            <div data-content="{$item.name}" {if !$item.active} style="display: none;"{/if}>
+                 {$item.content}
+            </div>
+        {/foreach}
+    </div>
+</div>

@@ -1,0 +1,20 @@
+{if !empty($list)}
+{foreach from=$list item=item name='user_list'}
+{assign var='dto' value=$item.dto}
+{assign var='id' value=$dto->id}
+<div class="owm_content_list_item" onclick=" window.location.href='{$avatars[$id]['url']}'  ">
+    <div class="owm_user_list_item">
+        <div class="owm_avatar">
+            {decorator name='avatar_item' data=$avatars[$id]}
+        </div>
+        <div class="owm_user_list_name"><span>{$displayNameList[$id]}</span></div>
+        {if !empty($onlineInfo) && $onlineInfo[$id] }
+            <div class="owm_profile_online">
+            </div>
+        {/if}
+    </div>
+</div>
+{/foreach}
+{else}
+    <div class="owm_nocontent">{text key="base+user_no_users"}</div>
+{/if}

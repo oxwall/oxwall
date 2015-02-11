@@ -1,0 +1,53 @@
+
+{$paging}
+
+<table class="ow_table_2">
+    <tr class="ow_tr_first">
+        <th class="ow_nowrap">{text key='base+billing_transaction_id'}</th>
+        <th>{text key='base+billing_gateway'}</th>
+        <th>{text key='admin+plugin'}</th>
+        <th>{text key='base+billing_details'}</th>
+        <th>{text key='base+billing_amount'}</th>
+        <th>{text key='admin+currency'}</th>
+        <th>{text key='admin+user'}</th>
+        <th>{text key='base+time'}</th>
+    </tr>
+    {foreach from=$list item='sale' name='sale'}
+    <tr class="ow_alt{cycle values='1,2'} {if $smarty.foreach.sale.last}ow_tr_last{/if}">
+        <td>{$sale.transactionUid}</td>
+        <td>
+            {if $sale.gatewayKey != ''}
+                {text key="`$sale.gatewayKey`+gateway_title"}
+            {else}
+                <span class="ow_small ow_remark">{text key='base+billing_gateway_unavailable'}</span>
+            {/if}
+        </td>
+        <td>{$sale.pluginTitle}</td>
+        <td>{$sale.entityDescription}</td>
+        <td>{$sale.totalAmount}</td>
+        <td>{$sale.currency}</td>
+        <td>
+            {if $sale.userId != null}
+                {user_link username=$userNames[$sale.userId] name=$displayNames[$sale.userId]}
+            {else}
+                <span class="ow_small ow_remark">-</span>
+            {/if}
+        </td>
+        <td class="ow_small">{format_date timestamp=$sale.timeStamp}</td>
+    </tr>
+    {/foreach}
+</table>
+
+{$paging}
+
+<div class="ow_supernarrow ow_automargin">
+<table class="ow_table_3">
+<tr class="ow_tr_first"><th class="ow_label" style="text-align: center" colspan="2"><b>{text key='base+billing_statistics'}</b></th></tr>
+{foreach from=$stats item='sum' key='cur'}
+    <tr>
+        <td class="ow_label">{$cur}</td>
+        <td class="ow_value">{$sum}</td>
+    </tr>
+{/foreach}
+</table>
+</div>

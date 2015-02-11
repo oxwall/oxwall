@@ -1,0 +1,10 @@
+{block_decorator name="box" type="empty" addClass="ow_stdmargin ow_wide ow_automargin ow_center"}
+    {text key="base+delete_user_confirmation"}
+{/block_decorator}
+
+{block_decorator name="box" type="empty" addClass="ow_stdmargin ow_wide ow_automargin ow_center"}
+    <form name="deleteUser" method="post">
+        {decorator name="button" type="submit" buttonName="delete_user_button" class="ow_ic_delete ow_red" langLabel="base+delete_user_delete_button"}
+        {decorator name="button" type="submit" buttonName="cansel_button" langLabel="base+delete_user_cancel_button"}
+    </form>
+{/block_decorator}

@@ -1,0 +1,138 @@
+{script}
+  {literal}
+    $("#avatar_change_btn").click(function(){
+        $(this).hide();
+        $("#cancel_change").show();
+        $("#avatar_input").show();
+    });
+    
+    $("#big_avatar_change_btn").click(function(){
+        $(this).hide();
+        $("#cancel_big_change").show();
+        $("#big_avatar_input").show();
+    });
+    
+    $("#cancel_change").click(function(){
+        $(this).hide();
+        $("#avatar_change_btn").show();
+        $("#avatar_input").html('<input type="file" name="avatar" />');
+        $("#avatar_input").hide();
+    });
+    
+    $("#cancel_big_change").click(function(){
+        $(this).hide();
+        $("#big_avatar_change_btn").show();
+        $("#big_avatar_input").html('<input type="file" name="bigAvatar" />');
+        $("#big_avatar_input").hide();
+    });
+    
+    $("#avatar_delete_btn").click(function(){
+        if ( confirm(OW.getLanguageText('admin', 'confirm_avatar_delete')) ) 
+        {
+            window.location.href = "{/literal}{url_for_route for='admin_settings_user'}?del-avatar=1{literal}";
+        }
+    });
+    
+    $("#big_avatar_delete_btn").click(function(){
+        if ( confirm(OW.getLanguageText('admin', 'confirm_avatar_delete')) ) 
+        {
+            window.location.href = "{/literal}{url_for_route for='admin_settings_user'}?del-avatar=2{literal}";
+        }
+    });
+  {/literal}
+{/script}
+{$menu}
+{form name='userSettingsForm'}
+
+<table class="ow_table_1 ow_form">
+    <tr class="ow_tr_first">
+        <th class="ow_name ow_txtleft" colspan="3">
+            <span class="ow_section_icon ow_ic_monitor">{text key='admin+user_display_settings'}</span>
+        </th>
+    </tr>
+   <tr class="ow_alt1 ow_tr_last">
+        <td class="ow_label">{label name='displayName'}</td>
+        <td class="ow_value">{input name='displayName'} {error name='displayName'}</td>
+        <td class="ow_desc ow_small">
+            {text key='admin+user_settings_display_name_desc'}
+        </td>
+    </tr>
+    <tr class="ow_tr_delimiter"><td></td></tr>
+    {if $displayConfirmEmail}
+    <tr class="ow_tr_first">
+        <th class="ow_name ow_txtleft" colspan="3">
+            <span class="ow_section_icon ow_ic_mail">{text key='admin+user_settings_email'}</span>
+        </th>
+    </tr>
+    <tr class="ow_alt1 ow_tr_last">
+        <td class="ow_label">{label name='confirmEmail'}</td>
+        <td class="ow_value">{input name='confirmEmail'} {error name='confirmEmail'}</td>
+        <td class="ow_desc ow_small">
+            {text key='admin+user_settings_confirm_email_desc'}
+        </td>
+    </tr>
+    <tr class="ow_tr_delimiter"><td></td></tr>
+    {/if}
+    <tr class="ow_tr_first">
+        <th class="ow_name ow_txtleft" colspan="3">
+            <span class="ow_section_icon ow_ic_picture">{text key='admin+user_avatar_settings'}</span>
+        </th>
+    </tr>
+    <tr class="ow_alt1">
+        <td class="ow_label">{label name='avatarSize'}</td>
+        <td class="ow_value">{input name='avatarSize' class='ow_settings_input'} px<br />{error name='avatarSize'}</td>
+        <td class="ow_desc ow_small">{text key='admin+user_settings_avatar_size_desc'}</td>
+    </tr>
+    <tr class="ow_alt2">
+        <td class="ow_label">{label name='bigAvatarSize'}</td>
+        <td class="ow_value">{input name='bigAvatarSize' class='ow_settings_input'} px<br />{error name='bigAvatarSize'}</td>
+        <td class="ow_desc ow_small">{text key='admin+user_settings_big_avatar_size_desc'}</td>
+    </tr>        
+        <tr class="ow_alt1">
+            <td class="ow_label">{label name='avatar_max_upload_size'}</td>
+            <td class="ow_value">{input name='avatar_max_upload_size' style="width:30px;"} MB  <span class="ow_small">{text key='base+max_upload_filesize' value=$maxUploadMaxFilesize}</span><br />{error name='avatar_max_upload_size'}</td>
+            <td class="ow_desc"></td>
+        </tr>
+    </tr>
+    <tr class="ow_alt2 ow_tr_last">
+        <td class="ow_label">{text key='admin+user_settings_avatar_image'}</td>
+        <td class="ow_value">
+            <div class="ow_smallmargin">
+                <img src="{$avatar}" /><br />
+                {if !empty($customAvatar.1)}<span class="ow_lbutton ow_mild_red" id="avatar_delete_btn">{text key='base+delete'}</span>{/if}
+                <span class="ow_lbutton" id="avatar_change_btn">{text key='base+change'}</span>
+                <span class="ow_lbutton" id="cancel_change" style="display: none;">{text key='base+cancel'}</span>
+	            <div id="avatar_input" style="display: none">{input name='avatar'}</div>
+            </div>
+            <div>
+                <img src="{$avatarBig}" /><br />
+                {if !empty($customAvatar.2)}<span class="ow_lbutton ow_mild_red" id="big_avatar_delete_btn">{text key='base+delete'}</span>{/if}
+                <span class="ow_lbutton" id="big_avatar_change_btn">{text key='base+change'}</span>
+                <span class="ow_lbutton" id="cancel_big_change" style="display: none;">{text key='base+cancel'}</span>
+                <div id="big_avatar_input" style="display: none">{input name='bigAvatar'}</div>
+            </div>
+        </td>
+        <td class="ow_desc ow_small">{text key='admin+user_settings_avatar_image_desc'}</td>
+    </tr>
+    <tr class="ow_tr_delimiter"><td></td></tr>
+    <tr class="ow_tr_first">
+        <th class="ow_name ow_txtleft" colspan="3">
+            <span class="ow_section_icon ow_ic_script">{text key='admin+join_page'}</span>
+        </th>
+    </tr>
+    <tr class="{cycle name="install" values="ow_alt1,ow_alt2"}">
+        <td class="ow_label">{text key='admin+join_display_photo_upload'}</td>
+        <td class="ow_value">{input name='join_display_photo_upload'} {error name='join_display_photo_upload'}</td>
+        <td class="ow_desc">{text key='admin+join_display_photo_upload_desc'}</td>
+    </tr>
+    <tr class="{cycle name="install" values="ow_alt1,ow_alt2"} ow_tr_last">
+        <td class="ow_label">{text key='admin+join_display_terms_of_use'}</td>
+        <td class="ow_value">{input name='join_display_terms_of_use'} {error name='join_display_terms_of_use'}</td>
+        <td class="ow_desc">{text key='admin+join_display_terms_of_use_desc'}</td>
+    </tr>
+</table>
+<div class="clearfix ow_stdmargin"><div class="ow_right">
+{submit name='save' class='ow_ic_save'}
+</div></div>
+
+{/form}

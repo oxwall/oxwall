@@ -1,0 +1,19 @@
+{style}{literal}
+
+html div.ow_console_list_wrapper
+{
+    min-height: 0px;
+    max-height: 257px;
+}
+
+{/literal}{/style}
+
+<div class="ow_console clearfix">
+    <div class="ow_console_body clearfix">
+        <div style="ow_floatright">
+            {foreach from=$items item="item"}
+                {$item}
+            {/foreach}
+        </div>
+    </div>
+</div>

@@ -1,0 +1,13 @@
+{style}
+{literal}
+.maintenance_cont{
+    width:500px;
+    margin:0 auto;
+    padding-top: 200px;
+}
+{/literal}
+{/style}
+<div class="maintenance_cont">
+    {text key='admin+maintenance_text_value'}
+    {if !empty($disableMessage)}<div style="padding-top: 50px; text-align: center;">{$disableMessage}</div>{/if}
+</div>

@@ -1,0 +1,7 @@
+<div class="owm_avatar_list {if !empty($css_class)} {$css_class}{/if}">
+    {if empty($users)}
+    <div class="owm_nocontent">{text key='base+empty_user_avatar_list'}</div>
+    {else}
+    {foreach from=$users item='user'}{decorator name='avatar_item' data=$user}{/foreach}
+    {/if}
+</div>

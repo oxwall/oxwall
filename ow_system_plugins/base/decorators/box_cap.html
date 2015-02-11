@@ -1,0 +1,17 @@
+{* `Box Cap` decorator template *}
+<div class="ow_box_cap{if !empty($data.type)}_{$data.type}{/if}{if !empty($data.addClass)} {$data.addClass}{/if}">
+	<div class="ow_box_cap_right">
+		<div class="ow_box_cap_body">
+			<h3 class="{if !empty($data.iconClass)}{$data.iconClass}{else}ow_ic_file{/if}">
+			{if !empty($data.href)}<a href="{$data.href}" {if !empty($data.extraString)}{$data.extraString}{/if}>{/if}
+			{if !empty($data.langLabel)}
+			   {text key=$data.langLabel}
+			{else}
+			   {if !empty($data.label)}{$data.label}{else}&nbsp;{/if}
+		    {/if}
+		    {if !empty($data.href)}</a>{/if}
+			</h3>
+		   {if !empty($data.content)}{$data.content}{/if}
+		</div>
+	</div>
+</div>

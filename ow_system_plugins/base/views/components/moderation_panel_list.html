@@ -1,0 +1,7 @@
+<ul class="ow_regular">
+    {foreach from=$items item="item"}
+        <li>
+            <a href="{$item.url}">{$item.label}</a> <span class="ow_lbutton ow_green">{$item.count}</span>
+        </li>
+    {/foreach}
+</ul>

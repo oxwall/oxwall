@@ -1,0 +1,21 @@
+{*script}
+    DND_InterfaceFix.fix('.place_section');
+{/script*}
+
+{style}{literal}
+    .view_component div{
+       overflow: hidden;
+    }
+{/literal}{/style}
+
+<div class="owm_std_margin_top" id="place_sections">
+    <div class="place_section">
+
+        {if isset($componentList.section["mobile.main"])}
+            {foreach from=$componentList.section["mobile.main"] item="component"}
+                {dd_component uniqName=$component.uniqName render=true}
+            {/foreach}
+        {/if}
+
+    </div>
+</div>

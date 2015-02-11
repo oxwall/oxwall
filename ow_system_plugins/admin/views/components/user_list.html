@@ -1,0 +1,118 @@
+{script}
+	{foreach from=$buttons item='btn'}
+	   {if !empty($btn.js)}
+	       {$btn.js}
+	   {/if}
+	{/foreach}
+{/script}
+
+{style}
+{literal}
+    .user_list_thumb {
+        width: 55px;
+        height: 45px;
+    }
+    
+    .user_list_thumb img {
+        width: 45px;
+        height: 45px;
+    }
+    
+    #user-list-form .ow_lbutton {
+        cursor: default;
+    }
+{/literal}
+{/style}
+
+{if $users}
+
+{if isset($search)}
+    <div class="ow_anno ow_std_margin ow_nocontent">{text key="admin+user_search_result" for=$search}</div>
+{/if}
+
+<div class="clearfix ow_smallmargin">
+    <div class="ow_left">{$paging}</div>
+    {if $total}<div class="ow_right">{text key='admin+found_users' count=$total}</div>{/if}
+</div>
+
+<form id="user-list-form" method="post" action="{if $action}{$action}{/if}">
+<table class="ow_table_2">
+<tr class="ow_tr_first">
+    <th width="1"></td>
+    <th>{text key='admin+user'}</th>
+    <th>{text key='admin+user_status'}</th>
+    <th>{text key='admin+joined'}</th>
+</tr>
+{foreach from=$users item='user'}
+    {capture assign='userId'}{$user->id}{/capture}
+    {capture assign='username'}{$userNameList[$userId]}{/capture}
+    <tr class="{cycle values='ow_alt1,ow_alt2'}">
+        <td>{if !in_array($user->id, $adminList)}<input type="checkbox" value="{$user->id}" name="users[{$user->id}]" />{/if}</td>
+        <td>
+            <div class="clearfix">
+                <div class="ow_left ow_txtleft user_list_thumb">{decorator name='avatar_item' data=$avatars[$userId]}</div>
+                <div class="ow_left ow_txtleft">
+                    {user_link name=$avatars[$userId].title username=$userNameList[$userId]}<br />
+                    <span class="ow_small">
+                    {if !empty($sexList[$userId])}
+                        {$sexList[$userId]}
+                    {/if}
+                    {if !empty($questionList[$userId].birthdate)}
+                        {age dateTime=$questionList[$userId].birthdate}
+                    {/if}
+                    {if !empty($sexList[$userId]) || !empty($questionList[$userId].birthdate)}<br />{/if}
+                    {if !empty($questionList[$userId].email)}
+                        <span class="ow_remark">{$questionList[$userId].email}</span>
+                    {/if}
+                    </span>
+                    {if $onlineStatus}
+                    <div class="ow_small">
+                        {if (!empty($onlineStatus[$userId]) && $onlineStatus[$userId])}
+                            <span class="ow_lbutton ow_green">{text key='base+activity_online'}</span>
+                        {elseif $user->activityStamp}
+                            {text key='base+activity_stamp'} <span class="ow_remark">{format_date timestamp=$user->activityStamp}</span>
+                        {/if}
+                    </div>
+                    {/if}
+                </div>
+            </div>
+        </td>
+        <td>
+            {if $suspendedList[$userId]}<div><span class="ow_lbutton ow_red">{text key='admin+user_status_suspended'}</span></div>{/if}
+            {if $unverifiedList[$userId]}<div><span class="ow_lbutton">{text key='admin+user_status_unverified'}</span></div>{/if}
+            {if $unapprovedList[$userId]}<div><span class="ow_lbutton">{text key='admin+user_status_unapproved'}</span></div>{/if}
+        </td>
+        <td class="ow_small">{if $user->joinStamp}{format_date timestamp=$user->joinStamp}{/if}</td>
+    </tr>
+{/foreach}
+<tr class="ow_alt1 ow_tr_last">
+     <td><input type="checkbox" id="check-all" /></th>
+     <td colspan="3" class="ow_txtleft">
+         {text key='base+check_all'} | {text key='base+with_selected'}
+         
+         {foreach from=$buttons item='btn'}
+            {decorator name='button_list_item' type='submit' buttonName=$btn.name label=$btn.label id=$btn.id class=$btn.class}
+         {/foreach}
+     </td>
+</tr>
+</table>
+
+<div class="ow_hidden" id="delete-user-confirm">
+<div class="ow_stdmargin ow_center">
+    <div class="ow_stdmargin">
+        {text key="admin+confirm_delete_users"}
+    </div>
+	
+	{decorator name="button" type="submit" id="button-confirm-user-delete" class="ow_ic_delete ow_red" langLabel="base+delete_user_delete_button"}
+</div>
+</div>
+
+</form>
+
+{$paging}
+
+{else}
+    {block_decorator name='box' addClass='ow_stdmargin clearfix ow_italic ow_center'}
+        {text key='admin+no_users'}
+    {/block_decorator}
+{/if}

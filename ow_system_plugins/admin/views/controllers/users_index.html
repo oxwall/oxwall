@@ -1,0 +1,52 @@
+{script}
+{literal}
+
+    $("#invite_btn").click(function(){
+	    var $form_content = $("#invite_members");
+	
+	    window.invite_members_floatbox = new OW_FloatBox({
+	        $title: OW.getLanguageText('admin', 'invite_members_cap_label'),
+	        $contents: $form_content,
+	        icon_class: 'ow_ic_add',
+	        width: 550
+	    });
+    });
+    
+    $("#username-search-input").focus();
+
+{/literal}
+{/script}
+
+<div class="ow_hidden">
+    <div id="invite_members" class="ow_center">
+        {form name='invite-members'}
+        {input name='emails'}
+        <div style="text-align: center;padding: 5px;">{submit name='submit'}</div>
+        {/form}
+    </div>
+</div>
+
+{text key='admin+total_users' count=$totalUsers}
+
+<div class="ow_stdmargin clearfix">
+	<div class="ow_right ow_superwide ow_txtright">
+        <form method="get">
+		<div class="ow_box ow_admin_search_box ow_smallmargin">
+	       {text key='admin+search_by'}
+	       <select name="search_by">
+	           {foreach from=$searchQ item='label' key='question'}
+	           <option value="{$question}"{if $currentSearch.question==$question} selected="selected"{/if}>{$label}</option>
+	           {/foreach}
+	       </select> :
+	       <input type="text" name="search" id="username-search-input" style="width: 280px" value="{$currentSearch.value}" />
+	       {decorator name='button' type="submit" langLabel='admin+go'}
+	    </div>
+	    
+	    {decorator name='button' class='ow_ic_add' langLabel='admin+invite_members_button_label' id='invite_btn'}
+	    </form>	
+	</div>
+</div>
+
+{$menu}
+
+{$userList}

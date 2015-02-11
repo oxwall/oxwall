@@ -1,0 +1,15 @@
+<div class="owm_profile_header_wrap owm_std_margin_bottom">
+    <div class="owm_profile_header clearfix owm_std_margin_bottom">
+        <div class="owm_profile_avatar_wrap" style="position:relative;">
+            {decorator name="avatar_item" data=$user.avatar fullLabel=true}
+            <div class="ow_avatar_pending_approval" style="{if empty($avatarDto) || !$owner && !$isModerator || !empty($avatarDto) && $avatarDto->status == 'active' }display:none;{else}{/if}position: absolute; top: 0; right: 0; left: 0; bottom: 0; background-color: rgba(0,0,0,0.6); color: #fff; padding: 8px;">{text key='base+avatar_pending_approval'}</div>
+        </div>
+        <span class="owm_profile_name">{$user.displayName}</span>
+        {if $showPresence}
+            <div class="owm_profile_online {if !$isOnline}owm_profile_offline{/if}"><span>{text key="base+user_list_activity"}: {format_date timestamp=$activityStamp}</span></div>
+        {/if}
+    </div>
+    <div class="owm_profile_btns">
+        {$toolbar}
+    </div>
+</div>

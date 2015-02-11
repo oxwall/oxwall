@@ -1,0 +1,15 @@
+{form name='mobile_settings'}
+    <table class="ow_table_1 ow_form">
+        <tr class="ow_tr_first">
+            <th class="ow_name ow_txtleft" colspan="3">
+                <span class="ow_section_icon ow_ic_gear_wheel">{text key='admin+mobile_settings_tabe_heading'}</span>
+            </th>
+        </tr>
+        <tr class="{cycle name="user_input" values="ow_alt1,ow_alt2"}">
+            <td class="ow_label" style="width: 30%;">{label name='disable_mobile'}</td>
+            <td class="ow_value">{input name='disable_mobile'} {error name='disable_mobile'}</td>
+            <td class="ow_desc">{desc name='disable_mobile'}</td>
+        </tr>
+    </table>
+    <div class="clearfix ow_stdmargin"><div class="ow_right">{submit name='save' class='ow_ic_save ow_positive'}</div></div>
+{/form}

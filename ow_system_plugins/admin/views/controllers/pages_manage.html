@@ -1,0 +1,181 @@
+{style}
+{literal}
+	.ph{
+		border: 1px solid #999;
+		float: left;
+		height: 26px;
+		margin-right: 4px;
+	}
+        
+        .dnd-pannel {
+            min-height: 102px;
+        }
+{/literal}
+{/style}
+{script}
+{literal}
+	$(document).ready(function(){
+		$('#main-menu-items, #bottom-menu-items, #hidden-menu-items').sortable({
+			placeholder: 'ph',
+			tolerance: 'pointer',
+			connectWith: '#main-menu-items, #bottom-menu-items, #hidden-menu-items',
+			start:	function(event, ui){
+				$(ui.placeholder).width($(ui.item).width());
+			},
+			stop:	function(event, ui){
+
+			},
+			recieve:	function(event, ui){},
+			update:	function(event, ui){
+				if(ui.sender){
+					return;
+				}
+
+				var set = {};
+				$('.ow_navbox', '#main-menu-items').each(function(i){
+					set['main-menu['+i+']'] = $('input:hidden', this).val();
+				});
+
+				$('.ow_navbox', '#bottom-menu-items').each(function(i){
+					set['bottom-menu['+i+']'] = $('input:hidden', this).val();
+				});
+
+				$('.ow_navbox', '#hidden-menu-items').each(function(i){
+					set['hidden-menu['+i+']'] = $('input:hidden', this).val();
+				});
+
+				var url = '{/literal}{url_for for='ADMIN_CTRL_Pages:ajaxReorder'}{literal}';
+				$.post(url, set);
+			}
+		});
+	});
+{/literal}
+{/script}
+
+
+<p>{text key='admin+pages_and_menus_instructions'}</p>
+
+<!-- Std block for page -->
+{block_decorator name='box' type='empty' addClass='ow_stdmargin clearfix' iconClass='ow_ic_folder' langLabel='admin+pages_and_menus_main_menu_label'}
+    <div class="ow_main_menu_scheme"></div>
+    <div id="main-menu-items" class="dnd-pannel" style="width: 650px;" class="ow_left clearfix ow_box_empty">
+	{foreach from=$menuItems.main item='menu'}
+			{script}
+            {literal}
+				$('#menu-{/literal}{$menu.id}{literal}').hover( function(){$('#edit-link-{/literal}{$menu.id}{literal}').show();}, function(){ $('#edit-link-{/literal}{$menu.id}{literal}').hide(); } );
+			{/literal}	
+			{/script}
+		
+					{if $menu.externalUrl}
+						{assign var='route' value='admin_pages_edit_external'}
+					{elseif $menu.routePath }
+						{assign var='route' value='admin_pages_edit_plugin'}
+					{else}
+						{assign var='route' value='admin_pages_edit_local'}
+					{/if}
+					
+			<div id="menu-{$menu.id}" class="ow_navbox {if $menu.visibleFor == 1}ow_mild_red{elseif $menu.visibleFor == 2}ow_mild_green{/if}">
+				<div id="edit-link-{$menu.id}" style="background-color: #999; font-weight: bold; display: none; position:absolute; margin-top: -15px; padding: 0px 3px;">
+					<a style="color: white;" href="{url_for_route for="`$route`:[id=>`$menu.id`]"}">edit</a>
+				</div>
+	        	<input type="hidden" value="{$menu.id}">
+	            <a class="move" href="#">{text key="`$menu.prefix`+`$menu.key`"}</a>
+	        </div>
+	{foreachelse}
+		<div class="empty_" style="text-align: center; display: none;">drag here..</div>        
+	{/foreach}
+    </div>
+    <div class="ow_right ow_txtright">
+    	{capture assign="add_main"}{url_for_route for="admin_pages_add:[type=>main]"}{/capture}
+
+    	{decorator name="button" class="ow_ic_add" langLabel="base+pages_add_item" onclick="location.href='`$add_main`';"}
+    </div>
+{/block_decorator}
+
+<!-- End of STD block -->
+{block_decorator name='box' type='empty' addClass='ow_stdmargin clearfix' iconClass='ow_ic_folder' langLabel='admin+pages_and_menus_bottom_menu_label'}
+    <div class="ow_bottom_menu_scheme"></div>
+    <div id="bottom-menu-items" class="dnd-pannel" style="width: 650px;" class="ow_left clearfix ow_box_empty">
+    {if $menuItems.bottom|@count} 
+		{foreach from=$menuItems.bottom item='menu'}
+		
+			{script}
+            {literal}
+					
+						$('#menu-{/literal}{$menu.id}{literal}').hover( function(){$('#edit-link-{/literal}{$menu.id}{literal}').show();}, function(){ $('#edit-link-{/literal}{$menu.id}{literal}').hide(); } );
+					
+				{/literal}	
+			{/script}
+					{if $menu.externalUrl}
+						{assign var='route' value='admin_pages_edit_external'}
+					{elseif $menu.routePath }
+						{assign var='route' value='admin_pages_edit_plugin'}
+					{else}
+						{assign var='route' value='admin_pages_edit_local'}
+					{/if}
+					
+	        <div id="menu-{$menu.id}" class="ow_navbox {if $menu.visibleFor == 1}ow_mild_red{elseif $menu.visibleFor == 2}ow_mild_green{/if}">
+	        	<div id="edit-link-{$menu.id}"  style=" background-color: #999; color: #fff;font-weight: bold; display: none; position:absolute; margin-top: -15px; padding: 0px 3px;">
+	        		<a style="color: white;" href="{url_for_route for="`$route`:[id=>`$menu.id`]"}">
+	        			edit
+        			</a>
+       			</div>
+		        <input type="hidden" value="{$menu.id}">
+		    	<a class="move" href="#">{text key="`$menu.prefix`+`$menu.key`"}</a>
+		    </div>
+		{/foreach}
+	{else}
+		<div class="empty_" style="display: none;">drag here..</div>
+    {/if}
+    </div>
+	<div class="ow_right ow_txtright">
+    	{capture assign="add_bottom"}{url_for_route for="admin_pages_add:[type=>bottom]"}{/capture}
+    	{decorator name="button" class="ow_ic_add" langLabel="base+pages_add_item" onclick="location.href='`$add_bottom`';"}
+	</div>    
+{/block_decorator}
+
+{block_decorator name='box' addClass='ow_stdmargin' iconClass='ow_ic_delete' langLabel='admin+pages_and_menus_hidden_pages_label'}
+    <div class="clearfix">
+    <div id="hidden-menu-items" class="ow_stdmargin clearfix ow_center ow_nomargin dnd-hidden-pannel" style="height:25px;">
+	    {if $menuItems.hidden|@count}
+			{foreach from=$menuItems.hidden item='menu'}
+
+					{script}
+                    {literal}
+					
+								$('#menu-{/literal}{$menu.id}{literal}').hover( function(){$('#edit-link-{/literal}{$menu.id}{literal}').show();}, function(){ $('#edit-link-{/literal}{$menu.id}{literal}').hide(); } );
+					{/literal}
+						{/script}
+					
+			
+					{if $menu.externalUrl}
+						{assign var='route' value='admin_pages_edit_external'}
+					{elseif $menu.routePath }
+						{assign var='route' value='admin_pages_edit_plugin'}
+					{else}
+						{assign var='route' value='admin_pages_edit_local'}
+					{/if}
+		        <div id="menu-{$menu.id}" class="ow_navbox {if $menu.visibleFor == 1}ow_mild_red{elseif $menu.visibleFor == 2}ow_mild_green{/if}">
+		        	<div id="edit-link-{$menu.id}" style="background-color: #999999; color: #fff;font-weight: bold; display: none; position:absolute; margin-top: -15px; padding: 0px 3px;">
+		        		<a style="color: white;" href="{url_for_route for="`$route`:[id=>`$menu.id`]"}">
+		        			edit
+	        			</a>
+	       			</div>
+			        <input type="hidden" value="{$menu.id}">
+			    	<a class="move" href="#">{text key="`$menu.prefix`+`$menu.key`"}</a>
+			    </div>
+			{/foreach}
+		{else}
+			<div class="empty_" style="display: none;">drag here..</div>
+	    {/if}
+	</div>
+        </div>
+    <p>{text key='admin+pages_and_menus_hidden_desc'}</p>
+	
+{/block_decorator}	
+
+{block_decorator name='box' addClass='ow_stdmargin' iconClass='ow_ic_help' langLabel='admin+pages_and_menus_legend_label'}
+	<div class="clearfix"><div class="ow_navbox"><b>{text key='admin+pages_and_menus_item_label'}</b></div> - {text key='admin+pages_and_menus_legend_everyone_label'}</div>
+	<div class="clearfix"><div class="ow_navbox ow_mild_red"><b>{text key='admin+pages_and_menus_item_label'}</b></div> - {text key='admin+pages_and_menus_legend_guests_label'}</div>
+	<div class="clearfix"><div class="ow_navbox ow_mild_green"><b>{text key='admin+pages_and_menus_item_label'}</b></div> - {text key='admin+pages_and_menus_legend_members_label'}</div>
+{/block_decorator}

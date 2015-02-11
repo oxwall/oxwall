@@ -1,0 +1,61 @@
+{style}
+{literal}
+
+.avatar_select_list{
+    height:320px;
+    text-align:left;
+    padding:0 8px;
+}
+
+.avatar_select_list .ow_user_list_picture{
+    height:45px;
+}
+
+.avatar_select_list .ow_user_list_item{
+    cursor:pointer;
+}
+
+.avatar_select_list .ow_item_set2{
+    width:48%;
+}
+
+.avatar_select_list .asl_users{
+    height:270px;
+    overflow-y:scroll;
+}
+
+{/literal}
+{/style}
+<div class="ow_lp_avatars avatar_select_list" id="{$contexId}">
+    {if empty($users)}
+    <div class="ow_nocontent">{text key='base+empty_user_avatar_list_select'}</div>
+    {else}
+    <div class="asl_users">
+        {foreach from=$users item='user' name='user_list'}
+        {if $smarty.foreach.user_list.first}
+            <div class="clearfix {cycle name="rows" values="ow_alt2, ow_alt1"}">
+        {/if}
+        {decorator name="user_list_item"
+                   avatar=$avatars[$user.id]
+                   username=$user.username
+                   displayName=$user.title
+                   noUserLink=1
+                   contId=$user.linkId
+                   set_class='ow_item_set2'}
+        {if $smarty.foreach.user_list.iteration % 2 == 0 && !$smarty.foreach.user_list.last}
+            </div>
+            <div class="clearfix {cycle name="rows" values="ow_alt1,ow_alt2"}">
+        {/if}
+        {if $smarty.foreach.user_list.last}
+          </div>
+        {/if}
+        {/foreach}
+    </div>
+    <div class="ow_center" style="padding: 8px;">
+    {if !empty($langs.countLabel)}<input type="hidden" class="count_label" value="{$langs.countLabel}" />{/if}
+    <input type="hidden" class="button_label" value="{$langs.buttonLabel}" />
+    {if !empty($langs.countLabel)}<div class="count_label">{$langs.startCountLabel}</div>{/if}
+    <div class="submit_cont"><div class="ow_right">{decorator name='button' label=$langs.startButtonLabel class='submit'}</div></div>
+    </div>
+    {/if}
+</div>

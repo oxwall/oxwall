@@ -1,0 +1,44 @@
+<div id="{$cmpContext}">
+    <div class="ow_comments_list">
+        {if !empty($countToLoad) && $countToLoad > 0}
+        <div class="ow_comment_list_loader ow_feed_comments_viewall ow_small">
+            <a href="javascript://">+<span>{$countToLoad}</span> {$loadMoreLabel}</a>
+        </div>
+        {/if}
+        {if isset($noComments)}
+        <div class="ow_nocontent">{text key="base+comment_no_comments"}</div>
+        {else}
+        {foreach from=$comments item='comment'}
+        <div class="ow_comments_item clearfix">
+            <div class="cnx_action" style="display: none">{$comment.cnxAction}</div>
+            <div class="ow_comments_item_picture">
+                {decorator name='avatar_item' data=$comment.avatar}
+            </div>
+            <div class="ow_comments_item_info">
+                <span class="{if !empty($comment.cnxAction)}ow_comments_date_hover {/if}ow_comments_date ow_nowrap ow_tiny ow_remark">{$comment.date}</span>
+                <div class="ow_comments_item_header"><a href="{$comment.profileUrl}">{$comment.displayName}</a></div>
+                <div class="ow_comments_content ow_smallmargin">
+                    {if !empty($comment.previewMaxChar)}
+                    {$comment.content|more:$comment.previewMaxChar}
+                    {else}
+                    {$comment.content}
+                    {/if}
+                </div>{$comment.content_add}
+            </div>
+        </div>
+        {/foreach}
+        {/if}
+    </div>
+    {if !empty($pages)}
+    <div class="ow_paging clearfix ow_stdmargin">
+        <span>{text key='base+pages_label'}</span>
+        {foreach from=$pages item='page'}
+        {if !isset($page.pageIndex)}
+        <span>{$page.label}</span>
+        {else}
+        <a href="javascript://" class="page-{$page.pageIndex}{if isset($page.active) && $page.active} active{/if}">{$page.label}</a>
+        {/if}
+        {/foreach}
+    </div>
+    {/if}
+</div>

@@ -1,0 +1,7 @@
+{if isset($menu)}
+	{$menu}	
+{/if}
+
+{if !empty($listType)}{add_content key="base.content.user_list_top" listType=$listType}{/if}
+
+{$cmp}

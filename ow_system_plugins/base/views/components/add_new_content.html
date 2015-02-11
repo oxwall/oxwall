@@ -1,0 +1,4 @@
+{* Add new content cmp template *}
+{foreach from=$items item='item'}
+<a class="ow_add_content {$item.iconClass}"{if !empty($item.id)} id="{$item.id}"{/if} href="{$item.url}">{$item.label}</a>
+{/foreach}

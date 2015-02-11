@@ -1,0 +1,16 @@
+{style}
+{literal}
+.splash_screen_cont{
+    width:500px;
+    margin:0 auto;
+    padding-top: 300px;
+}
+{/literal}
+{/style}
+<div class="splash_screen_cont">
+    {text key='admin+splash_intro_value'}
+    <div style="padding: 5px;text-align: center;">
+        {if isset($leaveUrl)}{decorator name='button' langLabel='admin+splash_leave_button_label' class='ow_ic_left_arrow' extraString=" onclick=\"window.location='`$leaveUrl`'\""} &nbsp;&nbsp;&nbsp;{/if}
+        {decorator name='button' langLabel='admin+splash_button_value' extraString=" onclick=\"window.location='`$submit_url`'\""}
+    </div>
+</div>

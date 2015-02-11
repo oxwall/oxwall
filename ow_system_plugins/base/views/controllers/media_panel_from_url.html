@@ -1,0 +1,23 @@
+{$menu}
+{script}
+{literal}
+window.tf_insert_from_url = function(){
+    window.parent.document.getElementById('{/literal}{$elid}{literal}').jhtmlareaObject.insertImage({src:$('#mp-img-url').val()});
+}
+{/literal}
+{/script}
+
+<table class="ow_table_1 ow_form ow_automargin">
+    <tr class="ow_alt1 ow_tr_first ow_tr_last">
+        <td class="ow_label">
+            {text key='base+tf_img_url'}
+        </td>
+        <td class="ow_value">
+            <input id="mp-img-url" type="text" value="http://" />
+        </td>
+    </tr>
+
+</table>
+
+            <div class="clearfix"><div class="ow_right">{decorator name='button' langLabel='base+tf_insert' extraString='onclick="tf_insert_from_url();"'}</div></div>
+

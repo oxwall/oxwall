@@ -1,0 +1,15 @@
+{$contentMenu}
+{form name='questionSettings'}
+    <table class="ow_form ow_full ow_automargin ow_center ow_table_1">
+        <tr class="{cycle values='ow_alt2,alt1'} ow_tr_first ow_tr_last">
+            <td class="ow_label" >{label name=user_view_presentation}</td>
+            <td class="ow_value" style="text-align:left;padding-left:40px;">{input name=user_view_presentation}<br/>{error name=user_view_presentation}</td>
+            <td class="ow_desc ow_small" style="text-align:left">{desc name=user_view_presentation}</td>
+        </tr>
+    </table>
+    <div class="clearfix ow_stdmargin">
+       <div class="ow_right">
+            {submit name='save' class="ow_ic_save"}
+       </div>
+   </div>
+{/form}

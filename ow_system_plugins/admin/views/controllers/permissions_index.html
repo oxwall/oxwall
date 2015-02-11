@@ -1,0 +1,32 @@
+<div class="ow_superwide ow_automargin ow_stdmargin">
+{form name='privacy_settings'}
+<table class="ow_table_1 ow_form">
+    <tr class="{cycle values='ow_alt2,ow_alt1'} ow_tr_first">
+		<td class="ow_label">{label name='user_approve'}</td>
+		<td class="ow_value">{input name='user_approve'}</td>
+		<td class="ow_desc"></td>
+	</tr>
+	<tr class="{cycle values='ow_alt2,ow_alt1'}">
+		<td class="ow_label">{label name='who_can_join'}</td>
+		<td class="ow_value">{input name='who_can_join'}</td>
+		<td class="ow_desc"></td>
+	</tr>
+    <tr class="{cycle values='ow_alt2,ow_alt1'}" style="display:none;">
+		<td class="ow_label">{label name='who_can_invite'}</td>
+		<td class="ow_value">{input name='who_can_invite'}</td>
+		<td class="ow_desc"></td>
+	</tr>
+	<tr class="{cycle values='ow_alt2,ow_alt1'} ow_tr_last">
+		<td class="ow_label">{label name='guests_can_view'}</td>
+        <td class="ow_value">
+            <div class="clearfix">
+                <div style="float: left;width: 50%;">{input name='guests_can_view'}</div>
+                <div style="float: left;width: 50%;padding-top: 35px;">{input name='password'}</div>
+            </div>
+        </td>
+		<td class="ow_desc ow_small">{desc name='guests_can_view'}</td>
+	</tr>
+</table>
+<div class="clearfix"><div class="ow_right">{submit name='save' class='ow_button ow_ic_save ow_positive'}</div></div>
+{/form}
+</div>

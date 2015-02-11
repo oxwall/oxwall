@@ -1,0 +1,17 @@
+{form name='verificationForm'}
+<div class="owm_std_margin_top owm_blank_content">
+        <div class="owm_info">{text key="base+email_verify_form_promo"}</div>
+        <div class="owm_std_margin_top">
+            <div class="owm_login_txt">
+                {label name='verificationCode'}:
+            </div>
+            <div class="owm_login_field owm_login_pass">
+                {input name='verificationCode' class="owm_invitation" }
+            </div>
+            <div style="color: red;">{error name='verificationCode'}</div>
+            <div class="owm_btn_wide owm_btn_positive owm_std_margin_top">
+                {submit name='submit' class='ow_ic_mail' }
+            </div>
+        </div>
+</div>
+{/form}

@@ -1,0 +1,41 @@
+
+{block_decorator name="box" type="empty"}
+	{form name=$form->getName()}
+		<table class="account_type_label ow_table_1 ow_form ow_smallmargin">
+			<tr class="ow_center ow_tr_first">
+				<th>{text key="admin+language"}</th>
+				<th>{text key="admin+account_type_translation" }</th>
+			</tr>
+			{foreach from=$langs item='lang' name='lang'}
+				<tr class="{cycle values="ow_alt1,ow_alt2"} {if $smarty.foreach.lang.last}ow_tr_last{/if}">
+					<td class="ow_label">{$lang->getLabel()} ({$lang->getTag()})</td>
+					<td class="ow_value">{input name="lang[`$lang->id`][`$prefix`][`$key`]"}</td>
+				</tr>
+			{/foreach}
+		</table>
+
+        <table class="ow_table_1 ow_form ow_smallmargin">
+            <tbody>
+                    <tr class="ow_alt1 ow_tr_first {if !$form->getElement('order')}ow_tr_last{/if}">
+                        <td class="ow_label">{text key="admin+default_role"}</td>
+                        <td class="ow_value">
+                            {input name="role"}
+                        </td>
+                    </tr>
+                    {if $form->getElement('order')}
+                        <tr class="ow_alt1 ow_tr_last">
+                            <td class="ow_label">{text key="admin+account_type_sort_order"}</td>
+                            <td class="ow_value">
+                                {input name="order"}
+                                <div>{error name="order"}</div>
+                            </td>
+                        </tr>
+                    {/if}
+            </tbody>
+        </table>
+
+        <div class="clearfix ow_smallmargin"><div class="ow_right">
+                {submit name="submit"}
+        </div></div>
+	{/form}
+{/block_decorator}

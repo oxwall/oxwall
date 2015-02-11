@@ -1,0 +1,10 @@
+{if isset($menu)}
+	{$menu}	
+{/if}
+
+{if !empty($listType)}{add_content key="base.mobile.user_list_top" listType=$listType}{/if}
+
+<div class="owm_user_list owm_content_list owm_std_margin_bottom">
+    {$list}
+    <div class="owm_user_list_preloader owm_preloader" style="visibility: hidden"></div>
+</div>

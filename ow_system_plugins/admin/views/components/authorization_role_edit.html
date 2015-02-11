@@ -1,0 +1,54 @@
+{style}
+{literal}
+    .ow_avatar_sample {
+        width: 45px;
+        padding-left: 10px;
+        float: left;
+    }
+    
+    .ow_role_edit_form {
+        float: left;
+        padding-left: 10px;
+    }
+
+    .color_sample {
+        width: 16px; 
+        height: 16px;
+        -moz-border-radius: 4px;
+        -webkit-border-radius: 4px;
+        float: left;
+        margin: 0px 5px 5px 0px;
+        cursor: pointer;
+    }
+    
+    .color_selected {
+        -moz-border-radius: 4px;
+        -webkit-border-radius: 4px;
+        border: 2px solid red;
+    }
+    
+   #role-edit-cont .ow_avatar img { width: 45px; }
+{/literal}
+{/style}
+
+<div id="role-edit-cont" class="clearfix">
+{form name='edit-role-form'}
+    <table class="ow_table_3">
+        <tr class="ow_tr_first ow_tr_last">
+            <td class="ow_label" style="width: 15%">{decorator name='avatar_item' src=$defaultAvatarUrl label=$roleLabel}</td>
+            <td class="ow_value">
+                <div class="ow_smallmargin">{input name='displayLabel'} {text key='admin+display_avatar_label'}</div>
+                <div id="color-select-cont"{if !$role->displayLabel} style="display: none"{/if}>
+                <div class="ow_smallmargin">{text key='admin+avatar_label_color'}:</div>
+                <div class="clearfix">
+		            {foreach from=$colors item='c' name='col'}
+		                <div class="color_sample" style="background-color: {$c}"></div>
+		            {/foreach}
+		        </div>
+		        </div>
+            </td>
+        </tr>
+    </table>        
+    <div class="ow_center">{submit name='save' class='ow_ic_save'}</div>    
+    {/form}
+</div>

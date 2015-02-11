@@ -1,0 +1,17 @@
+
+{block_decorator name='box' type='empty' addClass='ow_breadcrumb ow_stdmargin clearfix'}
+	
+	{if $title != ''}<span class="ow_breadcrumb_title">{$title}</span>{/if}
+	
+	{foreach from=$items item='crumb' name='c'}
+        <span class="ow_breadcrumb_item{if !empty($crumb.class)} {$crumb.class}{/if}">
+        {if !empty($crumb.href)}
+            <a href="{$crumb.href}">{$crumb.label}</a>
+        {else}
+            {$crumb.label}
+        {/if}
+        </span>
+        {if !$smarty.foreach.c.last}&raquo;{/if}
+	{/foreach}
+	
+{/block_decorator}

@@ -1,0 +1,279 @@
+body
+{
+    background: transparent url('img/bg.png');
+    font-size: 14px;
+    font-family: 'Arial',"Lucida Grande", Tahoma;
+    color: #2c2c2c;
+    margin: 0;
+}
+
+img
+{
+	vertical-align: middle;
+}
+
+ul li
+{
+	margin-bottom: 15px;
+}
+
+input[type=text]
+{
+    font-size: 13px;
+    color: #4d4d4d;
+    padding: 5px;
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+    border-radius: 5px;
+    border: 1px solid #e3e3e3;
+    width: 350px;
+    background: transparent url('img/inputbg.gif') left top;
+}
+
+input[type=submit]
+{
+    font-size: 18px;
+    color: #fff;
+    border: none;
+    background: transparent url('img/button.png') no-repeat center center;
+    width: 132px;
+    height: 47px;
+    padding-right: 25px;
+}
+
+h1
+{
+    margin-top: 0;
+    color: #000;
+}
+
+p
+{
+	line-height: 1.4;
+}
+
+div.wrapper
+{
+    background: transparent url('img/wrapper.png') repeat-x left top;
+    padding-top: 20px;
+    min-height: 550px;
+}
+
+div.body_wrapper
+{
+    margin: 0 auto;
+    width: 800px;
+}
+
+div.body_top {
+    background: transparent url('x') no-repeat center bottom;
+    height: 80px;
+    position: relative;
+}
+
+div.logo_container {
+    float: right;
+	background: transparent url('img/oxwall-logo.png') no-repeat left top;
+	left: 35px;
+	top: 0px;
+	height: 46px;
+	width: 111px;
+    margin-top: 18px;
+}
+
+
+div.body_top h1
+{
+	margin-top: 30px;
+	left: 115px;
+	color: #000;
+    font-family: 'Arial';
+    text-align: center;
+}
+
+div.body
+{
+    background: transparent url('img/body.png') repeat-y center top;
+    padding: 0px 17px 17px 17px;
+    min-height: 300px;
+    border: solid 1px #e9eaee;
+    -moz-border-radius: 2px;
+    -webkit-border-radius: 2px;
+    margin: auto;
+}
+
+div.body_bottom
+{
+    background: transparent url('x') no-repeat center top;
+    height: 69px;
+}
+
+div.steps
+{
+    top: 10px;
+    padding-top: 10px;
+    color: #c8cacd;
+    text-align: center;
+    font-size: 18px;
+    line-height: 50px;
+    border-top: solid 1px #E9EAEB;
+    width: 565px;
+    height: 45px;
+    margin: auto;
+}
+
+div.steps span.activepointer
+{
+    height: 50px;
+    /*padding-top: 14px;*/
+    display: inline-block;
+}
+
+div.steps span.item
+{
+    margin: 0 30px 0 35px;
+    padding-right: 18px;
+    background: transparent url('img/arrow.png') no-repeat right 70%;
+}
+
+div.steps span.borderleft
+{
+}
+
+div.steps span.borderright
+{
+}
+
+div.steps span.active
+{
+    color: #f93;
+    background-image: url('img/arrow-active.png');
+}
+
+table.form
+{
+    border-spacing: 8px;
+    width: 100%;
+    padding-top: 27px;
+}
+
+table.form td
+{
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+    border-radius: 5px;
+}
+
+table.form td.error {
+    background-color: #ff6e44;
+}
+
+td.label
+{
+    text-align: right;
+    width: 20%;
+}
+
+td.value
+{
+    text-align: center;
+    width: 358px;
+}
+
+td.description
+{
+    font-size: 12px;
+    color: #999;
+}
+
+.feedback_msg
+{
+	text-align: center;
+	margin: 0 40px 15px 40px;
+	padding: 10px 0;
+	border-radius: 4px;
+	-moz-border-radius: 4px;
+	-webkit-border-radius: 4px;
+}
+
+div.error
+{
+	background-color: #ff6e44;
+	color: #3a3a3a;
+}
+
+ul.directories {
+    margin: 0 20px 20px 20px;
+    font-size: 13px;
+}
+
+.directories .directory {
+    padding: 2px 0px;
+}
+
+textarea.config {
+	width: 100%;
+}
+
+table.plugin_table
+{
+	border-spacing: 8px;
+}
+
+.plugin_title
+{
+	color: #000;
+}
+
+.plugin_desc
+{
+	font-size: 13px;
+    color: #999;
+}
+
+.small
+{
+	font-size: 13px;
+}
+
+.red
+{
+	color: #f00;
+}
+
+.high
+{
+	color: #f63;
+}
+
+.feedback_error
+{
+	font-size: 13px;
+    padding: 5px 10px;
+    text-align: center;
+}
+
+.clearfix{
+    zoom: 1;
+}
+
+.clearfix:after {
+    content: ".";
+    display: block;
+    clear: both;
+    visibility: hidden;
+    line-height: 0;
+    height: 0;
+}
+
+.clearfix {
+    display: inline-block;
+}
+
+html[xmlns] .clearfix {
+    display: block;
+}
+
+*html .clearfix {
+    height: 1%;
+}

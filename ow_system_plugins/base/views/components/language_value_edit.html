@@ -1,0 +1,23 @@
+<div class="ow_automargin">
+
+	{block_decorator name="box" type="empty"}
+	{form name="lang-values-edit"}
+		<table class="ow_table_1 ow_form ow_smallmargin">
+			<tr class="ow_center ow_tr_first">
+				<th>Language</th>
+				<th>Translation</th>
+			</tr>
+			{foreach from=$langs item='lang' name='lang'}
+				<tr class="{cycle values="ow_alt1,ow_alt2"} {if $smarty.foreach.lang.last}ow_tr_last{/if}">
+					<td class="ow_label">{$lang->getLabel()} ({$lang->getTag()})</td>
+					<td class="ow_value">{input name="lang[`$lang->id`][`$prefix`][`$key`]"}</td>
+				</tr>
+			{/foreach}
+		</table>
+			<div class="clearfix ow_smallmargin"><div class="ow_right">
+					{submit name="submit"}
+			</div></div>
+	{/form}
+	{/block_decorator}
+
+</div>

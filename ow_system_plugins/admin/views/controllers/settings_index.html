@@ -1,0 +1,87 @@
+{$menu}
+
+{form name='configSaveForm'}
+    <table class="ow_table_1 ow_form">
+        <tr class="ow_tr_first">
+            <th class="ow_name ow_txtleft" colspan="3">
+                <span class="ow_section_icon ow_ic_script">{text key='admin+site_installation'}</span>
+            </th>
+        </tr>
+        <tr class="{cycle name="install" values="ow_alt1,ow_alt2"}">
+            <td class="ow_label">{text key='admin+site_title'}</td>
+            <td class="ow_value">{input name='siteTitle'} {error name='siteTitle'}</td>
+            <td class="ow_desc"></td>
+        </tr>
+        <tr class="{cycle name="install" values="ow_alt1,ow_alt2"}">
+            <td class="ow_label">{text key='admin+site_email'}</td>
+            {if $showVerifyButton}
+                <td class="ow_value">{input style="width:60%;" name='siteEmail'} {decorator name="button" class='ow_ic_mail' id="verify_site_email_button" langLabel='admin+verify_site_email'} {error name='siteEmail'}</td>
+            {else}
+                <td class="ow_value">{input name='siteEmail'} {error name='siteEmail'}</td>
+            {/if}
+            <td class="ow_desc">{text key='admin+site_email_desc'}</td>
+        </tr>
+        <tr class="{cycle name="install" values="ow_alt1,ow_alt2"}">
+            <td class="ow_label">{text key='admin+site_tagline'}</td>
+            <td class="ow_value">{input name='tagline'} {error name='tagline'}</td>
+            <td class="ow_desc ow_small">{text key='admin+site_tagline_desc'}</td>
+        </tr>
+        <tr class="{cycle name="install" values="ow_alt1,ow_alt2"} ow_tr_last">
+            <td class="ow_label">{text key='admin+site_description'}</td>
+            <td class="ow_value">{input name='description'} {error name='description'}</td>
+            <td class="ow_desc ow_small">{text key='admin+site_description_desc'}</td>
+        </tr>
+        <tr class="ow_tr_delimiter"><td></td></tr>
+        <tr class="ow_tr_first">
+            <th class="ow_name ow_txtleft" colspan="3">
+                <span class="ow_section_icon ow_ic_clock">{text key='admin+time_settings'}</span>
+            </th>
+        </tr>
+        <tr class="{cycle name="time" values="ow_alt1,ow_alt2"}">
+            <td class="ow_label">{label name='dateFieldFormat'}</td>
+            <td class="ow_value">{input name='dateFieldFormat'} {error name='dateFieldFormat'}</td>
+            <td class="ow_desc ow_small"></td>
+        </tr>
+        <tr class="{cycle name="time" values="ow_alt1,ow_alt2"}">
+            <td class="ow_label">{text key='admin+timezone'}</td>
+            <td class="ow_value">{input name='timezone'} {error name='timezone'}</td>
+            <td class="ow_desc"></td>
+        </tr>
+        <tr class="{cycle name="time" values="ow_alt1,ow_alt2"}">
+            <td class="ow_label">{text key='admin+use_relative_time'}</td>
+            <td class="ow_value">{input name='relativeTime'} {error name='relativeTime'}</td>
+            <td class="ow_desc ow_small">{text key='admin+site_relative_time_desc'}</td>
+        </tr>
+        <tr class="{cycle name="time" values="ow_alt1,ow_alt2"} ow_tr_last">
+            <td class="ow_label">{text key='admin+use_military_time'}</td>
+            <td class="ow_value">{input name='militaryTime'}</td>
+            <td class="ow_desc ow_small"></td>
+        </tr>
+        <tr class="ow_tr_delimiter"><td></td></tr>
+        <tr class="ow_tr_first">
+            <th class="ow_name ow_txtleft" colspan="3">
+                <span class="ow_section_icon ow_ic_app">{text key='admin+finance_settings'}</span>
+            </th>
+        </tr>
+        <tr class="{cycle name="time" values="ow_alt1,ow_alt2"}">
+            <td class="ow_label">{label name='currency'}</td>
+            <td class="ow_value">{input name='currency'} <br />{error name='currency'}</td>
+            <td class="ow_desc ow_small"></td>
+        </tr>
+
+    </table>
+    <div class="clearfix ow_stdmargin"><div class="ow_right">{submit name='save' class='ow_ic_save ow_positive'}</div></div>
+{/form}
+{if $showVerifyButton}
+    <div style="display:none;">
+        <div id="site-email-verify">
+            {block_decorator name="box" type="empty" addClass="ow_automargin" style="width:325px;padding-bottom:10px;"}
+                {text key="admin+site_email_verify_promo"}
+            {/block_decorator}
+            {block_decorator name="box" type="normal" addClass="ow_stdmargin ow_wide ow_automargin ow_center"}
+                {decorator name="button" class='ow_ic_mail' id="sendVerifyMail" langLabel='admin+send_verification_email'}
+            {/block_decorator}
+        </div>
+    </div>
+{/if}
+

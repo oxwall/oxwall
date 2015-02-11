@@ -1,0 +1,13 @@
+<div class="clearfix component {if isset($item.custom) && $item.custom}dnd-item-custom{/if}" data-key="{$item.key}" {if isset($item.type)}data-type={$item.type}{/if} {if isset($item.custom)}data-custom={$item.custom}{/if} {if isset($item.data)}data-data="{$item.data}"{/if}>
+    <div class="schem_component dd_handle">
+        <div class="ow_dnd_schem_item schem_component">
+            <span class="ow_label dnd-title">
+                {$item.title}
+            </span>
+            <span class="action dnd-actions">
+                <a class="ow_ic_gear_wheel dnd-control dd_edit" href="javascript://;" data-action="edit">&nbsp;</a>
+                <a class="ow_ic_delete close dnd-control dd_delete" href="javascript://;" data-action="delete">&nbsp;</a>
+            </span>
+        </div>
+    </div>
+</div>

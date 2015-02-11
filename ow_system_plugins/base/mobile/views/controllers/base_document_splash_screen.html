@@ -1,0 +1,8 @@
+<div class="owm_blank_content owm_std_margin_top">
+	<div class="owm_info">{text key='admin+splash_intro_value'}</div>
+	<div class="owm_btn_wrap">
+		{if isset($leaveUrl)}{decorator name='button' langLabel='admin+splash_leave_button_label' class='owm_btn_big' extraString=" onclick=\"window.location='`$leaveUrl`'\""} &nbsp;&nbsp;&nbsp;{/if}
+		{decorator name='button' class='owm_btn_big owm_btn_positive' langLabel='admin+splash_button_value' extraString=" onclick=\"window.location='`$submit_url`'\""}
+	</div>
+</div>
+

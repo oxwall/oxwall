@@ -1,0 +1,8 @@
+<div class="ow_lp_avatars{if !empty($css_class)} {$css_class}{/if}">
+    {if empty($users)}
+        <div class="ow_nocontent">{text key='base+empty_user_avatar_list'}</div>
+    {else}
+        {foreach from=$users item='user'}{decorator name='avatar_item' data=$user}{/foreach}{if !empty($view_more_array)}<a href="{$view_more_array.url}" title="{$view_more_array.title}" class="avatar_list_more_icon"></a>{/if}
+    {/if}
+    
+</div>

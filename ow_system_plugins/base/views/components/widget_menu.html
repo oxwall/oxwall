@@ -1,0 +1,7 @@
+<div class="clearfix">
+	<div class="ow_box_menu">
+		{foreach from=$items item='tab'}
+			<a href="javascript://" id="{$tab.id}"{if isset($tab.active) && $tab.active} class="active"{/if}><span>{$tab.label}</span></a>
+		{/foreach}
+	</div>
+</div>

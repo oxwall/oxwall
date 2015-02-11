@@ -1,0 +1,27 @@
+{style}
+{literal}
+textarea.edit_css{
+    height:400px;
+}
+.css_code pre{
+	padding:10px;
+	height:400px;
+	overflow:scroll;
+}
+{/literal}
+{/style}
+{$contentMenu}
+{block_decorator name='box' addClass='ow_stdmargin' langLabel='admin+theme_css_existing_css_box_cap_label'}
+    <div class="css_code">{$code}</div>
+{/block_decorator}
+{block_decorator name='box' style='text-align:center;' iconClass="ow_ic_write" langLabel='admin+theme_css_edit_css_box_cap_label'}
+{form name='add-css'}
+{input name='css' class='edit_css'}
+<div class="clearfix ow_smallmargin">
+<div class="ow_right" style="padding-top: 20px;padding-left: 10px; padding-right: 15px;">
+{submit name='submit' class='ow_positive'}
+</div>
+</div>
+{/form}
+{/block_decorator}
+

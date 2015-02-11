@@ -1,0 +1,5 @@
+<div class="ow_footer_menu">
+{foreach from=$data item='item' name='bottom_menu'}
+	<a href="{$item.url}"{if $item.active} class="active"{/if}{if $item.new_window} target="_blank"{/if}>{$item.label}</a>{if !$smarty.foreach.bottom_menu.last} | {/if}
+{/foreach}
+</div>

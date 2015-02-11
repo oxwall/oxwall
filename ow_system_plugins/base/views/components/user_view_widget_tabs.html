@@ -1,0 +1,49 @@
+{if $ownerMode || ($adminMode && !$superAdminProfile)}
+    {style}
+        {literal}
+            .ow_edit_profile_link
+            {
+                position: absolute;
+                right: 0px;
+                top: 0px;
+            }
+        {/literal}
+    {/style}
+    {script}
+        {literal}
+            (function(){
+                $(".user_profile_data").hover(
+                  function(){
+                    $("#edit-profile").fadeIn();
+                  },
+                  function(){
+                    $("#edit-profile").fadeOut();
+                  }
+              );
+           }());
+       {/literal}
+    {/script}
+{/if}
+
+<div style="position:relative;">
+    <div class="user_profile_data">
+
+    <div class="user_view_menu">
+        {$menu}
+    </div>
+
+    {if $ownerMode || ($adminMode && !$superAdminProfile) }
+        <div style="display: none;" id="edit-profile" class="ow_edit_profile_link">
+            <a class="ow_lbutton" href="{$profileEditUrl}">{text key='base+edit_profile_link'}</a>
+        </div>
+    {/if}
+    
+
+    {foreach  from=$sectionsHtml key='section' item='html'}
+        {$html}
+    {/foreach}
+    </div>
+    
+{add_content key='socialsharing.get_sharing_buttons' title=$displayName image=$avatarUrl entityType='user' entityId=$userId }
+</div>
+

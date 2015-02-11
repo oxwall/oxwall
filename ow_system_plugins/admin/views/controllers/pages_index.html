@@ -1,0 +1,123 @@
+{script}
+{literal}
+$(document).ready(function(){
+
+	$radio1 = $('#address1');
+	$radio2 = $('#address2');
+
+	$url1 = $('#url1');
+	$url2 = $('#url2');
+
+	$radio1.bind('click', function(){
+		var disabled = !this.checked;
+		$('#meta-tags-tr').show();
+		$('#meta-tags').attr( 'disabled', disabled );
+		$('#content').attr( 'disabled', disabled );
+		$('#content-tr').show();
+		$('#title').attr( 'disabled', disabled );
+		$('#title-tr').show();
+	}).bind('click', function(){
+		$('#type').attr('value', 'local');
+	});
+	
+	$radio1.bind('click', function(){
+		$url1[0].focus();
+	})
+{/literal}
+{if !$isLocal}
+	{literal}
+	$('#meta-tags-tr').hide();
+	$('#content-tr').hide();
+	$('#title-tr').hide();
+	$('#address2').attr('checked', 'checked');
+	{/literal}
+{else}
+{literal}
+	$('#address1').attr('checked', 'checked');
+{/literal}
+{/if}
+{literal}
+	$radio2.bind('click', function(){
+		var disabled = this.checked;
+		$('#meta-tags-tr').hide();
+		$('#meta-tags').attr( 'disabled', disabled );
+		$('#content').attr( 'disabled', disabled );
+		$('#content-tr').hide();
+		$('#title').attr( 'disabled', disabled );
+		$('#title-tr').hide();
+	}).bind('click', function(){
+
+		$('#type').attr('value', 'external');
+	}).bind('click', function(){
+		$url2[0].focus();
+	});
+});
+{/literal}
+{/script}
+
+{form name="page-add-form"}
+<table class="ow_table_1" id="new-page-form">
+
+    <tr class="{cycle values="ow_alt2,ow_alt1"} ow_tr_first">
+        <td style="width: 15%;" class="ow_label">{label name="name"}</td>
+        <td class="ow_value">{input name="name"}
+        	<br />{error name="name"}
+        </td>
+        <td class="ow_description ow_small" style="width: 25%">
+        </td>
+    </tr>
+
+    <tr class="{cycle values="ow_alt2,ow_alt1"}">
+        <td class="ow_label">{label name="type"}</td>
+        <td class="ow_value">
+	       	{input name="type" style="display: none;"}
+	           <input type="radio" name="address" id="address1"/>
+	           <label for="address1">Local page</label>, http://yoursite.com/{input name="local-url" style="width: 200px;margin-left: 6px;"}<br /> {error name='local-url'}
+	           <div class="ow_center" style="margin:5px 0;">- {text key="admin+pages_new_form_or"} -</div>
+	           <input type="radio" name="address" id="address2" />
+	           <label for="address2">External URL</label>
+	           {input name="external-url"}
+	           {error name='external-url'}
+	           {input name="ext-open-in-new-window"}
+	           {label name="ext-open-in-new-window"}
+      	</td>
+      	<td class="ow_description ow_small"></td>
+    </tr>
+    <tr id="title-tr" class="{cycle values="ow_alt2,ow_alt1"}">
+        <td class="ow_label">
+        	{label name="title"}
+       	</td>
+        <td class="ow_value">
+        	{input name="title"}
+        	<br />{error name="title"}
+        </td>
+        <td class="ow_description ow_small"></td>
+    </tr>      
+	
+    <tr class="{cycle values="ow_alt2,ow_alt1"}">
+        <td class="ow_label">{label name="visible-for"}</td>
+        <td class="ow_value">
+        	{input name="visible-for"}
+        	<br />{error name="visible-for"}
+       </td>
+       <td class="ow_description ow_small"></td>
+    </tr>
+    
+    <tr class="{cycle values="ow_alt2,ow_alt1"}" id="meta-tags-tr">
+        <td class="ow_label">{label name="meta-tags"}</td>
+        <td class="ow_value">{input name="meta-tags"}
+        	<br />{error name="meta-tags"}
+        </td>
+        <td class="ow_description ow_small"> {desc name="meta-tags"}
+        </td>
+    </tr>
+    <tr class="{cycle values="ow_alt2,ow_alt1"} ow_tr_last" id="content-tr">
+        <td class="ow_label">{label name="content"}</td>
+        <td class="ow_value">{input name="content"}
+        	<br />{error name="content"}
+        </td>
+        <td class="ow_description ow_small"> {desc name="content"}</td>
+    </tr>
+</table>
+<div class="clearfix ow_stdmargin"><div class="ow_right">{submit name="submit" class="ow_positive"}</div></div>
+{/form}

@@ -1,0 +1,77 @@
+<div id="{$uniqId}">
+{if !empty($data.text)}
+    <div class="ow_newsfeed_body_status ow_smallmargin">{$data.text|more:150}</div>
+{/if}
+
+{if $displayFormat=="video"}
+
+
+<div class="clearfix ow_newsfeed_oembed_atch">
+    <div class="ow_newsfeed_item_picture">
+        <a href="{$data.url}" data-action="play">
+            <img src="{$data.image.thumbnail}" style="max-width: 100%;">
+            <div class="ow_oembed_video_cover"></div>
+        </a>
+    </div>
+    <div class="ow_newsfeed_item_content">
+        <a href="{$data.url}" class="ow_newsfeed_item_title">
+            {$data.title}
+        </a>
+        
+        <div class="ow_remark ow_smallmargin">
+            {$data.description|more:150}
+        </div>
+    </div>
+</div>
+
+
+{elseif $displayFormat=="image_content"}
+
+
+<div class="ow_newsfeed_oembed_atch clearfix">
+    <div class="ow_newsfeed_item_picture">
+        <a href="{$data.url}">
+            <img src="{$data.image.thumbnail}" style="max-width: 100%;" />
+        </a>
+    </div>
+    <div class="ow_newsfeed_item_content">
+        
+        <a href="{$data.url}" class="ow_newsfeed_item_title">
+            {$data.title}
+        </a>
+        
+        <div class="ow_remark ow_smallmargin">
+            {$data.description|more:150}
+        </div>
+    </div>
+</div>
+
+
+{elseif $displayFormat=="image"}
+
+
+<div class="ow_newsfeed_large_image clearfix">
+    <div class="ow_newsfeed_item_picture">
+        <a href="{$data.image.preview}" data-src="{$data.image.view}" onclick="OW.showImageInFloatBox($(this).data('src')); return false;">
+            <img style="max-width: 100%;" src="{$data.image.preview}" />
+        </a>
+    </div>
+</div>
+
+
+{elseif $displayFormat=="content"}
+
+
+<div class="ow_newsfeed_item_content">
+    <a href="{$data.url}" class="ow_newsfeed_item_title">
+        {$data.title}
+    </a>
+    <div class="ow_remark ow_smallmargin">
+        {$data.description|more:150}
+    </div>
+</div>
+
+
+
+{/if}
+</div>

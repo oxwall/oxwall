@@ -1,0 +1,28 @@
+{style}{literal}
+    .ow_avatar_console .ow_avatar_label {
+        bottom: 5px;
+        right: 5px;
+        -moz-border-radius: 3px;
+        -webkit-border-radius: 3px;
+    }
+{/literal}{/style}
+
+{if isset($profileActionToolbar)}
+{$profileActionToolbar}
+{/if}
+
+<div class="ow_left ow_supernarrow">
+    <div style="" class="ow_box_empty ow_stdmargin clearfix">
+        <div id="avatar-console" class="ow_avatar_console ow_center">
+            <div style="height: {$avatarSize}px; background: url({$avatar}) no-repeat center center; width: 100%">
+                {if isset($role.label)}<span class="ow_avatar_label"{if isset($role.custom)} style="background-color: {$role.custom}"{/if}>{$role.label}</span>{/if}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="ow_right ow_superwide">
+    <div class="ow_anno ow_center">
+        {if !empty($message)}{$message}{else}{text key='privacy+no_permission_message'}{/if}
+    </div>
+</div>

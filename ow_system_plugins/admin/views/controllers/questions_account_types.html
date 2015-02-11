@@ -1,0 +1,183 @@
+{script}
+{literal}
+window.editLangValue = function editLangValue(_prefix, _key, _callback){
+
+    if ( !window.question_langs_floatbox_display )
+    {
+        window.question_langs_floatbox_display = true;
+        $.post( '{/literal}{url_for for="ADMIN_CTRL_Languages:ajaxEditLanguageValuesForm"}{literal}?prefix='+_prefix+'&key='+_key, {}, function(json){
+            if(document['ajaxLangValueEditForms'] == undefined)
+                    {
+                        document['ajaxLangValueEditForms'] = [];
+                    }
+
+            document['ajaxLangValueEditForms'][_prefix+'-'+_key] = new OW_FloatBox({$title: '{/literal}{text key="admin+questions_edit_section_name_title"}{literal}', $contents: json['markup'], width: 556});
+                    document['ajaxLangValueEditForms'][_prefix+'-'+_key+'callback'] = _callback;
+
+            document['ajaxLangValueEditForms'][_prefix+'-'+_key].bind("close", function() {
+                window.question_langs_floatbox_display = false;
+            });
+
+            OW.addScriptFiles(json['include_js'], function(){ OW.addScript(json['js']); });
+
+        }, 'json');
+    }
+}
+{/literal}
+{/script}
+
+{$contentMenu}
+
+<div class="ow_admin_profile_questions_list_div">
+
+    <table class="ow_table_2 ow_smallmargin ow_lables_table">
+        <tr class="ow_tr_first">
+            <th colspan="4" class="ow_tr_top_empty ow_txtleft">
+                {text key="admin+questions_page_description"}
+            </th>
+            <th colspan="{$accountTypesCount}" class="ow_tr_top">
+                <div class="ow_tr_top_buttons">
+                    <div class="ow_tr_top_button ow_tr_top_button_selected" ><div>{text key='admin+question_menu_account_types'}</div></div>
+                    <div class="ow_tr_top_button" onclick='window.location.href="{$propertiesUrl}"'><div>{text key='admin+question_menu_properties'}</div></div>
+                </div>
+            </th>
+        </tr>
+        <tr class="ow_tr_last ow_tr_titles">
+            <th class="question_label_th"   ><div class="question_label_div">{text key='admin+question_column_question'}</div></th>
+            <th class="question_account_type_th"><div class="question_account_type_div">{text key='admin+question_column_type'}</div></th>
+            <th class="question_values_th"><div class="question_values_div">{text key='admin+question_column_values'}</div></th>
+            <th class="question_buttons_th" ><div class="question_buttons_div"></div></th>
+            {foreach from=$accountTypeDtoList item='accountType'}
+                <th class="ow_small account_type_th" style="width:{$td_width}px;" data-accounttype="{$accountType->name}">
+                    <div style="width:{$div_width}px;position:relative;">
+                        <input type='hidden' value='{$accountType->name}'>
+                        <div class="account_type_menu" style="position:absolute;top: -8px; right: -8px;display:none;">{$accountTypeMenu}</div>
+                        <div class="{*Dont delete*}table_content_block{*Dont delete*}"style="overflow:hidden; font-weight: normal;">{text key="base+questions_account_type_`$accountType->name`"}</div>
+
+                    </div>
+                </th>
+            {/foreach}
+            <th class="ow_small account_type_th" style="width:{$td_width}px;">
+                <div class="table_content_block" style="width:{$div_width}px;overflow:hidden; font-weight: normal;"><a class="add_account_type" href="javascript://">{text key="base+questions_add_account_type"}</div>
+            </th>
+        </tr>
+    </table>
+
+    {foreach from=$questionsBySections key='section' item='questions' }
+    <table class="ow_table_2 ow_smallmargin ow_admin_profile_questions_list {if !$section }no_section{else}{$section}{/if}" sectionName={if $section }"{$section}"{else}"no_section"{/if}>
+        <tr class="question_section_tr ow_tr_first">
+            <th class="section_value {if $section}ow_admin_profile_question_dnd_cursor{/if}" colspan="{$tableColumnCount}">
+               <div class="ow_section_label" >{if $section}{text key="base+questions_section_`$section`_label"}{else}{text key="base+questions_no_section_label"}{/if}</div>
+                   <div class="delete_edit_buttons quest_buttons ow_right">
+                        {if $section}
+                            <a href="javascript://" class="ow_lbutton edit_sectionNameLang" style="visibility:hidden;" >{text key='admin+btn_label_edit'}</a>
+                            {if $sectionList[$section]->isDeletable}
+                                <a  href="javascript://" class="ow_lbutton ow_red section_delete_button" style="visibility:hidden;" >{text key='admin+btn_label_delete'}</a>
+                            {/if}
+                        {/if}
+                    </div>
+
+            </th>
+        </tr>
+       {if isset($questions)}
+           {foreach from=$questions item='question' name='question' }
+                  {capture name="evenstyle"}{cycle name="acc_`$section`" values="ow_alt1,ow_alt2"}{/capture}
+                  <tr class="question_tr ow_admin_profile_question_dnd_cursor {if $smarty.foreach.question.last}ow_tr_last{/if}" question_name="{$question.name}">
+                    <td class="question_label_td {$smarty.capture.evenstyle} ow_txtleft" >
+                        <div class="question_label_div ow_overflow_hidden"  >{text key="base+questions_question_`$question.name`_label"}</div>
+                    </td>
+                    <td class="question_presentation_td {$smarty.capture.evenstyle} ow_small" >
+                        <div class="question_account_type_div ow_overflow_hidden" >{text key="base+questions_question_presentation_`$question.presentation`_label"}</div>
+                    </td>
+                    <td class="question_values_td question_values_type_td {$smarty.capture.evenstyle} ow_small">
+                        {if !empty($previewValues[$question.name])}
+                            <div class="question_values_div">{$previewValues[$question.name]}</div>
+                            
+                        {else}
+                            {if isset($questionValues[$question.name].values)}
+                                {if !empty($question.parentUrl)}
+                                    <div class="question_values_div ow_overflow_hidden">{text key='admin+questions_matched_question_values' label=$question.parentLabel parentId=$question.parentId url=$question.parentUrl}</div>
+                                {else}
+                                <div class="question_values_div">
+                                    <center><a class="question_values" href="javascript://">{text key="admin+questions_values_count" count=$questionValues[$question.name].count}</a></center>
+
+                                    <div style="padding:0 0 0 15px;text-align:left;display:none;width:100px;overflow:hidden;" >
+                                        <ul style="list-style-type:disc;">
+                                            {foreach from=$questionValues[$question.name].values item='value'}
+                                                    <li>{$valueLabels[$question.name][$value->value]}</li>
+                                            {/foreach}
+                                        </ul>
+                                    </div>
+                                </div>
+                                {/if}
+                            {else}
+                                <div class="question_values_div"></div>
+                            {/if}
+                        {/if}
+                    </td>
+
+                    <td class="question_buttons_td {$smarty.capture.evenstyle} ow_nowrap quest_buttons {$smarty.capture.evenstyle}">
+                            
+                                {if !empty($deleteEditButtons[$question.name])}
+                                    <div class="question_buttons_div ow_overflow_hidden">
+                                        {$deleteEditButtons[$question.name]}
+                                    </div>
+                                {else}
+                                    <div class="question_buttons_div delete_edit_buttons ow_overflow_hidden">
+                                        <input type="hidden" value="{$question.id}">
+                                        <a href="javascript://" class="ow_lbutton question_edit_button" style="visibility:hidden;">{text key='admin+btn_label_edit'}</a>
+                                        {if $question.base!=1 && $question.removable==1 && empty($question.parentUrl)}
+                                            <a href="javascript://" class="ow_lbutton ow_red question_delete_button" style="visibility:hidden;">{text key='admin+btn_label_delete'}</a>
+                                        {/if}
+                                    </div>
+                                {/if}
+                            
+                    </td>
+                    {if !empty($accountTypesCheckboxContent[$question.name])}
+                        <td class="ow_small ow_lightweigh {$smarty.capture.evenstyle}" colspan="{$accountTypesCount}" style="width:{math equation="count*(width)" count=$accountTypesCount width=$td_width}px">
+                            <div style="width:{math equation="count*(width) - 18" count=$accountTypesCount width=$td_width}px;overflow:hidden;">{$accountTypesCheckboxContent[$question.name]}</div>
+                        </td>
+                    {else}
+                        {foreach from=$accountTypeDtoList item='accountType'}
+                            <td class="account_type_td ow_small ow_lightweigh {$smarty.capture.evenstyle}" data-accounttype="{$accountType->name}"  style="width:{$td_width}px">
+                                <div style="width:{$div_width}px;overflow:hidden;">
+                                    <div class="{$accountType->name} ow_checkbox
+                                         {if $questionList[$question.name].disable_account_type==1}
+                                            {if !empty($accountTypesToQuestionsDtoList[$question.name][$accountType->name])}
+                                                ow_checkbox_cell_marked_lock
+                                            {else}
+                                                ow_checkbox_cell_lock
+                                            {/if}
+                                         {else}
+                                            {if !empty($accountTypesToQuestionsDtoList[$question.name][$accountType->name])}
+                                                ow_checkbox_cell_marked
+                                            {else}
+                                                ow_checkbox_cell
+                                            {/if}
+                                         {/if}"></div>
+                                </div>
+                            </td>
+                        {/foreach}
+                        
+                        <td class="ow_small ow_lightweigh {$smarty.capture.evenstyle}" style="width:{$td_width}px">
+                                <div class="account_type_empty" style="width:{$div_width}px;overflow:hidden"></div>
+                        </td>
+                    {/if}
+                 </tr>
+           {/foreach}
+        {/if}
+
+        <tr class="question_tr no_question" style="display:none;">
+            <td colspan="9"></td>
+        </tr>
+
+        <tr class="ow_tr_delimiter"><td colspan="9"></td></tr>
+    </table>
+    {/foreach}
+</div>
+<div class="clearfix ow_std_margin">
+    <div class="ow_right">
+        {decorator name='button' class="ow_ic_add add_new_question_button ow_positive" langLabel='admin+questions_add_question_button'}
+        {decorator name='button' class="ow_ic_add add_new_section_button ow_positive" langLabel='admin+questions_add_section_button'}
+    </div>
+</div>

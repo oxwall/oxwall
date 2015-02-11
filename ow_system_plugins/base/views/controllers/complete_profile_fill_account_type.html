@@ -1,0 +1,28 @@
+
+{block_decorator name="box" type="empty" addClass="ow_superwide ow_automargin"}
+    {block_decorator name="box_cap" type="empty" addClass="ow_center" style="padding:15px;" langLabel="base+required_profile_questions"}
+    {/block_decorator}
+
+    {form name=accountTypeForm}
+        <table class="ow_table_1 ow_form ow_stdmargin">
+            <tr class=" ow_tr_first ow_tr_last">
+                <td class="ow_alt1 ow_label">
+                    {label name='accountType'}
+                </td>
+                <td class="ow_alt1 ow_value">
+                    {input name='accountType'}
+                    <div style="height:1px;"></div>
+                    {error name='accountType'}
+                </td>
+                <td class="ow_alt1 ow_desc ow_small">
+                    {question_description_lang name='accountType'}
+                </td>
+            </tr>
+        </table>
+        <div class="clearfix ow_stdmargin">
+           <div class="ow_right">
+               {submit name='submit'}
+           </div>
+        </div>
+    {/form}
+{/block_decorator}

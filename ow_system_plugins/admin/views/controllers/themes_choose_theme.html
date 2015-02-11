@@ -1,0 +1,204 @@
+{style}
+{literal}
+
+.theme_thumbs {
+    float: left;
+    width: 519px;
+}
+
+.theme_icon {
+    background-repeat:no-repeat;
+    display:block;
+    cursor:pointer;
+    background-position: 5px 5px;
+    background-repeat: no-repeat;
+    border: none;
+    height: 103px;
+    width: 164px;
+    margin: 0;
+}
+
+.theme_title{
+    font-weight:bold;
+}
+
+.theme_desc{
+    padding:10px 0;
+}
+
+.theme_controls input[type="text"]{
+    width:200px;
+}
+
+.theme_control_image{
+    background-repeat:no-repeat;
+    background-position:50% 50%;
+    border:1px solid #ccc;
+    height:40px;
+    width:200px;
+}
+
+.theme_item {
+    float:left;
+    padding-bottom: 7px;
+    padding-right: 9px;
+    text-align: center;    
+    position: relative;
+}
+
+.theme_item a {
+    display: block;
+    outline: 0 none;
+}
+
+.theme_icon span.name {
+    display: none;
+}
+
+.theme_item span.fake{
+    background: url({/literal}{$defaultThemeImgDir}{literal}theme_frame_small.png) no-repeat scroll 0 0 transparent;
+    display: block;
+    height: 103px;
+}
+
+.theme_item .theme_icon span.clicked,
+.theme_item .theme_icon.clicked span.clicked {
+    background: url({/literal}{$defaultThemeImgDir}{literal}theme_frame_small.png) no-repeat scroll 0 -112px transparent;
+}
+
+.theme_item .theme_icon.clicked span {
+    background: url({/literal}{$defaultThemeImgDir}{literal}theme_frame_small.png) no-repeat scroll 0 -224px transparent;
+}
+
+html body .selected_theme_info{
+    float:right;
+    width:312px;
+}
+
+html body .selected_theme_info_stick{
+    width:312px;
+}
+
+.themes_preview {
+    overflow: hidden;
+    padding: 6px 6px 0;
+    position: relative;
+    width: 302px;
+    background: url({/literal}{$defaultThemeImgDir}{literal}theme_frame_preview.png) no-repeat scroll 0 0 transparent;
+}
+.theme_wrap a {
+    display: block;
+    height: 179px;
+    width: auto;
+    cursor: pointer;
+    background-position: 0px 0px;
+}
+.theme_text_wrap {
+    padding: 13px 0 0;
+}
+.theme_text_wrap .theme_desc {
+    font-size: 11px;
+    padding: 3px 0;
+}
+.theme_info .ow_table_3 td {
+    text-align: left;
+}
+.theme_info .ow_table_3 {
+    margin-bottom: 5px;
+}
+.theme_info .ow_table_3 td.ow_label {
+    padding-left: 0;
+    width: 18%;
+}
+.theme_item.theme_update span.fake {
+    background: url("{/literal}{$defaultThemeImgDir}{literal}theme_frame_small.png") no-repeat scroll 0 -336px transparent
+}
+.theme_item.theme_clicked span.fake {
+    background: url("{/literal}{$defaultThemeImgDir}{literal}theme_frame_small.png") no-repeat scroll 0 -224px transparent
+}
+.theme_item.active span.clicked {
+    background: url("{/literal}{$defaultThemeImgDir}{literal}theme_frame_small.png") no-repeat scroll 0 -112px transparent
+}
+.theme_update_label {
+    position: absolute;
+    right: 14px;
+    top: 5px;
+    background: #ff9927;
+    border-left: 4px solid #ff9927;
+    border-bottom: 4px solid #ff9927;
+}
+.theme_item.theme_clicked .theme_update_label,
+.theme_item.active .theme_update_label {
+    background: none repeat scroll 0 0 #A8D700;
+    border-color: #A8D700;
+}
+{/literal}
+{/style}
+<div class="clearfix">
+
+<div class="selected_theme_info">
+<div class="selected_theme_info_stick">
+{block_decorator name='box' type='empty' iconClass="ow_ic_info" langLabel='admin+theme_info_cap_label'}
+
+<div class="themes_preview">
+    <div class="theme_wrap"><a onclick="{literal}new OW_FloatBox({$contents:$('.selected_theme_info .theme_preview'), $title:'Preview', width:'720px'}){/literal}" class="theme_icon" style="background-image:url({$themeInfo.previewUrl});"></a></div>
+    <div class="theme_text_wrap">
+        <div class="theme_title">{$themeInfo.title}</div>
+        <div class="theme_desc">{$themeInfo.description}</div>
+    </div>
+</div>
+    <div class="theme_info">
+			<table class="ow_table_3">
+			<tr class="ow_tr_first">
+				<td class="ow_label">{text key='admin+theme_info_author_label'}:</td>
+				<td class="ow_value"><span class="author">{$themeInfo.author}</span></td>
+			</tr>
+			<tr>
+				<td class="ow_label ow_tr_last">{text key='admin+theme_info_author_url_label'}:</td>
+				<td class="ow_value"><span class="author_url"><a href="{$themeInfo.authorUrl}">{$themeInfo.authorUrl}</a></span></td>
+			</tr>
+			</table>
+        <div class="clearfix"><div class="ow_right theme_control_button ow_btn_delimiter"><span class="dlt_btn"{if empty($themeInfo.delete_url)} style="display:none;"{/if}>{decorator name='button' class='theme_select_delete_btn ow_ic_delete' langLabel='admin+themes_choose_delete_button_label'}</span> {decorator name='button' class='theme_select_submit ow_positive' langLabel='admin+themes_choose_activate_button_label'}</div></div>
+            <div style="display: none;"><div class="theme_preview" style="text-align: center;"><img src="{$themeInfo.previewUrl}" /></div></div>
+		</div>
+{/block_decorator}
+</div>
+</div>
+
+<div class="theme_thumbs">
+{block_decorator name='box' type='empty' iconClass="ow_ic_monitor" langLabel='admin+themes_choose_list_cap_title'}
+<div class="themes_select clearfix">
+{foreach from=$themes item='theme'}
+<div class="theme_item{if $theme.active} active{/if}{if $theme.update_url} theme_update{/if}">
+	<a class="theme_icon {$theme.key}" href="javascript://" style="background-image:url({$theme.iconUrl});">
+		<span class="fake{if $theme.active} clicked{/if}"></span>
+		<span class="name">{$theme.title}</span>
+	</a>
+    {if $theme.update_url}<div class="theme_update_label"><a class="ow_lbutton ow_green" href="{$theme.update_url}">{text key='admin+manage_plugins_update_button_label'}</a></div>{/if}
+</div>
+{/foreach}
+</div>
+{/block_decorator}
+{block_decorator name='box' type='empty' iconClass="ow_ic_monitor" langLabel='admin+themes_admin_list_cap_title'}
+<div class="themes_select admin_themes_select clearfix">
+{foreach from=$adminThemes item='theme'}
+
+<div class="theme_item{if $theme.active} active{/if}{if $theme.update_url} theme_update{/if}">
+    <a class="theme_icon {$theme.key}" href="javascript://" style="background-image:url({$theme.iconUrl});">
+		<span class="fake clicked"></span>
+		<span class="name">{$theme.title}</span>
+	</a>
+    {if $theme.update_url}<div class="theme_update_label"><a class="ow_lbutton ow_green" href="{$theme.update_url}">{text key='admin+manage_plugins_update_button_label'}</a></div>{/if}
+</div>
+
+{/foreach}
+</div>
+{/block_decorator}
+</div>
+    <div style="display: none;">
+        <div class="delete_confirm_node clearfix">    
+            <div class="message ow_stdmargin"></div>
+            <div class="ow_right">{decorator name='button' class='theme_select_delete ow_positive' langLabel='base+yes'}</div>
+        </div>
+    </div>
+</div>

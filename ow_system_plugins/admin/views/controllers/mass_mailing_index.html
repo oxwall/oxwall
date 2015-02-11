@@ -1,0 +1,53 @@
+<div class="clearfix">
+    {if !$isActive}
+        <div class="ow_anno ow_center">
+            {$expireText}
+        </div>
+    {else}
+        <div class="ow_column ow_automargin ow_superwide">
+            <p class="total_members">{text key="admin+massmailing_total_members" count=$userCount}</p>
+            {form name='massMailingForm' type='empty' iconClass="ow_ic_edit" langLabel='admin+massmailing_compose_email'}
+                <table class="ow_table_1 ow_form">
+                    <tr class="{cycle values="ow_alt2,ow_alt1"} ow_tr_first">
+                        <td class="ow_label">{label name='emailFormat'}</td>
+                        <td class="ow_value">
+                             {input name='emailFormat'}
+                        </td>
+                    </tr>
+                    <tr class="{cycle values="ow_alt2,ow_alt1"}">
+                        <td class="ow_label">{label name='userRoles'}</td>
+                        <td class="ow_value">
+                             {input name='userRoles'}
+                        </td>
+                    </tr>
+                    <tr class="{cycle values="ow_alt2,ow_alt1"}">
+                        <td class="ow_label">{label name='subject'}</td>
+                        <td class="ow_value">{input name='subject' style="width:97%;" }<br />{error name='subject'}</td>
+                    </tr>
+                    <tr class="{cycle values="ow_alt2,ow_alt1"} ow_tr_last">
+                        <td class="ow_label">{label name='body'}</td>
+                        <td class="ow_value">
+                            {input id="mass_mailing_body" name='body' style="width:97%;height:250px;" }<br />{error name='body'}
+                            <div style="padding:5px;">
+                                {text key='admin+massmailing_following_variables_text'}<br />
+                                {literal}
+                                    <a id="var_username" onclick="window.massMailing.addVar('{$user_name}')" href="javascript://">{$user_name}</a><br />
+                                    <a id="var_username" onclick="window.massMailing.addVar('{$user_email}')" href="javascript://">{$user_email}</a><br />
+                                    <a id="var_sitename" onclick="window.massMailing.addVar('{$site_name}')" href="javascript://">{$site_name}</a><br />
+                                    <a id="var_siteurl" onclick="window.massMailing.addVar('{$site_url}')" href="javascript://">{$site_url}</a><br />
+                                    <a id="site_email" onclick="window.massMailing.addVar('{$site_email}')" href="javascript://">{$site_email}</a><br />
+                                    <a id="site_email" onclick="window.massMailing.addVar('{$unsubscribe_url}')" href="javascript://">{$unsubscribe_url}</a><br />
+                                {/literal}
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+                <div class="clearfix ow_stdmargin">
+                    <div class="ow_right">
+                        {submit name='startMailing' class="ow_positive"}
+                    </div>
+                </div>
+            {/form}
+        </div>
+    {/if}
+</div>

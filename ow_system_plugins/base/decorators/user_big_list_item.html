@@ -1,0 +1,28 @@
+<div class="ow_ulist_big_item">
+    <div class="ow_ulist_big_item_cont">
+        <div style="background-image: url('{$data.avatar}');" class="ow_ulist_big_avatar">
+            {if !empty($data.isMarked)}
+                <div class="ow_ic_bookmark ow_bookmark_icon"></div>
+            {/if}
+            
+            {if !empty($data.online)}
+                <div class="ow_miniic_live"><span class="ow_live_on"></span></div>
+            {/if}
+            
+            <a href="{url_for_route for="base_user_profile:[username=>`$data.username`]"}" class="ow_ulist_big_avatar_shadow"></a>
+            
+            {if !empty($data.avatarAction)}
+                <a {if !empty($data.avatarAction.userId)}data-user-id="{$data.avatarAction.userId}" {/if}class="ow_ulist_big_avatar_bookmark" href="{$data.avatarAction.href}">{$data.avatarAction.label}</a>
+            {/if}
+        </div>
+        <div class="ow_ulist_big_info">
+            <div class="clearfix">
+                <a class="ow_ulist_big_info_name ow_small" href="{url_for_route for="base_user_profile:[username=>`$data.username`]"}">{$data.displayName}</a>
+            </div>
+            {$data.fields}
+            {if !empty($data.activity)}
+                {$data.activity}
+            {/if}
+        </div> 
+    </div>
+</div>

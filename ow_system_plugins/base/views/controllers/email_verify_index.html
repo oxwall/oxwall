@@ -1,0 +1,9 @@
+{block_decorator name="box" type="empty" addClass="ow_center" style="padding: 215px 15px 15px;"}
+    {text key="base+email_verify_promo"}
+{/block_decorator}
+{block_decorator name="box" type="normal" addClass="ow_stdmargin ow_wide ow_automargin ow_center"}
+    {form name='emailVerifyForm'}
+                        <div style="display: inline;">{label name='email'}:</div><div style="display: inline;"> {input name='email' style="width:330px;" }</div>
+                        {submit name='sendVerifyMail' class='ow_ic_mail' }<br/><div style="color: red;">{error name='email'}</div>
+    {/form}
+{/block_decorator}

@@ -1,0 +1,10 @@
+<span class="ow_tooltip_tail"><span></span></span>	
+<ul class="{$class} clearfix ow_tooltip_body">
+{foreach from=$data item='item'}
+	<li class="{$item.class}{if !empty($item.active)} active{/if}">
+		<a href="{$item.url}"{if !empty($item.new_window)} target="_blank"{/if}>
+		   <span>{$item.label}</span>
+		</a>
+	</li>
+{/foreach}
+</ul>

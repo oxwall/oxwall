@@ -1,0 +1,25 @@
+<div class="ow_automargin ow_superwide">
+	{block_decorator name='box' langLabel='base+billing_gateway_products_binding' iconClass='ow_ic_link' type='empty' addClass='ow_stdmargin'}
+	<form method="post" action="{$actionUrl}">
+	   <input type="hidden" name="action" value="update_products" />
+	   <input type="hidden" name="back_url" value="{$backUrl}" />
+	   <table class="ow_table_1 ow_form">
+	   <tr class="ow_tr_first">
+	       <th>{text key='admin+plugin'}</th>
+	       <th>{text key='base+billing_product'}</th>
+	       <th>{text key='base+billing_product_id'}</th>
+	   </tr>
+	   {foreach from=$products item='prod' name='prod'}
+	       <tr class="ow_alt{cycle values='1,2'} {if $smarty.foreach.prod.last}ow_tr_last{/if}">
+	           <td>{$prod.plugin}</td>
+	           <td class="ow_small">{$prod.label}</td>
+	           <td><input type="text" name="products[{$prod.id}]" width="24" value="{$prod.productId}" /></td>
+	       </tr>
+	   {/foreach}
+	   </table>
+	   <div class="ow_center">
+	       {block_decorator name='button' type='submit' langLabel='admin+save_btn_label' class='ow_ic_save'}{/block_decorator}
+	   </div>
+	{/block_decorator}
+	</form>
+</div>

@@ -1,0 +1,9 @@
+{* `Tooltip` decorator template *}
+<div class="ow_tooltip {if !empty($data.addClass)} {$data.addClass}{/if}">
+    <div class="ow_tooltip_tail">
+        <span></span>
+    </div>
+    <div class="ow_tooltip_body">
+        {$data.content}
+    </div>
+</div>

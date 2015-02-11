@@ -1,0 +1,11 @@
+newsfeed:auto
+mailbox:auto
+notifications:auto
+slideshow:auto
+forum
+groups
+photo
+video
+event
+privacy
+friends

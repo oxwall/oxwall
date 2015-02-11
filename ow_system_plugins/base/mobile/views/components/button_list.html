@@ -1,0 +1,15 @@
+<div class="owm_btn_list owm_std_margin_bottom clearfix">
+    {foreach from=$groups item="group"}
+        <div class="owm_btn_list_item_wrap owm_view_more owm_float_right">
+            {$group}
+        </div>
+    {/foreach}
+    {foreach from=$buttons item="item"}
+        <div class="owm_btn_list_item_wrap owm_float_right">
+            <a {$item.attrs}>
+                <span class="owm_btn_list_item_c">{$item.label}</span>
+            </a>
+        </div>
+    {/foreach}
+    
+</div>

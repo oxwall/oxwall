@@ -1,0 +1,47 @@
+<?php
+
+define('OW_URL_HOME', '{$site_url}');
+
+define('OW_DB_HOST', '{$db_host}');
+define('OW_DB_PORT', {$db_port});
+define('OW_DB_USER', '{$db_user}');
+define('OW_DB_PASSWORD', '{$db_password}');
+define('OW_DB_NAME', '{$db_name}');
+
+define('OW_DB_PREFIX', '{$db_prefix}');
+
+define('OW_DIR_USERFILES', OW_DIR_ROOT.'ow_userfiles'.DS);
+define('OW_DIR_STATIC', OW_DIR_ROOT.'ow_static'.DS);
+define('OW_URL_STATIC', OW_URL_HOME.'ow_static/');
+define('OW_URL_USERFILES', OW_URL_HOME.'ow_userfiles/');
+define('OW_DIR_PLUGINFILES', OW_DIR_ROOT.'ow_pluginfiles/');
+
+define('OW_PASSWORD_SALT', '{$password_salt}');
+
+define('OW_DIR_CORE', OW_DIR_ROOT.'ow_core'.DS);
+define('OW_DIR_INC', OW_DIR_ROOT.'ow_includes'.DS);
+define('OW_DIR_LIB', OW_DIR_ROOT.'ow_libraries'.DS);
+define('OW_DIR_UTIL', OW_DIR_ROOT.'ow_utilities'.DS);
+define('OW_DIR_PLUGIN', OW_DIR_ROOT.'ow_plugins'.DS);
+define('OW_DIR_THEME', OW_DIR_ROOT.'ow_themes'.DS);
+define('OW_DIR_SYSTEM_PLUGIN', OW_DIR_ROOT.'ow_system_plugins'.DS);
+define('OW_DIR_SMARTY', OW_DIR_ROOT.'ow_smarty'.DS);
+
+define('OW_USE_CLOUDFILES', false);
+
+if ( defined('OW_CRON') )
+{
+    define('OW_DEBUG_MODE', false);
+    define('OW_DEV_MODE', false);
+    define('OW_PROFILER_ENABLE', false);
+}
+else
+{
+    /**
+    * Make changes in this block if you want to enable DEV mode and DEBUG mode
+    */
+
+    define('OW_DEBUG_MODE', false);
+    define('OW_DEV_MODE', false);
+    define('OW_PROFILER_ENABLE', false);
+}

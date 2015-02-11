@@ -1,0 +1,51 @@
+<form method="post" action="{$formAction}">
+  <div class="ow_admin_permissions ow_stdmargin ow_center">
+	<div class="ow_automargin ow_stdmargin ow_wide ow_admin_permissions_overflow">
+		<table class="ow_table_2 ow_form">
+			<tr class="ow_tr_first">
+				<th></th>
+				{foreach from=$moderators item='moderator'}
+					{assign var='moderatorId' value=$moderator->id}
+					{assign var='userId' value=$moderator->userId}
+					<th width="1">
+						{decorator name='avatar_item' data=$avatars[$userId]}
+					</th>
+				{/foreach}
+			</tr>
+			{foreach from=$groups item='group'}
+				{assign var=groupName value=$group->name}
+				<tr class="{cycle values='ow_alt1,ow_alt2'}">
+					<td class="ow_txtleft">{$groupLabels[$groupName]}</td>
+					{foreach from=$moderators item='moderator'}
+						{assign var='groupId' value=$group->id}
+						{assign var='moderatorId' value=$moderator->id}
+						<td><input {if $moderator->id == $superModeratorId or ($myModeratorId != $superModeratorId and $groupId == $adminGroupId)} disabled="disabled"{/if} type="checkbox" name="perm[]" value="{$moderatorId}:{$groupId}" {if isset($perms.$moderatorId.$groupId) or $moderator->id == $superModeratorId} checked="checked"{/if} /></td>
+					{/foreach}
+				</tr>
+			{/foreach}
+			<tr class="ow_tr_last">
+				<td></td>
+				{foreach from=$moderators item='moderator'}
+					{assign var='moderatorId' value=$moderator->id}
+					{assign var='userId' value=$moderator->userId}
+					<td>
+						{if $moderator->id !== $myModeratorId and $moderator->id !== $superModeratorId}
+							<a href="{$deleteModerUrls[$userId]}" onclick="return confirm('{text key="base+are_you_sure"}');" style="width:16px; height:16px; display:block; margin:0 auto;background-repeat:no-repeat;background-position: 50% 50%;" class="ow_ic_delete"></a>
+						{/if}
+					</td>
+				{/foreach}
+			</tr>
+		</table>
+	</div>
+    <div class="clearfix ow_automargin ow_wide"><div class="ow_right">{decorator name='button' langLabel='admin+permissions_index_save' class='ow_button ow_ic_save ow_positive' onclick='this.form.submit();'}</div></div>
+  </div>
+</form>
+
+<form method="post" action="{$addFormAction}">
+<div class="ow_wide ow_automargin">
+    {block_decorator name='box' addClass='ow_stdmargin clearfix ow_center' iconClass='ow_ic_moderator' langLabel='admin+permissions_moders_add_moder'}
+        {text key='admin+permissions_moders_username'} <input type="text" name="username" style="width: 170px" />
+    	{decorator name='button' langLabel='admin+permissions_moders_make_moderator' type="submit"}
+    {/block_decorator}
+</div>
+</form>

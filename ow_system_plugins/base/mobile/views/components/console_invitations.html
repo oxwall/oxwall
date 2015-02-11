@@ -1,0 +1,27 @@
+{foreach from=$items item='item' key='invId'}
+<li class="owm_sidebar_msg_item{if !$item.viewed} owm_sidebar_msg_item_new{/if} clearfix" data-invid="{$invId}">
+    <div class="owm_sidebar_msg_avatar">
+        {decorator name='avatar_item' data=$item.avatar}
+    </div>
+    {if $item.contentImage}
+    <div class="owm_sidebar_msg_img">
+        <img src="{$item.contentImage.src}" />
+    </div>
+    {/if}
+    <div class="owm_sidebar_msg_info">
+        <div class="owm_sidebar_msg_string">
+            {$item.string}
+        </div>
+        {if !empty($item.acceptCommand) && !empty($item.declineCommand)}
+        <div class="owm_sidebar_msg_toolbar">
+            <a href="javascript://" class="owm_lbutton owm_invite_accept" data-ref="{$item.entityId}" data-cmd="{$item.acceptCommand}">
+                <span class="owm_lbutton_ico"><span>{text key='base+accept'}</span></span>
+            </a>
+            <a href="javascript://" class="owm_lbutton owm_invite_ignore" data-ref="{$item.entityId}" data-cmd="{$item.declineCommand}">
+                <span class="owm_lbutton_ico"><span>{text key='base+ignore'}</span></span>
+            </a>
+        </div>
+        {/if}
+    </div>
+</li>
+{/foreach}

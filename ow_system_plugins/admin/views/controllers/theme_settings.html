@@ -1,0 +1,133 @@
+{style}
+{literal}
+.theme_icon{
+	background-repeat:no-repeat;
+	background-position:50% 50%;
+	height:180px;
+	width:180px;
+}
+
+.theme_title{
+	font-weight:bold;
+}
+
+.theme_desc{
+	padding:10px 0;
+}
+
+.theme_controls input[type="text"]{
+	width:232px;
+	padding:4px;
+}
+
+.theme_control_image{
+	background-repeat:no-repeat;
+	background-position:0% 0%;
+	border:1px solid #ccc;
+	height:40px;
+	width:170px;
+    float:left;
+    cursor:pointer;
+}
+
+.theme_controls select{
+	width:240px;
+}
+
+body table.theme_controls td.ow_label{
+	width:35%;
+}
+
+body table.theme_controls td.ow_input{
+	width:30%;
+}
+
+body table.theme_controls td.ow_desc{
+	text-align:left;
+	width:35%;
+}
+
+.color_input input[type="text"]{
+	width:170px;
+}
+
+.theme_controls .color_button{
+	width:30px;
+	height:27px;
+	padding:0;
+	box-shadow: 0px 0px 2px rgba(0,0,0,0.5);
+}
+
+.preview_graphics{
+    background-repeat:no-repeat;
+	background-position:50% 50%;
+	border:1px solid #ccc;
+    width:500px;
+    height:350px;
+    margin:0 auto;
+}
+
+{/literal}
+{/style}
+{$contentMenu}
+<div class="clearfix">
+	<div style="float:left;width:23%;"><div class="theme_icon" style="background-image:url({$themeInfo.iconUrl});"></div></div>
+	<div style="float:right;width:74%;padding:5px;">
+		<div class="theme_title">{if isset($themeInfo.title)}{$themeInfo.title}{else}-{/if}</div>
+		<div class="theme_desc">{if isset($themeInfo.description)}{$themeInfo.description}{else}-{/if}</div>
+		<div class="theme_info">
+			<table class="ow_table_3" style="width:100px">
+				<tr class="ow_tr_first">
+					<td class="ow_label">{text key='admin+theme_info_version_label'}:</td>
+					<td class="ow_value">{if isset($themeInfo.version)}{$themeInfo.version}{else}-{/if}</td>
+				</tr>
+				<tr>
+					<td class="ow_label">{text key='admin+theme_info_compatibility_label'}:</td>
+					<td class="ow_value">{if isset($themeInfo.compatibility)}{$themeInfo.compatibility}{else}-{/if}</td>
+				</tr>
+				<tr>
+					<td class="ow_label">{text key='admin+theme_info_author_label'}:</td>
+					<td class="ow_value">{if isset($themeInfo.author)}{$themeInfo.author}{else}-{/if}</td>
+				</tr>
+				<tr class="ow_tr_last">
+					<td class="ow_label">{text key='admin+theme_info_author_url_label'}:</td>
+					<td class="ow_value">{if isset($themeInfo.authorUrl)}<a href="{$themeInfo.authorUrl}">{$themeInfo.authorUrl}</a>{else}-{/if}</td>
+				</tr>
+			</table>
+		</div>
+	</div>
+</div>
+{block_decorator name='box' type='empty' langLabel='admin+theme_settings_cap_label' iconClass='ow_ic_edit'}
+<div class="ow_superwide ow_automargin">
+{if isset($noControls) && $noControls}
+<div class="no_content">{text key='admin+theme_settings_no_controls_label'}</div>
+{else}
+{form name='theme-edit'}
+<table class="ow_form ow_table_1 theme_controls">
+{foreach from=$inputArray key='section' item='inputs'}
+   <tr class="ow_tr_first">
+	   <th colspan="10" style="text-align: left;">{$section}</th>
+   </tr>
+   {foreach from=$inputs item='input' name='i'}
+	<tr class="{cycle values='ow_alt1,ow_alt2' name=$section} {if $smarty.foreach.i.last}ow_tr_last{/if}">
+      <td class="ow_label">{$input.title}</td>
+      <td class="ow_value">{input name=$input.name}</td>
+      <td class="ow_desc">{if isset($input.desc)}{$input.desc}{/if}</td>
+      
+   </tr>
+   {/foreach}
+   <tr class="ow_tr_delimiter"><td></td></tr>
+{/foreach}
+       {capture name='resetLabel'}{text key='admin+theme_settings_reset_confirm_message'}{/capture}
+
+</table>
+    <div class="clearfix ow_stdmargin ow_btn_delimiter">
+        <div class="ow_right">
+            {decorator name="button" class='ow_red ow_ic_delete' langLabel='admin+themes_settings_reset_label' onclick="if(confirm('`$smarty.capture.resetLabel`')) window.location = '`$resetUrl`';"}    
+			{submit name='submit' class='ow_positive ow_btn_delimiter'}     
+        </div>
+    </div>
+{/form}
+{/if}
+</div>
+{/block_decorator}

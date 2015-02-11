@@ -1,0 +1,20 @@
+{style}
+{literal}
+.ow_box_toolbar span{
+display:inline-block;
+}
+{/literal}
+{/style}
+<ul class="ow_box_toolbar ow_remark ow_bl">
+    {foreach from=$data.itemList item='item' name='toolbar'}    
+    <li {if !empty($item.id)}id="{$item.id}"{/if}{if isset($item.display)} style="display:{$item.display}"{/if}{if !empty($item.class)} class="{$item.class}"{/if}{if isset($item.title)} title="{$item.title}"{/if}>
+        {if isset($item.href)}
+        <a{if isset($item.click)} onclick="{$item.click}"{/if}{if isset($item.rel)} rel="{$item.rel}"{/if} href="{$item.href}">{$item.label}</a>
+        {else}
+        {$item.label}
+        {/if}
+    </li>
+    {/foreach}
+</ul>
+
+

@@ -1,0 +1,29 @@
+{capture assign="back_url"}{url_for_route for="admin_pages_main"}{/capture}
+
+<div class="ow_stdmargin">{decorator name="button" class="ow_ic_left_arrow" onclick="location.href='`$back_url`';" langLabel="base+pages_back"}</div>
+{form name="edit-form"}
+<div class="ow_superwide ow_automargin">
+<table class="ow_table_1 ow_form">
+
+    <tr id="title-tr" class="{cycle values="ow_alt2, ow_alt1"} ow_tr_first">
+        <td class="ow_label">
+        	{label name="name"}
+       	</td>
+        <td class="ow_value">
+        	{input name="name"}
+        	<br />{error name="name"}
+        </td>        
+    </tr>
+
+    <tr class="{cycle values="ow_alt2, ow_alt1"} ow_tr_last" >
+        <td class="ow_label">{label name="visible-for"}</td>
+        <td class="ow_value">
+        	{input name="visible-for"}
+        	<br />{error name="visible-for"}
+       </td>
+    </tr>
+
+</table>
+<div class="clearfix ow_stdmargin"><div class="ow_right">{submit name="save" class="ow_positive"}</div></div>
+</div>
+{/form}

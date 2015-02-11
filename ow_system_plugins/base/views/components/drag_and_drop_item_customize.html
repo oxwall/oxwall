@@ -1,0 +1,42 @@
+<div {if !empty($box.avaliable_sections)}ow_avaliable_sections="{$box.avaliable_sections}"{/if} class="{if $box.clone}clone{/if}{if $box.freeze} ow_dnd_freezed{/if} access_{$box.access} clearfix component" id="{$box.uniqName}">
+    <div class="schem_component dd_handle" {if $render} style="display: none" {/if}>
+        <div class="ow_dnd_schem_item schem_component {$box.icon}" >
+            <span class="ow_label dd_title">
+                {$box.title}
+            </span>
+            <span class="action" style="display: none">
+                
+                <a class="ow_ic_gear_wheel dd_edit" href="javascript://;" title="{text key="base+widgets_action_edit"}">&nbsp;</a>
+                <a class="ow_ic_delete close dd_delete" href="javascript://;" title="{text key="base+widgets_action_delete"}">&nbsp;</a>
+                
+            </span>
+        </div>
+    </div>
+
+    {if $render}
+        <div class="view_component ow_dnd_widget ow_dnd_widget_customize {$box.uniqName}">
+            {capture name="boxCap"}
+                {if !$box.freeze}
+                    <div class="ow_box_icons actions">
+                        <a href="javascript://;" class="ow_ic_gear_wheel control dd_edit">&nbsp;</a>
+                        <a href="javascript://;" class="ow_ic_delete control dd_delete">&nbsp;</a>
+                    </div>
+                {/if}
+            {/capture}
+
+            {block_decorator name='box'
+                iconClass=$box.icon
+                label=$box.title
+                capAddClass="ow_dnd_configurable_component dd_handle clearfix"
+                capContent=$smarty.capture.boxCap
+                type=$box.type
+                addClass="ow_stdmargin clearfix"
+                toolbar=$box.toolbar}
+
+                {$content}
+
+            {/block_decorator}
+        </div>
+    {/if}
+
+</div>

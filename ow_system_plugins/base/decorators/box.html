@@ -1,0 +1,23 @@
+{if $data.capEnabled}
+<div class="ow_box_cap{$data.capAddClass}">
+	<div class="ow_box_cap_right">
+		<div class="ow_box_cap_body">
+			<h3 class="{$data.iconClass}">{$data.label}</h3>{$data.capContent}
+		</div>
+	</div>
+</div>
+{/if}
+<div class="ow_box{$data.addClass} ow_break_word"{if !empty($data.style)} style="{$data.style}"{/if}>
+{$data.content}
+{if !empty($data.toolbar)}
+    <div class="ow_box_toolbar_cont clearfix">
+	{decorator name='box_toolbar' itemList=$data.toolbar}
+    </div>
+{/if}
+{if empty( $data.type )}
+	<div class="ow_box_bottom_left"></div>
+	<div class="ow_box_bottom_right"></div>
+	<div class="ow_box_bottom_body"></div>
+	<div class="ow_box_bottom_shadow"></div>
+{/if}
+</div>

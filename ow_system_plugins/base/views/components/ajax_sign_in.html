@@ -1,0 +1,27 @@
+{style}
+{literal}
+.common_ajax_form input[type=text], .common_ajax_form input[type=password]{
+    width:160px;
+}
+
+.common_ajax_form{
+    padding:3px 0;
+}
+
+.common_ajax_form input[type=submit]{
+	padding:2px 7px 2px 28px;
+}
+
+{/literal}
+{/style}
+<div class="common_ajax_form clearfix">
+    {form name='ajax-sign-in'}
+	<div style="float:left;">
+    {input name='identity'}
+    {input name='password'}
+    </div>
+    <div style="float:left;padding:1px 2px 0 2px;">{input name='remember'}</div>
+    <div style="float:left;">{submit name='submit'}</div>
+    <div style="float:left;padding:2px 2px 0 4px;"><a class="ow_lbutton ow_red" title="{text key='base+forgot_password_label'}" href="{$forgot_url}">?</a></div>
+    {/form}
+</div>

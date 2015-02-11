@@ -1,0 +1,5 @@
+<ul class="ow_console_lang">
+    {foreach from=$languages item="language"}
+        <li class="ow_console_lang_item" onclick="location.href='{$language.url}';"><span class="{$language.class}">{$language.label}</span></li>
+    {/foreach}
+</ul>

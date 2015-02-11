@@ -1,0 +1,385 @@
+{$menu}
+
+<div class="ow_stdmargin">
+	<span class="ow_highlight" style="padding:1px 3px;">{text key="admin+page_note_part_1"}</span> {text key="admin+page_note_part_2"}
+</div>
+{script}
+{literal}
+$(document).ready( function(){
+	$('#s1, #s2').sortable({
+		items: 'tr.draggable-lang-item',
+		helper: 'clone',
+		placeholder: 'lang_placeholder',
+		start: function(event, ui){
+			$(ui.placeholder).append('<td colspan="3"></td>');
+		},
+
+		stop: function(event, ui){
+
+				switch( this ){
+					case $('#s1')[0]:
+
+						if( $('tr.draggable-lang-item', this).length == 0 )
+						{
+							alert( '{/literal}{text key="admin+msg_one_active_constraint"}{literal}' );
+
+							$(this).sortable('cancel');
+
+							$('#s1 tr.empty').remove();
+							break;
+						}
+
+						$('tr.draggable-lang-item:odd', this).each(function(){
+
+							if( !$(this).hasClass('ow_even') ) $(this).addClass('ow_even');
+						});
+
+
+						$('tr.draggable-lang-item:even', this).each(function(){
+							if( $(this).hasClass('ow_even') ) $(this).removeClass('ow_even');
+						});
+						break;
+				}
+			},
+
+		receive: function(event, ui){
+					switch(this){
+						case $('#s1')[0] :
+							$('tr.draggable-lang-item', this).each( function(){
+								$('td:nth(2) div span a.deact', this).show(); $('td:nth(2) div span a.act', this).hide(); $('td:nth(2) div span a.del', this).hide();
+
+                                 if( $(this).hasClass('ow_high2') ){
+                                    $(this).removeClass('ow_high2');
+                                }
+							} );
+
+                           $( 'td:nth(2) div span a.deact', $('tr.draggable-lang-item', this).get(0) ).hide();
+
+						if( $('tr.draggable-lang-item', this).length == 0 )
+						{
+							alert( '{text key="admin+msg_one_active_constraint"}' );
+
+							$(this).sortable('cancel');
+							$('#s1 tr.empty').remove();
+							break;
+						}
+
+						$('tr.draggable-lang-item:odd', this).each(function(){
+							if( !$(this).hasClass('ow_even') ) $(this).addClass('ow_even');
+						});
+
+
+						$('tr.draggable-lang-item:even', this).each(function(){
+							if( $(this).hasClass('ow_even') ) $(this).removeClass('ow_even');
+						});
+
+							break;
+
+						case $('#s2')[0]:
+							if($('tr.draggable-lang-item', ui.sender).length == 0) break;
+							$('tr.draggable-lang-item', this).each( function(){
+
+								$('td:nth(2) div span a.deact', this).hide(); $('td:nth(2) div span a.act', this).show(); $('td:nth(2) div span a.del', this).show();
+
+								if( $(this).hasClass('ow_even') )
+									$(this).removeClass('ow_even');
+
+									if( !$(this).hasClass('ow_high2') )
+										$(this).addClass('ow_high2');
+							} ) ;
+							break;
+					}
+				},
+
+		update: function(event, ui){
+				if( ui.sender ){
+					if($('tr', ui.sender[0]).length == 0) $( ui.sender[0] ).append('<tr class="empty"><td colspan="3">{/literal}{text key="admin+empty"}{literal}</td></tr>');
+					return;
+				}
+
+				if( $('#s1 tr.empty').length == 1 && $('#s1 tr.draggable-lang-item').length > 0 )
+					$('#s1 tr.empty').remove();
+
+				if( $('#s2 tr.empty').length == 1 && $('#s2 tr.draggable-lang-item').length > 0 )
+					$('#s2 tr.empty').remove();
+
+
+                $('tr.draggable-lang-item', '#s1').each( function(){
+								$('td:nth(2) div span a.deact', this).show();
+				});
+
+                $( 'td:nth(2) div span a.deact', $('tr.draggable-lang-item', '#s1').get(0) ).hide();
+
+				var set = {};
+
+				$('tr.draggable-lang-item', '#s1').each(function(i){
+					set['active['+i+']'] = parseInt( $('input:hidden', this).attr('value') );
+				});
+
+				$('tr.draggable-lang-item', '#s2').each(function(i){
+					set[ 'inactive['+i+']' ] = parseInt( $('input:hidden', this).attr('value') );
+				});
+
+				if( $('tr.draggable-lang-item', '#s1').length == 0 ) return;
+
+				$('td:nth(0) span.ow_mild_green', $('tr.draggable-lang-item', '#s1, #s2')).remove();
+
+				$('td:nth(0)', $('tr.draggable-lang-item', '#s1')[0]).append(
+						{/literal}'<span class="ow_mild_green ow_small">{text key="admin+def"}</span>'
+						{literal}
+					);
+
+				$.ajax( {
+					type: "POST",
+					url: '{/literal}{url_for for="ADMIN_CTRL_Languages:ajaxOrder"}{literal}',
+					data: set
+				});
+		},
+
+		connectWith: '#s1, #s2'
+	}).each( function(){
+		$('tr.draggable-lang-item', this).hover(
+				function(){ $('td:nth-child(3) div span', this).show() },
+				function(){ $('td:nth-child(3) div span', this).hide() }
+			);
+
+		if ($('tr.draggable-lang-item', this).length == 0)
+			$(this).append( '<tr class="empty"><td colspan="3">{/literal}{text key="admin+empty"}{literal}</td></tr>' );
+		} );
+});
+{/literal}
+{/script}
+{style}
+{literal}
+.lang_placeholder {
+	border: 1px dashed grey;
+	width: 100%;
+}
+
+tr.lang_placeholder td{
+	border: 1px dashed grey;
+	width: 100%;
+	height: 35px;
+}
+
+.draggable-lang-item{
+	cursor: move;
+}
+{/literal}
+{/style}
+
+<div class="ow_superwide ow_automargin ow_stdmargin">
+<a name="lang_list"></a>
+<table id="langs" class="ow_table_1">
+    <tr class="ow_tr_first">
+        <th class="ow_center">{text key="admin+active_languages"}</th>
+        <th width="100">{text key="admin+missing_keys2"}</th>
+        <th width="180"></th>
+    </tr>
+    <tbody id="s1" class="s">
+	{foreach from=$active_langs item='lang' name="active_langs"}
+    <tr class="ow_high1 draggable-lang-item {if $smarty.foreach.active_langs.last}ow_tr_last{/if}">
+        <td style="text-align:left;"><input type="hidden" value="{$lang.id}">
+        	{$lang.label} {if $smarty.foreach.active_langs.first}<span class="ow_mild_green ow_small">{text key="admin+def"}</span>{/if}
+       	</td>
+
+        <td class="ow_center">
+        	<a href="{if $devMode}{url_for_route for="admin_developer_tools_language"}{else}{url_for for="ADMIN_CTRL_Languages:"}{/if}?language={$lang.tag}&prefix=missing-text">{$lang.missing_key_count}</a>
+       	</td>
+
+        <td>
+        	<div style="width:250px;height: 20px;" class="ow_center">
+	        	<span style="display: none;">
+		            <a class="ow_lbutton" href="{url_for for="ADMIN_CTRL_Languages:index"}?language={$lang.tag}">{text key="admin+btn_label_edit_values"}</a>
+                    <a class="ow_lbutton" href="javascript://" onclick="OW.ajaxFloatBox('ADMIN_CMP_LangEdit',['{$lang.id}'], {literal}{{/literal}width:600, iconClass: 'ow_ic_edit', title: '{text key='admin+edit_langs_cap_label'}'{literal}}{/literal})">{text key="admin+btn_label_edit"}</a>
+		            <a class="ow_lbutton" onclick="$('form[name=clone-form] input:hidden[name=language]').attr('value', '{$lang.tag}'); new OW_FloatBox({ldelim}$title: '{text key='admin+clone_language_cap_label'}', $contents: $('#clone_cont'), width: '420px'{rdelim})" href="javascript://">{text key="admin+btn_label_clone"}</a>
+
+					<a class="ow_lbutton ow_green act" style="display: none;" href="{url_for for="ADMIN_CTRL_Languages:activate"}?language={$lang.tag}">{text key="admin+btn_label_activate"}</a>
+                    <a class="ow_lbutton ow_red deact" {if $smarty.foreach.active_langs.first}style="display: none;"{/if}href="{url_for for="ADMIN_CTRL_Languages:deactivate"}?language={$lang.tag}">{text key="admin+btn_label_deactivate"}</a>
+		            <a class="ow_lbutton ow_red del" style="display: none;" href="{url_for for="ADMIN_CTRL_Languages:delete"}?language={$lang.tag}">{text key="admin+btn_label_delete"}</a>
+	            </span>
+        	</div>
+        </td>
+    </tr>
+    {/foreach}
+	</tbody>
+	<tr class="ow_tr_delimiter"><td></td></tr>
+
+    <tr class="ow_tr_first ow_tr_last">
+        <th class="ow_center">{text key="admin+inactive_languages"}</th>
+        <th width="100">{text key="admin+missing_keys2"}</th>
+        <th width="180"></th>
+    </tr>
+
+	<tfoot id="s2" class="s">
+    {foreach from=$inactive_langs item='lang' name='inactive_lang'}
+    <tr class="ow_high2 draggable-lang-item {if $smarty.foreach.inactive_lang.last}ow_tr_last{/if}">
+        <td style="text-align:left;">
+        	<input type="hidden" value="{$lang.id}">
+        	{$lang.label}
+        </td>
+        <td class="ow_center">
+        	<a href="{url_for for="ADMIN_CTRL_Languages:index"}?language={$lang.tag}&prefix=missing-text">{$lang.missing_key_count}</a>
+       	</td>
+        <td>
+        	<div style="width: 250px; height: 20px;" class="ow_center">
+	        	<span style="display: none;">
+                    <a class="ow_lbutton" href="{url_for for="ADMIN_CTRL_Languages:index"}?language={$lang.tag}">{text key="admin+btn_label_edit_values"}</a>
+                    <a class="ow_lbutton" href="javascript://" onclick="OW.ajaxFloatBox('ADMIN_CMP_LangEdit',['{$lang.id}'], {literal}{{/literal}width:600, iconClass: 'ow_ic_edit', title: '{text key='admin+edit_langs_cap_label'}'{literal}}{/literal})">{text key="admin+btn_label_edit"}</a>
+		            <a class="ow_lbutton" onclick="$('form[name=clone-form] input:hidden[name=language]').attr('value', '{$lang.tag}'); new OW_FloatBox({ldelim}$title: '{text key='admin+clone_language_cap_label'}', $contents: $('#clone_cont'), width: '420px'{rdelim})" href="javascript://">{text key="admin+btn_label_clone"}</a>
+
+					<a class="ow_lbutton ow_green act" href="{url_for for="ADMIN_CTRL_Languages:activate"}?language={$lang.tag}">{text key="admin+btn_label_activate"}</a>
+                    <a class="ow_lbutton ow_red deact" style="display: none;" href="{url_for for="ADMIN_CTRL_Languages:deactivate"}?language={$lang.tag}">{text key="admin+btn_label_deactivate"}</a>
+	            	{if $lang.tag!='en' }<a class="ow_lbutton ow_red del" onclick="return confirm('{text key="admin+are_you_sure"}')" href="{url_for for="ADMIN_CTRL_Languages:delete"}?language={$lang.tag}">{text key="admin+btn_label_delete"}</a>{/if}
+	            </span>
+        	</div>
+        </td>
+    </tr>
+    {/foreach}
+    <tfoot>
+</table>
+</div>
+
+<div class="ow_superwide ow_automargin">
+{capture name='add_new_lang'}{text key="admin+add_new_lang_or_pack"}{/capture}
+
+{block_decorator name='box' addClass='ow_stdmargin' iconClass='ow_ic_add' label=$smarty.capture.add_new_lang}
+    <a name="lang_import"></a>
+	<p>
+        {text key="admin+import_lang_note"}
+	</p>
+
+	<div class="ow_box ow_superwide" style="text-align:center;margin:0 auto 20px; display: {if !$foo}block{else}none{/if};">
+		{form name="import"}
+		 {input name="command"}
+		 {label name="file"} {input name="file"} {submit name="submit" class="ow_ic_add"}
+		{/form}
+	</div>
+	{if $foo}
+		<form id="imp_form" method="POST" action="{url_for for="ADMIN_CTRL_Languages:import"}">
+		<input type="hidden" name="command" value="import-langs" />
+		<input type="hidden" name="imp-type" value="{$type}" />
+
+	    <table id="import_table" class="ow_table_2 ow_small ow_spc_import_language">
+	        <tr>
+	        	<td></td>
+	        	<td colspan="10" style="text-align:left;">{text key="admin+select_items_to_import_note"}</td>
+	        </tr>
+
+	        <tr>
+	        	<td></td>
+	        	{foreach from=$langsToImport item='lang' name="col"}
+	        	<th><input type="checkbox" onclick="$('input:checkbox.col_{$smarty.foreach.col.iteration}', $('#import_table') ).attr('checked', this.checked);"/> {$lang.label}</th>
+	        	{/foreach}
+	        </tr>
+
+	        {foreach from=$prefixesToImport item='prToImp' name='row'}
+	        <tr class="{cycle values="ow_alt1,ow_alt2"}">
+	        	<th style="text-align:left;">
+	        		<input type="checkbox" onclick="$('input:checkbox.row_{$smarty.foreach.row.iteration}', $('#import_table') ).attr('checked', this.checked);" />
+	        		{$prToImp.label}
+	       		</th>
+
+	        	{foreach from=$langsToImport item='lang' name='col'}
+				<td>
+					<input type="checkbox" class="col_{$smarty.foreach.col.iteration} row_{$smarty.foreach.row.iteration}" name="set[lang][lang_{$lang.tag}][]" value="{$prToImp.prefix}"/>
+				</td>
+	        	{/foreach}
+	        </tr>
+	        {/foreach}
+
+	        <tr>
+	        	<td></td>
+	        	<td colspan="10"><input type="checkbox" onclick="$('input:checkbox','#import_table').attr('checked', this.checked);" /> {text key="admin+lang_import_check_all"}</td>
+	        </tr>
+	    </table>
+		<div class="clearfix">
+			<div class="ow_right">
+			{decorator name="button" class="ow_positive" langLabel="admin+import_lang_button_label" extraString="onclick=\"$('#imp_form')[0].submit()\""}
+			</div>
+		</div>
+		</form>
+	{/if}
+{/block_decorator}
+
+{style}
+{literal}
+.ondrag-class{
+	background-color: #B2CCB2;
+}
+{/literal}
+{/style}
+
+<span id="exportInvite">
+	{capture name='export_lang'}{text key="admin+export_lang_header"}{/capture}
+    {block_decorator name='box' addClass='ow_stdmargin' iconClass='ow_ic_add' label=$smarty.capture.export_lang}
+    	<p style="padding-bottom:10px;">{text key="admin+export_lang_note"}</p>
+
+        <div class="ow_box_mod clearfix ow_smallmargin">
+            <div class="ow_right">
+                {decorator name="button" class="ow_ic_up_arrow" langLabel="admin+export_lang_button_label" extraString="onclick=\"$('#exportInvite').hide();$('#exportForm').show();\""}
+            </div>
+        </div>
+    {/block_decorator}
+</span>
+
+</div>
+
+<form id="exportForm" method="POST" style="display: none;">
+<input type="hidden" name="command" value="export-langs">
+
+	<table id="export_table" class="ow_table_2 ow_small ow_superwide ow_spc_inport_language ow_automargin">
+	    <tr>
+	    	<td></td>
+	    	<td colspan="10" style="text-align:left;">{text key="admin+export_lang_note2"}</td>
+	    </tr>
+	    <tr>
+            <td class="ow_left"><input type="checkbox" onclick="$('input:checkbox', '#export_table').attr('checked', this.checked);"/> {text key="admin+lang_import_check_all"}</td>
+	    	{foreach from=$langs item='lang' name="col"}
+	    	<th><input type="checkbox" onclick="$('input:checkbox.col_{$smarty.foreach.col.iteration}', $('#export_table') ).attr('checked', this.checked);"/> {$lang.label}</th>
+	    	{/foreach}
+	    </tr>
+	    {foreach from=$prefixes item='prefix' name="row"}
+	    <tr class="{cycle values="ow_alt1,ow_alt2"}" >
+	    	<th style="text-align: left;"><input type="checkbox" onclick="$('input:checkbox.row_{$smarty.foreach.row.iteration}', $('#export_table') ).attr('checked', this.checked);" /> {$prefix->getLabel()}</th>
+	    	{foreach from=$langs item='lang' name="col"}
+	    	<td><input type="checkbox" class="col_{$smarty.foreach.col.iteration} row_{$smarty.foreach.row.iteration}" name="set[lang][lang_{$lang.id}][prefix_{$prefix->getId()}]" value="{$prefix->getId()}"/></td>
+	    	{/foreach}
+	    </tr>
+	    {/foreach}
+	</table>
+	<div class="clearfix ow_stdmargin"><div class="ow_right">{decorator name="button" class="ow_ic_up_arrow ow_positive" langLabel="admin+export_lang_button_label2" extraString="onclick=\"$('#exportForm')[0].submit();\""}</div></div>
+</form>
+
+<div style="display: none;">
+	<div id="clone_cont">
+		{form name="clone-form"}
+			{input name="language"}
+			<table class="ow_table_1 ow_form">
+				<tr class="ow_alt2">
+					<td class="ow_label">
+						{label name="label"}
+					</td>
+                    <td class="ow_value" style="width:30%">
+						{input name="label"}
+					</td>
+                    <td class="ow_desc">
+						{desc name="label"}
+					</td>
+				</tr>
+				<tr class="ow_alt1">
+					<td class="ow_label">
+						{label name="tag"}
+					</td>
+                    <td class="ow_value">
+						{input name="tag"}
+					</td>
+					<td class="ow_desc">
+						{desc name="tag"}
+					</td>
+				</tr>
+			</table>
+			<div class="clearfix"><div class="ow_right">{submit name="submit" class="ow_positive"}</div></div>
+		{/form}
+	</div>
+</div>

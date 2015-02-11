@@ -1,0 +1,16 @@
+{if !empty($permissionMessage)}
+    <div class="owm_padding">
+        <div class="owm_box_nocap owm_anno">
+            {$permissionMessage}
+        </div>
+    </div>
+{else}
+    {add_content key="mobile.content.profile_view_top" userId=$userId}
+    <div class="owm_profile_block owm_bg_color_1">
+        {$header}
+        {$info}
+        {$about}
+        {$contentMenu}
+    </div>
+    {add_content key="mobile.content.profile_view_bottom" userId=$userId}
+{/if}

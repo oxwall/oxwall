@@ -1,0 +1,35 @@
+{style}
+    span.tag {
+        background: url("images/tag_bg.png") repeat-x scroll 0 0 #F8F8F8;
+        border: 1px solid #DCDCDC;
+        border-radius: 2px 2px 2px 2px;
+        float: left;
+        line-height: 22px;
+        margin-bottom: 3px;
+        margin-right: 4px;
+    }
+{/style}
+
+
+{form name='qst_add_form'}
+	<table class="ow_table_1 ow_form ow_admin_add_profile_question">
+		{foreach from=$formData key='formEl' item='field' name='f'}
+                    <tr class="{cycle values='ow_alt2,ow_alt1'} tr_{$formEl} {if $smarty.foreach.f.first}ow_tr_first{/if} {if $smarty.foreach.f.last}ow_tr_last{/if} {if empty($displayedFormElements[$formEl]) }ow_hidden{/if}">
+                        <td class="ow_label">
+                            {label name=$formEl}
+                        </td>
+                        <td class="ow_value">
+                            {input name=$formEl}
+                            <br/>
+                            {error name=$formEl}
+                        </td>
+                        <td class="ow_desc ow_small">{desc name=$formEl}</td>
+                    </tr>
+		{/foreach}
+	</table>
+    <div class="clearfix ow_stdmargin">
+        <div class="ow_right">
+             {submit name='qst_submit'}
+        </div>
+    </div>
+{/form}

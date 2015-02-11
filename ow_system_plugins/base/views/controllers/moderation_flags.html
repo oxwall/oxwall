@@ -1,0 +1,183 @@
+<script type="text/javascript">
+
+function MODERATION_FlagsInit( uniqId, options )
+{
+    var c = $("#" + uniqId);
+    
+    $("[data-checkall]", c).click(function() {
+        $("[data-item]", c).prop("checked", this.checked);
+    });
+
+    $("[data-command]", c).click(function() {
+        var node = $(this),
+            command = node.data("command"),
+            contentLabel = node.data("content"),
+            action = command.split(".")[0],
+            itemKey = node.data("item"),
+            form = $("#" + uniqId + "-form");
+            
+        var count = c.find("[data-item]:checked").length;
+        
+        if ( !contentLabel && !count ) {
+            alert(OW.getLanguageText("base", "moderation_no_items_warning"));
+            
+            return false;
+        }
+        
+        var deleteConfirmMsg = contentLabel
+            ? OW.getLanguageText("base", "moderation_delete_confirmation", { "content": contentLabel })
+            : OW.getLanguageText("base", "moderation_delete_multiple_confirmation", { "content": options.groupLabel, "count": count });
+
+        if ( action === "delete" && !confirm(deleteConfirmMsg) ) {
+            return false;
+        }
+
+        $(form.get(0)["command"]).val(command);
+        $(form.get(0)["item"]).val(itemKey);
+
+        form.submit();
+        
+        return false;
+    });
+    
+    
+    
+    (function() {
+        
+        var OFFSET = 40;
+        var stickers = [];
+        
+        function stick( sticker ) {
+            sticker.addClass("ow_moderation_sticked");
+        };
+        
+        function unstick( sticker ) {
+            sticker.removeClass("ow_moderation_sticked");
+        };
+        
+        $(document).on("scroll", function() {
+            var top = $(document).scrollTop();
+            $.each(stickers, function(i, sticker) {
+                if ( sticker.top - top <= OFFSET ) {
+                    stick(sticker.el);
+                } else {
+                    unstick(sticker.el);
+                }
+            });
+        });
+        
+        $(".ow_moderation_sticky").each(function() {
+            var sticker = {};
+            sticker.el = $(this);
+            sticker.top = sticker.el.position().top;
+                        
+            stickers.push(sticker);
+        });
+    })();
+}
+
+</script>
+
+
+{style}
+
+.ow_moderation_sticked {
+    position: fixed;
+    top: 40px;
+}
+
+{/style}
+
+{$menu}
+
+<div class="ow_moderation_wrap clearfix" id="{$uniqId}">
+    <div class="ow_moderation_sticky">
+        <div class="ow_smallmargin">
+            {$contentMenu}
+        </div>
+        <table class="ow_table_2">
+            <tbody>
+            <tr class="ow_tr_first ow_tr_last ow_alt1">
+                <td class="ow_txtleft" style="border-right: none;">
+                    <input type="checkbox" data-checkall="">
+                </td>
+                <td class="ow_txtleft" style="border-right: none;">
+                     <span>{text key='base+check_all_to'}</span>
+                </td>
+                <td>
+                    <div class="ow_moderation_label_bnts ow_left">
+                        <a data-command="unflag.multiple" class="ow_lbutton ow_smallmargin ow_green" href="javascript://">{text key='base+unflag'}</a>
+                        <br>
+                        <a data-command="delete.multiple" class="ow_lbutton ow_red" href="javascript://">{text key='base+delete'}</a>
+                    </div>
+                </td>
+            </tr>
+        </tbody></table>
+    </div>
+    <div class="ow_left" style="width: 100%;">
+
+        <form action="{$responderUrl}" method="post" id="{$uniqId}-form">
+            <input type="hidden" name="command" />
+            <input type="hidden" name="item" />
+            
+        <table class="ow_table_2 ow_margin ow_moderation_table">
+        <tbody>
+            <tr class="ow_tr_first">
+                <th>{$group.label}</th>
+                <th>{text key="base+moderation_reporter"}</th>
+                <th>{text key="base+moderation_reason"}</th>
+                <th>{text key="base+moderation_action"}</th>
+            </tr>
+                
+            {foreach from=$flags item="item"}
+            <tr class="ow_alt1">
+                <td>
+                    <div class="clearfix ow_moderation_content_wrap">
+                        <input type="checkbox" class="ow_left" data-item="{$item.entityType}:{$item.entityId}" name="items[]" value="{$item.entityType}:{$item.entityId}">
+                       <div class="ow_user_list_picture">
+                           {decorator name="avatar_item" data=$item.avatar}
+                        </div>
+                        <div class="ow_user_list_data">
+                            <div class="ow_moderation_string ow_txtleft ow_small ow_smallmargin">
+                                {$item.string}
+                            </div>
+                            <div class="ow_moderation_content ow_txtleft">
+                                {$item.content}
+                            </div>      
+
+                        </div>
+                    </div>
+                    <div class="ow_newsfeed_btns ow_small ow_remark clearfix">
+                        <span class="ow_nowrap create_time ow_newsfeed_date ow_small" style="line-height: 14px;">{text key="base+flagged_time" time=$item.time}</span>
+                    </div>
+                </td>
+                <td>
+                    <div class="ow_small">
+                        <a href="{$item.reporter.url}"><b>{$item.reporter.name}</b></a>
+                    </div>
+                </td>
+                <td>
+                    <div class="ow_small">
+                        {text key="base+flag_`$item.reason`"}
+                    </div>
+                </td>
+                <td class="ow_small">
+                    <div class="ow_moderation_label_bnts">
+                        <a data-command="unflag.single" data-item="{$item.entityType}:{$item.entityId}" data-content="{$item.contentLabel|strip_tags:false}" class="ow_lbutton ow_smallmargin ow_green" href="javascript://">{text key='base+unflag'}</a>
+                        <br />
+                        <a data-command="delete.single" data-item="{$item.entityType}:{$item.entityId}" data-content="{$item.contentLabel|strip_tags:false}" class="ow_lbutton ow_red" href="javascript://">{text key='base+delete'}</a>
+                    </div>
+                </td>
+            </tr>
+            {/foreach}
+        </tbody>
+        </table>
+            
+        </form>
+
+        <div class="ow_smallmargin">
+            {$paging}
+        </div>
+
+    </div>
+</div>

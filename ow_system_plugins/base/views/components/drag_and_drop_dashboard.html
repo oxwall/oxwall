@@ -1,0 +1,232 @@
+{script}{literal}
+    DND_InterfaceFix.fix('.place_section');
+{/literal}{/script}
+
+{style}{literal}
+	.hidden-placeholder {
+		display: none;
+	}
+        
+	.placeholder {
+            height: 10px;
+            border: 1px dashed #999999;
+            background-color: #FFF;
+	}
+
+	.dd_helper {
+	   border: 1px dashed #000;
+	}
+
+	.dd_handle {
+	   cursor: move;
+	}
+
+	.component .action {
+	       display: none;
+	}
+
+	.component .action .dd_delete {
+	       display: none;
+	}
+
+	#place_components .clone .action .dd_delete {
+	       display: inline;
+	}
+
+	.place_section .component .action .dd_delete {
+	       display: inline;
+	}
+
+	.place_section .dd_freezed {
+	   background-color: #FFAAAA;
+	}
+
+	#place_components .component {
+		float: left;
+	}
+
+	.place_section .component {
+
+	}
+
+	.place_section {
+	   min-height: 60px;
+        padding-top: 10px;
+	}
+
+	.view_component div{
+	   overflow: hidden;
+	}
+
+	.configurable_component .controll {
+		display: inline-block;
+		width: 18px;
+		height: 16px;
+		text-decoration: none;
+		background-position: center;
+		background-repeat: no-repeat;
+	}
+
+	.ow_box_cap_empty .controll {
+	    background-color: #FFFFFF;
+	}
+
+	.configurable_component .ow_box_icons {
+		float: right;
+		padding-top: 6px;
+	}
+
+	.configurable_component h3 {
+	    float: left;
+	}
+
+	.ow_dragndrop_panel {
+       background: #fff;
+	   padding: 0px 10px 10px;
+	   margin-top: 5px;
+	}
+
+	.ow_dragndrop_panel .ow_dnd_schem_item{
+	   width: 150px;
+	}
+
+	.ow_dragndrop_sections .ow_highbox{
+	   margin-top: 6px;
+	   margin-left: 3px;
+	   margin-right: 3px;
+	}
+
+	.content_components{
+	   padding: 10px 0;
+	   width: 74%;
+	}
+
+	.sidebar_components{
+	   border-left: 1px solid #ccc;
+	   padding: 10px 0 10px 10px;
+       width: 24%;
+	}
+
+
+ {/literal}{/style}
+
+
+{add_content key='base.widget_panel.content.top' placeName=$placeName}
+{add_content key='base.`$placeName`.content.top'}
+
+ <div style="display: none" id="fb_settings">
+     <div class="settings_title">
+        {text key="base+widgets_fb_setting_box_title"}
+     </div>
+     <div class="settings_content component_settings" style="min-height: 300px;"></div>
+     <div class="settings_controls component_controls">
+         {decorator name="button" class="dd_save ow_ic_save" langLabel="base+edit_button"}
+     </div>
+ </div>
+
+{block_decorator name='box' add_class='ow_highbox ow_stdmargin'}
+
+    <div class="ow_smallmargin ow_center">
+        {decorator name='button' label='Customize this page' class='ow_ic_gear_wheel'}
+        {decorator name='button' label='Finish customizing' class='ow_ic_lock'}
+    </div>
+
+    <div class="ow_dragndrop_panel">
+
+        {block_decorator name="box" iconClass="ow_ic_add" lang_label="components+section_box_title" type="empty" add_class="ow_smallmargin"}
+
+        <p>
+            <span class="ow_highlight">Drag'n'drop</span> items to the page to add features or custom components.
+            These are items activated by <a href="admin/plugins.php">plugins</a>. If you want an element to stay on all pages put it to the sidebar.
+        </p>
+        <p>
+	        Items visibility:
+	        <span class="ow_mild_green ow_small" style="border: 1px solid rgb(204, 204, 204); padding: 1px 3px;">users only</span>
+	        <span class="ow_mild_red ow_small" style="border: 1px solid rgb(204, 204, 204); padding: 1px 3px;">guests only</span>
+	        <span class="ow_box ow_small" style="border: 1px solid rgb(204, 204, 204); padding: 1px 3px;">everyone</span>
+	    </p>
+
+        <div class="clearfix">
+            <div class="content_components ow_left clearfix" id="place_components">
+                {foreach from=$componentList.place item="component"}
+                    {dd_component uniqName=$component.uniqName}
+                {/foreach}
+		   </div>
+		   <div class="sidebar_components ow_right" id="clonable_components">
+		        {foreach from=$componentList.clonable item="component"}
+		            {dd_component uniqName=$component.uniqName}
+		        {/foreach}
+		   </div>
+        </div>
+
+        {/block_decorator}
+    </div>
+
+{/block_decorator}
+
+<div class="ow_dragndrop_sections ow_stdmargin" id="place_sections">
+
+    <div class="clearfix">
+
+		<div class="ow_highbox place_section top_section" ow_place_section="top">
+
+		    {if isset($componentList.section.top)}
+		        {foreach from=$componentList.section.top item="component"}
+		            {dd_component uniqName=$component.uniqName render=true}
+		        {/foreach}
+		    {/if}
+
+		</div>
+
+		<div class="ow_dnd_slider" >
+               <div class="ow_dnd_slider_handle ow_ic_move_horizontal"></div>
+		    {foreach from=$schemeList item=scheme}
+			    <div class="ow_dnd_slider_item clearfix">
+                    <div class="ow_dnd_slider_pusher {$scheme.leftCssClass}"></div>
+                    <div class="ow_dnd_slider_marker{if $activeScheme.id == $scheme.id} current{/if}"
+                       ow_scheme="{$scheme.id}" dd_leftclass="{$scheme.leftCssClass}" dd_rightclass="{$scheme.rightCssClass}" >
+                    </div>
+                </div>
+               {/foreach}
+		</div>
+
+         <div class="clearfix" style="overflow: hidden;">
+
+	        <div class="ow_left ow_highbox place_section ow_column_equal_fix left_section {if isset($activeScheme.leftCssClass)}{$activeScheme.leftCssClass}{/if}" ow_scheme_class="{if isset($activeScheme.leftCssClass)}{$activeScheme.leftCssClass}{/if}"  ow_place_section="left">
+
+	            {if isset($componentList.section.left)}
+                    {foreach from=$componentList.section.left item="component"}
+                        {dd_component uniqName=$component.uniqName render=true}
+                    {/foreach}
+                {/if}
+
+            </div>
+
+            <div class="ow_right ow_highbox place_section ow_column_equal_fix right_section {if isset($activeScheme.rightCssClass)}{$activeScheme.rightCssClass}{/if}" ow_scheme_class="{if isset($activeScheme.rightCssClass)}{$activeScheme.rightCssClass}{/if}"  ow_place_section="right">
+
+                {if isset($componentList.section.right)}
+                    {foreach from=$componentList.section.right item="component"}
+                        {dd_component uniqName=$component.uniqName render=true}
+                    {/foreach}
+                {/if}
+
+            </div>
+
+         </div>
+
+	    <div class="ow_highbox place_section bottom_section" ow_place_section="bottom">
+
+            {if isset($componentList.section.bottom)}
+                {foreach from=$componentList.section.bottom item="component"}
+                    {dd_component uniqName=$component.uniqName render=true}
+                {/foreach}
+            {/if}
+
+        </div>
+
+	</div>
+
+</div>
+
+{add_content key='base.widget_panel.content.bottom' placeName=$placeName}
+{add_content key='base.`$placeName`.content.bottom'}

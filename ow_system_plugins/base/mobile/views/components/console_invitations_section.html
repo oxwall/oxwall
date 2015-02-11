@@ -1,0 +1,15 @@
+<div class="owm_sidebar_msg_block owm_invitation_block">
+    <div class="owm_sidebar_msg_block_cap" id="invitations-cap"><h3>{text key='base+console_item_invitations_label'}</h3></div>
+    <div class="owm_sidebar_msg_block_cont">
+        <ul class="owm_sidebar_msg_list" id="invitations-list">
+            {$itemsCmp}
+        </ul>
+        {if $loadMore}
+        <ul class="owm_sidebar_msg_list">
+        <li class="owm_sidebar_msg_item owm_sidebar_msg_load_more">
+            <a href="javascript://" id="invitations-load-more" class="owm_sidebar_load_more"></a>
+        </li>
+        </ul>
+        {/if}
+    </div>
+</div>

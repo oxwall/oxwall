@@ -1,0 +1,17 @@
+{if !empty($permissionMessage)}
+    <div class="ow_anno ow_center">
+        {$permissionMessage}
+    </div>
+{else}
+    <section>
+        <div class="owm_profile_block owm_bg_color_1">
+            {$header}
+            {$info}
+            {$about}
+            {$contentMenu}
+        </div>
+        <div class="content_item">
+            {$dnd}
+        </div>
+    </section>
+{/if}

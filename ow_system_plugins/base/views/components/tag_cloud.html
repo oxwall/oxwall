@@ -1,0 +1,8 @@
+{* Default tag cloud view file `BASE_CMP_TagCloud` *}
+{block_decorator name='box' addClass='ow_stdmargin' langLabel='base+tags_cloud_cap_label' iconClass='ow_ic_tag'}
+<div class="ow_tags_cont">
+{foreach from=$tags item='tag'}
+    <a href="{$tag.url}" style="font-size:{$tag.size}px;line-height:{$tag.lineHeight}px;">{$tag.label}</a>
+{/foreach}
+</div>
+{/block_decorator}

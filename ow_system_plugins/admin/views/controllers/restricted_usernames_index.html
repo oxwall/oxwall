@@ -1,0 +1,43 @@
+<div class="clearfix">
+    <div class="ow_column ow_left">
+        {block_decorator name="box" iconClass="ow_ic_edit" langLabel='admin+restrictedusernames_add_username'}
+        {form name='restrictedUsernamesForm'}
+        <table class="ow_form ow_automargin">
+            <tr>
+                <td class="ow_label ow_valign_middle">{label name='restrictedUsername'}</td>
+                <td class="ow_value ow_valign_middle">{input name='restrictedUsername' style="width:97%;" }<br />{error name='restrictedUsername'}</td>
+                <td class="ow_submit ow_valign_middle">{submit name='addUsername'}</td>
+            </tr>
+        </table>
+        {/form}
+        {/block_decorator}
+    </div>
+
+    <div class="ow_column ow_right">
+        {block_decorator name="box_cap" type='empty' iconClass="ow_ic_monitor" langLabel='admin+restrictedusernames_restricted_list_label'}
+        {/block_decorator}
+
+        <table class="ow_table_2">
+	        {foreach from=$restricted_list item='item' name='item'}
+            <tr class="{cycle values='ow_alt1, ow_alt2'} {if $smarty.foreach.item.first}ow_tr_first{/if}{if $smarty.foreach.item.last}ow_tr_last{/if}" onmouseover="$('span.del-cont', this).show();" onmouseout="$('span.del-cont', this).hide();">
+                <td style="width: 90%;">
+                    <div class="ow_left ow_txtleft">
+		        		{$item->username}
+                    </div>
+                </td>
+                <td class="ns-hover-block">
+                    <div style="width: 50px;">
+                        <span class="del-cont" style="display: none;">
+                            <a class="ow_lbutton ow_red" href="{url_for for="ADMIN_CTRL_RestrictedUsernames:delete"}?username={$item->username}"
+		                    		onclick="return(confirm('{text key="admin+are_you_sure"}'));">
+		                    		{text key="admin+delete"}
+                        </a>
+                    </span>
+                </div>
+            </td>
+        </tr>
+	        {/foreach}
+    </table>
+
+</div>
+</div>

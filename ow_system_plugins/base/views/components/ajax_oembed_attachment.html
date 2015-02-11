@@ -1,0 +1,188 @@
+{style}{literal}
+.ow_oembed_attachment {
+    position: relative;
+    padding-right: 20px;
+    margin-bottom: 4px;
+}
+
+.ow_oembed_attachment .two_column  .attachment_left {
+    float: left;
+    max-width: 150px;
+    margin-right: 8px;
+}
+
+.ow_oembed_attachment .two_column .attachment_right {
+    display: inline-block;
+}
+
+.ow_oembed_attachment .video div.attachment_left {
+    position: relative;
+}
+
+.ow_oembed_attachment .video div.attachment_right {
+    display: inline-block;
+}
+
+.ow_oembed_attachment .one_column .attachment_left {
+    display: none;
+}
+
+.ow_oembed_attachment .attachment_left img
+{
+    width: 100%;
+    height: auto;
+    max-width: none;
+}
+
+.ow_oembed_attachment .attachment_left embed,
+.ow_oembed_attachment .attachment_left object,
+.ow_oembed_attachment .attachment_left iframe
+{
+    width: 300px;
+    height: 220px;
+}
+
+.ow_oembed_attachment:hover .attachment_delete {
+    display: block;
+}
+
+.attachment_delete {
+    position: absolute;
+    right: 0;
+    width:12px;
+    height:12px;
+    display: none;
+}
+.ow_oembed_attachment .link.two_column,
+.ow_oembed_attachment .video.two_column {
+    padding-left: 108px;
+}
+
+.ow_oembed_attachment .video.two_column.ow_video_playing {
+    padding-left: 0;
+}
+.ow_oembed_attachment .link.two_column .attachment_left,
+.ow_oembed_attachment .video.two_column .attachment_left {
+    max-width: 100px;
+    margin-left: -108px;
+    margin-top: 4px;
+}
+.ow_oembed_attachment .video.two_column.ow_video_playing .attachment_left {
+    margin: 0 0 4px 0;
+    width: 100%;
+    max-width: none;
+}
+.ow_oembed_attachment .link .ow_oembed_video_cover {
+    display: none;
+}
+{/literal}{/style}
+
+{*
+<div class="ow_ajax_oembed_attachment ow_oembed_attachment ow_border clearfix {if !empty($containerClass)}{$containerClass}{/if}" id="{$uniqId}">
+
+    <a class="attachment_delete OW_AttachmentDelete ow_miniic_delete {if !empty($deleteClass)}{$deleteClass}{/if}" href="javascript://"></a>
+
+    <div style="padding-right: 20px;">
+        <div class="{$data.type} {if !empty($data.thumbnail_url) || !empty($data.url)}has_thumbnail{elseif !empty($data.html)}has_html{/if} {if !empty($data.title) || !empty($data.description) }two_column{elseif $data.type !='photo'}one_column{/if}">
+            <div class="attachment_left">
+                {if !empty($data.thumbnail_url) }
+                    <a href="{$data.href}" target="_blank">
+                        <img src="{$data.thumbnail_url}" class="attachment_thumb OW_AttachmentImage" />
+                    </a>
+                {elseif !empty($data.url)}
+                <a href="javascript://" onclick="OW.showImageInFloatBox('{$data.href}');">
+                        <img src="{$data.url}" class="attachment_thumb from_fullsize_photo OW_AttachmentImage" />
+                    </a>
+                {elseif !empty($data.html)}
+                    {$data.html}
+                {/if}
+
+                {if !empty($data.allImages) && count($data.allImages) > 1}
+                    <div class="attachment_other_images">
+                        <a href="javascript://" class="attachment_other_images_btn OW_AttachmentSelectPicture ow_lbutton">{text key="base+ajax_attachment_select_image"}</a>
+                        <div style="display: none">
+                            <div class="attachment_other_images_fbtitle OW_AttachmentPicturesFbTitle">{text key="base+ajax_attachment_select_image_title"}</div>
+                            <div class="attachment_other_images_fbcontent clearfix OW_AttachmentPicturesFbContent">
+                                {foreach from=$data.allImages item="img"}
+                                    <div class="attachment_image_item ow_border OW_AttachmentPictureItem">
+                                        <img src="{$img}" />
+                                    </div>
+                                {/foreach}
+                            </div>
+                        </div>
+                    </div>
+                {/if}
+
+            </div>
+            <div class="attachment_right ">
+                {if !empty($data.title)}
+                    <div class="attachment_title"><a href="{$data.href}" target="_blank">{$data.title}</a></div>
+                {elseif $data.type != "photo"}
+                    <div class="attachment_title"><a href="{$data.href}" target="_blank">{$data.href}</a></div>
+                {/if}
+                {if !empty($data.description)}
+                    <div class="attachment_desc ow_remark">{$data.description}</div>
+                {/if}
+            </div>
+        </div>
+    </div>
+</div>
+
+*}
+
+{if $data.type == "photo"}
+<div class="ow_comment_attachment ow_photo_attachment_preview ow_smallmargin" id="{$uniqId}">
+    {if !empty($data.thumbnail_url) }
+    <a href="{$data.href}" target="_blank" class="ow_photo_attachment_pic ow_attachment_preload" style="background-image: url({$data.thumbnail_url});">
+        <div class="ow_attachment_delete ow_miniic_delete OW_AttachmentDelete"></div>
+    </a>
+    {elseif !empty($data.url)}
+    <a href="javascript://" class="ow_photo_attachment_pic ow_attachment_preload" onclick="OW.showImageInFloatBox('{$data.href}');" style="background-image: url({$data.url});">
+        <div class="ow_attachment_delete ow_miniic_delete OW_AttachmentDelete"></div>
+    </a>
+    {/if}
+</div>
+{else}
+<div class="ow_comment_attachment ow_oembed_attachment_preview ow_smallmargin" id="{$uniqId}">
+    {if !empty($data.thumbnail_url) || !empty($data.url)}
+        <div class="ow_oembed_attachment_pic">
+            
+            {if !empty($data.thumbnail_url) }
+                <a href="{$data.href}" target="_blank">
+                    <img src="{$data.thumbnail_url}" class="attachment_thumb OW_AttachmentImage" />
+                </a>
+            {elseif !empty($data.url)}
+                <a href="javascript://" onclick="OW.showImageInFloatBox('{$data.href}');">
+                    <img src="{$data.url}" class="attachment_thumb from_fullsize_photo OW_AttachmentImage" />
+                </a>
+            {/if}
+            
+            {if !empty($data.allImages) && count($data.allImages) > 1}
+                <a href="javascript://" class="attachment_other_images_btn ow_lbutton OW_AttachmentSelectPicture">{text key="base+ajax_attachment_select_image"}</a>
+                
+                <div style="display: none">
+                    <div class="attachment_other_images_fbtitle OW_AttachmentPicturesFbTitle">{text key="base+ajax_attachment_select_image_title"}</div>
+                    <div class="attachment_other_images_fbcontent clearfix OW_AttachmentPicturesFbContent">
+                        {foreach from=$data.allImages item="img"}
+                            <div class="attachment_image_item ow_border OW_AttachmentPictureItem">
+                                <img src="{$img}" />
+                            </div>
+                        {/foreach}
+                    </div>
+                </div>
+            {/if}
+        </div>
+    {/if}
+    
+    <div class="ow_attachment_title">
+        {if !empty($data.title)}
+            <a href="{$data.href}" target="_blank">{$data.title}</a>
+        {/if}
+        <a class="ow_attachment_delete ow_miniic_delete OW_AttachmentDelete" href="javascript://"></a>
+    </div>
+    
+    {if !empty($data.description)}
+        <div class="ow_attachment_description ow_remark">{$data.description}</div>
+    {/if}
+</div>
+{/if}

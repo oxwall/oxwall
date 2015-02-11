@@ -1,0 +1,15 @@
+<ul class="ow_console_dropdown">
+    {foreach from=$items key="section" item="sitems" name="cddm"}
+        {foreach from=$sitems item="item"}
+            <li class="{if !empty($item.class)}{$item.class}{/if} ow_dropdown_menu_item ow_cursor_pointer" >
+                <div class="ow_console_dropdown_cont">
+                    <a href="{$item.url}">{$item.label}</a>
+                </div>
+            </li>
+        {/foreach}
+
+        {if !$smarty.foreach.cddm.last}
+            <li><div class="ow_console_divider"></div></li>
+        {/if}
+    {/foreach}
+</ul>

@@ -1,0 +1,12 @@
+<div class="owm_profile_nav">
+    <ul class="owm_profile_nav_list clearfix">
+        {foreach from=$actions item='action'}
+            <li>
+                <a {$action.attrs}>
+                    <span class="owm_profile_nav_img{if !empty($action.class)} {$action.class}{/if}"{if !empty($action.img)} style="background-image: url({$action.img})"{/if}></span>
+                    <span class="owm_profile_nav_txt">{$action.label}</span>
+                </a>
+            </li>
+        {/foreach}
+    </ul>
+</div>

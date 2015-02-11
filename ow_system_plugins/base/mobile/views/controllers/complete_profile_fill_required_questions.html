@@ -1,0 +1,30 @@
+<div class="owm_join_form owm_std_margin_top">
+    {form name=requiredQuestionsForm}
+        {foreach from=$questionArray key='section' item='questions' name='section'}
+                {if !empty($section) }
+                    <div class="owm_section owm_std_margin_bottom">
+                        <span class="owm_section_label">{text key="base+questions_section_`$section`_label"}</span><div class="owm_section_border"></div>
+                    </div>
+                {/if}
+                {foreach from=$questions item='question' name='question'}
+                    {if in_array( $question.presentation, array('text', 'password') ) }
+                        <div class="owm_field_container owm_small_margin_bottom {* if !empty($question.required)}owm_field_required{/if *} {if !empty($question.trClass)}{$question.trClass}{/if}">
+                            <div class="{if !empty($presentationToClass[$question.presentation]) }{$presentationToClass[$question.presentation]}{else}owm_field_wrap{/if}">{input name=$question.name}</div>
+                            <div class="owm_error_txt">{error name=$question.name}</div>
+                        </div>
+                    {else}
+                        <div class="owm_field_container owm_std_margin_bottom {* if !empty($question.required)}owm_field_required{/if *} {if !empty($question.trClass)}{$question.trClass}{/if}">
+                            <div class="owm_form_label owm_small_margin_bottom">{label name=$question.name}</div>
+                            <div class="{if !empty($presentationToClass[$question.presentation]) }{$presentationToClass[$question.presentation]}{else}owm_field_wrap{/if}">
+                                {input name=$question.name}
+                            </div>
+                            <div class="owm_error_txt">{error name=$question.name}</div>
+                        </div>
+                    {/if}
+                {/foreach}
+        {/foreach}
+        <div class="owm_btn_wide owm_std_margin_top">
+            {submit name='submit'}
+        </div>
+    {/form}
+</div>

@@ -1,0 +1,15 @@
+{style}
+    .owm_profile_desc {
+        display: block;
+    }
+{/style}
+
+{if $previewMode}
+<a href="{$aboutUrl}" class="owm_profile_desc owm_box_wrap owm_bg_color_2 owm_std_margin_bottom">
+    {$aboutMe}
+</a>
+{else}
+    <div class="owm_profile_desc_all owm_box_wrap owm_bg_color_1 owm_std_margin_bottom">
+        {$aboutMe}
+    </div>
+{/if}

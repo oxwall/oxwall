@@ -1,0 +1,23 @@
+{form name='sign-in'}
+<div class="owm_login_form">
+    <div class="clearfix owm_std_margin_top">
+        <div class="owm_login_txt owm_float_left">
+            {text key='base+base_sign_in_cap_label'}
+        </div>
+        <a href="{url_for_route for='base_forgot_password'}" class="owm_forgot_txt owm_float_right">{text key='base+forgot_password_label'}</a>
+    </div>
+    <div class="owm_login_field owm_login_username">
+        {input name='identity'}
+    </div>
+    <div class="owm_login_field owm_login_pass">
+        {input name='password'}
+    </div>
+    <div style="display:none;">{input name='remember'}{label name='remember'}</div>
+    <div class="owm_btn_wide owm_btn_positive owm_std_margin_top">
+        {submit name='submit'}
+    </div>
+</div>
+{/form}
+
+{component class="BASE_MCMP_ConnectButtonList"}
+

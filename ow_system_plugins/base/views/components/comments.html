@@ -1,0 +1,50 @@
+<div id="{$cmpContext}" class="{if $mini}ow_comments_mipc{else}ow_comments_ipc{/if}{if $bottomList} ow_comments_form_top{/if}{if empty($formCmp)} ow_comments_no_form{/if}">
+   {capture name='comments'}
+   {if $topList}
+   <div class="comments_list_cont">
+	   {$commentList}
+   </div>
+   {/if}
+   {if isset($formCmp)}
+      <div class="ow_comments_form_wrap_pre" style="display:none;"></div>
+      <div class="ow_comments_form_wrap">
+      <div class="ow_comments_input_wrap clearfix">
+            <div class="ow_comments_item_picture">{decorator name='avatar_item' data=$currentUserInfo}</div>
+            <div class="ow_comments_item_info clearfix"><span class="comment_add_arr"></span>
+                <div class="ow_comments_input">
+                    <span class="ow_attachment_icons">
+                        <div class="ow_attachments clearfix">
+                            {if !empty($attch)}<a href="javascript://" class="image" id="{$buttonContId}">{/if}
+                                
+                            </a>
+                        </div>
+                    </span>
+                    <textarea id="{$taId}" class="comments_fake_autoclick invitation">{text key='base+comment_form_element_invitation_text'}</textarea>
+                </div>
+            </div>
+        </div>
+        {if !empty($attch)}{$attch}{/if}
+        <div id="{$attchId}"></div>
+        
+        <div class="clearfix comments_hidden_btn" style="display:none;">
+        <span class="ow_attachment_btn">{decorator name='button' langLabel='base+btn_label_send'}</span>
+        </div>
+        
+        </div>
+    {else}
+      <div class="ow_smallmargin ow_center ow_comments_msg">{$authErrorMessage}</div>
+   {/if}
+   {if $bottomList}
+   <div class="comments_list_cont">
+	   {$commentList}
+   </div>
+   {/if}
+   {/capture}
+   {if $wrapInBox}
+   {block_decorator name='box' type='empty' addClass='ow_add_comments_form ow_stdmargin' langLabel='base+comment_box_cap_label' iconClass='ow_ic_comment'}
+   {$smarty.capture.comments}
+   {/block_decorator}
+   {else}
+   {$smarty.capture.comments}
+   {/if}
+</div>

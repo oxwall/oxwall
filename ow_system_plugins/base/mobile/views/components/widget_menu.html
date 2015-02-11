@@ -1,0 +1,6 @@
+
+<div class="owm_box_menu owm_float_right">
+   {foreach from=$items item='tab'}{strip}
+        <a href="javascript://" id="{$tab.id}" class="owm_box_menu_item {if isset($tab.active) && $tab.active} owm_box_menu_item_active{/if}"><span>{$tab.label}</span></a>
+    {/strip}{/foreach}
+</div>

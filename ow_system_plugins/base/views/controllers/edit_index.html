@@ -1,0 +1,86 @@
+
+{literal}
+<script language="javascript" type="text/javascript">
+    $(function(){
+        $(".unregister_profile_button").click(
+            function() { window.location = {/literal}"{$unregisterProfileUrl}"{literal} }
+        );
+   });
+</script>
+{/literal}
+
+{if !empty($changePassword) }
+    {block_decorator name="box" type="empty" addClass="ow_superwide ow_automargin" }
+        <div class="clearfix ow_stdmargin"><div class="ow_right">{$changePassword}</div></div>
+    {/block_decorator}
+{/if}
+
+{block_decorator name="box" type="empty" addClass="ow_superwide ow_automargin"}
+{if isset($editSynchronizeHook)}
+    {block_decorator name="box" addClass="ow_center" iconClass='ow_ic_update' langLabel='base+edit_remote_field_synchronize_title' style="overflow:hidden;"}
+       {foreach from=$editSynchronizeHook item='item'}
+          {$item}
+       {/foreach}
+    {/block_decorator}
+    {block_decorator name="box" type="empty" addClass="ow_center" style="padding:15px;"}
+        {text key="base+join_or"}
+    {/block_decorator}
+{/if}
+
+{form name=editForm}
+    <table class="ow_table_1 ow_form ow_stdmargin">
+        {if $displayAccountType}
+            <tr class="ow_alt1 ow_tr_first">
+                <td class="ow_label">
+                    {label name='accountType'}
+                </td>
+                <td class="ow_value">
+                    {input name='accountType'}
+                    <div style="height:1px;"></div>
+                    {error name='accountType'}
+                </td>
+                <td class="ow_desc ow_small">
+
+                </td>
+            </tr>
+        {/if}
+        <tr class="ow_tr_delimiter"><td></td></tr>
+        {foreach from=$questionArray key='section' item='questions' name='question'}
+            {if !empty($section) }
+                <tr class="ow_tr_first"><th colspan="3">{text key="base+questions_section_`$section`_label"}</th></tr>
+            {/if}
+            
+            {foreach from=$questions item='question' name='question'}
+                {cycle assign='alt' name=$section values='ow_alt1,ow_alt2'}
+                <tr class=" {if $smarty.foreach.question.last}ow_tr_last{/if}">
+                    <td class="{$alt} ow_label">
+                        {label name=$question.name}
+                    </td>
+                    <td class="{$alt} ow_value">
+                        {input name=$question.name}
+                        <div style="height:1px;"></div>
+                        {error name=$question.name}
+                    </td>
+                    <td class="{$alt} ow_desc ow_small">
+                        {question_description_lang name=$question.name}
+                    </td>
+                </tr>
+            {/foreach}
+            {if !empty($section)}{if !$smarty.foreach.question.first}
+            <tr class="ow_tr_delimiter"><td></td></tr>
+            {/if}
+            {/if}
+        {/foreach}
+    </table>
+	<div class="clearfix ow_stdmargin{if !$isAdmin} ow_btn_delimiter{/if}">
+	   <div class="ow_right">
+		   {if !$isAdmin }
+				{decorator name="button" class="unregister_profile_button ow_ic_delete ow_red ow_negative" langLabel='base+delete_profile'}
+		   {/if}
+		   {submit name='editSubmit'}
+	   </div>
+	</div>
+
+
+{/form}
+{/block_decorator}

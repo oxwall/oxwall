@@ -1,0 +1,14 @@
+#PHP version
+php.version 5.0;
+
+#PHP extensions
+php.extensions PDO, mbstring, zip, zlib, ftp, json, dom, gd, mysql;
+
+#PHP.ini configuration
+ini.safe_mode off;
+
+#GD version
+gd.version 2;
+
+#GD image type support
+gd.support FreeType Support;

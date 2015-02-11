@@ -1,0 +1,26 @@
+<div class="ow_user_list_item clearfix{if isset($data.set_class)} {$data.set_class}{/if}"{if !empty($data.contId)} id="{$data.contId}"{/if}>
+
+    {if !empty($data.contextMenu)}
+        <div class="ow_uli_context_menu">
+            {$data.contextMenu}
+	</div>
+    {/if}
+    <div class="ow_user_list_picture">
+        {decorator name='avatar_item' data=$data.avatar}
+    </div>
+    <div class="ow_user_list_data">
+        {if !empty($data.userUrl)}
+        <a href="{$data.userUrl}">{$data.displayName}</a>
+        {else}
+            {if !empty($data.noUserLink)}{$data.displayName}{else}{user_link username=$data.username name=$data.displayName}{/if}
+        {/if}
+        <div class="ow_small">
+            {if !empty($data.content)}<div class="ow_remark ow_user_list_content">{$data.content}</div>{/if}
+            {if !empty($data.fields)}{$data.fields}{/if}
+            {if !empty($data.activity)}{$data.activity}{/if}
+        </div>
+    </div>
+        {if !empty($data.toolbar)}
+			{$data.toolbar}
+        {/if}
+</div>

@@ -1,0 +1,50 @@
+{style}
+{literal}
+.ow_active_plugins tr, .ow_inactive_plugins tr{
+    border-top:1px solid #ccc;
+}
+.ow_plugin_controls{
+    display:none;
+}
+.ow_plugin_update{
+    background:#ddddaa;
+}
+{/literal}
+{/style}
+{block_decorator name='box' type='empty' addClass='ow_stdmargin' iconClass='ow_ic_plugin' langLabel='admin+manage_plugins_active_box_cap_label'}
+   <table class="ow_superwide ow_active_plugins" style="margin:0 auto;">
+   	{foreach from=$plugins.active item='plugin'}
+        <tr class="ow_high1{if $plugin.update_url} ow_plugin_update{/if}" {literal}onmouseover="$('span.ow_plugin_controls', $(this)).css({display:'block'});" onmouseout="$('span.ow_plugin_controls', $(this)).css({display:'none'});"{/literal}>
+         <td style="padding: 10px 15px;">
+         	<b>{$plugin.title}</b>
+            <div class="ow_small">{$plugin.description}</div>
+         </td>
+         <td class="ow_small" style="text-align:right;width:235px;vertical-align:middle;">
+             <span class="ow_plugin_controls">
+                    {if $plugin.update_url}<a class="ow_lbutton ow_green" href="{$plugin.update_url}">{text key='admin+manage_plugins_update_button_label'}</a>{/if}
+                    {if $plugin.set_url}<a class="ow_lbutton" href="{$plugin.set_url}">{text key='admin+manage_plugins_settings_button_label'}</a>{/if}
+                    <a class="ow_lbutton ow_red" href="{$plugin.deact_url}">{text key='admin+manage_plugins_deactivate_button_label'}</a>
+                    {if $plugin.un_url}<a class="ow_lbutton ow_red" href="{$plugin.un_url}">{text key='admin+manage_plugins_uninstall_button_label'}</a>{/if}
+                </span>
+         </td>
+      </tr>
+      {/foreach}
+   </table>
+{/block_decorator}
+{block_decorator name='box' type='empty' addClass='ow_stdmargin' iconClass='ow_ic_trash' langLabel='admin+manage_plugins_inactive_box_cap_label'}
+   <table class="ow_superwide ow_inactive_plugins" style="margin:0 auto;">
+   	{foreach from=$plugins.inactive item='plugin'}
+      <tr class="ow_high2{if $plugin.update_url} ow_plugin_update{/if}" {literal}onmouseover="$('span.ow_plugin_controls', $(this)).css({display:'block'});" onmouseout="$('span.ow_plugin_controls', $(this)).css({display:'none'});"{/literal}>
+         <td style="padding: 10px 15px;">
+            <b>{$plugin.title}</b>
+            <div class="ow_small">{$plugin.description}</div>
+         </td>
+         <td class="ow_small" style="text-align:right;width:235px;vertical-align:middle;">
+             <span class="ow_plugin_controls">
+                <a class="ow_lbutton ow_green" href="{$plugin.active_url}">{text key='admin+manage_plugins_activate_button_label'}</a>
+             </span>
+         </td>
+      </tr>
+      {/foreach}
+   </table>
+{/block_decorator}

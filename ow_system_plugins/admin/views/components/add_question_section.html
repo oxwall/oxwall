@@ -1,0 +1,7 @@
+    <p>{text key='admin+questions_section_info_txt'}</p>
+    {block_decorator name="box" type="normal" addClass="ow_stdmargin ow_superwide ow_automargin ow_center"}
+            {form name="qst_add_section_form"}
+                <div style="display:inline;" >{label name='section_name'}: </div><div style="display:inline;" >{input name='section_name'}</div>
+                {decorator name='button' type="submit" buttonName="qst_new_section" class="ow_ic_add" langLabel='admin+questions_add_new_section_button'}<br><div style="color:red;">{error name='section_name'}</div>
+            {/form}
+    {/block_decorator}

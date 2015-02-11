@@ -1,0 +1,37 @@
+<div class="ow_automargin ow_wide">
+{block_decorator name='box' addClass='ow_stdmargin' type='empty'}
+    {capture assign="rolesPageUrl"}{url_for for='ADMIN_CTRL_Users:roles'}{/capture}
+    {text key='admin+permissions_go_to_role_management_page' url="$rolesPageUrl"}
+{/block_decorator}
+</div>
+
+<form method="post" action="{$formAction}">
+<div class="ow_admin_permissions ow_automargin ow_superwide ow_stdmargin ow_center">
+<table class="ow_table_2 ow_form ow_automargin ow_superwide">
+	<tr class="ow_tr_first">
+		<th>{text key='admin+permissions_role_actions_label'}</th>
+		{foreach from=$roles item='role'}
+		<th width='1'>{text key="base+authorization_role_`$role->name`"}</th>
+		{/foreach}
+	</tr>
+	{foreach from=$groupActionList item='groupAction' name='groupAction'}	
+	<tr>
+		<th colspan="{$colspanForRoles}">{if !empty($labels[$groupAction.name].label)}{$labels[$groupAction.name].label}{else}{$groupAction.name}{/if}</th>
+	</tr>
+	{foreach from=$groupAction.actions item='action' name='action'}
+	<tr class="{cycle values='ow_alt1,ow_alt2'}  {if $smarty.foreach.groupAction.last && $smarty.foreach.action.last}ow_tr_last{/if}">
+        {assign var='actionName' value=$action->name}
+		<td class="ow_label ow_autowidth">{if !empty($labels[$groupAction.name].actions[$actionName])}{$labels[$groupAction.name].actions[$actionName]}{else}{$actionName}{/if}</td>
+		{assign var='actionId' value=$action->id}		
+		{foreach from=$roles item='role'}
+			{assign var='roleId' value=$role->id}		
+		<td>{if !($action->availableForGuest == false && $roleId == $guestRoleId)}<input type="checkbox" name="perm[]" value="{$actionId}:{$roleId}" {if isset($perms.$actionId.$roleId)} checked="checked"{/if} />{/if}</td>
+		{/foreach}
+	</tr>
+	{/foreach}
+	{/foreach}
+</table>
+
+</div>
+<div class="clearfix ow_automargin ow_superwide"><div class="ow_right">{decorator name="button" langLabel='admin+permissions_index_save' class="ow_button ow_ic_save ow_positive" onclick='this.form.submit();'}</div></div>
+</form>

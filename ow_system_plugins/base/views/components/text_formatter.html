@@ -1,0 +1,42 @@
+{style}
+{literal}
+	.alignleft{
+		float: left;
+	}
+	.alignright{
+		float: right;
+	}
+	.aligncenter{
+		display: block;
+		margin-left: auto;
+		margin-right: auto;
+	}
+{/literal}
+{/style}
+
+{script}
+{literal}
+function openMediaPanel(type, isBB, selection){
+    selection = $("#{/literal}{$elId}{literal}").getSelection();
+	switch(type){
+		case 'image':
+			document.tfmp = new OW_FloatBox({$title: '{/literal}{text key='base+ws_button_label_image'}{literal}', 
+					width: '600px', 
+					height: '600px', 
+					$contents: '<center><iframe style="min-width: 550px; min-height: 500px;" src="{/literal}{url_for for="BASE_CTRL_MediaPanel:index:[plugin=>`$plugin`, type=>image]"}{literal}?eid={/literal}{$elId}{literal}&'+(isBB? 'bb=y': '')+(selection? '&sel_start='+selection['start']: '')+'"></iframe></center>'});
+			break;
+	}
+}
+{/literal}
+{/script}
+
+{foreach from=$controls item = 'ctrl'}
+	<button type="button" id="{$ctrl.id}"><span style="{if isset($ctrl.style)}{$ctrl.style}{/if}">{$ctrl.label}</span></button>
+{/foreach}
+<button type="button" onclick="openMediaPanel('image', {$bb});" class="ow_ic_picture" style="background-repeat: no-repeat; background-position: 50% 50%" id="{$ctrl.id}">&nbsp;</button>
+
+{if 0}{*todo: check*}
+<div style="padding: 3px;">
+	<div class="ow_ic_picture" style="cursor: pointer; width: 16px; height: 16px;" onclick="openMediaPanel('image', {$bb})" ></div>
+</div>
+{/if}

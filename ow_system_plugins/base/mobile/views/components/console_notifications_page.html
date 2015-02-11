@@ -1,0 +1,5 @@
+{foreach from=$items item="item"}
+    {$item}
+{foreachelse}
+    <div class="owm_padding owm_align_center">{text key='base+mobile_notifications_console_empty'}</div>
+{/foreach}

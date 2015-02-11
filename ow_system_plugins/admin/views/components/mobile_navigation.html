@@ -1,0 +1,190 @@
+{style}
+
+.ow_mobile_dd_sections {
+	width: 300px;
+}
+
+.ow_mobile_dd_sections_left,
+.ow_mobile_dd_sections_right {
+}
+
+.ow_mobile_dd_sections_left .ow_highbox,
+.ow_mobile_dd_sections_menu_new,
+.ow_mobile_dd_sections_menu_hidden {
+	padding: 0px 11px 16px;
+}
+
+.ow_mobile_dd_sections_left .ow_highbox {
+	padding-top: 6px; 
+}
+
+.ow_mobile_dd_sections_menu_new {
+	padding-bottom: 15px; 
+	border-bottom: 1px solid #ccc; 
+	margin-bottom: 5px;
+}
+
+.ow_mobile_dd_sections_left {
+    margin-right: 8px;
+}
+
+.ow_mobile_dd_sections_right {
+    border-left: 1px solid #CCCCCC;
+    margin-left: 8px;
+    margin-top: 5px;
+}
+
+.ow_mobile_dd_sections_menu_label {
+	color: #ccc; 
+	padding: 6px; 
+	text-transform: uppercase;
+}
+
+.ow_mobile_dd_sections_menu_bottom .ow_mobile_dd_sections_menu_label {
+	padding-top: 40px;
+}
+
+.ow_mobile_dd_sections_menu_hidden .ow_mobile_dd_sections_menu_label {
+	padding-bottom: 7px;
+}
+
+.ow_mobile_dd_sections .ow_dnd_schem_item {
+	padding-left: 5px;
+}
+
+.ow_mobile_dd_sections .dd_delete,
+.ow_mobile_dd_sections .dd_edit {
+	display: inline-block;
+	width: 18px;
+	height: 18px;
+	background-repeat: no-repeat;
+}
+
+.ow_mobile_dd_sections .component .schem_component .action .dd_delete:hover,
+.ow_mobile_dd_sections .component .schem_component .action .dd_edit:hover {
+	text-decoration: none;
+}
+
+.ow_mobile_dd_sections .ow_dnd_schem_item span.action {
+	right: 3px;
+	top: 7px;
+	width: 40px;
+}
+
+.ow_mobile_nav_setting_popup {
+    width: 500px;
+}
+
+/* My classes */
+
+.ow_mobile_dd_sections div.ow_dnd_schem_item {
+    background-image: none;
+}
+
+.ow_mobile_dnd_section {
+    min-height: 34px;
+}
+
+.dnd-item-moving {
+    opacity: 0.5;
+}
+
+.dnd-actions, 
+.dnd-section-new .component:hover .dnd-actions,
+html div.dnd-item-locked:hover .dnd-actions {
+    display: none;
+}
+
+.component:hover .dnd-actions {
+    display: block;
+}
+
+.dnd-actions .dnd-control {
+    cursor: pointer;
+}
+
+.dnd-item-locked {
+    opacity: 0.7;
+}
+
+.dnd-section-new .ow_dnd_placeholder {
+    display: none!important;
+}
+
+.dnd-section-hidden .dnd-item-custom .dnd-actions .dd_delete {
+    display: inline-block;
+}
+
+.dnd-section-hidden .dnd-actions .dd_delete {
+    display: none;
+}
+
+{/style}
+
+<div class="ow_dragndrop_sections ow_stdmargin ow_superwide ow_automargin">
+    <div class="clearfix" style="overflow: hidden;">
+        
+<!-- ======================= Begin of    Admin DragnDrop Sections ======================= -->
+
+        <div class="ow_mobile_dd_sections ow_left ow_column_equal_fix">
+            <div class="ow_mobile_dd_sections_left">
+                <div class="ow_highbox">
+                    <div class="ow_mobile_dd_sections_menu_top">
+                        <div class="ow_mobile_dd_sections_menu_label">{text key="mobile+admin_nav_top_section_label"}</div>
+                        <div class="ow_mobile_dnd_section dnd-section dnd-section-top" 
+                             data-key="top" data-alias="{$panels.top.key}" data-delegate="DefaultDelegate" data-relation="bottom, hidden">
+
+                            {foreach from=$panels.top.items item="item"}
+                                {dnd_item data=$item}
+                            {/foreach}
+
+                        </div>
+                    </div>
+                    
+                    <div class="ow_mobile_dd_sections_menu_bottom">
+                        <div class="ow_mobile_dd_sections_menu_label">{text key="mobile+admin_nav_bottom_section_label"}</div>
+                        <div class="ow_mobile_dnd_section dnd-section dnd-section-bottom" 
+                             data-key="bottom" data-alias="{$panels.bottom.key}" data-delegate="DefaultDelegate" data-relation="top, hidden">
+
+                            {foreach from=$panels.bottom.items item="item"}
+                                {dnd_item data=$item}
+                            {/foreach}
+
+                        </div>
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+
+        <div class="ow_mobile_dd_sections ow_left ow_column_equal_fix right_section ow_narrow">
+            <div class="ow_mobile_dd_sections_right">
+
+                <div class="ow_mobile_dd_sections_menu_new ow_mobile_dnd_section dnd-section dnd-section-new" 
+                     data-key="new" data-alias="{$panels.new.key}" data-delegate="NewDelegate" data-relation="top, bottom">
+
+                    {foreach from=$panels.new.items item="item"}
+                        {dnd_item data=$item}
+                    {/foreach}
+                    
+                </div>
+
+                <div class="ow_mobile_dd_sections_menu_hidden">   
+                    <div class="ow_mobile_dd_sections_menu_label">{text key="mobile+admin_nav_hidden_section_label"}</div>
+
+                    <div class="ow_mobile_dnd_section dnd-section dnd-section-hidden" 
+                         data-key="hidden" data-alias="{$panels.hidden.key}" data-delegate="HiddenDelegate" data-relation="top, bottom">
+                        {foreach from=$panels.hidden.items item="item"}
+                            {dnd_item data=$item}
+                        {/foreach}
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+
+<!-- ======================= End of Admin DragnDrop Sections ======================= -->
+
+     </div>
+</div>

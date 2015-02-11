@@ -1,0 +1,170 @@
+
+{style}{literal}
+	.hidden-placeholder {
+		display: none;
+	}
+
+	.dd_handle {
+       cursor: move;
+    }
+
+    .component .action {
+           display: none;
+    }
+
+    .component .action .dd_delete {
+           display: none;
+    }
+
+    #place_components .clone .action .dd_delete {
+           display: inline-block;
+    }
+
+    .place_section .component .action .dd_delete {
+           display: inline-block;
+    }
+
+    #place_components .component {
+        float: left;
+    }
+
+    .place_section {
+       min-height: 60px;
+       padding-top: 3px;
+    }
+
+    .component {
+       width: 200px;
+    }
+
+    .place_section .component {
+           width: auto;
+           margin-left: 4px;
+    }
+
+    .ow_dnd_slider {
+        margin: 10px 0 0;
+    }
+
+    .ow_dnd_locked_section {
+        opacity: 0.5;
+        filter: alpha(opacity=50)
+    }
+
+    .ow_dnd_locked_section .ow_dnd_placeholder {
+        display: none;
+    }
+
+ {/literal}{/style}
+
+ <div style="display: none" id="fb_settings">
+     <div class="settings_title">
+        {text key="base+widgets_fb_setting_box_title"}
+     </div>
+     <div class="settings_content component_settings" style="min-height: 300px;"></div>
+     <div class="settings_controls component_controls">
+         {decorator name="button" class="dd_save ow_ic_save" langLabel="admin+save_btn_label"}
+     </div>
+ </div>
+
+{block_decorator name='box' type='empty' add_class='ow_stdmargin'}
+
+<p>
+    {text key="base+widgets_admin_section_information"}
+
+</p>
+
+ <div class="clearfix ow_stdmargin">
+   <div class="clearfix" style="float:left;width:74%;" id="place_components">
+   	{foreach from=$componentList.place item="component"}
+   		{dd_component uniqName=$component.uniqName isClone=$component.clone}
+   	{/foreach}
+   </div>
+   <div style="float:right;width:24%;border-left:1px solid #ccc;padding-left:10px;" id="clonable_components">
+        {foreach from=$componentList.clonable item="component"}
+            {dd_component uniqName=$component.uniqName isClone=$component.clone}
+        {/foreach}
+   </div>
+</div>
+
+<div class="ow_dragndrop_sections ow_stdmargin ow_superwide ow_automargin" id="place_sections">
+
+    <div class="clearfix">
+
+        <div class="ow_highbox place_section top_section" ow_place_section="top">
+
+            {if isset($componentList.section.top)}
+                {foreach from=$componentList.section.top item="component"}
+                    {dd_component uniqName=$component.uniqName render=true}
+                {/foreach}
+            {/if}
+
+        </div>
+
+        <div class="ow_dnd_slider" >
+               <div class="ow_dnd_slider_handle ow_ic_move_horizontal"></div>
+            {foreach from=$schemeList item=scheme}
+                <div class="ow_dnd_slider_item clearfix">
+                    <div class="ow_dnd_slider_pusher {$scheme->leftCssClass}"></div>
+                    <div class="ow_dnd_slider_marker{if $activeScheme.id == $scheme->id} current{/if}"
+                       ow_scheme="{$scheme->id}" dd_leftclass="{$scheme->leftCssClass}" dd_rightclass="{$scheme->rightCssClass}" >
+                    </div>
+                </div>
+               {/foreach}
+        </div>
+
+         <div class="clearfix" style="overflow: hidden;">
+
+            <div class="ow_left ow_highbox place_section ow_column_equal_fix left_section {if isset($activeScheme.leftCssClass)}{$activeScheme.leftCssClass}{/if}" ow_scheme_class="{if isset($activeScheme.leftCssClass)}{$activeScheme.leftCssClass}{/if}"  ow_place_section="left">
+
+                {if isset($componentList.section.left)}
+                    {foreach from=$componentList.section.left item="component"}
+                        {dd_component uniqName=$component.uniqName render=true}
+                    {/foreach}
+                {/if}
+
+            </div>
+
+            <div class="ow_right ow_highbox place_section ow_column_equal_fix right_section {if isset($activeScheme.rightCssClass)}{$activeScheme.rightCssClass}{/if}" ow_scheme_class="{if isset($activeScheme.rightCssClass)}{$activeScheme.rightCssClass}{/if}"  ow_place_section="right">
+
+                {if isset($componentList.section.right)}
+                    {foreach from=$componentList.section.right item="component"}
+                        {dd_component uniqName=$component.uniqName render=true}
+                    {/foreach}
+                {/if}
+
+            </div>
+
+         </div>
+
+        <div class="ow_highbox place_section bottom_section" ow_place_section="bottom">
+
+            {if isset($componentList.section.bottom)}
+                {foreach from=$componentList.section.bottom item="component"}
+                    {dd_component uniqName=$component.uniqName render=true}
+                {/foreach}
+            {/if}
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<p>
+    {text key="base+widgets_admin_legend"}
+</p>
+{/block_decorator}
+
+{block_decorator name='box' iconClass='ow_ic_user' langLabel='base+widgets_admin_customization_box_title' addClass='ow_stdmargin' type='empty'}
+
+ <p>{text key="base+widgets_allow_customize_legend"}</p>
+   {block_decorator name='box' addClass='ow_automargin ow_wide ow_center'}
+      <input id="allow_customize_btn" type="checkbox"{if $customizeAllowed} checked="checked"{/if}/>
+      <label for="allow_customize_btn">{text key='base+widgets_allow_customize_label'}</label>
+   {/block_decorator}
+
+
+{/block_decorator}
+

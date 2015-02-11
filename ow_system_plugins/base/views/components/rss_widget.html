@@ -1,0 +1,21 @@
+
+{foreach name='feed' from=$rss item="item"}
+    {capture assign='info'}
+        {if !$titleOnly}
+            {$item.description}
+        {/if}
+    {/capture}
+
+    {assign var='index' value=$smarty.foreach.feed.iteration-1}
+    {if empty($toolbars[$index])}
+        {assign var='toolbar' value=''}
+    {else}
+        {assign var='toolbar' value=$toolbars[$index]}
+    {/if}
+
+    {decorator name="ic" titleHref=$item.link titleHrefBlank=true title=$item.title info=$info toolbar=$toolbar first=$smarty.foreach.feed.first last=$smarty.foreach.feed.last}
+{foreachelse}
+	<div class="ow_nocontent">
+	    {text key="base+widgets_no_content"}
+        </div>
+{/foreach}

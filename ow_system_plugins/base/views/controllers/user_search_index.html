@@ -1,0 +1,85 @@
+
+{literal}
+    <style>
+        input.display_name_input {
+            width:65%;
+        }
+    </style>
+{/literal}
+{script}
+    {literal}
+      $(function(){
+            $("form[name='MainSearchForm'] select[name='accountType']").change(
+               function(){ this.form.submit(); }
+            );
+       });
+   {/literal}
+{/script}
+
+{if isset($menu)}
+	{$menu}
+{/if}
+
+{if isset($authMessage)}
+    <div class="ow_anno ow_std_margin ow_nocontent">{$authMessage}</div>
+{else}
+<div class="clearfix">
+    <div class="ow_left ow_wide">
+                {form name=MainSearchForm}
+                        <table class="ow_table_1 ow_form">
+                            {if $displayAccountType==true}
+                            {cycle assign='alt' values='ow_alt1,ow_alt2'}
+                            <tr class=" ow_tr_first ow_tr_last">
+                                <td class="{$alt} ow_label">
+                                    {label name='accountType'}
+                                </td>
+                                <td class="{$alt} ow_value ow_center">
+                                    {input name='accountType'}
+                                    <div style="height:1px;"></div>
+                                    {error name='accountType'}
+                                </td>
+                            </tr>
+                            <tr class="ow_tr_delimiter"><td></td></tr>
+                            {/if}
+                            {if !empty($questionList)}
+                                {foreach from=$questionList key='section' item='questions'}
+                                {if !empty($section) }
+                                    <tr class="ow_tr_first"><th colspan="3">{text key="base+questions_section_`$section`_label"}</th></tr>
+                                {/if}
+                                    {foreach from=$questions item='question' name='question'}
+                                        {cycle assign='alt' values='ow_alt1,ow_alt2'}
+                                        <tr class=" {if $smarty.foreach.question.last}ow_tr_last{/if}">
+                                            <td class="{$alt} ow_label">
+                                                {label name=$question.name}
+                                            </td>
+                                            <td class="{$alt} ow_value">
+                                                {input name=$question.name}
+                                                <div style="height:1px;"></div>
+                                                {error name=$question.name}
+                                            </td>
+                                        </tr>
+                                    {/foreach}
+                                    <tr class="ow_tr_delimiter"><td></td></tr>
+                                {/foreach}
+                           {/if}
+                        </table>
+                       <div class="clearfix">
+                  		<div class="ow_right">
+							{submit name='MainSearchFormSubmit'}
+                        </div>
+                       </div> 
+                {/form}
+    </div>
+    <div class="ow_right ow_narrow">
+        {form name='DisplayNameSearchForm'}
+            {block_decorator name="box" addClass="ow_center" iconClass="ow_ic_lens" langLabel="base+user_search_display_name_search_label"}
+                <div class="clearfix ow_smallmargin">
+                    {label name=$displayNameQuestion.name}
+                    {input class="display_name_input" name=$displayNameQuestion.name}
+                </div>
+                {submit class="ow_txtcenter"  name='DisplayNameSearchFormSubmit'}
+            {/block_decorator}
+        {/form}
+    </div>
+</div>
+{/if}

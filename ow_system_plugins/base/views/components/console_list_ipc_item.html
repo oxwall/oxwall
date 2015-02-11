@@ -1,0 +1,18 @@
+<div class="clearfix console_list_ipc_item {if $url}ow_cursor_pointer console_item_with_url{/if}" data-url="{$url}" >
+    {decorator name="avatar_item" data=$avatar}
+    {if !empty($contentImage)}
+        <div class="ow_console_invt_img">
+            <a href="{if empty($contentImage.url)}javascript://{else}{$contentImage.url}{/if}">
+                <img {if !empty($contentImage.title)}alt="{$contentImage.title}" title="{$contentImage.title}"{/if} src="{$contentImage.src}" />
+            </a>
+        </div>
+    {/if}
+    <div class="ow_console_invt_cont{if empty($contentImage)} ow_console_invt_no_img{/if}">
+        <div class="ow_console_invt_txt">{$content}</div>
+        <div class="ow_console_invt_toolbar">
+            {foreach from=$toolbar item="item"}
+                <a href="{if !empty($item.url)}{$item.url}{else}javascript://{/if}" {if !empty($item.id)}id="{$item.id}"{/if} {if !empty($item.onclick)}onclick="{$item.onclick}"{/if} class="ow_lbutton {if !empty($item.class)}{$item.class}{/if}">{$item.label}</a>
+            {/foreach}
+        </div>
+    </div>
+</div>

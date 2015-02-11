@@ -1,0 +1,25 @@
+{$menu}
+{form name="image-upload"}
+<center>
+	<table class="ow_table_1 ow_form">
+		<tr class="{cycle values="ow_alt1, ow_alt2"} ow_tr_first">
+			<td class="ow_label">
+				{label name="file"}
+			</td>
+			<td class="ow_value">
+				{input name="file"}<br />
+				{error name="file"}
+			</td>
+		</tr>
+		<tr class="ow_tr_last">
+			<td colspan="2" align="center">
+				<p>
+					{text key='base+tf_img_types'} <span class="ow_txt_value">JPG</span>/<span class="ow_txt_value">PNG</span>/<span class="ow_txt_value">GIF</span>. {text key='base+tf_img_max_size'} <span class="ow_txt_value">{$maxSize} Mb</span>.
+	
+				</p>	
+			</td>
+		</tr>
+	</table>
+	<div class="clearfix"><div class="ow_right">{submit name="submit"}</div></div>	
+</center>
+{/form}

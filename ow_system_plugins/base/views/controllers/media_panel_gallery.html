@@ -1,0 +1,76 @@
+{script}
+{literal}
+	window.insImg = function( elid, id, src, size ){
+        data = {src:src};
+        if( $('#gimg-'+id+'-p').is(':checked') ){data.resize = 300; data.preview = true;}
+        if( $('#gimg-'+id+'-align').val() != 'none' ){data.align = $('#gimg-'+id+'-align').val();}
+        window.parent.document.getElementById(elid).jhtmlareaObject.insertImage(data);
+}
+{/literal}
+{/script}
+{$menu}
+<div style="height: 430px; overflow-y: scroll;">
+	<table style="width: 100%;" cellpadding="5">
+
+		{foreach from=$images item="img"}
+			{assign var='dto' value=$img.dto}
+			{assign var='data' value=$img.data}
+
+			<tr class="{cycle name="1" values='ow_alt1, ow_alt2'}" onclick="if( $('#gimg-{$dto->getId()}').is(':visible') ){ldelim} $('#gimg-{$dto->getId()}-visbtn').empty().html('show');{rdelim} else $('#gimg-{$dto->getId()}-visbtn').empty().html('{text key='base+mp_gal_hide'}'); $('#gimg-{$dto->getId()}').toggle();">
+				<td style="padding: 3px;">
+					 <div style="float: left;">{$data->name} {if !empty($data->width) && !empty($data->height) }{$data->width}x{$data->height}{/if}</div><span id="gimg-{$dto->getId()}-visbtn" class="ow_lbutton clearfix" style="width: 30px; text-align:center; float: right;">{text key='base+mp_gal_show'}</span>
+				</td>
+			</tr>
+
+			<tr class=" {cycle name="2" values='ow_alt1, ow_alt2'}" id="gimg-{$dto->getId()}" style="display: {if $img.sel}block{else}none{/if}; ">
+				<td align="center">
+					<img style="height: 200px;" src="{$img.url}"/>
+
+					<table class="ow_form ow_table_3">
+						<tr class="ow_tr_first">
+							<td class="ow_label">{text key='base+mp_gal_pic_url'}</td>
+							<td class="ow_value">
+								<input id="gimg-{$dto->getId()}-url" value="{$img.url}" type="text" /> <a class="ow_lbutton ow_red" onclick="$('#gimg-{$dto->getId()}-url').val('')" >{text key='base+mp_gal_delete'}</a>
+							</td>
+						</tr>
+						<tr>
+							<td class="ow_label">Size</td>
+							<td class="ow_value">
+								<input type="radio" name="pos-{$dto->getId()}" checked="checked" id="gimg-{$dto->getId()}-p" value="preview" /> <label for="gimg-{$dto->getId()}-p">{text key='base+mp_gal_preview'}</label>
+								<input type="radio" name="pos-{$dto->getId()}" id="gimg-{$dto->getId()}-f" value="fullsize"/> <label for="gimg-{$dto->getId()}-f">{text key='base+mp_gal_fullsize'}</label>
+							</td>
+						</tr>
+						<tr class="ow_tr_last">
+							<td class="ow_label">{text key='base+mp_gal_align'} </td>
+							<td class="ow_value">
+								<select id="gimg-{$dto->getId()}-align">
+									<option value="none">{text key='base+mp_gal_none'}</option>
+									<option value="left">{text key='base+mp_gal_left'}</option>
+									<option value="center">{text key='base+mp_gal_center'}</option>
+									<option value="right">{text key='base+mp_gal_right'}</option>
+								</select>
+							</td>
+						</tr>
+					</table>
+					
+					<div class="clearfix"><div class="ow_right">								
+					{if !empty($data->width) && !empty($data->height) }
+									{assign var="size" value="[`$data->height`, `$data->width`]"}
+								{else}
+									{assign var="size" value="[]"}
+								{/if}
+
+								{decorator name="button" langLabel='base+mp_gal_ins_into_post' onclick="insImg('`$id`', `$dto->id`,  '`$img.url`', $size)"}
+								{decorator name="button" langLabel='base+delete' class='ow_red' onclick="$('input[name=img-id]', '#delete-image-form').val('`$dto->id`'); $('#delete-image-form')[0].submit();"}
+					</div></div>
+				</td>
+			</tr>
+		{/foreach}
+	</table>
+    <a name="bottom"></a>
+
+<form method="POST" id="delete-image-form" style="display: none;">
+	<input type="hidden" name="command" value="delete-image" />
+	<input type="hidden" name="img-id" value="" />
+</form>
+</div>

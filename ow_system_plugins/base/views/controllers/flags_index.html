@@ -1,0 +1,91 @@
+{$menu}
+
+<table style="width: 100%" class="ow_stdmargin ow_table_1">
+	<tr class="ow_tr_first">
+		<th style="width: 40%" rowspan="2">
+			{text key="`$langKey`"}
+		</th>
+		<th colspan="3">
+			{text key="base+flags_users_reported"}
+		</th>
+		<th rowspan="2" width="1"></th>
+	</tr>
+	<tr>
+		<th style="width: 15%">
+			{text key="base+flag_spam"}
+		</th>
+		<th style="width: 15%">
+			{text key="base+flag_offence"}
+		</th>
+		<th style="width: 15%">
+			{text key="base+flag_illegal"}
+		</th>
+	</tr>
+{foreach from=$list item='f' name='f'}
+	<tr class="{cycle values="ow_alt1, ow_alt2"}" onmouseover="$('a.ow_lbutton', this).show();" onmouseout="$('a.ow_lbutton', this).hide();">
+		<td>
+			<a href="{$f.url}">{$f.title}</a>
+		</td>
+		<td>
+			{if $f.spamUsers|@count > 0}
+				<a style="display: block;" class="ow_center" href="javascript://" onclick="$('#spamUsers_{$f.id}').toggle();">{$f.spamC}</a>
+				<ul id="spamUsers_{$f.id}" style="display: none;" class="ow_regular">
+					{foreach from=$f.spamUsers item=uid}
+						<li>
+                        {if !empty($ul.$uid) && !empty($dl.$uid)}
+                          {user_link username=$ul.$uid name=$dl.$uid}
+                        {else}
+                          {user_link id=$uid}
+                        {/if}
+                        </li>
+					{/foreach}
+				</ul>
+			{else}
+				<center>-</center>				
+			{/if}
+
+		</td>
+		<td>		
+			{if $f.offenceUsers|@count > 0}
+				<a style="display: block;" class="ow_center" href="javascript://" onclick="$('#offenceUsers_{$f.id}').toggle();"> {$f.offenceC} </a>
+				<ul id="offenceUsers_{$f.id}" style="display: none;" class="ow_regular">
+					{foreach from=$f.offenceUsers item=uid}
+						<li>
+						{if !empty($ul.$uid) && !empty($dl.$uid)}
+						  {user_link username=$ul.$uid name=$dl.$uid}
+						{else}
+						  {user_link id=$uid}
+						{/if}
+						</li>
+					{/foreach}
+				</ul>
+			{else}
+				<center>-</center>
+			{/if}
+		</td>
+		<td>
+			{if $f.illegalUsers|@count > 0}
+				<a style="display: block;" class="ow_center" href="javascript://" onclick="$('#illegalUsers_{$f.id}').toggle();"> {$f.illegalC} </a>
+				<ul id="illegalUsers_{$f.id}" style="display: none;" class="ow_regular">
+					{foreach from=$f.illegalUsers item=uid}
+						<li>
+                        {if !empty($ul.$uid) && !empty($dl.$uid)}
+                          {user_link username=$ul.$uid name=$dl.$uid}
+                        {else}
+                          {user_link id=$uid}
+                        {/if}
+                        </li>
+					{/foreach}
+				</ul>
+			{else}
+				<center>-</center>				
+			{/if}
+		</td>
+		<td class="ow_txtcenter ow_nowrap">
+			<a href="{url_for for="BASE_CTRL_Flag:delete:[id=>`$f.id`]"}" style="display: none;" class="ow_lbutton ow_red">delete flag</a>
+		</td>
+	</tr>
+{/foreach}
+</table>
+
+<center>{$paging}</center>

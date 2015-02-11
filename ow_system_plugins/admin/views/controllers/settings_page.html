@@ -1,0 +1,30 @@
+{$menu}
+{form name='page_settings'}
+<table class="ow_table_1 ow_form">
+   <tr class="ow_alt2 ow_tr_first">
+        <td class="ow_label">{label name='head_code'}</td>
+        <td class="ow_value">{input name='head_code'} {error name='head_code'}</td>
+        <td class="ow_desc ow_small">
+            {desc name='head_code'}
+        </td>
+    </tr>
+    <tr class="ow_alt1">
+        <td class="ow_label">{label name='bottom_code'}</td>
+        <td class="ow_value">{input name='bottom_code'} {error name='bottom_code'}</td>
+        <td class="ow_desc ow_small">
+            {desc name='bottom_code'}
+        </td>
+    </tr>
+    <tr class="ow_alt2 ow_tr_last">
+        <td class="ow_label"><label>{label name='favicon'} {input name='enable_favicon'}</label></td>
+        <td class="ow_value">
+            <div id="favicon_desabled"{if !empty($faviconEnabled)} style="display:none;"{/if}>{text key='admin+page_settings_no_favicon_label'}</div>
+            <div id="favicon_enabled"{if empty($faviconEnabled)} style="display:none;"{/if}><img src="{$faviconSrc}" /> {input name='favicon'} {error name='favicon'}</div>
+        </td>
+        <td class="ow_desc ow_small">
+            {desc name='favicon'}
+        </td>
+    </tr>
+</table>
+<div class="clearfix ow_stdmargin"><div class="ow_right">{submit name='save' class='ow_ic_save ow_positive'}</div></div>
+{/form}

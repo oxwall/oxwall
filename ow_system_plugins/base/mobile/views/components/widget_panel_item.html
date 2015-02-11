@@ -1,0 +1,14 @@
+<div class="owm_dnd_widget {$box.uniqName}">
+    {block_decorator name='box'
+        capEnabled=$box.capEnabled
+        capAddClass=""
+        capContent=$box.capContent
+        label=$box.title
+        iconClass=$box.icon
+        type=$box.type
+        addClass="`$box.uniqName`"
+        toolbar=$box.toolbar}
+
+        {$content}
+    {/block_decorator}
+</div>

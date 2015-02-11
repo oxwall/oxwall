@@ -1,0 +1,33 @@
+<div class="ow_sign_in_wrap">
+<h2>{$siteName}</h2>
+{form name='sign-in'}
+     <div class="clearfix">
+        <div class="ow_sign_in">
+            {block_decorator name='box' langLabel='base+base_sign_in_cap_label'}
+
+                <div class="ow_user_name">
+                    {input name='identity'}
+                </div>
+                <div class="ow_password">
+                    {input name='password'}
+                </div>
+                <div class="ow_form_options clearfix">
+                    <div class="ow_right">
+                        {submit name='submit' class='ow_positive'}
+                    </div>
+                    <p class="ow_remember_me">{input name='remember'}{label name='remember'}</p>
+                    <p class="ow_forgot_pass"><a href="{url_for_route for='base_forgot_password'}">{text key='base+forgot_password_label'}</a></p>
+                </div>
+            {/block_decorator}
+            <div class="ow_connect_buttons">
+                {component class='BASE_CMP_SignInButtonList'}
+            </div>
+        </div>
+        <div class="ow_sign_up">
+            <p>{text key='base+base_sign_in_txt'}</p>
+            <hr>
+            <p>{*text key='base+base_sign_in_or_label'*} <a href="{$joinUrl}">{text key='base+join_submit_button_join'}</a></p>
+        </div>
+     </div>
+{/form}
+</div>

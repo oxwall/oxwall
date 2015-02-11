@@ -1,0 +1,2 @@
+{* `Button` decorator template *}
+<span class="ow_button{if !empty($data.class)} {$data.class}{/if}"><span><input type="{if !empty($data.type) && $data.type == 'submit'}submit{else}button{/if}"  value="{if !empty($data.langLabel)}{text key=$data.langLabel}{else}{$data.label}{/if}"{if !empty($data.buttonName)} name="{$data.buttonName}"{/if}{if !empty($data.id)} id="{$data.id}"{/if}{if !empty($data.class)} class="{$data.class}"{/if}{if !empty($data.extraString)}{$data.extraString}{/if} {if !empty($data.onclick)}onclick="{$data.onclick}"{/if} /></span></span>

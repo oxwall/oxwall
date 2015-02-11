@@ -1,0 +1,16 @@
+<div class="ow_dnd_widget {$box.uniqName}">
+
+    {block_decorator name='box'
+        capEnabled=$box.show_title
+        capContent=$box.capContent
+        capAddClass="ow_dnd_configurable_component clearfix"
+        label=$box.title
+        iconClass=$box.icon
+        type=$box.type
+        addClass="ow_stdmargin clearfix `$box.uniqName`"
+        toolbar=$box.toolbar}
+
+        {$content}
+    {/block_decorator}
+    
+</div>

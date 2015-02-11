@@ -1,0 +1,19 @@
+<div class="owm_box{$data.addClass}">
+    {if $data.capEnabled}
+        <div class="owm_box_cap{$data.capAddClass} clearfix">
+            {if !empty($data.label)}<h3 class="{$data.iconClass}">{$data.label}</h3>{/if}{$data.capContent}
+        </div>
+    {/if}
+    <div class="owm_box_body">
+        <div class="owm_box_body_cont clearfix">
+            <div class="owm_box_padding">
+                {$data.content}
+            </div>
+        </div>
+    </div>
+    {if !empty($data.toolbar)}
+        <div class="owm_box_bottom">
+            {decorator name='box_toolbar' itemList=$data.toolbar}
+        </div>
+    {/if}
+</div>

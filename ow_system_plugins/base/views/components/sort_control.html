@@ -1,0 +1,16 @@
+{*<table class="ow_table_1 ow_smallmargin ow_small ow_alt1">
+    <tbody>
+        <tr class="ow_tr_first ow_tr_last">
+            <td><p class="ow_nowrap">{text key="base+sort_control_sortby"}:</p></td>
+            <td class="sort_link">
+                <ul>
+                    {foreach from=$itemList item='item'}
+                        <li {if $item.isActive}class="active"{/if} ><a href="{$item.url}">{$item.label}</a></li>
+                    {/foreach}
+                </ul>
+            </td>
+        </tr>
+    </tbody>
+</table>*}
+<div class="ow_sort_control ow_smallmargin ow_small ow_alt2"><span class="ow_sort_control_label">{text key="base+sort_control_sortby"}:</span>{foreach from=$itemList item='item'}<a href="{$item.url}" {if $item.isActive}class="active"{/if}><span>{$item.label}</span></a>{/foreach}
+</div>

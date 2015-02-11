@@ -1,0 +1,14 @@
+<div class="ow_vertical_nav {$class}">
+    {foreach from=$data item='item'}
+    <a href="{$item.url}" {if $item.new_window} target="_blank"{/if} class="ow_vertical_nav_item clearfix {if !empty($item.active)}selected{/if}">
+        <span>{$item.label}</span>
+        {if !empty($item.number)}
+        <span class="ow_count_wrap">
+            <span class="ow_count_bg">
+                <span class="ow_count">{$item.number}</span>
+            </span>
+        </span>
+        {/if}
+    </a>
+    {/foreach}
+</div>

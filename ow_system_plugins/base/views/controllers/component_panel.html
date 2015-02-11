@@ -1,0 +1,11 @@
+{if !empty($permissionMessage)}
+    <div class="ow_anno ow_center">
+        {$permissionMessage}
+    </div>
+{else}
+	{if isset($profileActionToolbar)}
+		{$profileActionToolbar}
+	{/if}
+
+	{$componentPanel}
+{/if}

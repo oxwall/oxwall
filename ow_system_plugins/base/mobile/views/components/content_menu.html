@@ -1,0 +1,9 @@
+<div class="owm_content_menu_wrap owm_padding">
+	<ul class="owm_content_menu clearfix">
+	{strip}
+	    {foreach from=$data item='item' name='contentMenu'}
+	    <li class="{$item.class} {if $item.active} active{/if}"><a href="{$item.url}"><span>{$item.label}</span></a></li>
+	    {/foreach}
+	{/strip}
+	</ul>
+</div>

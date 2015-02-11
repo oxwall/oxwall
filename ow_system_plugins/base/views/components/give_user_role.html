@@ -1,0 +1,18 @@
+{form name="give-role"}
+<table class="ow_table_2 ow_form ow_stdmargin ow_center">
+<tr class="ow_tr_first">
+	<th></th>
+	<th>User Role</th>
+</th>
+{foreach from=$list item='role' name='role'}
+<tr class="{cycle values='ow_alt1, ow_alt2'} {if $smarty.foreach.role.last}ow_tr_last{/if}">
+	<td>{input name="roles[`$role->id`]"}</td>
+	<td>{label name="roles[`$role->id`]"}</td>
+</tr>
+{/foreach}
+</table>
+
+	<div class="clearfix ow_smallmargin"><div class="ow_right">
+		{submit name="submit"}
+	</div></div>	
+{/form}

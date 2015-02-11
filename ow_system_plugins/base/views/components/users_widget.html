@@ -1,0 +1,7 @@
+{if !empty($menu)}{$menu}{/if}
+<div id="{$widgetId}">
+	{foreach from=$data item='item' key='type'}
+		<div id="{$item.contId}" style="display:{if $item.active}block{else}none{/if};">{$item.users}</div>
+		{if !empty($item.toolbarId)}<div id="{$item.toolbarId}"  style="display: none;">{decorator name='box_toolbar' class="clearfix" itemList=$item.toolbar}</div>{/if}
+	{/foreach}
+</div>

@@ -1,0 +1,42 @@
+{form name='qst_edit_form'}
+	<table class="ow_table_1 ow_form ow_admin_edit_profile_question">
+
+         <tr class="{cycle values='ow_alt2,ow_alt1'} tr_qst_name ow_tr_first">
+		        <td class="ow_label">
+                     {text key="admin+questions_question_name_label"}
+		        </td>
+		        <td class="ow_value">
+                     <a href="javascript://" class="question_label">{$questionLabel}</a>
+		        </td>
+		        <td class="ow_desc ow_small">
+		        </td>
+		 </tr>
+         <tr class="{cycle values='ow_alt2,ow_alt1'} tr_qst_name">
+		        <td class="ow_label">
+                    {text key="admin+questions_edit_question_description_label"}
+		        </td>
+		        <td class="ow_value">
+                    <a href="javascript://"  class="question_description" >{$questionDescription}</a>
+		        </td>
+		        <td class="ow_desc ow_small">
+		        </td>
+		 </tr>
+
+		{foreach from=$formData key='formEl' item='field' name='f'}
+		    <tr class="{cycle values='ow_alt2,ow_alt1'} tr_{$formEl} {if $smarty.foreach.f.last}ow_tr_last{/if}">
+		        <td class="ow_label">
+		            {label name=$formEl}
+		        </td>
+		        <td class="ow_value">
+                {input name=$formEl}
+                <br/>
+                {error name=$formEl}
+		        </td>
+		        <td class="ow_desc ow_small">{desc name=$formEl}</td>
+		    </tr>
+        {/foreach}
+		</table>
+    <div class="clearfix ow_stdmargin ow_submit"><div class="ow_right">
+    {submit name='qst_submit'}
+    </div></div>
+{/form}

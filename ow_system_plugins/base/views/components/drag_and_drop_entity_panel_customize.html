@@ -1,0 +1,170 @@
+
+{style}{literal}
+	.hidden-placeholder {
+		display: none;
+	}
+
+	.dd_handle {
+	   cursor: move;
+	}
+
+	.ow_dnd_freezed .dd_handle {
+            cursor: default;
+        }
+
+	.component .action {
+	       display: none;
+	}
+
+	.component .action .dd_delete {
+	       display: none;
+	}
+
+	#place_components .clone .action .dd_delete {
+	       display: inline-block;
+	}
+
+	.place_section .component .action .dd_delete {
+	       display: inline-block;
+	}
+
+	#place_components .component {
+		float: left;
+	}
+
+	.place_section .component {
+
+	}
+
+	.place_section {
+	   min-height: 60px;
+       padding-top: 10px;
+	}
+
+	.ow_dragndrop_panel .ow_dnd_schem_item{
+	   width: 150px;
+	}
+
+	.ow_dnd_locked_section {
+	    opacity: 0.5;
+	    filter: alpha(opacity=50)
+	}
+
+	.ow_dnd_locked_section .ow_dnd_placeholder {
+	    display: none;
+	}
+
+	.add_btn_cont {
+        position: absolute;
+        right: 0px;
+        top: 0px;
+	}
+
+ {/literal}{/style}
+
+{add_content key='base.widget_panel_customize.content.top' placeName=$placeName entityId=$entityId}
+{add_content key='base.`$placeName`_customize.content.top' entityId=$entityId}
+
+ <div style="display: none" id="fb_settings">
+     <div class="settings_title">
+        {text key="base+widgets_fb_setting_box_title"}
+     </div>
+     <div class="settings_content component_settings" style="min-height: 300px;"></div>
+     <div class="settings_controls component_controls">
+         {decorator name="button" class="dd_save ow_ic_save" langLabel="base+edit_button"}
+     </div>
+ </div>
+
+{block_decorator name='box' addClass='ow_highbox ow_stdmargin customize_box'}
+
+    <div class="ow_center" style="position: relative">
+        {decorator name='button' langLabel='base+widgets_finish_customize_btn' class='ow_ic_ok ow_positive' id="goto_normal_btn"}
+        <div class="add_btn_cont">
+            <form style="display: inline;">
+                {if $disableJs}
+                    <input type="hidden" name="disable-js" value="0" />
+                    {decorator name='button' type="submit" langLabel='base+widgets_enable_js' class='ow_ic_unlock'}
+                {else}
+	                <input type="hidden" name="disable-js" value="1" />
+	                {decorator name='button' type="submit" langLabel='base+widgets_disable_js' class='ow_ic_restrict ow_negative'}
+                {/if}
+            </form>
+            {decorator name='button' langLabel='base+widgets_reset_customization' class='ow_ic_delete ow_negative' id="reset_position_btn"}
+        </div>
+    </div>
+
+    <div class="ow_dragndrop_panel">
+        {block_decorator name='box' iconClass='ow_ic_add' langLabel='base+widgets_section_box_title' addClass='ow_smallmargin'}
+
+	       <div class="clearfix">
+	            <div class="ow_dnd_content_components ow_left clearfix" id="place_components">
+	                {foreach from=$componentList.place item="component"}
+	                    {dd_component uniqName=$component.uniqName}
+	                {/foreach}
+			   </div>
+			   <div class="ow_dnd_clonable_components ow_right" id="clonable_components">
+			        {foreach from=$componentList.clonable item="component"}
+			            {dd_component uniqName=$component.uniqName}
+			        {/foreach}
+			   </div>
+	        </div>
+
+        {/block_decorator}
+    </div>
+
+{/block_decorator}
+
+<div class="ow_dragndrop_sections ow_stdmargin" id="place_sections">
+
+    <div class="clearfix">
+
+		<div class="ow_highbox place_section top_section" ow_place_section="top">
+
+		    {if isset($componentList.section.top)}
+		        {foreach from=$componentList.section.top item="component"}
+		            {dd_component uniqName=$component.uniqName render=true}
+		        {/foreach}
+		    {/if}
+
+		</div>
+
+         <div class="clearfix" style="overflow: hidden;">
+
+	        <div class="ow_left ow_highbox place_section ow_column_equal_fix left_section {if isset($activeScheme.leftCssClass)}{$activeScheme.leftCssClass}{/if}" ow_scheme_class="{if isset($activeScheme.leftCssClass)}{$activeScheme.leftCssClass}{/if}"  ow_place_section="left">
+
+	            {if isset($componentList.section.left)}
+                    {foreach from=$componentList.section.left item="component"}
+                        {dd_component uniqName=$component.uniqName render=true}
+                    {/foreach}
+                {/if}
+
+            </div>
+
+            <div class="ow_right ow_highbox place_section ow_column_equal_fix right_section {if isset($activeScheme.rightCssClass)}{$activeScheme.rightCssClass}{/if}" ow_scheme_class="{if isset($activeScheme.rightCssClass)}{$activeScheme.rightCssClass}{/if}"  ow_place_section="right">
+
+                {if isset($componentList.section.right)}
+                    {foreach from=$componentList.section.right item="component"}
+                        {dd_component uniqName=$component.uniqName render=true}
+                    {/foreach}
+                {/if}
+
+            </div>
+
+         </div>
+
+	    <div class="ow_highbox place_section bottom_section" ow_place_section="bottom">
+
+            {if isset($componentList.section.bottom)}
+                {foreach from=$componentList.section.bottom item="component"}
+                    {dd_component uniqName=$component.uniqName render=true}
+                {/foreach}
+            {/if}
+
+        </div>
+
+	</div>
+
+</div>
+
+{add_content key='base.widget_panel_customize.content.bottom' placeName=$placeName entityId=$entityId}
+{add_content key='base.`$placeName`_customize.content.bottom' entityId=$entityId}

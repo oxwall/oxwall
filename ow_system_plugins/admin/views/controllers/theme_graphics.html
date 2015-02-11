@@ -1,0 +1,41 @@
+{style}
+{literal}
+.css_image{
+	background-repeat:no-repeat;
+	background-position:50% 50%;
+	border:1px solid #666;
+	display:block;
+	height:30px;
+	margin:0 auto;
+	width:300px;
+}
+{/literal}
+{/style}
+{$contentMenu}
+
+<div class="ow_automargin ow_wide">
+{block_decorator name='box' addClass='ow_stdmargin ow_txtcenter' iconClass="ow_ic_up_arrow" langLabel='admin+theme_graphics_upload_label'}
+{form name='upload_graphics'}
+{input name='file'}
+{submit name='submit'}
+{/form}
+{/block_decorator}
+</div>
+{block_decorator name='box' type='empty' iconClass="ow_ic_picture" langLabel='admin+theme_graphics_list_cap_label'}
+<table class="ow_table_1">
+<tr class="ow_tr_first">
+	<th style="width:350px;">{text key='admin+theme_graphics_table_preview'}</th>
+	<th style="width:300px;">{text key='admin+theme_graphics_table_url'}</th>
+	<th>{text key='admin+theme_graphics_table_delete'}</th>
+</tr>
+{foreach from=$images item='image' name='i'}
+<tr class="{if $smarty.foreach.i.last}ow_tr_last{/if}  {cycle values='ow_alt1,ow_alt2'}" {literal}onmouseover="$('a', $(this)).css({display:'inline'});" onmouseout="$('a', $(this)).css({display:'none'});{/literal}">
+	<td><span class="css_image" style="background-image:url({$image.url});"></span></td>
+	<td><input type="text" value="{$image.url}" /></td>
+	<td style="text-align:center;">
+            <a class="ow_lbutton ow_red" href="{$image.delUrl}" onclick="return confirm('{$confirmMessage}');" style="display:none;">Delete</a>
+	</td>
+</tr>
+{/foreach}
+</table>
+{/block_decorator}

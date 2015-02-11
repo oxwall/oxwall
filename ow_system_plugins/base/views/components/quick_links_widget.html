@@ -1,0 +1,11 @@
+<table class="ow_nomargin" width="100%">
+	<tbody>
+        {foreach from=$data item='item'}
+		<tr>
+			<td class="ow_label"><a href="{$item.url}">{$item.label}</a></td>
+			<td class="ow_txtright">{if !empty($item.active_count)}<a href="{$item.active_count_url}"><span class="ow_lbutton ow_green">{$item.active_count}</span></a>{/if}</td>
+			<td class="ow_txtright"><a href="{$item.count_url}">{$item.count}</a></td>
+		</tr>
+        {/foreach}
+	</tbody>
+</table>

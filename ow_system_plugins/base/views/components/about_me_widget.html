@@ -1,0 +1,29 @@
+{style}
+{literal}
+
+.ow_about_me_widget {
+    padding: 5px 4px 10px;
+    overflow: hidden;
+}
+
+{/literal}
+{/style}
+
+
+<div class="ow_highbox ow_about_me_widget">
+    {if $ownerMode}
+        <div class="ow_center">
+            {form name="about_me_form"}
+                <div class="form_auto_click"> 
+                    <div class="ow_smallmargin">{input name="about_me"}</div>
+                    <div class="{if $noContent}ow_submit_auto_click{/if}">
+                        {submit name="save"}
+                    </div>
+                </div>
+            {/form}
+        </div>
+    {else if $contentText}
+            {$contentText}
+    {/if}
+
+</div>
