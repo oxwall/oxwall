@@ -14,6 +14,8 @@ error_log
 access_log
 blank
 build
+.owr
+owr.sh
 
 ow_static/plugins/*
 !ow_static/plugins/admin
