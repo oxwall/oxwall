@@ -16,6 +16,7 @@ blank
 build
 .owr
 owr.sh
+owr.py
 
 ow_static/plugins/*
 !ow_static/plugins/admin
