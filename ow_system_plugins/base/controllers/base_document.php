@@ -115,6 +115,7 @@ class BASE_CTRL_BaseDocument extends OW_ActionController
 
     public function passwordProtection()
     {
+        
         $form = new Form('password_protection');
         $form->setAjax(true);
         $form->setAction(OW::getRouter()->urlFor('BASE_CTRL_BaseDocument', 'passwordProtection'));
@@ -130,8 +131,10 @@ class BASE_CTRL_BaseDocument extends OW_ActionController
 
         if ( OW::getRequest()->isAjax() && $form->isValid($_POST) )
         {
+            
             $data = $form->getValues();
             $password = OW::getConfig()->getValue('base', 'guests_can_view_password');
+            $data['password'] = crypt($data['password'], OW_PASSWORD_SALT);
 
             if ( !empty($data['password']) && trim($data['password']) === $password )
             {
