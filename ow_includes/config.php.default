@@ -1,4 +1,6 @@
 <?php
+
+#qq
  
 define('OW_DIR_USERFILES', OW_DIR_ROOT.'ow_userfiles'.DS);
 define('OW_DIR_STATIC', OW_DIR_ROOT.'ow_static'.DS);
