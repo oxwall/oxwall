@@ -100,9 +100,9 @@ class ADMIN_CTRL_Permissions extends ADMIN_CTRL_Abstract
                 }
                 else
                 {
-                    $data['password'] = crypt($data['password'], OW_PASSWORD_SALT);
+                    $data['password'] = crypt(trim($data['password']), OW_PASSWORD_SALT);
                     $config->saveConfig('base', 'guests_can_view', (int) $data['guests_can_view']);
-                    $config->saveConfig('base', 'guests_can_view_password', trim($data['password']));
+                    $config->saveConfig('base', 'guests_can_view_password', $data['password']);
                 }
 
                 OW::getFeedback()->info($language->text('admin', 'permission_global_privacy_settings_success_message'));
