@@ -251,8 +251,6 @@ class ADMIN_CTRL_Users extends ADMIN_CTRL_Abstract
         $list = array();
 
         $total = $service->count(true);
-        printVar($total);
-        exit();
 
         foreach ( $roles as $role )
         {            
