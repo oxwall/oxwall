@@ -238,6 +238,7 @@ class ADMIN_CTRL_Users extends ADMIN_CTRL_Abstract
 
     public function roles( array $params )
     {
+        
         OW::getDocument()->addScript(OW::getPluginManager()->getPlugin('base')->getStaticJsUrl() . 'jquery-ui.min.js');
 
         $service = BOL_UserService::getInstance();
@@ -245,37 +246,36 @@ class ADMIN_CTRL_Users extends ADMIN_CTRL_Abstract
         $roleService = BOL_AuthorizationService::getInstance();
 
         $roles = $roleService->findNonGuestRoleList();
+       
 
         $list = array();
 
-        $total = 0;
+        $total = $service->count() + $service->countUnverified();
 
         foreach ( $roles as $role )
-        {
-            $userCount = $roleService->countUserByRoleId($role->getId());
+        {            
+            $userCount = $roleService->countUserByRoleId($role->getId());           
 
             $list[$role->getId()] = array(
                 'dto' => $role,
                 'userCount' => $userCount,
             );
-
-            $total += $userCount;
         }
+        
+        $this->assign( 'set', $list );
 
-        $this->assign('set', $list);
-
-        $this->assign('total', $total);
+        $this->assign( 'total', $total );
 
         $addRoleForm = new AddRoleForm();
 
-        if ( OW::getRequest()->isPost() && $addRoleForm->isValid($_POST) )
+        if ( OW::getRequest()->isPost() && $addRoleForm->isValid( $_POST ) )
         {
             $addRoleForm->process($addRoleForm->getValues());
 
             $this->redirect();
         }
 
-        $this->addForm($addRoleForm);
+        $this->addForm( $addRoleForm );
         
         OW::getLanguage()->addKeyForJs('admin', 'permissions_edit_role_btn');
 
