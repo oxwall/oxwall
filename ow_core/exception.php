@@ -232,3 +232,20 @@ class ApiResponseErrorException extends Exception
         $this->data = $data;
     }
 }
+
+class ApiAccessException extends ApiResponseErrorException
+{
+    const TYPE_NOT_AUTHENTICATED = "not_authenticated";
+    const TYPE_SUSPENDED = "suspended";
+    const TYPE_NOT_APPROVED = "not_approved";
+    const TYPE_NOT_VERIFIED = "not_verified";
+    
+    public $data = array();
+    
+    public function __construct( $type ) 
+    {
+        parent::__construct(array(
+            "type" => $type
+        ));
+    }
+}
