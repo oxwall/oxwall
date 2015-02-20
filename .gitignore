@@ -3,6 +3,7 @@ ow_libraries/htmlpurifier
 ow_libraries/html5lib-php-0.1/
 ow_static/themes
 ow_smarty/template_c
+ow_install
 nbproject
 ow_log/error.log
 .settings
