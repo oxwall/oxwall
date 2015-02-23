@@ -72,7 +72,7 @@ class ADMIN_CTRL_Permissions extends ADMIN_CTRL_Abstract
         $guestsCanView->setDescription($language->text('admin', 'permissions_idex_if_not_yes_will_override_settings'));
         $form->addElement($guestsCanView);
 
-        $password = new TextField('password');
+        $password = new PasswordFieldField('password');
         $form->addElement($password);
 
         $submit = new Submit('save');
@@ -100,8 +100,9 @@ class ADMIN_CTRL_Permissions extends ADMIN_CTRL_Abstract
                 }
                 else
                 {
+                    $data['password'] = crypt($data['password'], OW_PASSWORD_SALT);
                     $config->saveConfig('base', 'guests_can_view', (int) $data['guests_can_view']);
-                    $config->saveConfig('base', 'guests_can_view_password', trim($data['password']));
+                    $config->saveConfig('base', 'guests_can_view_password', $data['password']);
                 }
 
                 OW::getFeedback()->info($language->text('admin', 'permission_global_privacy_settings_success_message'));
