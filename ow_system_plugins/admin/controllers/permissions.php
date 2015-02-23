@@ -72,7 +72,7 @@ class ADMIN_CTRL_Permissions extends ADMIN_CTRL_Abstract
         $guestsCanView->setDescription($language->text('admin', 'permissions_idex_if_not_yes_will_override_settings'));
         $form->addElement($guestsCanView);
 
-        $password = new PasswordFieldField('password');
+        $password = new PasswordField('password');
         $form->addElement($password);
 
         $submit = new Submit('save');
