@@ -237,8 +237,7 @@ class ADMIN_CTRL_Users extends ADMIN_CTRL_Abstract
     }
 
     public function roles( array $params )
-    {
-        
+    {        
         OW::getDocument()->addScript(OW::getPluginManager()->getPlugin('base')->getStaticJsUrl() . 'jquery-ui.min.js');
 
         $service = BOL_UserService::getInstance();
