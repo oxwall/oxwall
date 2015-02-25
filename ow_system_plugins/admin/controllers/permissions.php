@@ -49,6 +49,7 @@ class ADMIN_CTRL_Permissions extends ADMIN_CTRL_Abstract
     {
         $language = OW::getLanguage();
         $config = OW::getConfig();
+        $baseConfigs = $config->getValues('base');
 
         $form = new Form('privacy_settings');
 
@@ -72,7 +73,16 @@ class ADMIN_CTRL_Permissions extends ADMIN_CTRL_Abstract
         $guestsCanView->setDescription($language->text('admin', 'permissions_idex_if_not_yes_will_override_settings'));
         $form->addElement($guestsCanView);
 
-        $password = new PasswordField('password');
+        $password = new TextField('password');
+        $password->setHasInvitation(true);
+        if($baseConfigs['guests_can_view'] == 3)
+        {
+            $password->setInvitation("Change password");
+        }
+        else
+        {
+            $password->setInvitation("Add password");
+        }
         $form->addElement($password);
 
         $submit = new Submit('save');
@@ -93,10 +103,12 @@ class ADMIN_CTRL_Permissions extends ADMIN_CTRL_Abstract
                 if ( (int) $data['guests_can_view'] === 3 && empty($data['password']) )
                 {
                     OW::getFeedback()->error($language->text('admin', 'permission_global_privacy_empty_pass_error_message'));
+                    return;
                 }
                 else if ( (int) $data['guests_can_view'] === 3 && strlen(trim($data['password'])) < 4 )
                 {
                     OW::getFeedback()->error($language->text('admin', 'permission_global_privacy_pass_length_error_message'));
+                    return;
                 }
                 else
                 {
@@ -115,7 +127,6 @@ class ADMIN_CTRL_Permissions extends ADMIN_CTRL_Abstract
         $form->getElement('who_can_invite')->setValue($baseConfigs['who_can_invite']);
         $form->getElement('guests_can_view')->setValue($baseConfigs['guests_can_view']);
         $form->getElement('user_approve')->setValue($baseConfigs['mandatory_user_approve']);
-        $form->getElement('password')->setValue($baseConfigs['guests_can_view_password']);
     }
 
     public function roles()
