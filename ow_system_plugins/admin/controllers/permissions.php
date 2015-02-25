@@ -77,11 +77,11 @@ class ADMIN_CTRL_Permissions extends ADMIN_CTRL_Abstract
         $password->setHasInvitation(true);
         if($baseConfigs['guests_can_view'] == 3)
         {
-            $password->setInvitation("Change password");
+            $password->setInvitation($language->text('admin', 'change_password'));
         }
         else
         {
-            $password->setInvitation("Add password");
+            $password->setInvitation($language->text('admin', 'add_password'));
         }
         $form->addElement($password);
 
