@@ -204,20 +204,17 @@ class BOL_UserDao extends OW_BaseDao
 
     public function findRecentlyActiveList( $first, $count, $admin = false )
     {
-        $query = "SELECT `u`.*
-            FROM `{$this->getTableName()}` as `u`"
-            . ( $admin === true ? "" : "
+        $queryParts = $this->getUserQueryFilter("u", "id", array(
+            "method" => "BOL_UserDao::findRecentlyActiveList"
+        ));
 
-                LEFT JOIN `" . BOL_UserSuspendDao::getInstance()->getTableName() . "` as `s`
-                    ON( `u`.`id` = `s`.`userId` )
-
-                LEFT JOIN `" . BOL_UserApproveDao::getInstance()->getTableName() . "` as `d`
-                    ON( `u`.`id` = `d`.`userId` )
-
-                WHERE `s`.`id` IS NULL AND `d`.`id` IS NULL" )
-            . " ORDER BY `u`.`activityStamp` DESC
-            LIMIT ?, ?
-            ";
+        $query = "SELECT `u`.* FROM `{$this->getTableName()}` AS `u`"
+            . ( $admin === true 
+                ? "" 
+                : " {$queryParts["join"]} WHERE {$queryParts["where"]} "
+            ) .
+            "ORDER BY `u`.`activityStamp` DESC" . ( !empty($queryParts["order"]) ? ", " . $queryParts["order"] : "" ) . "
+            LIMIT ?,?";
 
         return $this->dbo->queryForObjectList($query, $this->getDtoClassName(), array($first, $count));
     }
