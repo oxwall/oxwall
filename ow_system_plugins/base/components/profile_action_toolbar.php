@@ -102,8 +102,9 @@ class BASE_CMP_ProfileActionToolbar extends OW_Component
             
             $action["order"] = isset($item["order"]) ? $item["order"] : $maxOrder;
                     
-            $action['label'] = $item[self::DATA_KEY_LABEL];
+            $action['label'] = isset($item[self::DATA_KEY_LABEL]) ? $item[self::DATA_KEY_LABEL] : null;
             $action["key"] = isset($item[self::DATA_KEY_ITEM_KEY]) ? $item[self::DATA_KEY_ITEM_KEY] : null;
+            $action["html"] = isset($item["html"]) ? $item["html"] : null;
 
             $attrs = isset($item[self::DATA_KEY_LINK_ATTRIBUTES]) && is_array($item[self::DATA_KEY_LINK_ATTRIBUTES])
                 ? $item[self::DATA_KEY_LINK_ATTRIBUTES]
@@ -169,7 +170,7 @@ class BASE_CMP_ProfileActionToolbar extends OW_Component
         usort($tplActions, array($this, "sortCallback"));
         $visibleActions = array_slice($tplActions, 0, $this->shownButtonsCount);
         $moreActions = array_slice($tplActions, $this->shownButtonsCount);
-        
+
         $this->assign('toolbar', $visibleActions);
         
         $moreGroup = array(

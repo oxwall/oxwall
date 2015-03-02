@@ -1,11 +1,15 @@
 <div class="ow_profile_gallery_action_toolbar ow_profile_action_toolbar_wrap clearfix ow_stdmargin">
     <ul class="ow_bl ow_profile_action_toolbar clearfix ow_small ow_left">
         {foreach from=$toolbar item='action'}
-            <li>
-                <a {$action.attrs} >
-                    {$action.label}
-                </a>
-            </li>
+            {if isset($action.html)}
+                {$action.html}
+            {else}
+                <li>
+                    <a {$action.attrs} >
+                        {$action.label}
+                    </a>
+                </li>
+            {/if}
         {/foreach}
     </ul>
 
