@@ -134,12 +134,13 @@ class BASE_MCTRL_User extends OW_MobileActionController
     {
         $userService = BOL_UserService::getInstance();
         /* @var $userDto BOL_User */
-        $userDto = $userService->findByUsername($params['username']);
+        $userDto = $userService->findByUsername($params['username']);     
 
         if ( $userDto === null )
         {
             throw new Redirect404Exception();
         }
+        
 
         if ( !OW::getUser()->isAuthorized('base', 'view_profile') )
         {
@@ -147,7 +148,15 @@ class BASE_MCTRL_User extends OW_MobileActionController
             $this->assign('permissionMessage', $status['msg']);
             return null;
         }
-
+        
+        $isSuspended = $userService->isSuspended($userDto->id);
+        
+        if ( $isSuspended )
+        {   
+            $this->assign('permissionMessage', OW::getLanguage()->text('base', 'user_page_suspended'));
+            return null;
+        }
+        
         $eventParams = array(
             'action' => 'base_view_profile',
             'ownerId' => $userDto->id,
