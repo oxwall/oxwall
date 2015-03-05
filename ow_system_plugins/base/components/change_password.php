@@ -99,11 +99,11 @@ class BASE_CMP_ChangePassword extends OW_Component
                         floatbox.close();
                     }
 
-            	    OW.info('{$messageSuccess}');
+            	    OW.info(".json_encode($messageSuccess).");
                 }
                 else
                 {
-                    OW.error('{$messageError}');
+                    OW.error(".json_encode($messageError).");
                 }
 
             } " );
