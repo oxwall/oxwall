@@ -224,6 +224,12 @@ class BOL_QuestionService
         return $list;
     }
 
+     /**
+     * @var String
+     */
+    
+    private $birthdayConfig;
+    
     /**
      * Returns all available presentations
      *
@@ -305,26 +311,32 @@ class BOL_QuestionService
                     break;
 
                 case self::QUESTION_PRESENTATION_RANGE :
-                $class = new Range($fieldName);
+                    $class = new Range($fieldName);
 
-                if ( !empty($configs) && mb_strlen( trim($configs) ) > 0 )
-                {
-                    $configsList = json_decode($configs, true);
-                    foreach ( $configsList as $name => $value )
+                    if ( empty($this->birthdayConfig) )
                     {
-
-                        $minMax = explode("-", $value);
-
-                        if ( $name = 'range' && isset($minMax[0]) && isset($minMax[1]) )
+                        $birthday = $this->findQuestionByName("birthdate");
+                        if ( !empty($birthday) )
                         {
-                            $class->setMinValue($minMax[0]);
-                            $class->setMaxValue($minMax[1]);
+                            $this->birthdayConfig = ($birthday->custom);
                         }
                     }
-                }
+                    //printVar($this->birthdayConfig);
+                    if ( !empty($this->birthdayConfig) && mb_strlen( trim($this->birthdayConfig) ) > 0 )
+                    {
+                        $configsList = json_decode($this->birthdayConfig, true);
+                        foreach ( $configsList as $name => $value )
+                        {
+                            if ( $name = 'year_range' && isset($value['from']) && isset($value['to']) )
+                            {
+                                $class->setMinValue(date("Y") - $value['to']);
+                                $class->setMaxValue(date("Y") - $value['from']);
+                            }
+                        }
+                    }
 
-                $class->addValidator(new RangeValidator());
-                    break;
+                    $class->addValidator(new RangeValidator());
+                break;
 
                 case self::QUESTION_PRESENTATION_URL :
                     $class = new TextField($fieldName);
@@ -398,14 +410,70 @@ class BOL_QuestionService
                 case self::QUESTION_PRESENTATION_BIRTHDATE :
                 case self::QUESTION_PRESENTATION_AGE :
                     $class = new AgeRange($fieldName);
+                    
+                    if ( !empty($configs) && mb_strlen( trim($configs) ) > 0 )
+                    {
+                        $configsList = json_decode($configs, true);
+                        foreach ( $configsList as $name => $value )
+                        {
+                            if ( $name = 'year_range' && isset($value['from']) && isset($value['to']) )
+                            {
+                                $class->setMinYear($value['from']);
+                                $class->setMaxYear($value['to']);
+                            }
+                        }
+                    }
+
+                    $class->addValidator(new DateValidator($class->getMinYear(), $class->getMaxYear()));
+                    
                     break;
 
                 case self::QUESTION_PRESENTATION_RANGE :
-                $class = new Range($fieldName);
+                    $class = new Range($fieldName);
+
+                    if ( empty($this->birthdayConfig) )
+                    {
+                        $birthday = $this->findQuestionByName("birthdate");
+                        if ( !empty($birthday) )
+                        {
+                            $this->birthdayConfig = ($birthday->custom);
+                        }
+                    }
+                    
+                    if ( !empty($this->birthdayConfig) && mb_strlen( trim($this->birthdayConfig) ) > 0 )
+                    {
+                        $configsList = json_decode($this->birthdayConfig, true);
+                        foreach ( $configsList as $name => $value )
+                        {
+                            if ( $name = 'year_range' && isset($value['from']) && isset($value['to']) )
+                            {
+                                $class->setMinValue(date("Y") - $value['to']);
+                                $class->setMaxValue(date("Y") - $value['from']);
+                            }
+                        }
+                    }
+
+                    $class->addValidator(new RangeValidator());
+                    
                     break;
 
                 case self::QUESTION_PRESENTATION_DATE :
                     $class = new DateRange($fieldName);
+
+                    if ( !empty($configs) && mb_strlen( trim($configs) ) > 0 )
+                    {
+                        $configsList = json_decode($configs, true);
+                        foreach ( $configsList as $name => $value )
+                        {
+                            if ( $name = 'year_range' && isset($value['from']) && isset($value['to']) )
+                            {
+                                $class->setMinYear($value['from']);
+                                $class->setMaxYear($value['to']);
+                            }
+                        }
+                    }
+
+                    $class->addValidator(new DateValidator($class->getMinYear(), $class->getMaxYear()));
                     break;
 
                 case self::QUESTION_PRESENTATION_URL :
