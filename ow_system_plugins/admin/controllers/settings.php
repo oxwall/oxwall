@@ -163,10 +163,6 @@ class ADMIN_CTRL_Settings extends ADMIN_CTRL_Abstract
         $commentsRichMedia->setDescription($language->text('admin', 'input_settings_comments_rich_media_disable_desc'));
         $settingsForm->addElement($commentsRichMedia);
 
-        $allowPhotoUpload = new CheckboxField('allow_photo_upload');
-        $allowPhotoUpload->setLabel($language->text('admin', 'input_settings_allow_photo_upload_label'));
-        $settingsForm->addElement($allowPhotoUpload);
-
         $uploadMaxFilesize = (float) ini_get("upload_max_filesize");
         $postMaxSize = (float) ini_get("post_max_size");
 
@@ -212,7 +208,6 @@ class ADMIN_CTRL_Settings extends ADMIN_CTRL_Abstract
                 $config->saveConfig('base', 'tf_comments_rich_media_disable', (int) $data['comments_rich_media']);
                 $config->saveConfig('base', 'tf_user_custom_html_disable', (int) $data['user_custom_html']);
                 $config->saveConfig('base', 'tf_user_rich_media_disable', (int) $data['user_rich_media']);
-                $config->saveConfig('base', 'tf_allow_pic_upload', (int) $data['allow_photo_upload']);
                 $config->saveConfig('base', 'tf_max_pic_size', round((float) $data['max_upload_size'], 2));
                 $config->saveConfig('base', 'attch_file_max_size_mb', round((float) $data['attch_max_upload_size'], 2));
 
@@ -246,7 +241,6 @@ class ADMIN_CTRL_Settings extends ADMIN_CTRL_Abstract
         $commentsRichMedia->setValue($config->getValue('base', 'tf_comments_rich_media_disable'));
         $maxUploadSize->setValue(round((float) $config->getValue('base', 'tf_max_pic_size'), 2));
         $resourceList->setValue(implode(PHP_EOL, json_decode($config->getValue('base', 'tf_resource_list'))));
-        $allowPhotoUpload->setValue($config->getValue('base', 'tf_allow_pic_upload'));
         $attchMaxUploadSize->setValue(round((float) $config->getValue('base', 'attch_file_max_size_mb'), 2));
         $attchExtList->setValue(implode(PHP_EOL, json_decode($config->getValue('base', 'attch_ext_list'))));
 
