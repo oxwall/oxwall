@@ -108,7 +108,7 @@ class UTIL_Url
         $uri = mb_substr($originalUri, (mb_strpos($originalUri, $originalPath) + mb_strlen($originalPath)));
         $uri = trim(UTIL_String::removeFirstAndLastSlashes($uri));
 
-        return $uri ? $uri : '';
+        return $uri ? htmlspecialchars($uri, ENT_QUOTES) : '';
     }
 
     public static function selfUrl()
@@ -119,7 +119,7 @@ class UTIL_Url
 
         $port = ($_SERVER["SERVER_PORT"] == "80") ? "" : (":" . $_SERVER["SERVER_PORT"]);
 
-        return $protocol . "://" . $_SERVER['SERVER_NAME'] . $port . $_SERVER['REQUEST_URI'];
+        return $protocol . "://" . $_SERVER['SERVER_NAME'] . $port . htmlspecialchars($_SERVER['REQUEST_URI'], ENT_QUOTES);
     }
 
     public static function getLocalPath( $uri )
