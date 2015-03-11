@@ -108,7 +108,41 @@ class UTIL_Url
         $uri = mb_substr($originalUri, (mb_strpos($originalUri, $originalPath) + mb_strlen($originalPath)));
         $uri = trim(UTIL_String::removeFirstAndLastSlashes($uri));
 
-        return $uri ? $uri : '';
+        return $uri ? self::secureUrl($uri) : '';
+    }
+
+    /**
+     * Secure url
+     * 
+     * @param sting $url
+     * @return string
+     */
+    public static function secureUrl( $url )
+    {
+        // remove posible native uri encoding
+        $url = parse_url(urldecode($url));
+
+        if ( $url )
+        {
+            $processedUrl = implode('/', array_map('urlencode', explode('/', $url['path'])));
+
+            // process url params
+            if ( !empty($url['query']) )
+            {
+                $urlParams = array();
+                parse_str($url['query'], $urlParams);
+
+                $url .= '?';
+                foreach ($urlParams as $param => $value) 
+                {
+                    $processedUrl .= urlencode($param) . '=' . urlencode($value) . '&'; 
+                }
+
+                $processedUrl = rtrim($processedUrl, '&');
+            }
+
+            return $processedUrl;
+        }
     }
 
     public static function selfUrl()
@@ -119,7 +153,7 @@ class UTIL_Url
 
         $port = ($_SERVER["SERVER_PORT"] == "80") ? "" : (":" . $_SERVER["SERVER_PORT"]);
 
-        return $protocol . "://" . $_SERVER['SERVER_NAME'] . $port . $_SERVER['REQUEST_URI'];
+        return self::secureUrl($protocol . "://" . $_SERVER['SERVER_NAME'] . $port . $_SERVER['REQUEST_URI']);
     }
 
     public static function getLocalPath( $uri )
