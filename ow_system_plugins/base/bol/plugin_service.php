@@ -79,7 +79,7 @@ class BOL_PluginService
     }
 
     public function readPluginsList()
-    {        
+    {
         $this->pluginDaoCache = $this->pluginDao->findAll();
     }
 
@@ -321,7 +321,7 @@ class BOL_PluginService
         );
 
         $context = stream_context_create($options);
-        
+
         $resultArray = json_decode(file_get_contents($requestUrl, false, $context), true);
 
         if ( empty($resultArray) || !is_array($resultArray) )
@@ -484,6 +484,70 @@ class BOL_PluginService
     }
 
     /**
+     * @param string $module
+     */
+    public function installSystemPlugins()
+    {
+        $files = UTIL_File::findFiles(OW_DIR_SYSTEM_PLUGIN, array("xml"), 1);
+        $pluginData = array();
+        $tempPluginData = array();
+
+        // first element should be BASE plugin
+        foreach ( $files as $file )
+        {
+            $tempArr = $this->readPluginXmlInfo($file);
+            $pathArr = explode(DS, dirname($file));
+            $tempArr["dir_name"] = array_pop($pathArr);
+
+            if ( $tempArr["key"] == "base" )
+            {
+                $pluginData[$tempArr["key"]] = $tempArr;
+            }
+            else
+            {
+                $tempPluginData[$tempArr["key"]] = $tempArr;
+            }
+        }
+
+        foreach ( $tempPluginData as $key => $val )
+        {
+            $pluginData[$key] = $val;
+        }
+
+        if ( !array_key_exists("base", $pluginData) )
+        {
+            throw new LogicException("Base plugin is not found in `" . $basePluginRootDir . "`");
+        }
+
+        // install plugins list
+        foreach ( $pluginData as $pluginInfo )
+        {
+            $pluginDto = new BOL_Plugin();
+            $pluginDto->setTitle((!empty($pluginInfo['title']) ? trim($pluginInfo['title']) : 'No Title'));
+            $pluginDto->setDescription((!empty($pluginInfo['description']) ? trim($pluginInfo['description']) : 'No Description'));
+            $pluginDto->setKey(trim($pluginInfo['key']));
+            $pluginDto->setModule($pluginInfo["dir_name"]);
+            $pluginDto->setIsActive(true);
+            $pluginDto->setIsSystem(true);
+            $pluginDto->setBuild((int) $pluginInfo['build']);
+
+            if ( !empty($pluginInfo['developerKey']) )
+            {
+                $pluginDto->setDeveloperKey(trim($pluginInfo['developerKey']));
+            }
+
+            $plugin = new OW_SystemPlugin($pluginInfo);
+
+            if ( file_exists($plugin->getRootDir() . "install.php") )
+            {
+                include_once $plugin->getRootDir() . "install.php";
+            }
+
+            $this->processPluginInstall($pluginDto);
+        }
+    }
+
+    /**
      * Installs plugins.
      *
      * @param string $key
@@ -516,6 +580,25 @@ class BOL_PluginService
             $pluginDto->setDeveloperKey(trim($pluginInfo['developerKey']));
         }
 
+        $this->processPluginInstall($pluginDto);
+
+        include_once OW_DIR_PLUGIN . $pluginDto->getModule() . DS . 'install.php';
+        include_once OW_DIR_PLUGIN . $pluginDto->getModule() . DS . 'activate.php';
+
+        if ( $generateCache )
+        {
+            BOL_LanguageService::getInstance()->generateCacheForAllActiveLanguages();
+        }
+
+        // trigger event
+        $event = new OW_Event(OW_EventManager::ON_AFTER_PLUGIN_INSTALL, array('pluginKey' => $pluginDto->getKey()));
+        OW::getEventManager()->trigger($event);
+
+        return $pluginDto;
+    }
+
+    private function processPluginInstall( BOL_Plugin $pluginDto )
+    {
         $this->pluginDao->save($pluginDto);
 
         $this->readPluginsList();
@@ -554,20 +637,6 @@ class BOL_PluginService
             mkdir($userfilesDir);
             chmod($userfilesDir, 0777);
         }
-
-        include_once OW_DIR_PLUGIN . $pluginDto->getModule() . DS . 'install.php';
-        include_once OW_DIR_PLUGIN . $pluginDto->getModule() . DS . 'activate.php';
-        
-        if ( $generateCache )
-        {
-            BOL_LanguageService::getInstance()->generateCacheForAllActiveLanguages();
-        }
-        
-        // trigger event
-        $event = new OW_Event(OW_EventManager::ON_AFTER_PLUGIN_INSTALL, array('pluginKey' => $pluginDto->getKey()));
-        OW::getEventManager()->trigger($event);
-
-        return $pluginDto;
     }
 
     /**
