@@ -108,7 +108,7 @@ class UTIL_Url
         $uri = mb_substr($originalUri, (mb_strpos($originalUri, $originalPath) + mb_strlen($originalPath)));
         $uri = trim(UTIL_String::removeFirstAndLastSlashes($uri));
 
-        return $uri ? self::secureUrl($uri) : '';
+        return $uri ? self::secureUri($uri) : '';
     }
 
     /**
@@ -119,29 +119,69 @@ class UTIL_Url
      */
     public static function secureUrl( $url )
     {
+        $urlInfo = parse_url(urldecode($url));
+
+        // extract the uri
+        $uri  = !empty($urlInfo['path'])  ? $urlInfo['path'] : null;
+        $uri .= !empty($urlInfo['query']) ? '?' . $urlInfo['query'] : null;
+
+        // build url
+        $processedUrl  = !empty($urlInfo['scheme']) 
+            ? $urlInfo['scheme'] . '://' 
+            : null;
+
+        $processedUrl .= !empty($urlInfo['host']) 
+            ? $urlInfo['host']
+            : null;
+
+        $processedUrl .= !empty($urlInfo['port']) 
+            ? ':' . $urlInfo['port']
+            : null;
+
+        if ($uri) {
+            $processedUrl .= self::secureUri($uri, false);
+        }
+
+        if (!empty($urlInfo['fragment'])) {
+            $processedUrl .= '#' . urlencode($urlInfo['fragment']);
+        }
+
+        return $processedUrl;
+    }
+
+    /**
+     * Secure uri
+     * 
+     * @param string $uri
+     * @param boolean $urlDecode
+     * @return string
+     */
+    public static function secureUri( $uri, $urlDecode = true )
+    {
         // remove posible native uri encoding
-        $url = parse_url(urldecode($url));
+        $uriInfo = parse_url(($urlDecode ? urldecode($uri) : $uri));
 
-        if ( $url )
+        if ( $uriInfo )
         {
-            $processedUrl = implode('/', array_map('urlencode', explode('/', $url['path'])));
+            // process uri path
+            $processedUri = implode('/', array_map('urlencode', explode('/', $uriInfo['path'])));
 
-            // process url params
-            if ( !empty($url['query']) )
+            // process uri params
+            if ( !empty($uriInfo['query']) )
             {
-                $urlParams = array();
-                parse_str($url['query'], $urlParams);
+                $uriParams = array();
+                parse_str($uriInfo['query'], $uriParams);
 
-                $url .= '?';
-                foreach ($urlParams as $param => $value) 
+                $processedUri .= '?';
+                foreach ($uriParams as $param => $value) 
                 {
-                    $processedUrl .= urlencode($param) . '=' . urlencode($value) . '&'; 
+                    $processedUri .= urlencode($param) . '=' . urlencode($value) . '&'; 
                 }
 
-                $processedUrl = rtrim($processedUrl, '&');
+                $processedUri = rtrim($processedUri, '&');
             }
 
-            return $processedUrl;
+            return $processedUri;
         }
     }
 
