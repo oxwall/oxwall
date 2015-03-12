@@ -111,55 +111,16 @@ class UTIL_Url
         return $uri ? self::secureUri($uri) : '';
     }
 
-    /**
-     * Secure url
-     * 
-     * @param sting $url
-     * @return string
-     */
-    public static function secureUrl( $url )
-    {
-        $urlInfo = parse_url(urldecode($url));
-
-        // extract the uri
-        $uri  = !empty($urlInfo['path'])  ? $urlInfo['path'] : null;
-        $uri .= !empty($urlInfo['query']) ? '?' . $urlInfo['query'] : null;
-
-        // build url
-        $processedUrl  = !empty($urlInfo['scheme']) 
-            ? $urlInfo['scheme'] . '://' 
-            : null;
-
-        $processedUrl .= !empty($urlInfo['host']) 
-            ? $urlInfo['host']
-            : null;
-
-        $processedUrl .= !empty($urlInfo['port']) 
-            ? ':' . $urlInfo['port']
-            : null;
-
-        if ($uri) {
-            $processedUrl .= self::secureUri($uri, false);
-        }
-
-        if (!empty($urlInfo['fragment'])) {
-            $processedUrl .= '#' . urlencode($urlInfo['fragment']);
-        }
-
-        return $processedUrl;
-    }
-
-    /**
-     * Secure uri
-     * 
-     * @param string $uri
-     * @param boolean $urlDecode
-     * @return string
-     */
-    public static function secureUri( $uri, $urlDecode = true )
+   /**
+    * Secure uri
+    *
+    * @param string $uri
+    * @return string
+    */
+    public static function secureUri( $uri )
     {
         // remove posible native uri encoding
-        $uriInfo = parse_url(($urlDecode ? urldecode($uri) : $uri));
+        $uriInfo = parse_url(urldecode($uri));
 
         if ( $uriInfo )
         {
@@ -171,11 +132,12 @@ class UTIL_Url
             {
                 $uriParams = array();
                 parse_str($uriInfo['query'], $uriParams);
-
                 $processedUri .= '?';
-                foreach ($uriParams as $param => $value) 
+
+                // collect encoded params and values
+                foreach ($uriParams as $param => $value)
                 {
-                    $processedUri .= urlencode($param) . '=' . urlencode($value) . '&'; 
+                    $processedUri .= urlencode($param) . '=' . urlencode($value) . '&';
                 }
 
                 $processedUri = rtrim($processedUri, '&');
@@ -193,7 +155,7 @@ class UTIL_Url
 
         $port = ($_SERVER["SERVER_PORT"] == "80") ? "" : (":" . $_SERVER["SERVER_PORT"]);
 
-        return self::secureUrl($protocol . "://" . $_SERVER['SERVER_NAME'] . $port . $_SERVER['REQUEST_URI']);
+        return $protocol . "://" . $_SERVER['SERVER_NAME'] . $port . self::secureUri($_SERVER['REQUEST_URI']);
     }
 
     public static function getLocalPath( $uri )
