@@ -130,17 +130,11 @@ class UTIL_Url
             // process uri params
             if ( !empty($uriInfo['query']) )
             {
+                // parse uri params
                 $uriParams = array();
                 parse_str($uriInfo['query'], $uriParams);
-                $processedUri .= '?';
 
-                // collect encoded params and values
-                foreach ($uriParams as $param => $value)
-                {
-                    $processedUri .= urlencode($param) . '=' . urlencode($value) . '&';
-                }
-
-                $processedUri = rtrim($processedUri, '&');
+                $processedUri .= '?' . http_build_query($uriParams);
             }
 
             return $processedUri;
