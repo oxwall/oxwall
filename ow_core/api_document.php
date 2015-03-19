@@ -64,9 +64,11 @@ class OW_ApiDocument extends OW_Document
     {
         OW::getResponse()->setHeader(OW_Response::HD_CNT_TYPE, "application/json");
 
+        $body = $this->getBody();
+        
         $apiResponse = array(
             "type" => "success",
-            "data" => $this->getBody()
+            "data" => empty($body) ? new stdClass() : $body
         );
         
         return json_encode($apiResponse);

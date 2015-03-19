@@ -222,6 +222,9 @@ class ADMIN_CLASS_AddAccountTypeForm extends Form {
                 BOL_QuestionService::getInstance()->reOrderAccountType($list);
                 $result['reorder'] = true;
                 $result['orderList'] = $list;
+                        
+                $event = new OW_Event(BOL_QuestionService::EVENT_ON_ACCOUNT_TYPE_REORDER, array('dto' => $accountType, 'id' => $accountType->id, 'orderList' => $list));
+                OW::getEventManager()->trigger($event);
             }
         }
 

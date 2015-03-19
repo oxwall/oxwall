@@ -79,7 +79,8 @@ $classesToAutoload = array(
     'Multiselect' => OW_DIR_CORE . 'form_element.php',
     'CaptchaField' => OW_DIR_CORE . 'form_element.php',
     'InvitationFormElement' => OW_DIR_CORE . 'form_element.php',
-    'Range' => OW_DIR_CORE . 'form_element.php'
+    'Range' => OW_DIR_CORE . 'form_element.php',
+    'DateField' => OW_DIR_CORE . 'form_element.php'
 );
 
 OW::getAutoloader()->addClassArray($classesToAutoload);
