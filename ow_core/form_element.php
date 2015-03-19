@@ -3236,6 +3236,33 @@ class WysiwygTextarea extends InvitationFormElement
     {
         $this->customBodyClass = $customBodyClass;
     }
+
+    /**
+     * Makes form element required.
+     *
+     * @param boolean $value
+     * @return FormElement
+     */
+    public function setRequired( $value = true )
+    {
+        if ( $value )
+        {
+            $this->addValidator(new WyswygRequiredValidator());
+        }
+        else
+        {
+            foreach ( $this->validators as $key => $validator )
+            {
+                if ( $validator instanceof WyswygRequiredValidator )
+                {
+                    unset($this->validators[$key]);
+                    break;
+                }
+            }
+        }
+
+        return $this;
+    }
 }
 
 class TagsInputField extends FormElement
