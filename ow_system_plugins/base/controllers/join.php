@@ -692,8 +692,8 @@ class JoinForm extends BASE_CLASS_UserQuestionForm
 
                     for ( $i = 0; $i <= $fakesCount; $i++ )
                     {
-                        $randName = UTIL_String::getRandomString(rand(5, 16), 2);
-                        $question['trClass'] = uniqid('ow_'.rand(0, 99999999999));
+                        $randName = uniqid(UTIL_String::getRandomString(rand(5, 13), 2)); 
+                        $question['trClass'] = uniqid('ow_'. UTIL_String::getRandomString(rand(5, 10), 2));
 
                         if ( $i == $randId )
                         {

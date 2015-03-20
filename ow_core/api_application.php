@@ -73,7 +73,7 @@ class OW_ApiApplication extends OW_Application
         {
             $languageDto = BOL_LanguageService::getInstance()->findByTag($_SERVER["HTTP_API_LANGUAGE"]);
             
-            if ( !empty($languageDto) )
+            if ( !empty($languageDto) && $languageDto->status == "active" )
             {
                 BOL_LanguageService::getInstance()->setCurrentLanguage($languageDto);
             }
