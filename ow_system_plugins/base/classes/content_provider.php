@@ -258,6 +258,7 @@ class BASE_CLASS_ContentProvider
             if ( $info["status"] == BOL_ContentService::STATUS_ACTIVE && !$isApproved )
             {
                 BOL_UserService::getInstance()->approve($userId);
+                BOL_UserService::getInstance()->sendApprovalNotification($userId);
             }
             
             if ( $info["status"] == BOL_ContentService::STATUS_APPROVAL && $isApproved )
