@@ -759,12 +759,19 @@ class BOL_UserDao extends OW_BaseDao
             "method" => "BOL_UserDao::findUserIdListByQuestionValues"
         ));
 
+        $order = '`user`.`activityStamp` DESC';
+
+        if ( !empty($aditionalParams['order']) )
+        {
+            $order = $aditionalParams['order'];
+        }
+
         $query = "SELECT DISTINCT `user`.id, `user`.`activityStamp` FROM `" . $this->getTableName() . "` `user`
                 " . $innerJoin . "
                 {$queryParts["join"]}
 
                 WHERE {$queryParts["where"]} " . $where . "
-                ORDER BY `user`.`activityStamp` DESC
+                ORDER BY " . $order . "
                 LIMIT :first, :count ";
 
         if ( $isAdmin === true )
@@ -772,10 +779,10 @@ class BOL_UserDao extends OW_BaseDao
             $query = "SELECT DISTINCT `user`.id FROM `" . $this->getTableName() . "` `user`
                 " . $innerJoin . "
                 WHERE 1 " . $where . "
-                ORDER BY `user`.`activityStamp` DESC
+                ORDER BY '.$order.'
                 LIMIT :first, :count ";
         }
-
+        
         return $this->dbo->queryForColumnList($query, array_merge(array('first' => $first, 'count' => $count)));
     }
 

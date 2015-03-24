@@ -1,5 +1,6 @@
 {* `Avatar Item` decorator template *}
 <div class="ow_avatar{if !empty($data.class)} {$data.class}{/if}">
+{if !empty($data.isMarked)}<div class="ow_ic_bookmark ow_bookmark_icon"></div>{/if}
 {if !empty($data.url)}
 <a href="{$data.url}"><img alt=""{if !empty($data.title)} title="{$data.title}"{/if} {if !empty($data.attrs)}{$data.attrs}{/if} src="{$data.src}" /></a>
 {else}

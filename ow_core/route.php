@@ -117,7 +117,8 @@ class OW_Route
     {
         if ( $routePath )
         {
-            $this->routePath = UTIL_String::removeFirstAndLastSlashes($routePath);
+            $this->routePath = UTIL_String::removeFirstAndLastSlashes(trim($routePath));
+            $this->routePathArray = explode('/', $this->routePath);
         }
     }
 
@@ -164,15 +165,12 @@ class OW_Route
         {
             throw new InvalidArgumentException('Invalid route params provided!');
         }
-
+        
         $this->routeParamOptions = $paramOptions;
         $this->routeName = trim($routeName);
-        $this->routePath = trim($routePath);
+        $this->setRoutePath($routePath);
         $this->dispatchAttrs[self::DISPATCH_ATTRS_CTRL] = trim($controller);
         $this->dispatchAttrs[self::DISPATCH_ATTRS_ACTION] = trim($action);
-
-        // need to remove first and last slashes in route path
-        $this->routePath = UTIL_String::removeFirstAndLastSlashes($this->routePath);
 
         // if there are no dynamic parts in route path -> set flag and return
         if ( !mb_strstr($this->routePath, ':') )
@@ -180,8 +178,6 @@ class OW_Route
             $this->isStatic = true;
             return;
         }
-
-        $this->routePathArray = explode('/', $this->routePath);
     }
 
     /**
