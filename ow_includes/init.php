@@ -80,6 +80,7 @@ $classesToAutoload = array(
     'CaptchaField' => OW_DIR_CORE . 'form_element.php',
     'InvitationFormElement' => OW_DIR_CORE . 'form_element.php',
     'Range' => OW_DIR_CORE . 'form_element.php',
+    'WyswygRequiredValidator' => OW_DIR_CORE . 'validator.php'
     'DateField' => OW_DIR_CORE . 'form_element.php'
 );
 

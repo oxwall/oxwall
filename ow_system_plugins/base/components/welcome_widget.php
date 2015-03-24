@@ -58,14 +58,19 @@ class BASE_CMP_WelcomeWidget extends BASE_CLASS_Widget
         if ( mb_stripos($text, self::KEY_CHANGE_AVATAR) !== false )
         {
             $label = OW::getLanguage()->text('base', 'avatar_change');
-            $js =  ' document.avatarFloatBox = OW.ajaxFloatBox("BASE_CMP_AvatarChange", [], {width: 749, title: ' . json_encode($label) . '});';
-            $text = preg_replace($avatarKey, '<li><a href="javascript://" onclick=\'' . $js . '\'>' . $label . '</a></li>', $text);
+            
+            $js =  ' $("#welcomeWinget_loadAvatarChangeCmp").click(function(){'
+                    . 'document.avatarFloatBox = OW.ajaxFloatBox("BASE_CMP_AvatarChange", [], {width: 749, title: ' . json_encode($label) . '});'
+                    . '});';
+            OW::getDocument()->addOnloadScript($js);
+            $text = preg_replace($avatarKey, '<li><a id="welcomeWinget_loadAvatarChangeCmp" href="javascript://">' . $label . '</a></li>', $text);
         }
+
         else
         {
             $text = preg_replace($avatarKey, '', $text);
         }
-
+        
         $this->assign('text', $text);
     }
 

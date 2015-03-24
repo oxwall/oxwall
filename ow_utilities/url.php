@@ -124,8 +124,13 @@ class UTIL_Url
 
         if ( $uriInfo )
         {
+            $processedUri = '';
+
             // process uri path
-            $processedUri = implode('/', array_map('urlencode', explode('/', $uriInfo['path'])));
+            if ( !empty($uriInfo['path']) ) 
+            {
+                $processedUri = implode('/', array_map('urlencode', explode('/', $uriInfo['path'])));
+            }
 
             // process uri params
             if ( !empty($uriInfo['query']) )
