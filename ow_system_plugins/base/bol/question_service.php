@@ -33,7 +33,6 @@ class BOL_QuestionService
 {
     const EVENT_ON_QUESTION_DELETE = 'base.event.on_question_delete';
     const EVENT_ON_ACCOUNT_TYPE_DELETE = 'base.event.on_account_type_delete';
-    const EVENT_ON_ACCOUNT_TYPE_REORDER = 'base.event.on_account_type_reorder';
     const EVENT_ON_ACCOUNT_TYPE_ADD = 'base.event.on_account_type_add';
     const EVENT_ON_ACCOUNT_TYPE_REORDER = 'base.event.on_account_type_reorder';
     const EVENT_AFTER_ADD_QUESTION_VALUE = 'base.event.afret_question_value_add';
