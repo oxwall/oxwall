@@ -410,18 +410,23 @@ class ADMIN_CTRL_Languages extends ADMIN_CTRL_Abstract
                         $arr = $xmlElement->xpath('/prefix/key');
                         $tmp = $xmlElement->xpath('/prefix');
 
-                        $prefixElement = $tmp[0];
+                        $prefixElement = $tmp[0];                        
                         
+                        $prefix = (string)strval($prefixElement->attributes()->name);                        
                         
-                        $plugin = BOL_PluginService::getInstance()->findPluginByKey(strval($prefixElement->attributes()->name));
-                        
-                        if ( !empty($plugin) )
+                        if(!in_array($prefix, BOL_LanguageService::getInstance()->getExceptionPrefixes()))
                         {
-                            $p = array('label' => strval($prefixElement->attributes()->label), 'prefix' => strval($prefixElement->attributes()->name));
+                            $plugin = BOL_PluginService::getInstance()->findPluginByKey(strval($prefixElement->attributes()->name));
                             
-                            if ( !in_array($p, $prefixesToImport) )
-                                $prefixesToImport[] = $p;
+                            if ( empty($plugin) )
+                            {
+                                continue;
+                            }
                         }
+
+                        $p = array('label' => strval($prefixElement->attributes()->label), 'prefix' => strval($prefixElement->attributes()->name));                            
+                        if ( !in_array($p, $prefixesToImport) )
+                            $prefixesToImport[] = $p;
                     }
                 }
 
