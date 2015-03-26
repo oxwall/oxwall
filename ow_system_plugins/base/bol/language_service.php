@@ -486,9 +486,8 @@ class BOL_LanguageService
         if ( null === ( $prefix = $service->findPrefix($prefixName) ))
         {
             $prefix = new BOL_LanguagePrefix();
-            printVar($prefix);
 
-            $prefix->setPrefix(strval($prefixName))
+            $prefix->setPrefix($prefixName)
                 ->setLabel(strval($prefixesXml[0]->attributes()->label));
 
             $service->savePrefix($prefix);
