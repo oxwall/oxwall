@@ -412,11 +412,11 @@ class ADMIN_CTRL_Languages extends ADMIN_CTRL_Abstract
 
                         $prefixElement = $tmp[0];                        
                         
-                        $prefix = (string)strval($prefixElement->attributes()->name);                        
+                        $prefix = strval($prefixElement->attributes()->name);                         
                         
                         if(!in_array($prefix, BOL_LanguageService::getInstance()->getExceptionPrefixes()))
                         {
-                            $plugin = BOL_PluginService::getInstance()->findPluginByKey(strval($prefixElement->attributes()->name));
+                            $plugin = BOL_PluginService::getInstance()->findPluginByKey($prefix);
                             
                             if ( empty($plugin) )
                             {
@@ -424,7 +424,7 @@ class ADMIN_CTRL_Languages extends ADMIN_CTRL_Abstract
                             }
                         }
 
-                        $p = array('label' => strval($prefixElement->attributes()->label), 'prefix' => strval($prefixElement->attributes()->name));                            
+                        $p = array('label' => strval($prefixElement->attributes()->label), 'prefix' => $prefix);                            
                         if ( !in_array($p, $prefixesToImport) )
                             $prefixesToImport[] = $p;
                     }
