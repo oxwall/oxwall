@@ -41,6 +41,7 @@ class BASE_CMP_WelcomeWidget extends BASE_CLASS_Widget
         parent::__construct();
 
         $text = OW::getLanguage()->text('base', 'welcome_widget_content');
+        $text = str_replace('</li>', "</li>\n", $text); //if the tags are written in a line it is necessary to make a compulsory hyphenation?
         $photoKey = str_replace('{$key}', self::KEY_PHOTO_UPLOAD, self::PATTERN);
         $avatarKey = str_replace('{$key}', self::KEY_CHANGE_AVATAR, self::PATTERN);
         
@@ -48,6 +49,13 @@ class BASE_CMP_WelcomeWidget extends BASE_CLASS_Widget
         {
             $label = OW::getLanguage()->text('photo', 'upload_photos');
             $js = OW::getEventManager()->call('photo.getAddPhotoURL');
+            $langLabel = $this->getLangLabel($photoKey, $text, self::KEY_PHOTO_UPLOAD);
+            
+            if ( $langLabel != NULL )
+            {
+                $label = $langLabel;
+            }
+            
             $text = preg_replace($photoKey, '<li><a href="javascript://" onclick="' . $js . '();">' . $label . '</a></li>', $text);
         }
         else
@@ -63,6 +71,14 @@ class BASE_CMP_WelcomeWidget extends BASE_CLASS_Widget
                     . 'document.avatarFloatBox = OW.ajaxFloatBox("BASE_CMP_AvatarChange", [], {width: 749, title: ' . json_encode($label) . '});'
                     . '});';
             OW::getDocument()->addOnloadScript($js);
+            
+            $langLabel = $this->getLangLabel($avatarKey, $text, self::KEY_CHANGE_AVATAR);
+            
+            if ( $langLabel != NULL )
+            {
+                $label = $langLabel;
+            }
+            
             $text = preg_replace($avatarKey, '<li><a id="welcomeWinget_loadAvatarChangeCmp" href="javascript://">' . $label . '</a></li>', $text);
         }
 
@@ -72,6 +88,23 @@ class BASE_CMP_WelcomeWidget extends BASE_CLASS_Widget
         }
         
         $this->assign('text', $text);
+    }
+    
+    private function getLangLabel( $pattern, $text, $key )
+    {
+        preg_match($pattern, $text, $matches);
+            
+        if ( !empty($matches) )
+        {
+            preg_match('/<a[^>]*' . $key . '[^>]*>(.+)<\/a[^>]*>/i', $matches[0], $langLabel);
+
+            if ( isset($langLabel[1]) )
+            {
+                return $langLabel[1];
+            }
+        }
+        
+        return NULL;
     }
 
     public static function getSettingList()
