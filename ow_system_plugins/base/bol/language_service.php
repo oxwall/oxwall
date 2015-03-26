@@ -459,11 +459,11 @@ class BOL_LanguageService
 
         $languageTag = (string) $prefixesXml[0]->attributes()->language_tag;
 
-        $prefix = strval($prefixesXml[0]->attributes()->name);      
+        $prefixName = strval($prefixesXml[0]->attributes()->name);      
 
-        if ( $importOnlyActivePluginPrefix && !in_array($prefix, $this->getExceptionPrefixes()) )
+        if ( $importOnlyActivePluginPrefix && !in_array($prefixName, $this->getExceptionPrefixes()) )
         {            
-            $plugin = BOL_PluginService::getInstance()->findPluginByKey($prefix);
+            $plugin = BOL_PluginService::getInstance()->findPluginByKey($prefixName);
 
             if ( empty($plugin) )
             {
@@ -483,11 +483,12 @@ class BOL_LanguageService
             $service->save($language);
         }
 
-        if ( null === ( $prefix = $service->findPrefix($prefix) ))
+        if ( null === ( $prefix = $service->findPrefix($prefixName) ))
         {
             $prefix = new BOL_LanguagePrefix();
+            printVar($prefix);
 
-            $prefix->setPrefix(strval($prefix))
+            $prefix->setPrefix(strval($prefixName))
                 ->setLabel(strval($prefixesXml[0]->attributes()->label));
 
             $service->savePrefix($prefix);
