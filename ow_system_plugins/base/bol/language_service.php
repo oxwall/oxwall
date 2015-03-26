@@ -38,6 +38,7 @@ class BOL_LanguageService
     private $prefixDao;
     private $keyDao;
     private $valueDao;
+    private $exceptionPrefixes = array( "mobile", "nav", "ow_custom" ); // section which importing without checking plugin key
 
     private function __construct( $includeCache = true )
     {
@@ -45,7 +46,6 @@ class BOL_LanguageService
         $this->prefixDao = BOL_LanguagePrefixDao::getInstance();
         $this->keyDao = BOL_LanguageKeyDao::getInstance();
         $this->valueDao = BOL_LanguageValueDao::getInstance();
-
         $this->languageCacheDir = OW::getPluginManager()->getPlugin('base')->getPluginFilesDir();
 
         if ( $includeCache )
@@ -459,16 +459,17 @@ class BOL_LanguageService
 
         $languageTag = (string) $prefixesXml[0]->attributes()->language_tag;
 
-        if ( $importOnlyActivePluginPrefix )
-        {
-            $plugin = BOL_PluginService::getInstance()->findPluginByKey((string)$prefixesXml[0]->attributes()->name);
+        $prefix = strval($prefixesXml[0]->attributes()->name);      
+
+        if ( $importOnlyActivePluginPrefix && !in_array($prefix, $this->getExceptionPrefixes()) )
+        {            
+            $plugin = BOL_PluginService::getInstance()->findPluginByKey($prefix);
 
             if ( empty($plugin) )
             {
                 return false;
             }
         }
-        
         if ( null === ( $language = $service->findByTag($languageTag) ) )
         {
             $language = new BOL_Language();
@@ -482,11 +483,11 @@ class BOL_LanguageService
             $service->save($language);
         }
 
-        if ( null === ( $prefix = $service->findPrefix((string) $prefixesXml[0]->attributes()->name) ) )
+        if ( null === ( $prefix = $service->findPrefix($prefix) ))
         {
             $prefix = new BOL_LanguagePrefix();
 
-            $prefix->setPrefix(strval($prefixesXml[0]->attributes()->name))
+            $prefix->setPrefix(strval($prefix))
                 ->setLabel(strval($prefixesXml[0]->attributes()->label));
 
             $service->savePrefix($prefix);
@@ -935,5 +936,10 @@ class BOL_LanguageService
 
             unlink($dir . $node);
         }
+    }
+    
+    public function getExceptionPrefixes()
+    {
+        return $this->exceptionPrefixes;
     }
 }
