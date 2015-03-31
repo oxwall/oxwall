@@ -43,14 +43,14 @@ class BOL_SearchEntityDao extends OW_BaseDao
     /**
      * Singleton instance.
      *
-     * @var BOL_AuthTokenDao
+     * @var BOL_SearchEntityDao
      */
     private static $classInstance;
 
     /**
      * Returns an instance of class (singleton pattern implementation).
      *
-     * @return BOL_AuthTokenDao
+     * @return BOL_SearchEntityDao
      */
     public static function getInstance()
     {
@@ -76,7 +76,7 @@ class BOL_SearchEntityDao extends OW_BaseDao
      */
     public function getDtoClassName()
     {
-        return 'BOL_SearchEntityDao';
+        return 'BOL_SearchEntity';
     }
 
     /**
@@ -86,5 +86,98 @@ class BOL_SearchEntityDao extends OW_BaseDao
     public function getTableName()
     {
         return OW_DB_PREFIX . 'base_search_entity';
+    }
+
+    /**
+     * Finds entity parts
+     *
+     * @param string $entityType
+     * @param int $entityId
+     * @return OW_Entity
+     */
+    public function findEntityParts( $entityType, $entityId = null)
+    {
+        $params = array(
+            $entityType
+        );
+
+        $sql = 'SELECT * FROM ' . $this->getTableName() . ' WHERE `' . self::ENTITY_TYPE . '` = ?';
+
+        if ( $entityId ) 
+        {
+            $sql .=  ' AND `' . self::ENTITY_ID . '` = ? ';
+            $params = array_merge($params, array(
+                $entityId
+            ));
+        }
+
+        return $this->dbo->queryForObjectList($sql, $this->getDtoClassName(), $params);
+    }
+
+    /**
+     * Finds all entities
+     *
+     * @param integer $first
+     * @param integer $limit
+     * @param string $entityType
+     * @return array
+     */
+    public function findAllEntities( $first, $limit, $entityType = null )
+    {
+        $params = array();
+        $sql = 'SELECT * FROM ' . $this->getTableName() . ' WHERE 1';
+
+        if ( $entityType ) 
+        {
+            $sql .=  ' AND `' . self::ENTITY_TYPE . '` = ? ';
+            $params = array_merge($params, array(
+                $entityType
+            ));
+        }
+
+        $params = array_merge($params, array(
+            $first,
+            $limit
+        ));
+
+        $sql .= ' LIMIT ?, ?';
+
+        return $this->dbo->queryForList($sql, $params);
+    }
+
+    /**
+     * Delete all entities
+     * 
+     * @return void
+     */
+    public function deleteAllEntities()
+    {
+        $this->dbo->delete('TRUNCATE TABLE ' . $this->getTableName());
+    }
+
+    /**
+     * Set entities status
+     * 
+     * @param string $entityType
+     * @param boolean $active
+     * @return void
+     */
+    public function setEntitiesStatus( $entityType = null, $active = true )
+    {
+        $params = array(
+            ($active ? self::ENTITY_ACTIVE_STATE : self::ENTITY_NOT_ACTIVE_STATE)
+        );
+
+        $sql = 'UPDATE `' . $this->getTableName() . '` SET `' . self::ENTITY_ACTIVE . '` = ?';
+
+        if ( $entityType ) 
+        {
+            $sql .=  ' WHERE `' . self::ENTITY_TYPE . '` = ? ';
+            $params = array_merge($params, array(
+                $entityType
+            ));
+        }
+
+        $this->dbo->query($sql, $params);
     }
 }

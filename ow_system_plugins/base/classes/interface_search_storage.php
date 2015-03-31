@@ -41,7 +41,7 @@ interface BASE_CLASS_InterfaceSearchStorage
      * @param boolean $isActive
      * @return boolean
      */
-    public function addEntity($type, $id, $searchText, array $tags = array(), $isActive = true);
+    public function addEntity( $type, $id, $searchText, array $tags = array(), $isActive = true );
 
     /**
      * Delete entity
@@ -50,7 +50,7 @@ interface BASE_CLASS_InterfaceSearchStorage
      * @param integer $id
      * @return boolean
      */
-    public function deleteEntity($type, $id);
+    public function deleteEntity( $type, $id );
 
     /**
      * Delete all entities
@@ -58,7 +58,7 @@ interface BASE_CLASS_InterfaceSearchStorage
      * @param string $type
      * @return boolean
      */
-    public function deleteAllEntities($type = null);
+    public function deleteAllEntities( $type = null );
 
     /**
      * Deactivate all entities
@@ -66,7 +66,7 @@ interface BASE_CLASS_InterfaceSearchStorage
      * @param string $type
      * @return boolean
      */
-    public function deactivateAllEntities($type = null);
+    public function deactivateAllEntities( $type = null );
 
     /**
      * Activate all entities
@@ -74,7 +74,7 @@ interface BASE_CLASS_InterfaceSearchStorage
      * @param string $type
      * @return boolean
      */
-    public function activateAllEntities($type = null);
+    public function activateAllEntities( $type = null );
 
     /**
      * Search entities
@@ -86,13 +86,15 @@ interface BASE_CLASS_InterfaceSearchStorage
      * @param boolean $sortByDate sort by date or by relevance
      * @return array
      */
-    public function searchEntities($searchText, $first, $limit, array $tags = array(), $sortByDate = false);
+    public function searchEntities( $searchText, $first, $limit, array $tags = array(), $sortByDate = false );
 
     /**
      * Get all entities
      *
+     * @param integer $first
+     * @param integer $limit
      * @param string $type
      * @return array
      */
-    public function getAllEntities($type = null);
+    public function getAllEntities( $first, $limit, $type = null );
 }

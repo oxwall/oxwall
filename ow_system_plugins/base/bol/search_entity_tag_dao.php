@@ -37,14 +37,14 @@ class BOL_SearchEntityTagDao extends OW_BaseDao
     /**
      * Singleton instance.
      *
-     * @var BOL_AuthTokenDao
+     * @var BOL_SearchEntityTagDao
      */
     private static $classInstance;
 
     /**
      * Returns an instance of class (singleton pattern implementation).
      *
-     * @return BOL_AuthTokenDao
+     * @return BOL_SearchEntityTagDao
      */
     public static function getInstance()
     {
@@ -70,7 +70,7 @@ class BOL_SearchEntityTagDao extends OW_BaseDao
      */
     public function getDtoClassName()
     {
-        return 'BOL_SearchEntityTagDao';
+        return 'BOL_SearchEntityTag';
     }
 
     /**
@@ -80,5 +80,29 @@ class BOL_SearchEntityTagDao extends OW_BaseDao
     public function getTableName()
     {
         return OW_DB_PREFIX . 'base_search_entity_tag';
+    }
+
+    /**
+     * Finds tags
+     *
+     * @param int $entityId
+     * @return OW_Entity
+     */
+    public function findTags( $entityId )
+    {
+        $sql = 'SELECT * FROM ' . 
+                $this->getTableName() . ' WHERE `' . self::ENTITY_ID . '` = ?';
+
+        return $this->dbo->queryForObjectList($sql, $this->getDtoClassName(), array($entityId));
+    }
+
+    /**
+     * Delete all tags
+     * 
+     * @return void
+     */
+    public function deleteAllTags()
+    {
+        $this->dbo->delete('TRUNCATE TABLE ' . $this->getTableName());
     }
 }

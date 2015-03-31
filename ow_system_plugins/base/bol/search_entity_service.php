@@ -39,6 +39,12 @@ final class BOL_SearchEntityService
     private static $classInstance;
 
     /**
+     * Proxy search storage
+     * @var string
+     */
+    private $proxyStorage = 'BASE_CLASS_MysqlSearchStorage';
+
+    /**
      * Returns an instance of class (singleton pattern implementation).
      *
      * @return BOL_AttachmentService
@@ -66,13 +72,17 @@ final class BOL_SearchEntityService
      */
     public function getSearchStorage()
     {
-        // TODO: add factory method
-        return new BASE_CLASS_MysqlSearchStorage();
-        //$lucene = new BASE_CLASS_ZendLuceneSearchStorage();
-        
-        //print_r($mysql);
-        //print_r($lucene);
-        //echo 'test';
-        //exit;
+        return new $this->proxyStorage($this->getActiveStorage());
+    }
+
+    /**
+     * Get active storage
+     * 
+     * @return object BASE_CLASS_InterfaceSearchStorage
+     */
+    private function getActiveStorage()
+    {
+       // return new BASE_CLASS_ZendLuceneSearchStorage();
+        return null;
     }
 }
