@@ -48,6 +48,12 @@ class BOL_SearchEntityDao extends OW_BaseDao
     private static $classInstance;
 
     /**
+     * Full text search in boolean mode
+     * @var boolean
+     */
+    private $fullTextSearchBooleanMode = true;
+
+    /**
      * Returns an instance of class (singleton pattern implementation).
      *
      * @return BOL_SearchEntityDao
@@ -118,8 +124,8 @@ class BOL_SearchEntityDao extends OW_BaseDao
      * Finds all entities
      *
      * @param integer $first
-     * @param integer $limit
-     * @param string $entityType
+     * @param integer $limit 
+     * @param string $entityType 
      * @return array
      */
     public function findAllEntities( $first, $limit, $entityType = null )
@@ -160,7 +166,6 @@ class BOL_SearchEntityDao extends OW_BaseDao
      * 
      * @param string $entityType
      * @param boolean $active
-     * @return void
      */
     public function setEntitiesStatus( $entityType = null, $active = true )
     {
@@ -179,5 +184,68 @@ class BOL_SearchEntityDao extends OW_BaseDao
         }
 
         $this->dbo->query($sql, $params);
+    }
+
+    /**
+     * Find entities by text
+     * 
+     * @param string $searchText
+     * @param integer $first
+     * @param integer $limit
+     * @param array $tags
+     * @param boolean $sortByDate - sort by date or by relevance
+     * @return array
+     */
+    public function findEntitiesByText(  $searchText, $first, $limit, array $tags = array(), $sortByDate = false )
+    {
+        // sql params
+        $queryParams = array(
+            ':search' => $searchText,
+            ':first' => $first,
+            ':limit' => $limit,
+            ':status' => self::ENTITY_ACTIVE_STATE
+        );
+
+        // build the sub query
+        $searchFilter = 'MATCH (b.' . self::ENTITY_TEXT . ') AGAINST (:search ' . $this->getFullTextSearchMode() . ')';
+        $subQuery  = 'SELECT 
+                b.' . self::ENTITY_TYPE . ', 
+                b.' . self::ENTITY_ID . ', ' . 
+                $searchFilter . ' as relevance';
+
+        // search without tags
+        if ( !$tags ) 
+        {
+            $subQuery .= ' FROM ' . $this->getTableName() . ' b WHERE ' . $searchFilter .  ' AND b.'. self::ENTITY_ACTIVE  . ' = :status';
+        }
+        else 
+        {
+            $enityTags = BOL_SearchEntityTagDao::getInstance();
+
+            $subQuery .= ' FROM ' . $enityTags->getTableName() . ' a';
+            $subQuery .= ' INNER JOIN ' . $this->getTableName() . ' b';
+            $subQuery .= ' ON a.entityId = b.id AND ' . 
+                    $searchFilter . ' AND b.'. self::ENTITY_ACTIVE  . ' = :status';
+
+            $subQuery .= ' WHERE a.' . BOL_SearchEntityTagDao::ENTITY_TAG . ' IN (' . $this->dbo->mergeInClause($tags) . ')';
+        }
+
+        $subQuery .= ' ORDER BY ' . ($sortByDate ? 'b.' . self::ENTITY_CREATED : 'relevance') . ' DESC';
+
+        // build the primary query
+        $query  = 'SELECT DISTINCT ' .  self::ENTITY_TYPE. ', ' . self::ENTITY_ID;
+        $query .= ' FROM (' . $subQuery . ') result LIMIT :first, :limit';
+
+        return $this->dbo->queryForList($query, $queryParams);
+    }
+
+    /**
+     * Get full text search mode
+     * 
+     * @return string
+     */
+    protected function getFullTextSearchMode()
+    {
+        return $this->fullTextSearchBooleanMode ? 'IN BOOLEAN MODE' : 'IN NATURAL LANGUAGE MODE';
     }
 }

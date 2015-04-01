@@ -36,7 +36,7 @@ interface BASE_CLASS_InterfaceSearchStorage
      *
      * @param string $type
      * @param integer $id
-     * @param string $searchText
+     * @param string  $searchText
      * @param array $tags
      * @param boolean $isActive
      * @return boolean
@@ -46,8 +46,8 @@ interface BASE_CLASS_InterfaceSearchStorage
     /**
      * Delete entity
      *
-     * @param string $type
-     * @param integer $id
+     * @param string $type 
+     * @param integer $id 
      * @return boolean
      */
     public function deleteEntity( $type, $id );
@@ -55,7 +55,7 @@ interface BASE_CLASS_InterfaceSearchStorage
     /**
      * Delete all entities
      *
-     * @param string $type
+     * @param string $type 
      * @return boolean
      */
     public function deleteAllEntities( $type = null );
@@ -71,7 +71,7 @@ interface BASE_CLASS_InterfaceSearchStorage
     /**
      * Activate all entities
      *
-     * @param string $type
+     * @param string $type 
      * @return boolean
      */
     public function activateAllEntities( $type = null );
@@ -83,7 +83,7 @@ interface BASE_CLASS_InterfaceSearchStorage
      * @param integer $first
      * @param integer $limit
      * @param array $tags
-     * @param boolean $sortByDate sort by date or by relevance
+     * @param boolean $sortByDate - sort by date or by relevance
      * @return array
      */
     public function searchEntities( $searchText, $first, $limit, array $tags = array(), $sortByDate = false );

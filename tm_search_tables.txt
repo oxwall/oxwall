@@ -6,14 +6,15 @@ CREATE TABLE IF NOT EXISTS `ow_base_search_entity` (
     `entityActive` tinyint(1) unsigned DEFAULT NULL,
     `entityCreated` int(10) unsigned NOT NULL,
     PRIMARY KEY (`id`),
-    KEY `entity` (`entityType`,`entityId`)
+    KEY `entity` (`entityType`,`entityId`),
+    FULLTEXT KEY `entityText` (`entityText`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
-
 
 CREATE TABLE IF NOT EXISTS `ow_base_search_entity_tag` (
     `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
     `entityTag` varchar(50) NOT NULL,
     `entityId` int(10) unsigned NOT NULL,
     PRIMARY KEY (`id`),
-    KEY `entity` (`entityId`)
+    KEY `entity` (`entityId`),
+    KEY `entity` (`entityTag`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;

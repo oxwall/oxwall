@@ -34,7 +34,7 @@ final class BOL_SearchEntityService
     /**
      * Singleton instance.
      *
-     * @var BOL_AttachmentService
+     * @var BOL_SearchEntityService
      */
     private static $classInstance;
 
@@ -47,7 +47,7 @@ final class BOL_SearchEntityService
     /**
      * Returns an instance of class (singleton pattern implementation).
      *
-     * @return BOL_AttachmentService
+     * @return BOL_SearchEntityService
      */
     public static function getInstance()
     {
@@ -68,7 +68,7 @@ final class BOL_SearchEntityService
     /**
      * Get search storage
      * 
-     * @return object BASE_CLASS_IsearchStorage
+     * @return BASE_CLASS_InterfaceSearchStorage
      */
     public function getSearchStorage()
     {
@@ -78,7 +78,7 @@ final class BOL_SearchEntityService
     /**
      * Get active storage
      * 
-     * @return object BASE_CLASS_InterfaceSearchStorage
+     * @return BASE_CLASS_InterfaceSearchStorage
      */
     private function getActiveStorage()
     {

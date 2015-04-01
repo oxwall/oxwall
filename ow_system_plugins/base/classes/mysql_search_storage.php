@@ -46,7 +46,7 @@ class BASE_CLASS_MysqlSearchStorage extends BASE_CLASS_AbstractSearchStorage
     /**
      *  Class constructor
      * 
-     * @param object $activeStorage BASE_CLASS_InterfaceSearchStorage
+     * @param object $activeStorage
      */
     public function __construct( BASE_CLASS_InterfaceSearchStorage $activeStorage = null ) 
     {
@@ -66,7 +66,7 @@ class BASE_CLASS_MysqlSearchStorage extends BASE_CLASS_AbstractSearchStorage
      * @param boolean $isActive
      * @return boolean
      */
-    public function addEntity( $type, $id, $searchText, array $tags = array(), $isActive = true ) // +
+    public function addEntity( $type, $id, $searchText, array $tags = array(), $isActive = true )
     {
         try 
         {
@@ -114,7 +114,7 @@ class BASE_CLASS_MysqlSearchStorage extends BASE_CLASS_AbstractSearchStorage
      * @param integer $id
      * @return boolean
      */
-    public function deleteEntity( $type, $id ) // +
+    public function deleteEntity( $type, $id )
     {
         try 
         {
@@ -158,7 +158,7 @@ class BASE_CLASS_MysqlSearchStorage extends BASE_CLASS_AbstractSearchStorage
      * @param string $type
      * @return boolean
      */
-    public function deleteAllEntities( $type = null ) // +
+    public function deleteAllEntities( $type = null )
     {
         try 
         {
@@ -208,7 +208,7 @@ class BASE_CLASS_MysqlSearchStorage extends BASE_CLASS_AbstractSearchStorage
      * @param string $type
      * @return boolean
      */
-    public function deactivateAllEntities( $type = null ) //+
+    public function deactivateAllEntities( $type = null )
     {
         try 
         {
@@ -233,7 +233,7 @@ class BASE_CLASS_MysqlSearchStorage extends BASE_CLASS_AbstractSearchStorage
      * @param string $type
      * @return boolean
      */
-    public function activateAllEntities( $type = null ) //+
+    public function activateAllEntities( $type = null )
     {
         try 
         {
@@ -259,11 +259,18 @@ class BASE_CLASS_MysqlSearchStorage extends BASE_CLASS_AbstractSearchStorage
      * @param integer $first
      * @param integer $limit
      * @param array $tags
-     * @param boolean $sortByDate sort by date or by relevance
+     * @param boolean $sortByDate - sort by date or by relevance
      * @return array
      */
     public function searchEntities( $searchText, $first, $limit, array $tags = array(), $sortByDate = false )
-    {}
+    {
+        if ( $this->activeStorage )
+        {
+            return $this->activeStorage->searchEntities($searchText, $first, $limit, $tags, $sortByDate);
+        }
+
+        return $this->searchEntityDao->findEntitiesByText($searchText, $first, $limit, $tags, $sortByDate);
+    }
 
     /**
      * Get all entities
@@ -273,7 +280,7 @@ class BASE_CLASS_MysqlSearchStorage extends BASE_CLASS_AbstractSearchStorage
      * @param string $type
      * @return array
      */
-    public function getAllEntities(  $first, $limit, $type = null ) // +
+    public function getAllEntities(  $first, $limit, $type = null )
     {
          if (null != ($entities = $this->searchEntityDao->findAllEntities($first, $limit, $type)))  
          {
