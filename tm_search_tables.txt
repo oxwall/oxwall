@@ -15,6 +15,6 @@ CREATE TABLE IF NOT EXISTS `ow_base_search_entity_tag` (
     `entityTag` varchar(50) NOT NULL,
     `entityId` int(10) unsigned NOT NULL,
     PRIMARY KEY (`id`),
-    KEY `entity` (`entityId`),
-    KEY `entity` (`entityTag`)
+    KEY `entityId` (`entityId`),
+    KEY `entityTag` (`entityTag`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;

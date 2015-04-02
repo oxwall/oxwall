@@ -32,22 +32,6 @@
 abstract class BASE_CLASS_AbstractSearchStorage implements BASE_CLASS_InterfaceSearchStorage
 {
     /**
-     * Active storage
-     * @var BASE_CLASS_InterfaceSearchStorage
-     */
-    protected $activeStorage;
-
-    /**
-     *  Class constructor
-     * 
-     * @param object $activeStorage
-     */
-    public function __construct( BASE_CLASS_InterfaceSearchStorage $activeStorage = null ) 
-    {
-        $this->activeStorage = $activeStorage;
-    }
-
-    /**
      * Clean search text
      * 
      * @param string $text

@@ -41,7 +41,7 @@ class BASE_CLASS_ZendLuceneSearchStorage extends BASE_CLASS_AbstractSearchStorag
      * @param boolean $isActive
      * @return boolean
      */
-    public function addEntity($type, $id, $searchText, array $tags = array(), $isActive = true)
+    public function addEntity( $type, $id, $searchText, array $tags = array(), $isActive = true )
     {}
 
     /**
@@ -51,7 +51,7 @@ class BASE_CLASS_ZendLuceneSearchStorage extends BASE_CLASS_AbstractSearchStorag
      * @param integer $id
      * @return boolean
      */
-    public function deleteEntity($type, $id)
+    public function deleteEntity( $type, $id )
     {}
 
     /**
@@ -60,7 +60,7 @@ class BASE_CLASS_ZendLuceneSearchStorage extends BASE_CLASS_AbstractSearchStorag
      * @param string $type
      * @return boolean
      */
-    public function deleteAllEntities($type = null)
+    public function deleteAllEntities( $type = null )
     {}
 
     /**
@@ -69,7 +69,7 @@ class BASE_CLASS_ZendLuceneSearchStorage extends BASE_CLASS_AbstractSearchStorag
      * @param string $type
      * @return boolean
      */
-    public function deactivateAllEntities($type = null)
+    public function deactivateAllEntities( $type = null )
     {}
 
     /**
@@ -78,7 +78,7 @@ class BASE_CLASS_ZendLuceneSearchStorage extends BASE_CLASS_AbstractSearchStorag
      * @param string $type
      * @return boolean
      */
-    public function activateAllEntities($type = null)
+    public function activateAllEntities( $type = null )
     {}
 
     /**
@@ -88,18 +88,30 @@ class BASE_CLASS_ZendLuceneSearchStorage extends BASE_CLASS_AbstractSearchStorag
      * @param integer $first
      * @param integer $limit
      * @param array $tags
-     * @param boolean $sortByDate sort by date or by relevance
+     * @param boolean $sortByDate - sort by date or by relevance
      * @return array
      */
-    public function searchEntities($searchText, $first, $limit, array $tags = array(), $sortByDate = false)
+    public function searchEntities( $searchText, $first, $limit, array $tags = array(), $sortByDate = false )
+    {}
+
+    /**
+     * Search entities count
+     *
+     * @param string $searchText
+     * @param array $tags
+     * @return integer
+     */
+    public function searchEntitiesCount( $searchText, array $tags = array() )
     {}
 
     /**
      * Get all entities
      *
+     * @param integer $first
+     * @param integer $limit
      * @param string $type
      * @return array
      */
-    public function getAllEntities($type = null)
+    public function getAllEntities(  $first, $limit, $type = null )
     {}
 }

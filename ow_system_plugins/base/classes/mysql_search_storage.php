@@ -45,13 +45,9 @@ class BASE_CLASS_MysqlSearchStorage extends BASE_CLASS_AbstractSearchStorage
     
     /**
      *  Class constructor
-     * 
-     * @param object $activeStorage
      */
-    public function __construct( BASE_CLASS_InterfaceSearchStorage $activeStorage = null ) 
+    public function __construct() 
     {
-        parent::__construct($activeStorage);
-
         $this->searchEntityDao = BOL_SearchEntityDao::getInstance();
         $this->searchEntityTagDao = BOL_SearchEntityTagDao::getInstance();
     }
@@ -93,11 +89,6 @@ class BASE_CLASS_MysqlSearchStorage extends BASE_CLASS_AbstractSearchStorage
                     $this->searchEntityTagDao->save($dto);
                 }
             }
-
-            if ( $this->activeStorage )
-            {
-                return $this->activeStorage->addEntity($type, $id, $searchText, $tags, $isActive);
-            }
         }
         catch ( Exception $e ) 
         {
@@ -137,11 +128,6 @@ class BASE_CLASS_MysqlSearchStorage extends BASE_CLASS_AbstractSearchStorage
 
                 // delete an entity part
                 $this->searchEntityDao->deleteById($entity->id);
-            }
-
-            if ( $this->activeStorage )
-            {
-                return $this->activeStorage->deleteEntity($type, $id);
             }
         }
         catch ( Exception $e )
@@ -188,11 +174,6 @@ class BASE_CLASS_MysqlSearchStorage extends BASE_CLASS_AbstractSearchStorage
                     }
                 }
             }
-
-            if ( $this->activeStorage )
-            {
-                return $this->activeStorage->deleteAllEntities($type);
-            }
         }
         catch ( Exception $e ) 
         {
@@ -213,11 +194,6 @@ class BASE_CLASS_MysqlSearchStorage extends BASE_CLASS_AbstractSearchStorage
         try 
         {
             $this->searchEntityDao->setEntitiesStatus($type, false);
-
-            if ( $this->activeStorage )
-            {
-                return $this->activeStorage->deactivateAllEntities($type);
-            }
         }
         catch ( Exception $e ) 
         {
@@ -238,11 +214,6 @@ class BASE_CLASS_MysqlSearchStorage extends BASE_CLASS_AbstractSearchStorage
         try 
         {
             $this->searchEntityDao->setEntitiesStatus($type);
-
-            if ( $this->activeStorage )
-            {
-                return $this->activeStorage->activateAllEntities($type);
-            }
         }
         catch ( Exception $e ) 
         {
@@ -264,12 +235,20 @@ class BASE_CLASS_MysqlSearchStorage extends BASE_CLASS_AbstractSearchStorage
      */
     public function searchEntities( $searchText, $first, $limit, array $tags = array(), $sortByDate = false )
     {
-        if ( $this->activeStorage )
-        {
-            return $this->activeStorage->searchEntities($searchText, $first, $limit, $tags, $sortByDate);
-        }
+        return $this->searchEntityDao->
+                findEntitiesByText($searchText, $first, $limit, $tags, $sortByDate);
+    }
 
-        return $this->searchEntityDao->findEntitiesByText($searchText, $first, $limit, $tags, $sortByDate);
+    /**
+     * Search entities count
+     *
+     * @param string $searchText
+     * @param array $tags
+     * @return integer
+     */
+    public function searchEntitiesCount( $searchText, array $tags = array() )
+    {
+        return $this->searchEntityDao->findEntitiesCountByText($searchText, $tags);
     }
 
     /**

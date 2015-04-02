@@ -187,6 +187,55 @@ class BOL_SearchEntityDao extends OW_BaseDao
     }
 
     /**
+     * Find entities count by text
+     * 
+     * @param string $searchText
+     * @param array $tags
+     * @return integer
+     */
+    public function findEntitiesCountByText(  $searchText, array $tags = array() )
+    {
+        // sql params
+        $queryParams = array(
+            ':search' => $searchText,
+            ':status' => self::ENTITY_ACTIVE_STATE
+        );
+
+        // build the first sub query
+        $searchFilter = 'MATCH (b.' . self::ENTITY_TEXT . ') AGAINST (:search ' . $this->getFullTextSearchMode() . ')';
+        $subQuery1  = 'SELECT 
+                b.' . self::ENTITY_TYPE . ', 
+                b.' . self::ENTITY_ID;
+
+        // search without tags
+        if ( !$tags ) 
+        {
+            $subQuery1 .= ' FROM ' . $this->getTableName() . ' b WHERE ' . $searchFilter .  ' AND b.'. self::ENTITY_ACTIVE  . ' = :status';
+        }
+        else 
+        {
+            $enityTags = BOL_SearchEntityTagDao::getInstance();
+
+            $subQuery1 .= ' FROM ' . $enityTags->getTableName() . ' a';
+            $subQuery1 .= ' INNER JOIN ' . $this->getTableName() . ' b';
+            $subQuery1 .= ' ON a.entityId = b.id AND ' . 
+                    $searchFilter . ' AND b.'. self::ENTITY_ACTIVE  . ' = :status';
+
+            $subQuery1 .= ' WHERE a.' . BOL_SearchEntityTagDao::ENTITY_TAG . ' IN (' . $this->dbo->mergeInClause($tags) . ')';
+        }
+
+        // build the second sub query 
+        $subQuery2  = 'SELECT DISTINCT ' .  self::ENTITY_TYPE. ', ' . self::ENTITY_ID;
+        $subQuery2 .= ' FROM (' . $subQuery1 . ') result';
+
+        // build the primary query
+        $query = 'SELECT COUNT(*) as rowsCount FROM (' . $subQuery2 . ') as rows'; 
+        $result = $this->dbo->queryForRow($query, $queryParams);
+
+        return !empty($result['rowsCount']) ? $result['rowsCount'] : 0;
+    }
+
+    /**
      * Find entities by text
      * 
      * @param string $searchText

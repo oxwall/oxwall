@@ -3,6 +3,7 @@
 <phpunit bootstrap="init.php">
     <testsuites>
         <testsuite name="Base tests">
+            <directory>ow_core</directory>
             <directory>ow_utilities</directory>
         </testsuite>
     </testsuites>

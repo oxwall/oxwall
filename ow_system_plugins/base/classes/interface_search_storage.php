@@ -77,6 +77,15 @@ interface BASE_CLASS_InterfaceSearchStorage
     public function activateAllEntities( $type = null );
 
     /**
+     * Search entities count
+     *
+     * @param string $searchText
+     * @param array $tags
+     * @return integer
+     */
+    public function searchEntitiesCount( $searchText, array $tags = array() );
+
+    /**
      * Search entities
      *
      * @param string $searchText
