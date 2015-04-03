@@ -32,7 +32,7 @@
 class BOL_SearchEntityTagDao extends OW_BaseDao
 {
     const ENTITY_TAG = 'entityTag';
-    const ENTITY_ID = 'entityId';
+    const ENTITY_SEARCH_ID = 'searchEntityId';
 
     /**
      * Singleton instance.
@@ -85,15 +85,15 @@ class BOL_SearchEntityTagDao extends OW_BaseDao
     /**
      * Finds tags
      *
-     * @param int $entityId
+     * @param int $entitySearchId
      * @return OW_Entity
      */
-    public function findTags( $entityId )
+    public function findTags( $entitySearchId )
     {
         $sql = 'SELECT * FROM ' . 
-                $this->getTableName() . ' WHERE `' . self::ENTITY_ID . '` = ?';
+                $this->getTableName() . ' WHERE `' . self::ENTITY_SEARCH_ID . '` = ?';
 
-        return $this->dbo->queryForObjectList($sql, $this->getDtoClassName(), array($entityId));
+        return $this->dbo->queryForObjectList($sql, $this->getDtoClassName(), array($entitySearchId));
     }
 
     /**

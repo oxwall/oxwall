@@ -33,12 +33,12 @@ class BOL_SearchEntityDao extends OW_BaseDao
 {
     const ENTITY_TYPE = 'entityType';
     const ENTITY_ID = 'entityId';
-    const ENTITY_TEXT = 'entityText';
-    const ENTITY_ACTIVE = 'entityActive';
-    const ENTITY_CREATED = 'entityCreated';
+    const TEXT = 'text';
+    const STATUS = 'status';
+    const TIMESTAMP = 'timeStamp';
 
-    const ENTITY_ACTIVE_STATE = 1;
-    const ENTITY_NOT_ACTIVE_STATE = null;
+    const ENTITY_ACTIVE_STATUS = 1;
+    const ENTITY_NOT_ACTIVE_STATUS = 0;
 
     /**
      * Singleton instance.
@@ -166,20 +166,30 @@ class BOL_SearchEntityDao extends OW_BaseDao
      * 
      * @param string $entityType
      * @param boolean $active
+     * @param integer $entityId
+     * @return void
      */
-    public function setEntitiesStatus( $entityType = null, $active = true )
+    public function setEntitiesStatus( $entityType = null, $active = true, $entityId = null )
     {
         $params = array(
-            ($active ? self::ENTITY_ACTIVE_STATE : self::ENTITY_NOT_ACTIVE_STATE)
+            ($active ? self::ENTITY_ACTIVE_STATUS : self::ENTITY_NOT_ACTIVE_STATUS)
         );
 
-        $sql = 'UPDATE `' . $this->getTableName() . '` SET `' . self::ENTITY_ACTIVE . '` = ?';
+        $sql = 'UPDATE `' . $this->getTableName() . '` SET `' . self::STATUS . '` = ? WHERE 1';
 
         if ( $entityType ) 
         {
-            $sql .=  ' WHERE `' . self::ENTITY_TYPE . '` = ? ';
+            $sql .=  ' AND `' . self::ENTITY_TYPE . '` = ? ';
             $params = array_merge($params, array(
                 $entityType
+            ));
+        }
+
+        if ( $entityId ) 
+        {
+            $sql .=  ' AND `' . self::ENTITY_ID . '` = ? ';
+            $params = array_merge($params, array(
+                $entityId
             ));
         }
 
@@ -189,20 +199,20 @@ class BOL_SearchEntityDao extends OW_BaseDao
     /**
      * Find entities count by text
      * 
-     * @param string $searchText
+     * @param string $text
      * @param array $tags
      * @return integer
      */
-    public function findEntitiesCountByText(  $searchText, array $tags = array() )
+    public function findEntitiesCountByText(  $text, array $tags = array() )
     {
         // sql params
         $queryParams = array(
-            ':search' => $searchText,
-            ':status' => self::ENTITY_ACTIVE_STATE
+            ':search' => $text,
+            ':status' => self::ENTITY_ACTIVE_STATUS
         );
 
         // build the first sub query
-        $searchFilter = 'MATCH (b.' . self::ENTITY_TEXT . ') AGAINST (:search ' . $this->getFullTextSearchMode() . ')';
+        $searchFilter = 'MATCH (b.' . self::TEXT . ') AGAINST (:search ' . $this->getFullTextSearchMode() . ')';
         $subQuery1  = 'SELECT 
                 b.' . self::ENTITY_TYPE . ', 
                 b.' . self::ENTITY_ID;
@@ -210,7 +220,7 @@ class BOL_SearchEntityDao extends OW_BaseDao
         // search without tags
         if ( !$tags ) 
         {
-            $subQuery1 .= ' FROM ' . $this->getTableName() . ' b WHERE ' . $searchFilter .  ' AND b.'. self::ENTITY_ACTIVE  . ' = :status';
+            $subQuery1 .= ' FROM ' . $this->getTableName() . ' b WHERE ' . $searchFilter .  ' AND b.'. self::STATUS  . ' = :status';
         }
         else 
         {
@@ -218,8 +228,8 @@ class BOL_SearchEntityDao extends OW_BaseDao
 
             $subQuery1 .= ' FROM ' . $enityTags->getTableName() . ' a';
             $subQuery1 .= ' INNER JOIN ' . $this->getTableName() . ' b';
-            $subQuery1 .= ' ON a.entityId = b.id AND ' . 
-                    $searchFilter . ' AND b.'. self::ENTITY_ACTIVE  . ' = :status';
+            $subQuery1 .= ' ON a.' . BOL_SearchEntityTagDao::ENTITY_SEARCH_ID . ' = b.id AND ' . 
+                    $searchFilter . ' AND b.'. self::STATUS  . ' = :status';
 
             $subQuery1 .= ' WHERE a.' . BOL_SearchEntityTagDao::ENTITY_TAG . ' IN (' . $this->dbo->mergeInClause($tags) . ')';
         }
@@ -238,25 +248,25 @@ class BOL_SearchEntityDao extends OW_BaseDao
     /**
      * Find entities by text
      * 
-     * @param string $searchText
+     * @param string $text
      * @param integer $first
      * @param integer $limit
      * @param array $tags
      * @param boolean $sortByDate - sort by date or by relevance
      * @return array
      */
-    public function findEntitiesByText(  $searchText, $first, $limit, array $tags = array(), $sortByDate = false )
+    public function findEntitiesByText(  $text, $first, $limit, array $tags = array(), $sortByDate = false )
     {
         // sql params
         $queryParams = array(
-            ':search' => $searchText,
+            ':search' => $text,
             ':first' => $first,
             ':limit' => $limit,
-            ':status' => self::ENTITY_ACTIVE_STATE
+            ':status' => self::ENTITY_ACTIVE_STATUS
         );
 
         // build the sub query
-        $searchFilter = 'MATCH (b.' . self::ENTITY_TEXT . ') AGAINST (:search ' . $this->getFullTextSearchMode() . ')';
+        $searchFilter = 'MATCH (b.' . self::TEXT . ') AGAINST (:search ' . $this->getFullTextSearchMode() . ')';
         $subQuery  = 'SELECT 
                 b.' . self::ENTITY_TYPE . ', 
                 b.' . self::ENTITY_ID . ', ' . 
@@ -265,7 +275,7 @@ class BOL_SearchEntityDao extends OW_BaseDao
         // search without tags
         if ( !$tags ) 
         {
-            $subQuery .= ' FROM ' . $this->getTableName() . ' b WHERE ' . $searchFilter .  ' AND b.'. self::ENTITY_ACTIVE  . ' = :status';
+            $subQuery .= ' FROM ' . $this->getTableName() . ' b WHERE ' . $searchFilter .  ' AND b.'. self::STATUS  . ' = :status';
         }
         else 
         {
@@ -273,13 +283,13 @@ class BOL_SearchEntityDao extends OW_BaseDao
 
             $subQuery .= ' FROM ' . $enityTags->getTableName() . ' a';
             $subQuery .= ' INNER JOIN ' . $this->getTableName() . ' b';
-            $subQuery .= ' ON a.entityId = b.id AND ' . 
-                    $searchFilter . ' AND b.'. self::ENTITY_ACTIVE  . ' = :status';
+            $subQuery .= ' ON a.' . BOL_SearchEntityTagDao::ENTITY_SEARCH_ID . ' = b.id AND ' . 
+                    $searchFilter . ' AND b.'. self::STATUS  . ' = :status';
 
             $subQuery .= ' WHERE a.' . BOL_SearchEntityTagDao::ENTITY_TAG . ' IN (' . $this->dbo->mergeInClause($tags) . ')';
         }
 
-        $subQuery .= ' ORDER BY ' . ($sortByDate ? 'b.' . self::ENTITY_CREATED : 'relevance') . ' DESC';
+        $subQuery .= ' ORDER BY ' . ($sortByDate ? 'b.' . self::TIMESTAMP : 'relevance') . ' DESC';
 
         // build the primary query
         $query  = 'SELECT DISTINCT ' .  self::ENTITY_TYPE. ', ' . self::ENTITY_ID;

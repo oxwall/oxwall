@@ -9,21 +9,21 @@ $queryList[] = "CREATE TABLE IF NOT EXISTS `{$tblPrefix}base_search_entity` (
     `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
     `entityType` varchar(50) NOT NULL,
     `entityId` int(10) unsigned NOT NULL,
-    `entityText` text NOT NULL,
-    `entityActive` tinyint(1) unsigned DEFAULT NULL,
-    `entityCreated` int(10) unsigned NOT NULL,
+    `text` text NOT NULL,
+    `status` tinyint(1) unsigned NOT NULL DEFAULT 1,
+    `timeStamp` int(10) unsigned NOT NULL,
     PRIMARY KEY (`id`),
     KEY `entity` (`entityType`,`entityId`),
-    FULLTEXT KEY `entityText` (`entityText`)
+    FULLTEXT KEY `entityText` (`text`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8;";
 
 
 $queryList[] = "CREATE TABLE IF NOT EXISTS `{$tblPrefix}base_search_entity_tag` (
     `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
     `entityTag` varchar(50) NOT NULL,
-    `entityId` int(10) unsigned NOT NULL,
+    `searchEntityId` int(10) unsigned NOT NULL,
     PRIMARY KEY (`id`),
-    KEY `entityId` (`entityId`),
+    KEY `searchEntityId` (`searchEntityId`),
     KEY `entityTag` (`entityTag`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;";
 

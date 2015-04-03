@@ -34,76 +34,85 @@ interface BASE_CLASS_InterfaceSearchStorage
     /**
      * Add entity
      *
-     * @param string $type
-     * @param integer $id
-     * @param string  $searchText
+     * @param string $entityType
+     * @param integer $entityId
+     * @param string  $text
      * @param array $tags
+     * @return boolean
+     */
+    public function addEntity( $entityType, $entityId, $text, array $tags = array(), $isActive = true );
+
+    /**
+     * Set entity status
+     * 
+     * @param string $entityType
+     * @param integer $entityId
      * @param boolean $isActive
      * @return boolean
      */
-    public function addEntity( $type, $id, $searchText, array $tags = array(), $isActive = true );
+    public function setEntityStatus( $entityType, $entityId, $isActive = true );
 
     /**
      * Delete entity
      *
-     * @param string $type 
-     * @param integer $id 
+     * @param string $entityType 
+     * @param integer $entityId 
      * @return boolean
      */
-    public function deleteEntity( $type, $id );
+    public function deleteEntity( $entityType, $entityId );
 
     /**
      * Delete all entities
      *
-     * @param string $type 
+     * @param string $entityType 
      * @return boolean
      */
-    public function deleteAllEntities( $type = null );
+    public function deleteAllEntities( $entityType = null );
 
     /**
      * Deactivate all entities
      *
-     * @param string $type
+     * @param string $entityType
      * @return boolean
      */
-    public function deactivateAllEntities( $type = null );
+    public function deactivateAllEntities( $entityType = null );
 
     /**
      * Activate all entities
      *
-     * @param string $type 
+     * @param string $entityType 
      * @return boolean
      */
-    public function activateAllEntities( $type = null );
+    public function activateAllEntities( $entityType = null );
 
     /**
      * Search entities count
      *
-     * @param string $searchText
+     * @param string $text
      * @param array $tags
      * @return integer
      */
-    public function searchEntitiesCount( $searchText, array $tags = array() );
+    public function searchEntitiesCount( $text, array $tags = array() );
 
     /**
      * Search entities
      *
-     * @param string $searchText
+     * @param string $text
      * @param integer $first
      * @param integer $limit
      * @param array $tags
      * @param boolean $sortByDate - sort by date or by relevance
      * @return array
      */
-    public function searchEntities( $searchText, $first, $limit, array $tags = array(), $sortByDate = false );
+    public function searchEntities( $text, $first, $limit, array $tags = array(), $sortByDate = false );
 
     /**
      * Get all entities
      *
      * @param integer $first
      * @param integer $limit
-     * @param string $type
+     * @param string $entityType
      * @return array
      */
-    public function getAllEntities( $first, $limit, $type = null );
+    public function getAllEntities( $first, $limit, $entityType = null );
 }

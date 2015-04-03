@@ -41,19 +41,13 @@ final class OW_TextSearchManager
      * Default storage instance     
      * @var BASE_CLASS_InterfaceSearchStorage
      */
-    private static $defaultStorageInstance;
+    private $defaultStorageInstance;
 
     /**
      * Active storage instance     
      * @var BASE_CLASS_InterfaceSearchStorage
      */
-    private static $activeStorageInstance;
-
-    /**
-     * Default search storage
-     * @var string
-     */
-    private static $defaultStorage = 'BASE_CLASS_MysqlSearchStorage';
+    private $activeStorageInstance;
 
     /**
      * Returns an instance of class (singleton pattern implementation).
@@ -74,25 +68,48 @@ final class OW_TextSearchManager
      * Constructor.
      */
     private function __construct()
-    {}
+    {
+        $this->defaultStorageInstance = new BASE_CLASS_MysqlSearchStorage;
+        $this->activeStorageInstance = null;
+    }
 
     /**
      * Add entity
      *
-     * @param string $type
-     * @param integer $id
-     * @param string  $searchText
+     * @param string $entityType
+     * @param integer $entityId
+     * @param string  $text
      * @param array $tags
      * @param boolean $isActive
      * @return boolean
      */
-    public function addEntity( $type, $id, $searchText, array $tags = array(), $isActive = true )
+    public function addEntity( $entityType, $entityId, $text, array $tags = array(), $isActive = true )
     {
-        $result =  self::getDefaultStorageInstance()->addEntity($type, $id, $searchText, $tags, $isActive);
+        $result =  $this->defaultStorageInstance->addEntity($entityType, $entityId, $text, $tags, $isActive);
 
-        if ( $result && self::getActiveStorageInstance() )
+        if ( $result && $this->activeStorageInstance )
         {
-            $result =  self::getActiveStorageInstance()->addEntity($type, $id, $searchText, $tags, $isActive);
+            $result =  $this->activeStorageInstance->addEntity($entityType, $entityId, $text, $tags, $isActive);
+        }
+
+        return $result;
+    }
+
+    /**
+     * Set entity status
+     * 
+     * @param string $entityType
+     * @param integer $entityId
+     * @param boolean $isActive
+     * @return boolean
+     */
+    public function setEntityStatus( $entityType, $entityId, $isActive = true )
+    {
+        $result =  $this->defaultStorageInstance->setEntityStatus($entityType, $entityId, $isActive);
+
+        if ( $result && $this->activeStorageInstance )
+        {
+            $result =  $this->activeStorageInstance->setEntityStatus($entityType, $entityId, $isActive);
         }
 
         return $result;
@@ -101,17 +118,17 @@ final class OW_TextSearchManager
     /**
      * Delete entity
      *
-     * @param string $type
-     * @param integer $id
+     * @param string $entityType
+     * @param integer $entityId
      * @return boolean
      */
-    public function deleteEntity( $type, $id )
+    public function deleteEntity( $entityType, $entityId )
     {
-        $result =  self::getDefaultStorageInstance()->deleteEntity($type, $id);
+        $result =  $this->defaultStorageInstance->deleteEntity($entityType, $entityId);
 
-        if ( $result && self::getActiveStorageInstance() )
+        if ( $result && $this->activeStorageInstance )
         {
-            $result =  self::getActiveStorageInstance()->deleteEntity($type, $id);
+            $result =  $this->activeStorageInstance->deleteEntity($entityType, $entityId);
         }
 
         return $result;
@@ -120,16 +137,16 @@ final class OW_TextSearchManager
     /**
      * Delete all entities
      *
-     * @param string $type
+     * @param string $entityType
      * @return boolean
      */
-    public function deleteAllEntities( $type = null )
+    public function deleteAllEntities( $entityType = null )
     {
-        $result =  self::getDefaultStorageInstance()->deleteAllEntities($type);
+        $result =  $this->defaultStorageInstance->deleteAllEntities($entityType);
 
-        if ( $result && self::getActiveStorageInstance() )
+        if ( $result && $this->activeStorageInstance )
         {
-            $result =  self::getActiveStorageInstance()->deleteAllEntities($type);
+            $result =  $this->activeStorageInstance->deleteAllEntities($entityType);
         }
 
         return $result;
@@ -138,16 +155,16 @@ final class OW_TextSearchManager
     /**
      * Deactivate all entities
      *
-     * @param string $type
+     * @param string $entityType
      * @return boolean
      */
-    public function deactivateAllEntities( $type = null )
+    public function deactivateAllEntities( $entityType = null )
     {
-        $result = self::getDefaultStorageInstance()->deactivateAllEntities($type);
+        $result = $this->defaultStorageInstance->deactivateAllEntities($entityType);
 
-        if ( $result && self::getActiveStorageInstance() )
+        if ( $result && $this->activeStorageInstance )
         {
-            $result =  self::getActiveStorageInstance()->deactivateAllEntities($type);
+            $result =  $this->activeStorageInstance->deactivateAllEntities($entityType);
         }
 
         return $result;
@@ -156,16 +173,16 @@ final class OW_TextSearchManager
     /**
      * Activate all entities
      *
-     * @param string $type
+     * @param string $entityType
      * @return boolean
      */
-    public function activateAllEntities( $type = null )
+    public function activateAllEntities( $entityType = null )
     {
-        $result = self::getDefaultStorageInstance()->activateAllEntities($type);
+        $result = $this->defaultStorageInstance->activateAllEntities($entityType);
 
-        if ( $result && self::getActiveStorageInstance() )
+        if ( $result && $this->activeStorageInstance )
         {
-            $result =  self::getActiveStorageInstance()->activateAllEntities($type);
+            $result =  $this->activeStorageInstance->activateAllEntities($entityType);
         }
 
         return $result;
@@ -174,40 +191,40 @@ final class OW_TextSearchManager
     /**
      * Search entities
      *
-     * @param string $searchText
+     * @param string $text
      * @param integer $first
      * @param integer $limit
      * @param array $tags
      * @param boolean $sortByDate - sort by date or by relevance
      * @return array
      */
-    public function searchEntities( $searchText, $first, $limit, array $tags = array(), $sortByDate = false )
+    public function searchEntities( $text, $first, $limit, array $tags = array(), $sortByDate = false )
     {
-        if ( self::getActiveStorageInstance() )
+        if ( $this->activeStorageInstance )
         {
-            return self::getActiveStorageInstance()->
-                    searchEntities($searchText, $first, $limit, $tags, $sortByDate);
+            return $this->activeStorageInstance->
+                    searchEntities($text, $first, $limit, $tags, $sortByDate);
         }
 
-        return self::getDefaultStorageInstance()->
-                    searchEntities($searchText, $first, $limit, $tags, $sortByDate);
+        return $this->defaultStorageInstance->
+                    searchEntities($text, $first, $limit, $tags, $sortByDate);
     }
 
     /**
      * Search entities count
      *
-     * @param string $searchText
+     * @param string $text
      * @param array $tags
      * @return integer
      */
-    public function searchEntitiesCount( $searchText, array $tags = array() )
+    public function searchEntitiesCount( $text, array $tags = array() )
     {
-        if ( self::getActiveStorageInstance() )
+        if ( $this->activeStorageInstance )
         {
-            return self::getActiveStorageInstance()->searchEntitiesCount($searchText, $tags);
+            return $this->activeStorageInstance->searchEntitiesCount($text, $tags);
         }
 
-        return self::getDefaultStorageInstance()->searchEntitiesCount($searchText, $tags);
+        return $this->defaultStorageInstance->searchEntitiesCount($text, $tags);
     }
 
     /**
@@ -215,36 +232,11 @@ final class OW_TextSearchManager
      *
      * @param integer $first
      * @param integer $limit
-     * @param string $type
+     * @param string $entityType
      * @return array
      */
-    public function getAllEntities( $first, $limit, $type = null )
+    public function getAllEntities( $first, $limit, $entityType = null )
     {
-        return self::getDefaultStorageInstance()->getAllEntities($first, $limit, $type);
-    }
-
-    /**
-     * Get active storage instance
-     * 
-     * @return boolean|BASE_CLASS_InterfaceSearchStorage
-     */
-    private static function getActiveStorageInstance()
-    {
-        return false;
-    }
-
-    /**
-     * Get default storage instance
-     * 
-     * @return BASE_CLASS_InterfaceSearchStorage
-     */
-    private static function getDefaultStorageInstance()
-    {
-        if ( self::$defaultStorageInstance === null )
-        {
-            self::$defaultStorageInstance = new self::$defaultStorage();
-        }
-
-        return self::$defaultStorageInstance;
+        return $this->defaultStorageInstance->getAllEntities($first, $limit, $entityType);
     }
 }

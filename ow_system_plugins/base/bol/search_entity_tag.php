@@ -3,7 +3,7 @@
 /**
  * Data Transfer Object for `base_search_entity_tag` table.
  *
- * @package ow.plugin.guestbook.bol
+ * @package ow_system_plugins.base.bol
  * @since 1.0
  */
 class BOL_SearchEntityTag extends OW_Entity
@@ -15,8 +15,8 @@ class BOL_SearchEntityTag extends OW_Entity
     public $entityTag;
 
     /**
-     * Entity id
-     * @var string
+     * Search entity Id
+     * @var integer
      */
-    public $entityId;
+    public $searchEntityId;
 }

@@ -3,7 +3,7 @@
 /**
  * Data Transfer Object for `base_search_entity` table.
  *
- * @package ow.plugin.guestbook.bol
+ * @package ow_system_plugins.base.bol
  * @since 1.0
  */
 class BOL_SearchEntity extends OW_Entity
@@ -21,20 +21,20 @@ class BOL_SearchEntity extends OW_Entity
     public $entityId;
 
     /**
-     * Entity text
+     * Text
      * @var string
      */
-    public $entityText;
+    public $text;
 
     /**
-     * Entity active
+     * Status
      * @var integer
      */
-    public $entityActive;
+    public $status;
 
     /**
-     * Entity created
+     * TimeStamp
      * @var integer
      */
-    public $entityCreated;
+    public $timeStamp;
 }
