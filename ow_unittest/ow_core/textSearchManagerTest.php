@@ -3,6 +3,16 @@
 class TextSearchManagerTest extends PHPUnit_Framework_TestCase
 {
     /**
+     * Entity active
+     */
+    CONST ENTITY_ACTIVE = 1;
+
+    /**
+     * Entity not active
+     */
+    CONST ENTITY_NOT_ACTIVE = 0;
+
+    /**
      * Tear down
      */
     protected function tearDown()
@@ -143,11 +153,11 @@ class TextSearchManagerTest extends PHPUnit_Framework_TestCase
             {
                 // all forum post entities should be deactivated
                 case 'forum_post' :
-                    $this->assertEquals(BOL_SearchEntityDao::ENTITY_NOT_ACTIVE_STATUS, $entity['status']);
+                    $this->assertEquals(self::ENTITY_NOT_ACTIVE, $entity['status']);
                     break;
 
                 default :
-                    $this->assertEquals(BOL_SearchEntityDao::ENTITY_ACTIVE_STATUS, $entity['status']);
+                    $this->assertEquals(self::ENTITY_ACTIVE, $entity['status']);
             }
         }
     }
@@ -203,7 +213,7 @@ class TextSearchManagerTest extends PHPUnit_Framework_TestCase
         //  check entities status
         foreach ($entities as $entity)
         {
-            $this->assertEquals(BOL_SearchEntityDao::ENTITY_ACTIVE_STATUS, $entity['status']);
+            $this->assertEquals(self::ENTITY_ACTIVE, $entity['status']);
         }
     }
     
@@ -397,7 +407,7 @@ class TextSearchManagerTest extends PHPUnit_Framework_TestCase
         //  check entities status
         foreach ($entities as $entity)
         {
-            $this->assertEquals(BOL_SearchEntityDao::ENTITY_ACTIVE_STATUS, $entity['status']);
+            $this->assertEquals(self::ENTITY_ACTIVE, $entity['status']);
         }
     }
 }

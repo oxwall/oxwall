@@ -31,13 +31,39 @@
  */
 class BOL_SearchEntityDao extends OW_BaseDao
 {
+    /**
+     * Entity type
+     */
     const ENTITY_TYPE = 'entityType';
+
+    /**
+     * Entity id
+     */
     const ENTITY_ID = 'entityId';
+
+    /**
+     * Text
+     */
     const TEXT = 'text';
+
+    /**
+     * Status
+     */
     const STATUS = 'status';
+
+    /**
+     * Timestamp
+     */
     const TIMESTAMP = 'timeStamp';
 
+    /**
+     * Entity active status
+     */
     const ENTITY_ACTIVE_STATUS = 1;
+
+    /**
+     * Entity not active status
+     */
     const ENTITY_NOT_ACTIVE_STATUS = 0;
 
     /**
@@ -103,21 +129,15 @@ class BOL_SearchEntityDao extends OW_BaseDao
      */
     public function findEntityParts( $entityType, $entityId = null)
     {
-        $params = array(
-            $entityType
-        );
+        $example = new OW_Example();
+        $example->andFieldEqual(self::ENTITY_TYPE, $entityType);
 
-        $sql = 'SELECT * FROM ' . $this->getTableName() . ' WHERE `' . self::ENTITY_TYPE . '` = ?';
-
-        if ( $entityId ) 
+        if ( $entityId )
         {
-            $sql .=  ' AND `' . self::ENTITY_ID . '` = ? ';
-            $params = array_merge($params, array(
-                $entityId
-            ));
+            $example->andFieldEqual(self::ENTITY_ID, $entityId);
         }
 
-        return $this->dbo->queryForObjectList($sql, $this->getDtoClassName(), $params);
+        return $this->findListByExample($example);
     }
 
     /**

@@ -31,7 +31,14 @@
  */
 class BOL_SearchEntityTagDao extends OW_BaseDao
 {
+    /**
+     * Entity tag
+     */
     const ENTITY_TAG = 'entityTag';
+
+    /**
+     * Search entity id
+     */
     const ENTITY_SEARCH_ID = 'searchEntityId';
 
     /**
@@ -90,10 +97,10 @@ class BOL_SearchEntityTagDao extends OW_BaseDao
      */
     public function findTags( $entitySearchId )
     {
-        $sql = 'SELECT * FROM ' . 
-                $this->getTableName() . ' WHERE `' . self::ENTITY_SEARCH_ID . '` = ?';
+        $example = new OW_Example();
+        $example->andFieldEqual(self::ENTITY_SEARCH_ID, $entitySearchId);
 
-        return $this->dbo->queryForObjectList($sql, $this->getDtoClassName(), array($entitySearchId));
+        return $this->findListByExample($example);
     }
 
     /**
