@@ -40,7 +40,12 @@ class BASE_CMP_WelcomeWidget extends BASE_CLASS_Widget
     {
         parent::__construct();
 
-        $text = OW::getLanguage()->text('base', 'welcome_widget_content');
+        $isSkadate = OW::getPluginManager()->isPluginActive('skadate');
+        
+        $text = !$isSkadate
+            ? OW::getLanguage()->text('base', 'welcome_widget_content')
+            : OW::getLanguage()->text('base', 'skadate_welcome_widget_content');
+
         $text = str_replace('</li>', "</li>\n", $text); //if the tags are written in a line it is necessary to make a compulsory hyphenation?
         $photoKey = str_replace('{$key}', self::KEY_PHOTO_UPLOAD, self::PATTERN);
         $avatarKey = str_replace('{$key}', self::KEY_CHANGE_AVATAR, self::PATTERN);
