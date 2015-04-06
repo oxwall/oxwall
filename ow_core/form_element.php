@@ -2260,8 +2260,8 @@ class AgeRange extends FormElement
         OW::getDocument()->addScript(OW::getPluginManager()->getPlugin("base")->getStaticJsUrl() . 'age_range_field.js');
         OW::getDocument()->addOnloadScript(" window." . $this->getName() . " = new AgeRangeField( " . json_encode($this->getName()) . ", " . json_encode($this->minAge) . ", " . ( $this->maxAge ) . " ); ");
 
-        $fromAgeOptionsString = UTIL_HtmlTag::generateTag('option', array('value' => ''), true);
-        $toAgeOptionsString = UTIL_HtmlTag::generateTag('option', array('value' => ''), true);
+        $fromAgeOptionsString = "";//UTIL_HtmlTag::generateTag('option', array('value' => ''), true);
+        $toAgeOptionsString = "";//UTIL_HtmlTag::generateTag('option', array('value' => ''), true);
 
         $defaultAgeFrom = isset($this->value['from']) ? (int) $this->value['from'] : $this->minAge;
         $defaultAgeTo = isset($this->value['to']) ? (int) $this->value['to'] : $this->maxAge;
@@ -2502,8 +2502,8 @@ class Range extends FormElement
         OW::getDocument()->addScript(OW::getPluginManager()->getPlugin("base")->getStaticJsUrl() . 'range_field.js');
         OW::getDocument()->addOnloadScript(" window." . $this->getName() . " = new RangeField( '" . ( $this->getName() ) . "', " . ( $this->minValue ) . ", " . ( $this->maxValue ) . " ); ");
 
-        $fromValueOptionsString = UTIL_HtmlTag::generateTag('option', array('value' => ''), true);
-        $toValueOptionsString = UTIL_HtmlTag::generateTag('option', array('value' => ''), true);
+        $fromValueOptionsString = "";//UTIL_HtmlTag::generateTag('option', array('value' => ''), true);
+        $toValueOptionsString = "";//UTIL_HtmlTag::generateTag('option', array('value' => ''), true);
 
         $defaultValueFrom = isset($this->value['from']) ? (int) $this->value['from'] : $this->minValue;
         $defaultValueTo = isset($this->value['to']) ? (int) $this->value['to'] : $this->maxValue;
@@ -2873,8 +2873,8 @@ class YearRange extends FormElement
         OW::getDocument()->addScript(OW::getPluginManager()->getPlugin("base")->getStaticJsUrl() . 'age_range_field.js');
         OW::getDocument()->addOnloadScript(" window." . $this->getName() . " = new AgeRangeField( " . json_encode($this->getName()) . ", " . json_encode($this->minYear) . ", " . json_encode($this->maxYear) . " ); ");
 
-        $fromAgeOptionsString = UTIL_HtmlTag::generateTag('option', array('value' => ''), true);
-        $toAgeOptionsString = UTIL_HtmlTag::generateTag('option', array('value' => ''), true);
+        $fromAgeOptionsString = "";//UTIL_HtmlTag::generateTag('option', array('value' => ''), true);
+        $toAgeOptionsString = "";//UTIL_HtmlTag::generateTag('option', array('value' => ''), true);
 
         $defaultYearFrom = isset($this->value['from']) ? (int) $this->value['from'] : $this->minYear;
         $defaultYearTo = isset($this->value['to']) ? (int) $this->value['to'] : $this->maxYear;
