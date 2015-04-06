@@ -32,6 +32,26 @@
 abstract class BASE_CLASS_AbstractSearchStorage implements BASE_CLASS_InterfaceSearchStorage
 {
     /**
+     * Sort by date
+     */
+    CONST SORT_BY_DATE = 'date';
+
+    /**
+     * Sort by relevance
+     */
+    CONST SORT_BY_RELEVANCE = 'relevance';
+
+    /**
+     * Active entity status 
+     */
+    CONST ENTITY_ACTIVE_STATUS = 1;
+
+    /**
+     * Not active entity status
+     */
+    CONST ENTITY_NOT_ACTIVE_STATUS = 0;
+
+    /**
      * Clean search text
      * 
      * @param string $text

@@ -38,10 +38,9 @@ class BASE_CLASS_ZendLuceneSearchStorage extends BASE_CLASS_AbstractSearchStorag
      * @param integer $entityId
      * @param string $text
      * @param array $tags
-     * @param boolean $isActive
      * @return boolean
      */
-    public function addEntity( $entityType, $entityId, $text, array $tags = array(), $isActive = true )
+    public function addEntity( $entityType, $entityId, $text, array $tags = array() )
     {}
 
     /**
@@ -49,10 +48,10 @@ class BASE_CLASS_ZendLuceneSearchStorage extends BASE_CLASS_AbstractSearchStorag
      * 
      * @param string $entityType
      * @param integer $entityId
-     * @param boolean $isActive
+     * @param integer $status
      * @return boolean
      */
-    public function setEntityStatus( $entityType, $entityId, $isActive = true )
+    public function setEntityStatus( $entityType, $entityId, $status = self::ENTITY_ACTIVE_STATUS )
     {}
 
     /**
@@ -99,10 +98,10 @@ class BASE_CLASS_ZendLuceneSearchStorage extends BASE_CLASS_AbstractSearchStorag
      * @param integer $first
      * @param integer $limit
      * @param array $tags
-     * @param boolean $sortByDate - sort by date or by relevance
+     * @param string $sort
      * @return array
      */
-    public function searchEntities( $text, $first, $limit, array $tags = array(), $sortByDate = false )
+    public function searchEntities( $text, $first, $limit, array $tags = array(), $sort = self::SORT_BY_RELEVANCE )
     {}
 
     /**

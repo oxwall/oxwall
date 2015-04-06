@@ -67,6 +67,16 @@ class BOL_SearchEntityDao extends OW_BaseDao
     const ENTITY_NOT_ACTIVE_STATUS = 0;
 
     /**
+     * Sort by date
+     */
+    CONST SORT_BY_DATE = 'date';
+
+    /**
+     * Sort by relevance
+     */
+    CONST SORT_BY_RELEVANCE = 'relevance';
+
+    /**
      * Singleton instance.
      *
      * @var BOL_SearchEntityDao
@@ -185,14 +195,14 @@ class BOL_SearchEntityDao extends OW_BaseDao
      * Set entities status
      * 
      * @param string $entityType
-     * @param boolean $active
+     * @param integer $status
      * @param integer $entityId
      * @return void
      */
-    public function setEntitiesStatus( $entityType = null, $active = true, $entityId = null )
+    public function setEntitiesStatus( $entityType = null, $status = self::ENTITY_ACTIVE_STATUS, $entityId = null )
     {
         $params = array(
-            ($active ? self::ENTITY_ACTIVE_STATUS : self::ENTITY_NOT_ACTIVE_STATUS)
+            ($status == self::ENTITY_ACTIVE_STATUS ? self::ENTITY_ACTIVE_STATUS : self::ENTITY_NOT_ACTIVE_STATUS)
         );
 
         $sql = 'UPDATE `' . $this->getTableName() . '` SET `' . self::STATUS . '` = ? WHERE 1';
@@ -291,10 +301,10 @@ class BOL_SearchEntityDao extends OW_BaseDao
      * @param integer $first
      * @param integer $limit
      * @param array $tags
-     * @param boolean $sortByDate - sort by date or by relevance
+     * @param string $sort
      * @return array
      */
-    public function findEntitiesByText(  $text, $first, $limit, array $tags = array(), $sortByDate = false )
+    public function findEntitiesByText(  $text, $first, $limit, array $tags = array(), $sort = self::SORT_BY_RELEVANCE )
     {
         // sql params
         $queryParams = array(
@@ -319,7 +329,7 @@ class BOL_SearchEntityDao extends OW_BaseDao
                         AND 
                     b.'. self::STATUS  . ' = :status
                 ORDER BY 
-                    ' . ($sortByDate ? 'b.' . self::TIMESTAMP : 'relevance') . ' DESC';
+                    ' . ($sort == self::SORT_BY_DATE ? 'b.' . self::TIMESTAMP : 'relevance') . ' DESC';
         }
         else
         {
@@ -343,7 +353,7 @@ class BOL_SearchEntityDao extends OW_BaseDao
                 WHERE 
                     a.' . BOL_SearchEntityTagDao::ENTITY_TAG . ' IN (' . $this->dbo->mergeInClause($tags) . ')
                 ORDER BY 
-                    ' . ($sortByDate ? 'b.' . self::TIMESTAMP : 'relevance') . ' DESC';
+                    ' . ($sort == self::SORT_BY_DATE ? 'b.' . self::TIMESTAMP : 'relevance') . ' DESC';
         }
 
         // build main query

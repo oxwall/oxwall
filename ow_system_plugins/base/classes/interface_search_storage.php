@@ -40,17 +40,17 @@ interface BASE_CLASS_InterfaceSearchStorage
      * @param array $tags
      * @return boolean
      */
-    public function addEntity( $entityType, $entityId, $text, array $tags = array(), $isActive = true );
+    public function addEntity( $entityType, $entityId, $text, array $tags = array() );
 
     /**
      * Set entity status
      * 
      * @param string $entityType
      * @param integer $entityId
-     * @param boolean $isActive
+     * @param integer $status
      * @return boolean
      */
-    public function setEntityStatus( $entityType, $entityId, $isActive = true );
+    public function setEntityStatus( $entityType, $entityId, $status = self::ENTITY_ACTIVE_STATUS );
 
     /**
      * Delete entity
@@ -101,10 +101,10 @@ interface BASE_CLASS_InterfaceSearchStorage
      * @param integer $first
      * @param integer $limit
      * @param array $tags
-     * @param boolean $sortByDate - sort by date or by relevance
+     * @param string $sort
      * @return array
      */
-    public function searchEntities( $text, $first, $limit, array $tags = array(), $sortByDate = false );
+    public function searchEntities( $text, $first, $limit, array $tags = array(), $sort = self::SORT_BY_RELEVANCE );
 
     /**
      * Get all entities

@@ -32,6 +32,26 @@
 final class OW_TextSearchManager
 {
     /**
+     * Sort by date
+     */
+    CONST SORT_BY_DATE = BASE_CLASS_AbstractSearchStorage::SORT_BY_DATE;
+
+    /**
+     * Sort by relevance
+     */
+    CONST SORT_BY_RELEVANCE = BASE_CLASS_AbstractSearchStorage::SORT_BY_RELEVANCE;
+
+    /**
+     * Active entity status 
+     */
+    CONST ENTITY_ACTIVE_STATUS = BASE_CLASS_AbstractSearchStorage::ENTITY_ACTIVE_STATUS;
+
+    /**
+     * Not active entity status
+     */
+    CONST ENTITY_NOT_ACTIVE_STATUS = BASE_CLASS_AbstractSearchStorage::ENTITY_ACTIVE_STATUS;
+
+    /**
      * Singleton instance.
      * @var OW_TextSearchManager
      */
@@ -80,16 +100,15 @@ final class OW_TextSearchManager
      * @param integer $entityId
      * @param string  $text
      * @param array $tags
-     * @param boolean $isActive
      * @return boolean
      */
-    public function addEntity( $entityType, $entityId, $text, array $tags = array(), $isActive = true )
+    public function addEntity( $entityType, $entityId, $text, array $tags = array() )
     {
-        $result =  $this->defaultStorageInstance->addEntity($entityType, $entityId, $text, $tags, $isActive);
+        $result =  $this->defaultStorageInstance->addEntity($entityType, $entityId, $text, $tags);
 
         if ( $result && $this->activeStorageInstance )
         {
-            $result =  $this->activeStorageInstance->addEntity($entityType, $entityId, $text, $tags, $isActive);
+            $result =  $this->activeStorageInstance->addEntity($entityType, $entityId, $text, $tags);
         }
 
         return $result;
@@ -100,16 +119,16 @@ final class OW_TextSearchManager
      * 
      * @param string $entityType
      * @param integer $entityId
-     * @param boolean $isActive
+     * @param integer $status
      * @return boolean
      */
-    public function setEntityStatus( $entityType, $entityId, $isActive = true )
+    public function setEntityStatus( $entityType, $entityId, $status = self::ENTITY_ACTIVE_STATUS )
     {
-        $result =  $this->defaultStorageInstance->setEntityStatus($entityType, $entityId, $isActive);
+        $result =  $this->defaultStorageInstance->setEntityStatus($entityType, $entityId, $status);
 
         if ( $result && $this->activeStorageInstance )
         {
-            $result =  $this->activeStorageInstance->setEntityStatus($entityType, $entityId, $isActive);
+            $result =  $this->activeStorageInstance->setEntityStatus($entityType, $entityId, $status);
         }
 
         return $result;
@@ -195,19 +214,19 @@ final class OW_TextSearchManager
      * @param integer $first
      * @param integer $limit
      * @param array $tags
-     * @param boolean $sortByDate - sort by date or by relevance
+     * @param string $sort
      * @return array
      */
-    public function searchEntities( $text, $first, $limit, array $tags = array(), $sortByDate = false )
+    public function searchEntities( $text, $first, $limit, array $tags = array(), $sort = self::SORT_BY_RELEVANCE )
     {
         if ( $this->activeStorageInstance )
         {
             return $this->activeStorageInstance->
-                    searchEntities($text, $first, $limit, $tags, $sortByDate);
+                    searchEntities($text, $first, $limit, $tags, $sort);
         }
 
         return $this->defaultStorageInstance->
-                    searchEntities($text, $first, $limit, $tags, $sortByDate);
+                    searchEntities($text, $first, $limit, $tags, $sort);
     }
 
     /**

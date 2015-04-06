@@ -59,10 +59,9 @@ class BASE_CLASS_MysqlSearchStorage extends BASE_CLASS_AbstractSearchStorage
      * @param integer $entityId
      * @param string $text
      * @param array $tags
-     * @param boolean $isActive
      * @return boolean
      */
-    public function addEntity( $entityType, $entityId, $text, array $tags = array(), $isActive = true )
+    public function addEntity( $entityType, $entityId, $text, array $tags = array() )
     {
         try 
         {
@@ -71,9 +70,7 @@ class BASE_CLASS_MysqlSearchStorage extends BASE_CLASS_AbstractSearchStorage
             $dto->entityId   = $entityId;
             $dto->text = $this->cleanSearchText($text); 
             $dto->timeStamp = time();
-            $dto->status = $isActive 
-                    ? BOL_SearchEntityDao::ENTITY_ACTIVE_STATUS 
-                    : BOL_SearchEntityDao::ENTITY_NOT_ACTIVE_STATUS;
+            $dto->status = BOL_SearchEntityDao::ENTITY_ACTIVE_STATUS;
 
             $this->searchEntityDao->save($dto);
             $searchEntityId = $dto->id;
@@ -103,14 +100,14 @@ class BASE_CLASS_MysqlSearchStorage extends BASE_CLASS_AbstractSearchStorage
      * 
      * @param string $entityType
      * @param integer $entityId
-     * @param boolean $isActive
+     * @param integer $status
      * @return boolean
      */
-    public function setEntityStatus( $entityType, $entityId, $isActive = true )
+    public function setEntityStatus( $entityType, $entityId, $status = self::ENTITY_ACTIVE_STATUS )
     {
         try 
         {
-            $this->searchEntityDao->setEntitiesStatus($entityType, $entityId, $isActive);
+            $this->searchEntityDao->setEntitiesStatus($entityType, $status, $entityId);
         }
         catch ( Exception $e ) 
         {
@@ -216,7 +213,7 @@ class BASE_CLASS_MysqlSearchStorage extends BASE_CLASS_AbstractSearchStorage
     {
         try 
         {
-            $this->searchEntityDao->setEntitiesStatus($entityType, false);
+            $this->searchEntityDao->setEntitiesStatus($entityType, self::ENTITY_NOT_ACTIVE_STATUS);
         }
         catch ( Exception $e ) 
         {
@@ -253,13 +250,13 @@ class BASE_CLASS_MysqlSearchStorage extends BASE_CLASS_AbstractSearchStorage
      * @param integer $first
      * @param integer $limit
      * @param array $tags
-     * @param boolean $sortByDate - sort by date or by relevance
+     * @param string $sort
      * @return array
      */
-    public function searchEntities( $text, $first, $limit, array $tags = array(), $sortByDate = false )
+    public function searchEntities( $text, $first, $limit, array $tags = array(), $sort = self::SORT_BY_RELEVANCE )
     {
         return $this->searchEntityDao->
-                findEntitiesByText($text, $first, $limit, $tags, $sortByDate);
+                findEntitiesByText($text, $first, $limit, $tags, $sort);
     }
 
     /**
