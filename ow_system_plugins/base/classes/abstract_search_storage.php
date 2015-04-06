@@ -29,7 +29,7 @@
  * @package ow_system_plugins.base.classes
  * @since 1.0
  */
-abstract class BASE_CLASS_AbstractSearchStorage implements BASE_CLASS_InterfaceSearchStorage
+abstract class BASE_CLASS_AbstractSearchStorage
 {
     /**
      * Sort by date
@@ -44,12 +44,106 @@ abstract class BASE_CLASS_AbstractSearchStorage implements BASE_CLASS_InterfaceS
     /**
      * Active entity status 
      */
-    CONST ENTITY_ACTIVE_STATUS = 1;
+    CONST ENTITY_STATUS_ACTIVE = 1;
 
     /**
      * Not active entity status
      */
-    CONST ENTITY_NOT_ACTIVE_STATUS = 0;
+    CONST ENTITY_STATUS_NOT_ACTIVE = 0;
+
+    /**
+     * Add entity
+     *
+     * @param string $entityType
+     * @param integer $entityId
+     * @param string  $text
+     * @param array $tags
+     * @throws Exception
+     * @return void
+     */
+    abstract public function addEntity( $entityType, $entityId, $text, array $tags = array() );
+
+    /**
+     * Set entity status
+     * 
+     * @param string $entityType
+     * @param integer $entityId
+     * @param integer $status
+     * @throws Exception
+     * @return void
+     */
+    abstract public function setEntityStatus( $entityType, $entityId, $status = self::ENTITY_STATUS_ACTIVE );
+
+    /**
+     * Delete entity
+     *
+     * @param string $entityType 
+     * @param integer $entityId
+     * @throws Exception
+     * @return void
+     */
+    abstract public function deleteEntity( $entityType, $entityId );
+
+    /**
+     * Delete all entities
+     *
+     * @param string $entityType
+     * @throws Exception
+     * @return void
+     */
+    abstract public function deleteAllEntities( $entityType = null );
+
+    /**
+     * Deactivate all entities
+     *
+     * @param string $entityType
+     * @throws Exception
+     * @return void
+     */
+    abstract public function deactivateAllEntities( $entityType = null );
+
+    /**
+     * Activate all entities
+     *
+     * @param string $entityType
+     * @throws Exception
+     * @return void
+     */
+    abstract public function activateAllEntities( $entityType = null );
+
+    /**
+     * Search entities count
+     *
+     * @param string $text
+     * @param array $tags
+     * @throws Exception
+     * @return integer
+     */
+    abstract public function searchEntitiesCount( $text, array $tags = array() );
+
+    /**
+     * Search entities
+     *
+     * @param string $text
+     * @param integer $first
+     * @param integer $limit
+     * @param array $tags
+     * @param string $sort
+     * @throws Exception
+     * @return array
+     */
+    abstract public function searchEntities( $text, $first, $limit, array $tags = array(), $sort = self::SORT_BY_RELEVANCE );
+
+    /**
+     * Get all entities
+     *
+     * @param integer $first
+     * @param integer $limit
+     * @param string $entityType
+     * @throws Exception
+     * @return array
+     */
+    abstract public function getAllEntities( $first, $limit, $entityType = null );
 
     /**
      * Clean search text

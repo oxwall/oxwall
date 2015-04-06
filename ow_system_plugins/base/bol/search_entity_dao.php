@@ -59,12 +59,12 @@ class BOL_SearchEntityDao extends OW_BaseDao
     /**
      * Entity active status
      */
-    const ENTITY_ACTIVE_STATUS = 1;
+    const ENTITY_STATUS_ACTIVE = 1;
 
     /**
      * Entity not active status
      */
-    const ENTITY_NOT_ACTIVE_STATUS = 0;
+    const ENTITY_STATUS_NOT_ACTIVE = 0;
 
     /**
      * Sort by date
@@ -199,10 +199,10 @@ class BOL_SearchEntityDao extends OW_BaseDao
      * @param integer $entityId
      * @return void
      */
-    public function setEntitiesStatus( $entityType = null, $status = self::ENTITY_ACTIVE_STATUS, $entityId = null )
+    public function setEntitiesStatus( $entityType = null, $status = self::ENTITY_STATUS_ACTIVE, $entityId = null )
     {
         $params = array(
-            ($status == self::ENTITY_ACTIVE_STATUS ? self::ENTITY_ACTIVE_STATUS : self::ENTITY_NOT_ACTIVE_STATUS)
+            ($status == self::ENTITY_STATUS_ACTIVE ? self::ENTITY_STATUS_ACTIVE : self::ENTITY_STATUS_NOT_ACTIVE)
         );
 
         $sql = 'UPDATE `' . $this->getTableName() . '` SET `' . self::STATUS . '` = ? WHERE 1';
@@ -238,7 +238,7 @@ class BOL_SearchEntityDao extends OW_BaseDao
         // sql params
         $queryParams = array(
             ':search' => $text,
-            ':status' => self::ENTITY_ACTIVE_STATUS
+            ':status' => self::ENTITY_STATUS_ACTIVE
         );
 
         // search without tags
@@ -311,7 +311,7 @@ class BOL_SearchEntityDao extends OW_BaseDao
             ':search' => $text,
             ':first' => $first,
             ':limit' => $limit,
-            ':status' => self::ENTITY_ACTIVE_STATUS
+            ':status' => self::ENTITY_STATUS_ACTIVE
         );
 
         // search without tags

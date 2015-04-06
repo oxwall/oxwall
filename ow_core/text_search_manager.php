@@ -44,12 +44,12 @@ final class OW_TextSearchManager
     /**
      * Active entity status 
      */
-    CONST ENTITY_ACTIVE_STATUS = BASE_CLASS_AbstractSearchStorage::ENTITY_ACTIVE_STATUS;
+    CONST ENTITY_STATUS_ACTIVE = BASE_CLASS_AbstractSearchStorage::ENTITY_STATUS_ACTIVE;
 
     /**
      * Not active entity status
      */
-    CONST ENTITY_NOT_ACTIVE_STATUS = BASE_CLASS_AbstractSearchStorage::ENTITY_ACTIVE_STATUS;
+    CONST ENTITY_STATUS_NOT_ACTIVE = BASE_CLASS_AbstractSearchStorage::ENTITY_STATUS_NOT_ACTIVE;
 
     /**
      * Singleton instance.
@@ -100,18 +100,17 @@ final class OW_TextSearchManager
      * @param integer $entityId
      * @param string  $text
      * @param array $tags
-     * @return boolean
+     * @throws Exception
+     * @return void
      */
     public function addEntity( $entityType, $entityId, $text, array $tags = array() )
     {
-        $result =  $this->defaultStorageInstance->addEntity($entityType, $entityId, $text, $tags);
+        $this->defaultStorageInstance->addEntity($entityType, $entityId, $text, $tags);
 
-        if ( $result && $this->activeStorageInstance )
+        if ( $this->activeStorageInstance )
         {
-            $result =  $this->activeStorageInstance->addEntity($entityType, $entityId, $text, $tags);
+            $this->activeStorageInstance->addEntity($entityType, $entityId, $text, $tags);
         }
-
-        return $result;
     }
 
     /**
@@ -120,18 +119,17 @@ final class OW_TextSearchManager
      * @param string $entityType
      * @param integer $entityId
      * @param integer $status
-     * @return boolean
+     * @throws Exception
+     * @return void
      */
-    public function setEntityStatus( $entityType, $entityId, $status = self::ENTITY_ACTIVE_STATUS )
+    public function setEntityStatus( $entityType, $entityId, $status = self::ENTITY_STATUS_ACTIVE )
     {
-        $result =  $this->defaultStorageInstance->setEntityStatus($entityType, $entityId, $status);
+        $this->defaultStorageInstance->setEntityStatus($entityType, $entityId, $status);
 
-        if ( $result && $this->activeStorageInstance )
+        if ( $this->activeStorageInstance )
         {
-            $result =  $this->activeStorageInstance->setEntityStatus($entityType, $entityId, $status);
+            $this->activeStorageInstance->setEntityStatus($entityType, $entityId, $status);
         }
-
-        return $result;
     }
 
     /**
@@ -139,72 +137,68 @@ final class OW_TextSearchManager
      *
      * @param string $entityType
      * @param integer $entityId
-     * @return boolean
+     * @throws Exception
+     * @return void
      */
     public function deleteEntity( $entityType, $entityId )
     {
-        $result =  $this->defaultStorageInstance->deleteEntity($entityType, $entityId);
+        $this->defaultStorageInstance->deleteEntity($entityType, $entityId);
 
-        if ( $result && $this->activeStorageInstance )
+        if ( $this->activeStorageInstance )
         {
-            $result =  $this->activeStorageInstance->deleteEntity($entityType, $entityId);
+            $this->activeStorageInstance->deleteEntity($entityType, $entityId);
         }
-
-        return $result;
     }
 
     /**
      * Delete all entities
      *
      * @param string $entityType
-     * @return boolean
+     * @throws Exception
+     * @return void
      */
     public function deleteAllEntities( $entityType = null )
     {
-        $result =  $this->defaultStorageInstance->deleteAllEntities($entityType);
+        $this->defaultStorageInstance->deleteAllEntities($entityType);
 
-        if ( $result && $this->activeStorageInstance )
+        if ( $this->activeStorageInstance )
         {
-            $result =  $this->activeStorageInstance->deleteAllEntities($entityType);
+            $this->activeStorageInstance->deleteAllEntities($entityType);
         }
-
-        return $result;
     }
 
     /**
      * Deactivate all entities
      *
      * @param string $entityType
-     * @return boolean
+     * @throws Exception
+     * @return void
      */
     public function deactivateAllEntities( $entityType = null )
     {
-        $result = $this->defaultStorageInstance->deactivateAllEntities($entityType);
+        $this->defaultStorageInstance->deactivateAllEntities($entityType);
 
-        if ( $result && $this->activeStorageInstance )
+        if ( $this->activeStorageInstance )
         {
-            $result =  $this->activeStorageInstance->deactivateAllEntities($entityType);
+            $this->activeStorageInstance->deactivateAllEntities($entityType);
         }
-
-        return $result;
     }
 
     /**
      * Activate all entities
      *
      * @param string $entityType
-     * @return boolean
+     * @throws Exception
+     * @return void
      */
     public function activateAllEntities( $entityType = null )
     {
-        $result = $this->defaultStorageInstance->activateAllEntities($entityType);
+        $this->defaultStorageInstance->activateAllEntities($entityType);
 
-        if ( $result && $this->activeStorageInstance )
+        if ( $this->activeStorageInstance )
         {
-            $result =  $this->activeStorageInstance->activateAllEntities($entityType);
+            $this->activeStorageInstance->activateAllEntities($entityType);
         }
-
-        return $result;
     }
 
     /**
@@ -215,6 +209,7 @@ final class OW_TextSearchManager
      * @param integer $limit
      * @param array $tags
      * @param string $sort
+     * @throws Exception
      * @return array
      */
     public function searchEntities( $text, $first, $limit, array $tags = array(), $sort = self::SORT_BY_RELEVANCE )
@@ -234,6 +229,7 @@ final class OW_TextSearchManager
      *
      * @param string $text
      * @param array $tags
+     * @throws Exception
      * @return integer
      */
     public function searchEntitiesCount( $text, array $tags = array() )
@@ -252,6 +248,7 @@ final class OW_TextSearchManager
      * @param integer $first
      * @param integer $limit
      * @param string $entityType
+     * @throws Exception
      * @return array
      */
     public function getAllEntities( $first, $limit, $entityType = null )

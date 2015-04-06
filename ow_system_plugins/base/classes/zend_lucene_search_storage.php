@@ -38,7 +38,8 @@ class BASE_CLASS_ZendLuceneSearchStorage extends BASE_CLASS_AbstractSearchStorag
      * @param integer $entityId
      * @param string $text
      * @param array $tags
-     * @return boolean
+     * @throws Exception
+     * @return void
      */
     public function addEntity( $entityType, $entityId, $text, array $tags = array() )
     {}
@@ -49,9 +50,10 @@ class BASE_CLASS_ZendLuceneSearchStorage extends BASE_CLASS_AbstractSearchStorag
      * @param string $entityType
      * @param integer $entityId
      * @param integer $status
-     * @return boolean
+     * @throws Exception
+     * @return void
      */
-    public function setEntityStatus( $entityType, $entityId, $status = self::ENTITY_ACTIVE_STATUS )
+    public function setEntityStatus( $entityType, $entityId, $status = self::ENTITY_STATUS_ACTIVE )
     {}
 
     /**
@@ -59,7 +61,8 @@ class BASE_CLASS_ZendLuceneSearchStorage extends BASE_CLASS_AbstractSearchStorag
      *
      * @param string $entityType
      * @param integer $entityId
-     * @return boolean
+     * @throws Exception
+     * @return void
      */
     public function deleteEntity( $entityType, $entityId )
     {}
@@ -68,7 +71,8 @@ class BASE_CLASS_ZendLuceneSearchStorage extends BASE_CLASS_AbstractSearchStorag
      * Delete all entities
      *
      * @param string $entityType
-     * @return boolean
+     * @throws Exception
+     * @return void
      */
     public function deleteAllEntities( $entityType = null )
     {}
@@ -77,7 +81,8 @@ class BASE_CLASS_ZendLuceneSearchStorage extends BASE_CLASS_AbstractSearchStorag
      * Deactivate all entities
      *
      * @param string $entityType
-     * @return boolean
+     * @throws Exception
+     * @return void
      */
     public function deactivateAllEntities( $entityType = null )
     {}
@@ -86,7 +91,8 @@ class BASE_CLASS_ZendLuceneSearchStorage extends BASE_CLASS_AbstractSearchStorag
      * Activate all entities
      *
      * @param string $entityType
-     * @return boolean
+     * @throws Exception
+     * @return void
      */
     public function activateAllEntities( $entityType = null )
     {}
@@ -99,6 +105,7 @@ class BASE_CLASS_ZendLuceneSearchStorage extends BASE_CLASS_AbstractSearchStorag
      * @param integer $limit
      * @param array $tags
      * @param string $sort
+     * @throws Exception
      * @return array
      */
     public function searchEntities( $text, $first, $limit, array $tags = array(), $sort = self::SORT_BY_RELEVANCE )
@@ -109,6 +116,7 @@ class BASE_CLASS_ZendLuceneSearchStorage extends BASE_CLASS_AbstractSearchStorag
      *
      * @param string $text
      * @param array $tags
+     * @throws Exception
      * @return integer
      */
     public function searchEntitiesCount( $text, array $tags = array() )
@@ -120,6 +128,7 @@ class BASE_CLASS_ZendLuceneSearchStorage extends BASE_CLASS_AbstractSearchStorag
      * @param integer $first
      * @param integer $limit
      * @param string $entityType
+     * @throws Exception
      * @return array
      */
     public function getAllEntities(  $first, $limit, $entityType = null )

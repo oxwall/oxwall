@@ -11,38 +11,6 @@ class TextSearchManagerTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test add entities
-     */
-    public function testAddEntities()
-    {
-        $entities = array(
-            array(
-                'entity_type' => 'forum_post',
-                'entity_id' => 1,
-                'text' => 'forum post title',
-                'tags' => array(
-                    'forum_post'
-                )
-            ),
-            array(
-                'entity_type' => 'forum_post',
-                'entity_id' => 1,
-                'text' => 'forum post body',
-                'tags' => array(
-                    'forum_post'
-                )
-            )
-        );
-
-        // add entities
-        foreach ($entities as $entitiy)
-        {
-            $this->assertTrue(OW::getTextSearchManager()->
-                    addEntity($entitiy['entity_type'], $entitiy['entity_id'], $entitiy['text'], $entitiy['tags']));
-        }
-    }
-
-    /**
      * Test delete entities
      */
     public function testDeleteEntities()
@@ -69,19 +37,16 @@ class TextSearchManagerTest extends PHPUnit_Framework_TestCase
         // add and delete test entities
         foreach ($entities as $entitiy)
         {
-            $this->assertTrue(OW::getTextSearchManager()->
-                    addEntity($entitiy['entity_type'], $entitiy['entity_id'], $entitiy['text'], $entitiy['tags']));
+            OW::getTextSearchManager()->
+                    addEntity($entitiy['entity_type'], $entitiy['entity_id'], $entitiy['text'], $entitiy['tags']);
 
-            $this->assertTrue(OW::getTextSearchManager()->deleteEntity($entitiy['entity_type'], $entitiy['entity_id']));
+            OW::getTextSearchManager()->deleteEntity($entitiy['entity_type'], $entitiy['entity_id']);
         }
 
         // do we have entities?
         $entities = OW::getTextSearchManager()->getAllEntities(0, 2);
         $this->assertInternalType('array', $entities);
         $this->assertEquals(0, count($entities));
-
-        // delete an non existing entity
-        $this->assertFalse(OW::getTextSearchManager()->deleteEntity('non _existing_type', 100));
     }
 
     /**
@@ -119,8 +84,8 @@ class TextSearchManagerTest extends PHPUnit_Framework_TestCase
         // add test entities
         foreach ($entities as $entitiy)
         {
-            $this->assertTrue(OW::getTextSearchManager()->
-                    addEntity($entitiy['entity_type'], $entitiy['entity_id'], $entitiy['text'], $entitiy['tags']));
+            OW::getTextSearchManager()->
+                    addEntity($entitiy['entity_type'], $entitiy['entity_id'], $entitiy['text'], $entitiy['tags']);
         }
 
         // deactivate all forum post entities
@@ -134,13 +99,13 @@ class TextSearchManagerTest extends PHPUnit_Framework_TestCase
         {
             switch ($entity['entityType'])
             {
-                // all forum post entities should be deactivated
+                // all forum posts entities should be deactivated
                 case 'forum_post' :
-                    $this->assertEquals(BASE_CLASS_AbstractSearchStorage::ENTITY_NOT_ACTIVE_STATUS, $entity['status']);
+                    $this->assertEquals(BASE_CLASS_AbstractSearchStorage::ENTITY_STATUS_NOT_ACTIVE, $entity['status']);
                     break;
 
                 default :
-                    $this->assertEquals(BASE_CLASS_AbstractSearchStorage::ENTITY_ACTIVE_STATUS, $entity['status']);
+                    $this->assertEquals(BASE_CLASS_AbstractSearchStorage::ENTITY_STATUS_ACTIVE, $entity['status']);
             }
         }
     }
@@ -180,15 +145,15 @@ class TextSearchManagerTest extends PHPUnit_Framework_TestCase
         // add test entities
         foreach ($entities as $entitiy)
         {
-            $this->assertTrue(OW::getTextSearchManager()->
-                    addEntity($entitiy['entity_type'], $entitiy['entity_id'], $entitiy['text'], $entitiy['tags']));
+            OW::getTextSearchManager()->
+                    addEntity($entitiy['entity_type'], $entitiy['entity_id'], $entitiy['text'], $entitiy['tags']);
         }
 
         // deactivate all entities
-        $this->assertTrue(OW::getTextSearchManager()->deactivateAllEntities());
+        OW::getTextSearchManager()->deactivateAllEntities();
 
         // activate all entities
-        $this->assertTrue(OW::getTextSearchManager()->activateAllEntities());
+        OW::getTextSearchManager()->activateAllEntities();
 
         // get all entities
         $entities = OW::getTextSearchManager()->getAllEntities(0, 3);
@@ -196,7 +161,7 @@ class TextSearchManagerTest extends PHPUnit_Framework_TestCase
         //  check entities status
         foreach ($entities as $entity)
         {
-            $this->assertEquals(BASE_CLASS_AbstractSearchStorage::ENTITY_ACTIVE_STATUS, $entity['status']);
+            $this->assertEquals(BASE_CLASS_AbstractSearchStorage::ENTITY_STATUS_ACTIVE, $entity['status']);
         }
     }
 
@@ -238,13 +203,13 @@ class TextSearchManagerTest extends PHPUnit_Framework_TestCase
         // add test entities
         foreach ($entities as $entitiy)
         {
-            $this->assertTrue(OW::getTextSearchManager()->
-                    addEntity($entitiy['entity_type'], $entitiy['entity_id'], $entitiy['text'], $entitiy['tags']));
+            OW::getTextSearchManager()->
+                    addEntity($entitiy['entity_type'], $entitiy['entity_id'], $entitiy['text'], $entitiy['tags']);
 
             // deactivate an entity
             if (!$entitiy['active']) {
-                $this->assertTrue(OW::getTextSearchManager()->
-                        setEntityStatus($entitiy['entity_type'], $entitiy['entity_id'], BASE_CLASS_AbstractSearchStorage::ENTITY_NOT_ACTIVE_STATUS));
+                OW::getTextSearchManager()->
+                        setEntityStatus($entitiy['entity_type'], $entitiy['entity_id'], BASE_CLASS_AbstractSearchStorage::ENTITY_STATUS_NOT_ACTIVE);
             }
         }
 
@@ -326,8 +291,8 @@ class TextSearchManagerTest extends PHPUnit_Framework_TestCase
         // add test entities
         foreach ($entities as $entitiy)
         {
-            $this->assertTrue(OW::getTextSearchManager()->
-                    addEntity($entitiy['entity_type'], $entitiy['entity_id'], $entitiy['text'], $entitiy['tags']));
+            OW::getTextSearchManager()->
+                    addEntity($entitiy['entity_type'], $entitiy['entity_id'], $entitiy['text'], $entitiy['tags']);
         }
 
         // search entities by tags
@@ -372,13 +337,12 @@ class TextSearchManagerTest extends PHPUnit_Framework_TestCase
         // add and deactivate test entities 
         foreach ($entities as $entitiy)
         {
-            // add
-            $this->assertTrue(OW::getTextSearchManager()->
-                    addEntity($entitiy['entity_type'], $entitiy['entity_id'], $entitiy['text'], $entitiy['tags']));
+            OW::getTextSearchManager()->
+                    addEntity($entitiy['entity_type'], $entitiy['entity_id'], $entitiy['text'], $entitiy['tags']);
 
-            // deactivate
-            $this->assertTrue(OW::getTextSearchManager()->
-                    setEntityStatus($entitiy['entity_type'], $entitiy['entity_id'], BASE_CLASS_AbstractSearchStorage::ENTITY_NOT_ACTIVE_STATUS));
+            // deactivate entities
+            OW::getTextSearchManager()->
+                    setEntityStatus($entitiy['entity_type'], $entitiy['entity_id'], BASE_CLASS_AbstractSearchStorage::ENTITY_STATUS_NOT_ACTIVE);
         }
 
         // get all entities
@@ -390,7 +354,7 @@ class TextSearchManagerTest extends PHPUnit_Framework_TestCase
         //  check entities status
         foreach ($entities as $entity)
         {
-            $this->assertEquals(BASE_CLASS_AbstractSearchStorage::ENTITY_NOT_ACTIVE_STATUS, $entity['status']);
+            $this->assertEquals(BASE_CLASS_AbstractSearchStorage::ENTITY_STATUS_NOT_ACTIVE, $entity['status']);
         }
     }
 }
