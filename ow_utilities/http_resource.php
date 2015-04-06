@@ -14,7 +14,8 @@ class UTIL_HttpResource
     {
         $context = stream_context_create( array(
             'http'=>array(
-                'timeout' => $timeout
+                'timeout' => $timeout,
+                'header' => "User-Agent: Oxwall Content Fetcher\r\n"
             )
         ));
 
