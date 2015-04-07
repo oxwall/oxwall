@@ -1,4 +1,48 @@
-Oxwall 1.7.2 beta, 2014-11-18
+Oxwall 1.7.3 beta, 2015-04-07
+====================================
+
+Platform:
+- fixed issues with text editing in "Welcome Widget"
+- fixed issues with saving settings in Admin Panel > Privacy&Permissions > Roles
+- made custom "No avatar" image appear in all appropriate places on the site
+- removed debug warning message on profile view page in the mobile version
+- revised the apostrophe support for translations into other languages
+- made language’s system prefixes importable
+- removed the redundant setting "Allow photo upload" in Admin Panel > Settings > User Settings > Content Input
+- fixed the display of a suspended user’s profile page in mobile version
+- passwords set by the site admin under "Guests can view the site with password" mode are now encrypted
+- fixed the bug preventing the user to proceed further from the Join page without uploading an avatar, under conditions of selected “display” option for “Display Photo Upload” setting
+- fixed security issue related to ow_static folder
+
+Newsfeed:
+- fixed security issue allowing to delete other users’ comments
+
+Messages:
+- removed the ability to send empty messages
+- fixed sound notifications
+- fixed a JS error appearing when opening older messages during the message search of a specific user
+- fixed the message display order in conversation during fast type
+- activated the options button (gear) for conversations list in Chrome
+- made the links inside conversations to display properly
+- fixed the bug with perpetual preloader when user attempts to view conversation with no permissions
+- fixed the link to a conversation posted within message text of email notifications concerning new messages
+
+Geolocation data: 
+- added new plugin
+
+Photos:
+- made it impossible to set "Maximum file size" bigger than "Server limit" in plugin settings
+- fixed the display order of photos on the Photo List page in Firefox and IE
+- made the “Add Photo” button disappear if the action is not available for a chosen user role
+
+Forum: 
+- fixed the error appearing during topic search by username
+
+Contact importer:
+- fixed fatal error appearing during user registration by invitation 
+
+
+Oxwall 1.7.2, 2014-11-25
 ====================================
 
 Platform:
@@ -63,7 +107,7 @@ Contact us:
 - captcha field is now displayed on Contact form for suspended users.
 
 
-Oxwall 1.7.1 beta, 2014-08-18:
+Oxwall 1.7.1, 2014-08-25:
 ====================================
 
 Platform:
@@ -110,7 +154,7 @@ Events:
 - fixed display of private events in user dashboard
 
 
-Oxwall 1.7.0 beta 1, 2014-06-17:
+Oxwall 1.7.0, 2014-07-08:
 ====================================
 
 Platform:
