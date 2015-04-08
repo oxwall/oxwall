@@ -274,13 +274,41 @@ class UTIL_HtmlTag
      * Replaces all urls with link tags in the provided text.
      *
      * @param string $text
+     * @param integer $labelMaxlength
      * @return string
      */
-    public static function autoLink( $text )
+    public static function autoLink( $text, $labelMaxlength = 40 )
     {
-        $jevix = self::getJevix(array(), array(), true, false);
-        $jevix->isAutoLinkMode = true;
+        $oldLinks = array();
 
-        return $jevix->parse($text);
+        // replace already created links with special markers
+        $text = preg_replace_callback('/(?P<link><a[^>]*>.*?<\/a>)/si', function($linkInfo) use (&$oldLinks)
+        {
+            $linkHashKey = '__' . md5($linkInfo['link']) . '__';
+            $oldLinks[$linkHashKey] = $linkInfo['link'];
+
+            return $linkHashKey; 
+        }, $text);
+
+        // find new links
+        $newUrls = '/(?P<url>(http|https|ftp|ftps)(\:\/\/)([a-zA-Z0-9\-\.])+(\.*)([a-zA-Z]{0,3})(\/\S*)?)/';
+
+        $text = preg_replace_callback($newUrls, function($urlInfo) use ($labelMaxlength)
+        {
+            //print_r($urlInfo);
+            $label = strlen($urlInfo['url']) <= $labelMaxlength
+                ? $urlInfo['url']
+                : substr($urlInfo['url'], 0, $labelMaxlength) . '...'; 
+
+            return '<a href="' . $urlInfo['url'] . '" rel="nofollow">' . $label . '</a>';
+        }, $text);
+
+        // restore old links
+        if ( $oldLinks )
+        {
+            $text = str_replace(array_keys($oldLinks), $oldLinks, $text); 
+        }
+
+        return $text;
     }
 }
