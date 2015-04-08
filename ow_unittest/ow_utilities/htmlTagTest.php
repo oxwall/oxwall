@@ -33,6 +33,10 @@ class HtmlTagTest extends PHPUnit_Framework_TestCase
                 'proccesed' => '<a href=\'http://test.com\'>http://test.com</a>' 
             ),
             array(
+                'raw_text' => '<a href=http://test.com>http://test.com</a>',
+                'proccesed' => '<a href=http://test.com>http://test.com</a>' 
+            ),
+            array(
                 'raw_text' => '<a href="http://test.com"><p>http://test.com</p></a> http://test.com',
                 'proccesed' => '<a href="http://test.com"><p>http://test.com</p></a> <a href="http://test.com" rel="nofollow">http://test.com</a>' 
             ),
@@ -96,7 +100,5 @@ class HtmlTagTest extends PHPUnit_Framework_TestCase
                 $this->assertEquals($item['proccesed'], UTIL_HtmlTag::autoLink($item['raw_text']));    
             }
         }
-
-        file_put_contents('/home/esase/tmp/test.txt', UTIL_HtmlTag::autoLink($text));
     }
 }

@@ -282,7 +282,7 @@ class UTIL_HtmlTag
         $oldLinks = array();
 
         // replace already created links with special markers
-        $text = preg_replace_callback('/(?P<link><a[^>]*>.*?<\/a>)/si', function($linkInfo) use (&$oldLinks)
+        $text = preg_replace_callback('/(?P<link><a[^>]*>.*?<\/a>)/si', function( $linkInfo ) use ( &$oldLinks )
         {
             $linkHashKey = '__' . md5($linkInfo['link']) . '__';
             $oldLinks[$linkHashKey] = $linkInfo['link'];
@@ -293,9 +293,8 @@ class UTIL_HtmlTag
         // find new links
         $newUrls = '/(?P<url>(http|https|ftp|ftps)(\:\/\/)([a-zA-Z0-9\-\.])+(\.*)([a-zA-Z]{0,3})(\/\S*)?)/';
 
-        $text = preg_replace_callback($newUrls, function($urlInfo) use ($labelMaxlength)
+        $text = preg_replace_callback($newUrls, function( $urlInfo ) use ( $labelMaxlength )
         {
-            //print_r($urlInfo);
             $label = strlen($urlInfo['url']) <= $labelMaxlength
                 ? $urlInfo['url']
                 : substr($urlInfo['url'], 0, $labelMaxlength) . '...'; 
