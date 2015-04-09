@@ -42,11 +42,6 @@ abstract class BASE_CLASS_AbstractSearchStorage
     CONST SORT_BY_RELEVANCE = 'relevance';
 
     /**
-     * Delete entity status 
-     */
-    CONST ENTITY_STATUS_DELETE = 'delete';
-
-    /**
      * Active entity status 
      */
     CONST ENTITY_STATUS_ACTIVE = 'active';
