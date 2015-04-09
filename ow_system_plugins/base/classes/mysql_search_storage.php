@@ -58,17 +58,18 @@ class BASE_CLASS_MysqlSearchStorage extends BASE_CLASS_AbstractSearchStorage
      * @param string $entityType
      * @param integer $entityId
      * @param string $text
+     * @param integer $timeStamp
      * @param array $tags
      * @throws Exception
      * @return void
      */
-    public function addEntity( $entityType, $entityId, $text, array $tags = array() )
+    public function addEntity( $entityType, $entityId, $text, $timeStamp, array $tags = array() )
     {
         $dto = new BOL_SearchEntity;
         $dto->entityType = $entityType; 
         $dto->entityId   = $entityId;
         $dto->text = $this->cleanSearchText($text); 
-        $dto->timeStamp = time();
+        $dto->timeStamp = $timeStamp;
         $dto->status = BOL_SearchEntityDao::ENTITY_STATUS_ACTIVE;
 
         $this->searchEntityDao->save($dto);
@@ -111,62 +112,49 @@ class BASE_CLASS_MysqlSearchStorage extends BASE_CLASS_AbstractSearchStorage
      */
     public function deleteEntity( $entityType, $entityId )
     {
-        // get all entity's parts
-        if ( null == ($entityParts = 
-                $this->searchEntityDao->findEntityParts($entityType, $entityId)) ) 
-        {
-            return false;
-        }
-
-        foreach ( $entityParts as $entity )
-        {
-            // get tags list
-            $tags = $this->searchEntityTagDao->findTags($entity->id);
-
-            // delete assigned tags
-            foreach ($tags as $tag) 
-            {
-                $this->searchEntityTagDao->deleteById($tag->id);
-            }
-
-            // delete an entity part
-            $this->searchEntityDao->deleteById($entity->id);
-        }
+        // mark entity as deleted
+        $this->searchEntityDao->
+                setEntitiesStatus($entityType, BOL_SearchEntityDao::ENTITY_STATUS_DELETED, $entityId);
     }
 
     /**
      * Delete all entities
      *
-     * @param string $entityTyp
+     * @param string $entityType
      * @throws Exception
      * @return void
      */
     public function deleteAllEntities( $entityType = null )
     {
-        if ( !$entityType ) 
+        // mark entities as deleted
+        $this->searchEntityDao->
+                setEntitiesStatus($entityType, BOL_SearchEntityDao::ENTITY_STATUS_DELETED);
+    }
+
+    /**
+     * Real delete entities
+     *
+     * @throws Exception
+     * @return void
+     */
+    public function realDeleteEntities()
+    {
+        // get deleted entities
+        if ( null != ($entities = $this->searchEntityDao->findDeletedEntities()) ) 
         {
-            // truncate all entities and their tags
-            $this->searchEntityDao->deleteAllEntities();
-            $this->searchEntityTagDao->deleteAllTags();
-        }
-        else
-        {
-            // delete only specific entities
-            if ( null != ($entityParts = $this->searchEntityDao->findEntityParts($entityType)) ) {
-                foreach ($entityParts as $entity)
+            foreach ($entities as $entity)
+            {
+                // get tags list
+                $tags = $this->searchEntityTagDao->findTags($entity->id);
+
+                // delete assigned tags
+                foreach ($tags as $tag) 
                 {
-                    // get tags list
-                    $tags = $this->searchEntityTagDao->findTags($entity->id);
-
-                    // delete assigned tags
-                    foreach ($tags as $tag) 
-                    {
-                        $this->searchEntityTagDao->deleteById($tag->id);
-                    }
-
-                    // delete an entity part
-                    $this->searchEntityDao->deleteById($entity->id);
+                    $this->searchEntityTagDao->deleteById($tag->id);
                 }
+
+                // delete an entity part
+                $this->searchEntityDao->deleteById($entity->id);
             }
         }
     }
@@ -203,13 +191,15 @@ class BASE_CLASS_MysqlSearchStorage extends BASE_CLASS_AbstractSearchStorage
      * @param integer $limit
      * @param array $tags
      * @param string $sort
+     * @param integer $timeStampStart
+     * @param integer $timeStampEnd
      * @throws Exception
      * @return array
      */
-    public function searchEntities( $text, $first, $limit, array $tags = array(), $sort = self::SORT_BY_RELEVANCE )
+    public function searchEntities( $text, $first, $limit, array $tags = array(), $sort = self::SORT_BY_RELEVANCE, $timeStampStart = 0, $timeStampEnd = 0 )
     {
         return $this->searchEntityDao->
-                findEntitiesByText($text, $first, $limit, $tags, $sort);
+                findEntitiesByText($text, $first, $limit, $tags, $sort, $timeStampStart, $timeStampEnd);
     }
 
     /**
@@ -217,12 +207,15 @@ class BASE_CLASS_MysqlSearchStorage extends BASE_CLASS_AbstractSearchStorage
      *
      * @param string $text
      * @param array $tags
+     * @param integer $timeStampStart
+     * @param integer $timeStampEnd
      * @throws Exception
      * @return integer
      */
-    public function searchEntitiesCount( $text, array $tags = array() )
+    public function searchEntitiesCount( $text, array $tags = array(), $timeStampStart = 0,  $timeStampEnd = 0)
     {
-        return $this->searchEntityDao->findEntitiesCountByText($text, $tags);
+        return $this->searchEntityDao->
+                findEntitiesCountByText($text, $tags, $timeStampStart, $timeStampEnd);
     }
 
     /**
