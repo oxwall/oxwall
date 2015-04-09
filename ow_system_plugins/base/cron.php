@@ -48,6 +48,7 @@ class BASE_Cron extends OW_Cron
         $this->addJob('rmTempAvatars', 60 * 24);
         $this->addJob('deleteExpiredCache', 60 * 24);
         $this->addJob('dropLogFile', 60 * 24);
+        $this->addJob('clearMySqlSearchIndex', 60 * 24);
 
         $this->addJob('checkRealCron');
     }
@@ -84,6 +85,12 @@ class BASE_Cron extends OW_Cron
     public function expireSearchResultList()
     {
         BOL_SearchService::getInstance()->deleteExpireSearchResult();
+    }
+
+    public function clearMySqlSearchIndex()
+    {
+        $mysqlSearchStorage = new BASE_CLASS_MysqlSearchStorage();
+        $mysqlSearchStorage->realDeleteEntities();
     }
 
     public function checkPluginUpdates()

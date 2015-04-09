@@ -42,14 +42,19 @@ abstract class BASE_CLASS_AbstractSearchStorage
     CONST SORT_BY_RELEVANCE = 'relevance';
 
     /**
+     * Delete entity status 
+     */
+    CONST ENTITY_STATUS_DELETE = 'delete';
+
+    /**
      * Active entity status 
      */
-    CONST ENTITY_STATUS_ACTIVE = 1;
+    CONST ENTITY_STATUS_ACTIVE = 'active';
 
     /**
      * Not active entity status
      */
-    CONST ENTITY_STATUS_NOT_ACTIVE = 0;
+    CONST ENTITY_STATUS_NOT_ACTIVE = 'not_active';
 
     /**
      * Add entity
@@ -57,18 +62,19 @@ abstract class BASE_CLASS_AbstractSearchStorage
      * @param string $entityType
      * @param integer $entityId
      * @param string  $text
+     * @param integer $timeStamp
      * @param array $tags
      * @throws Exception
      * @return void
      */
-    abstract public function addEntity( $entityType, $entityId, $text, array $tags = array() );
+    abstract public function addEntity( $entityType, $entityId, $text, $timeStamp, array $tags = array() );
 
     /**
      * Set entity status
      * 
      * @param string $entityType
      * @param integer $entityId
-     * @param integer $status
+     * @param string $status
      * @throws Exception
      * @return void
      */
@@ -116,10 +122,12 @@ abstract class BASE_CLASS_AbstractSearchStorage
      *
      * @param string $text
      * @param array $tags
+     * @param integer $timeStampStart
+     * @param integer $timeStampEnd
      * @throws Exception
      * @return integer
      */
-    abstract public function searchEntitiesCount( $text, array $tags = array() );
+    abstract public function searchEntitiesCount( $text, array $tags = array(), $timeStampStart = 0, $timeStampEnd = 0);
 
     /**
      * Search entities
@@ -129,10 +137,12 @@ abstract class BASE_CLASS_AbstractSearchStorage
      * @param integer $limit
      * @param array $tags
      * @param string $sort
+     * @param integer $timeStampStart
+     * @param integer $timeStampEnd
      * @throws Exception
      * @return array
      */
-    abstract public function searchEntities( $text, $first, $limit, array $tags = array(), $sort = self::SORT_BY_RELEVANCE );
+    abstract public function searchEntities( $text, $first, $limit, array $tags = array(), $sort = self::SORT_BY_RELEVANCE, $timeStampStart = 0, $timeStampEnd = 0 );
 
     /**
      * Get all entities

@@ -38,7 +38,7 @@ class TextSearchManagerTest extends PHPUnit_Framework_TestCase
         foreach ($entities as $entitiy)
         {
             OW::getTextSearchManager()->
-                    addEntity($entitiy['entity_type'], $entitiy['entity_id'], $entitiy['text'], $entitiy['tags']);
+                    addEntity($entitiy['entity_type'], $entitiy['entity_id'], $entitiy['text'], time(), $entitiy['tags']);
 
             OW::getTextSearchManager()->deleteEntity($entitiy['entity_type'], $entitiy['entity_id']);
         }
@@ -85,7 +85,7 @@ class TextSearchManagerTest extends PHPUnit_Framework_TestCase
         foreach ($entities as $entitiy)
         {
             OW::getTextSearchManager()->
-                    addEntity($entitiy['entity_type'], $entitiy['entity_id'], $entitiy['text'], $entitiy['tags']);
+                    addEntity($entitiy['entity_type'], $entitiy['entity_id'], $entitiy['text'],  time(), $entitiy['tags']);
         }
 
         // deactivate all forum post entities
@@ -146,7 +146,7 @@ class TextSearchManagerTest extends PHPUnit_Framework_TestCase
         foreach ($entities as $entitiy)
         {
             OW::getTextSearchManager()->
-                    addEntity($entitiy['entity_type'], $entitiy['entity_id'], $entitiy['text'], $entitiy['tags']);
+                    addEntity($entitiy['entity_type'], $entitiy['entity_id'], $entitiy['text'],  time(), $entitiy['tags']);
         }
 
         // deactivate all entities
@@ -204,7 +204,7 @@ class TextSearchManagerTest extends PHPUnit_Framework_TestCase
         foreach ($entities as $entitiy)
         {
             OW::getTextSearchManager()->
-                    addEntity($entitiy['entity_type'], $entitiy['entity_id'], $entitiy['text'], $entitiy['tags']);
+                    addEntity($entitiy['entity_type'], $entitiy['entity_id'], $entitiy['text'],  time(), $entitiy['tags']);
 
             // deactivate an entity
             if (!$entitiy['active']) {
@@ -292,7 +292,7 @@ class TextSearchManagerTest extends PHPUnit_Framework_TestCase
         foreach ($entities as $entitiy)
         {
             OW::getTextSearchManager()->
-                    addEntity($entitiy['entity_type'], $entitiy['entity_id'], $entitiy['text'], $entitiy['tags']);
+                    addEntity($entitiy['entity_type'], $entitiy['entity_id'], $entitiy['text'],  time(), $entitiy['tags']);
         }
 
         // search entities by tags
@@ -338,7 +338,7 @@ class TextSearchManagerTest extends PHPUnit_Framework_TestCase
         foreach ($entities as $entitiy)
         {
             OW::getTextSearchManager()->
-                    addEntity($entitiy['entity_type'], $entitiy['entity_id'], $entitiy['text'], $entitiy['tags']);
+                    addEntity($entitiy['entity_type'], $entitiy['entity_id'], $entitiy['text'],  time(), $entitiy['tags']);
 
             // deactivate entities
             OW::getTextSearchManager()->
@@ -356,5 +356,66 @@ class TextSearchManagerTest extends PHPUnit_Framework_TestCase
         {
             $this->assertEquals(BASE_CLASS_AbstractSearchStorage::ENTITY_STATUS_NOT_ACTIVE, $entity['status']);
         }
+    }
+
+    /**
+     * Test search entities by timestamp
+     */
+    public function testSearchEntitiesByTimestamp()
+    {
+        $daySeconds = 86400;
+        $yesterday  = time() - $daySeconds;
+
+        $testEntities = array(
+            array(
+                'entity_type' => 'forum_post',
+                'entity_id' => 1,
+                'text' => 'forum post title #1',
+                'tags' => array(
+                ),
+                'timestamp' => $yesterday
+            ),
+            array(
+                'entity_type' => 'forum_post',
+                'entity_id' => 2,
+                'text' => 'forum post title #2',
+                'tags' => array(
+                ),
+                'timestamp' => time()
+            ),
+            array(
+                'entity_type' => 'forum_post',
+                'entity_id' => 3,
+                'text' => 'forum post title #3',
+                'tags' => array(
+                ),
+                'timestamp' => $yesterday
+            ),
+            array(
+                'entity_type' => 'forum_post',
+                'entity_id' => 4,
+                'text' => 'forum post title #4',
+                'tags' => array(
+                ),
+                'timestamp' => $yesterday - $daySeconds //before yesterday
+            )
+        );
+
+        // add test entities 
+        foreach ($testEntities as $entitiy)
+        {
+            OW::getTextSearchManager()->addEntity($entitiy['entity_type'], 
+                    $entitiy['entity_id'], $entitiy['text'],  $entitiy['timestamp'], $entitiy['tags']);
+        }
+
+        // search only entities that added yesterday
+        $this->assertEquals(2, OW::getTextSearchManager()->
+                searchEntitiesCount('forum post', array(), $yesterday, $yesterday));
+
+        $searchEntities = OW::getTextSearchManager()->
+                searchEntities('forum post', 0, 100, array(), BASE_CLASS_AbstractSearchStorage::SORT_BY_DATE, $yesterday, $yesterday);
+
+        $this->assertInternalType('array', $searchEntities);
+        $this->assertEquals(2, count($searchEntities));
     }
 }

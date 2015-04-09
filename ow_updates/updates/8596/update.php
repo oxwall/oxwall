@@ -10,13 +10,13 @@ $queryList[] = "CREATE TABLE IF NOT EXISTS `{$tblPrefix}base_search_entity` (
     `entityType` varchar(50) NOT NULL,
     `entityId` int(10) unsigned NOT NULL,
     `text` text NOT NULL,
-    `status` tinyint(1) unsigned NOT NULL DEFAULT 1,
+    `status` varchar(20) NOT NULL DEFAULT 'active',
     `timeStamp` int(10) unsigned NOT NULL,
     PRIMARY KEY (`id`),
     KEY `entity` (`entityType`,`entityId`),
+    KEY `status` (`status`, `timeStamp`),
     FULLTEXT KEY `entityText` (`text`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8;";
-
 
 $queryList[] = "CREATE TABLE IF NOT EXISTS `{$tblPrefix}base_search_entity_tag` (
     `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
