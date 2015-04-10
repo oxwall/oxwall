@@ -193,10 +193,12 @@ class BOL_SearchEntityDao extends OW_BaseDao
     public function setEntitiesStatus( $entityType = null, $status = self::ENTITY_STATUS_ACTIVE, $entityId = null )
     {
         $params = array(
-            $status
+            $status,
+            self::ENTITY_STATUS_DELETED
         );
 
-        $sql = 'UPDATE `' . $this->getTableName() . '` SET `' . self::STATUS . '` = ? WHERE 1';
+        $sql = 'UPDATE `' . $this->
+                getTableName() . '` SET `' . self::STATUS . '` = ? WHERE `' . self::STATUS . '` <> ?';
 
         if ( $entityType ) 
         {
@@ -412,6 +414,64 @@ class BOL_SearchEntityDao extends OW_BaseDao
                 :limit';
 
         return $this->dbo->queryForList($query, $queryParams);
+    }
+
+    /**
+     * Set entities status by tags
+     * 
+     * @param array $tags
+     * @param string $status
+     * @return void
+     */
+    public function setEntitiesStatusByTags( array $tags, $status )
+    {
+        $enityTags = BOL_SearchEntityTagDao::getInstance();
+
+        $params = array(
+            ':status' => self::ENTITY_STATUS_DELETED
+        );
+
+        // find not deleted entities
+        $query = '
+            SELECT 
+                b.id
+            FROM 
+                ' . $enityTags->getTableName() . ' a
+            INNER JOIN
+                ' . $this->getTableName() . ' b
+            ON
+                a.' . BOL_SearchEntityTagDao::ENTITY_SEARCH_ID . ' = b.id 
+                    AND 
+                b.'. self::STATUS  . ' <> :status
+            WHERE 
+                a.' . BOL_SearchEntityTagDao::ENTITY_TAG . ' IN (' . $this->dbo->mergeInClause($tags) . ')';
+ 
+         $entities = $this->dbo->queryForList($query, $params);
+
+         // set needed status
+         if ( $entities )
+         {
+             foreach ($entities as $entity) 
+             {
+                $params = array(
+                    $status,
+                    $entity['id']
+                );
+
+                $query = 'UPDATE `' . $this->getTableName() . '` SET `' . self::STATUS . '` = ? WHERE id = ?';
+                $this->dbo->query($query, $params);
+             }
+         }
+    }
+
+    /**
+     * Optimize table
+     * 
+     * @return void
+     */
+    public function optimizeTable()
+    {
+        $this->dbo->query('OPTIMIZE TABLE ' . $this->getTableName());
     }
 
     /**

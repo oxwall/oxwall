@@ -59,10 +59,11 @@ abstract class BASE_CLASS_AbstractSearchStorage
      * @param string  $text
      * @param integer $timeStamp
      * @param array $tags
+     * @param string $status
      * @throws Exception
      * @return void
      */
-    abstract public function addEntity( $entityType, $entityId, $text, $timeStamp, array $tags = array() );
+    abstract public function addEntity( $entityType, $entityId, $text, $timeStamp, array $tags = array(), $status = null );
 
     /**
      * Set entity status
@@ -95,6 +96,15 @@ abstract class BASE_CLASS_AbstractSearchStorage
     abstract public function deleteAllEntities( $entityType = null );
 
     /**
+     * Delete all entities by tags
+     *
+     * @param array $tags
+     * @throws Exception
+     * @return void
+     */
+    abstract public function deleteAllEntitiesByTags( array $tags );
+
+    /**
      * Deactivate all entities
      *
      * @param string $entityType
@@ -104,6 +114,15 @@ abstract class BASE_CLASS_AbstractSearchStorage
     abstract public function deactivateAllEntities( $entityType = null );
 
     /**
+     * Deactivate all entities by tags
+     *
+     * @param array $tags
+     * @throws Exception
+     * @return void
+     */
+    abstract public function deactivateAllEntitiesByTags( array $tags );
+
+    /**
      * Activate all entities
      *
      * @param string $entityType
@@ -111,6 +130,15 @@ abstract class BASE_CLASS_AbstractSearchStorage
      * @return void
      */
     abstract public function activateAllEntities( $entityType = null );
+
+    /**
+     * Activate all entities by tags
+     *
+     * @param array $tags
+     * @throws Exception
+     * @return void
+     */
+    abstract public function activateAllEntitiesByTags( array $tags );
 
     /**
      * Search entities count
@@ -158,6 +186,7 @@ abstract class BASE_CLASS_AbstractSearchStorage
      */
     protected function cleanSearchText( $text )
     {
-        return mb_strtolower(preg_replace('/[^\pL\pN]+/u', ' ', strip_tags($text)));
+        return mb_strtolower(trim(preg_replace('/[^\pL\pN]+/u', ' ', 
+                str_replace('&nbsp;', ' ', strip_tags($text)))));
     }
 }

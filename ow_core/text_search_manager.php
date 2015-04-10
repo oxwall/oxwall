@@ -101,16 +101,17 @@ final class OW_TextSearchManager
      * @param string  $text
      * @param integer $timeStamp
      * @param array $tags
+     * @param string $status
      * @throws Exception
      * @return void
      */
-    public function addEntity( $entityType, $entityId, $text, $timeStamp, array $tags = array() )
+    public function addEntity( $entityType, $entityId, $text, $timeStamp, array $tags = array(), $status = null )
     {
-        $this->defaultStorageInstance->addEntity($entityType, $entityId, $text, $timeStamp, $tags);
+        $this->defaultStorageInstance->addEntity($entityType, $entityId, $text, $timeStamp, $tags, $status);
 
         if ( $this->activeStorageInstance )
         {
-            $this->activeStorageInstance->addEntity($entityType, $entityId, $text, $timeStamp, $tags);
+            $this->activeStorageInstance->addEntity($entityType, $entityId, $text, $timeStamp, $tags, $status);
         }
     }
 
@@ -169,6 +170,23 @@ final class OW_TextSearchManager
     }
 
     /**
+     * Delete all entities by tags
+     *
+     * @param array $tags
+     * @throws Exception
+     * @return void
+     */
+    public function deleteAllEntitiesByTags( array $tags )
+    {
+        $this->defaultStorageInstance->deleteAllEntitiesByTags($tags);
+
+        if ( $this->activeStorageInstance )
+        {
+            $this->activeStorageInstance->deleteAllEntitiesByTags($tags);
+        }   
+    }
+
+    /**
      * Deactivate all entities
      *
      * @param string $entityType
@@ -182,6 +200,23 @@ final class OW_TextSearchManager
         if ( $this->activeStorageInstance )
         {
             $this->activeStorageInstance->deactivateAllEntities($entityType);
+        }
+    }
+    
+    /**
+     * Deactivate all entities by tags
+     *
+     * @param array $tags
+     * @throws Exception
+     * @return void
+     */
+    public function deactivateAllEntitiesByTags( array $tags )
+    {
+        $this->defaultStorageInstance->deactivateAllEntitiesByTags($tags);
+
+        if ( $this->activeStorageInstance )
+        {
+            $this->activeStorageInstance->deactivateAllEntitiesByTags($tags);
         }
     }
 
@@ -199,6 +234,23 @@ final class OW_TextSearchManager
         if ( $this->activeStorageInstance )
         {
             $this->activeStorageInstance->activateAllEntities($entityType);
+        }
+    }
+
+    /**
+     * Activate all entities by tags
+     *
+     * @param array $tags
+     * @throws Exception
+     * @return void
+     */
+    public function activateAllEntitiesByTags( array $tags )
+    {
+        $this->defaultStorageInstance->activateAllEntitiesByTags($tags);
+
+        if ( $this->activeStorageInstance )
+        {
+            $this->activeStorageInstance->activateAllEntitiesByTags($tags);
         }
     }
 
