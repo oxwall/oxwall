@@ -57,6 +57,11 @@ class BOL_SearchEntityDao extends OW_BaseDao
     const TIMESTAMP = 'timeStamp';
 
     /**
+     * Activated
+     */
+    const ACTIVATED = 'activated';
+
+    /**
      * Entity deleted status
      */
     const ENTITY_STATUS_DELETED = 'deleted';
@@ -70,6 +75,16 @@ class BOL_SearchEntityDao extends OW_BaseDao
      * Entity not active status
      */
     const ENTITY_STATUS_NOT_ACTIVE = 'not_active';
+
+    /**
+     * Entity activated
+     */
+    CONST ENTITY_ACTIVATED = 1;
+    
+    /**
+     * Entity not activated
+     */
+    CONST ENTITY_NOT_ACTIVATED = 0;
 
     /**
      * Sort by date
@@ -220,6 +235,74 @@ class BOL_SearchEntityDao extends OW_BaseDao
     }
 
     /**
+     * Change activation status
+     * 
+     * @param string $entityType
+     * @param boolean $activate
+     * @return void
+     */
+    public function changeActivationStatus( $entityType = null, $activate = true )
+    {
+        $params = array(
+            ($activate ? self::ENTITY_ACTIVATED : self::ENTITY_NOT_ACTIVATED)
+        );
+
+        $sql = 'UPDATE `' . $this->
+                getTableName() . '` SET `' . self::ACTIVATED . '` = ? WHERE 1';
+
+        if ( $entityType ) 
+        {
+            $sql .=  ' AND `' . self::ENTITY_TYPE . '` = ? ';
+            $params = array_merge($params, array(
+                $entityType
+            ));
+        }
+
+        $this->dbo->query($sql, $params);
+    }
+
+    /**
+     * Change activation status by tags
+     * 
+     * @param array $tags    
+     * @param boolean $activate
+     * @return void
+     */
+    public function changeActivationStatusByTags( array $tags, $activate = true )
+    {
+        $enityTags = BOL_SearchEntityTagDao::getInstance();
+
+        $query = '
+            SELECT 
+                b.id
+            FROM 
+                ' . $enityTags->getTableName() . ' a
+            INNER JOIN
+                ' . $this->getTableName() . ' b
+            ON
+                a.' . BOL_SearchEntityTagDao::ENTITY_SEARCH_ID . ' = b.id
+            WHERE 
+                a.' . BOL_SearchEntityTagDao::ENTITY_TAG . ' IN (' . $this->dbo->mergeInClause($tags) . ')';
+ 
+         $entities = $this->dbo->queryForList($query);
+
+         // set needed activation status
+         if ( $entities )
+         {
+             foreach ($entities as $entity) 
+             {
+                $params = array(
+                    ($activate ? self::ENTITY_ACTIVATED : self::ENTITY_NOT_ACTIVATED),
+                    $entity['id']
+                );
+
+                $query = 'UPDATE `' . $this->getTableName() . '` SET `' . self::ACTIVATED . '` = ? WHERE id = ?';
+                $this->dbo->query($query, $params);
+             }
+         }
+    }
+
+    /**
      * Find entities count by text
      * 
      * @param string $text
@@ -233,7 +316,8 @@ class BOL_SearchEntityDao extends OW_BaseDao
         // sql params
         $queryParams = array(
             ':search' => $text,
-            ':status' => self::ENTITY_STATUS_ACTIVE
+            ':status' => self::ENTITY_STATUS_ACTIVE,
+            ':activated' => self::ENTITY_ACTIVATED
         );
 
         $subQueryTimeStampFilter = null;
@@ -270,7 +354,7 @@ class BOL_SearchEntityDao extends OW_BaseDao
                 FROM 
                     ' . $this->getTableName() . ' b
                 WHERE 
-                    b.'. self::STATUS  . ' = :status ' . $subQueryTimeStampFilter . ' 
+                    b.'. self::STATUS  . ' = :status AND b.' . self::ACTIVATED . ' = :activated' . $subQueryTimeStampFilter . ' 
                         AND
                     MATCH (b.' . self::TEXT . ') AGAINST (:search ' . $this->getFullTextSearchMode() . ')';
         }
@@ -289,7 +373,7 @@ class BOL_SearchEntityDao extends OW_BaseDao
                 ON
                     a.' . BOL_SearchEntityTagDao::ENTITY_SEARCH_ID . ' = b.id 
                         AND 
-                    b.'. self::STATUS  . ' = :status ' . $subQueryTimeStampFilter . ' 
+                    b.'. self::STATUS  . ' = :status AND b.' . self::ACTIVATED . ' = :activated' . $subQueryTimeStampFilter . ' 
                         AND
                     MATCH (b.' . self::TEXT . ') AGAINST (:search ' . $this->getFullTextSearchMode() . ')
                 WHERE 
@@ -332,7 +416,8 @@ class BOL_SearchEntityDao extends OW_BaseDao
             ':search' => $text,
             ':first' => $first,
             ':limit' => $limit,
-            ':status' => self::ENTITY_STATUS_ACTIVE
+            ':status' => self::ENTITY_STATUS_ACTIVE,
+            ':activated' => self::ENTITY_ACTIVATED
         );
 
         $subQueryTimeStampFilter = null;
@@ -370,7 +455,7 @@ class BOL_SearchEntityDao extends OW_BaseDao
                 FROM 
                     ' . $this->getTableName() . ' b
                 WHERE 
-                    b.'. self::STATUS  . ' = :status ' . $subQueryTimeStampFilter . ' 
+                    b.'. self::STATUS  . ' = :status AND b.' . self::ACTIVATED . ' = :activated' . $subQueryTimeStampFilter . ' 
                         AND
                     MATCH (b.' . self::TEXT . ') AGAINST (:search ' . $this->getFullTextSearchMode() . ')
                 ORDER BY 
@@ -392,7 +477,7 @@ class BOL_SearchEntityDao extends OW_BaseDao
                 ON
                     a.' . BOL_SearchEntityTagDao::ENTITY_SEARCH_ID . ' = b.id 
                         AND 
-                    b.'. self::STATUS  . ' = :status ' . $subQueryTimeStampFilter . ' 
+                    b.'. self::STATUS  . ' = :status AND b.' . self::ACTIVATED . ' = :activated' . $subQueryTimeStampFilter . ' 
                         AND
                     MATCH (b.' . self::TEXT . ') AGAINST (:search ' . $this->getFullTextSearchMode() . ')
                 WHERE 
