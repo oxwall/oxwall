@@ -116,7 +116,7 @@ final class OW_TextSearchManager
     }
 
     /**
-     * Set entity status
+     * Set entities status
      * 
      * @param string $entityType
      * @param integer $entityId
@@ -124,13 +124,31 @@ final class OW_TextSearchManager
      * @throws Exception
      * @return void
      */
-    public function setEntityStatus( $entityType, $entityId, $status = self::ENTITY_STATUS_ACTIVE )
+    public function setEntitiesStatus( $entityType, $entityId, $status = self::ENTITY_STATUS_ACTIVE )
     {
-        $this->defaultStorageInstance->setEntityStatus($entityType, $entityId, $status);
+        $this->defaultStorageInstance->setEntitiesStatus($entityType, $entityId, $status);
 
         if ( $this->activeStorageInstance )
         {
-            $this->activeStorageInstance->setEntityStatus($entityType, $entityId, $status);
+            $this->activeStorageInstance->setEntitiesStatus($entityType, $entityId, $status);
+        }
+    }
+
+    /**
+     * Set entities status by tags
+     * 
+     * @param array $tags
+     * @param string $status
+     * @throws Exception
+     * @return void
+     */
+    public function setEntitiesStatusByTags( array $tags, $status = self::ENTITY_STATUS_ACTIVE )
+    {
+        $this->defaultStorageInstance->setEntitiesStatusByTags($tags, $status);
+
+        if ( $this->activeStorageInstance )
+        {
+            $this->activeStorageInstance->setEntitiesStatusByTags($tags, $status);
         }
     }
 

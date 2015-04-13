@@ -52,6 +52,16 @@ abstract class BASE_CLASS_AbstractSearchStorage
     CONST ENTITY_STATUS_NOT_ACTIVE = 'not_active';
 
     /**
+     * Entity activated
+     */
+    CONST ENTITY_ACTIVATED = 1;
+    
+    /**
+     * Entity not activated
+     */
+    CONST ENTITY_NOT_ACTIVATED = 0;
+
+    /**
      * Add entity
      *
      * @param string $entityType
@@ -66,7 +76,7 @@ abstract class BASE_CLASS_AbstractSearchStorage
     abstract public function addEntity( $entityType, $entityId, $text, $timeStamp, array $tags = array(), $status = null );
 
     /**
-     * Set entity status
+     * Set entities status
      * 
      * @param string $entityType
      * @param integer $entityId
@@ -74,7 +84,17 @@ abstract class BASE_CLASS_AbstractSearchStorage
      * @throws Exception
      * @return void
      */
-    abstract public function setEntityStatus( $entityType, $entityId, $status = self::ENTITY_STATUS_ACTIVE );
+    abstract public function setEntitiesStatus( $entityType, $entityId, $status = self::ENTITY_STATUS_ACTIVE );
+
+    /**
+     * Set entities status by tags
+     * 
+     * @param array $tags
+     * @param string $status
+     * @throws Exception
+     * @return void
+     */
+    abstract public function setEntitiesStatusByTags( array $tags, $status = self::ENTITY_STATUS_ACTIVE );
 
     /**
      * Delete entity

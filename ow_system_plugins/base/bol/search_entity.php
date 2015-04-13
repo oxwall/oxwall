@@ -37,4 +37,10 @@ class BOL_SearchEntity extends OW_Entity
      * @var integer
      */
     public $timeStamp;
+
+    /**
+     * Activated
+     * @var integer
+     */
+    public $activated;
 }

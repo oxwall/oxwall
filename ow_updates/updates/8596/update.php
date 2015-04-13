@@ -12,9 +12,10 @@ $queryList[] = "CREATE TABLE IF NOT EXISTS `{$tblPrefix}base_search_entity` (
     `text` text NOT NULL,
     `status` varchar(20) NOT NULL DEFAULT 'active',
     `timeStamp` int(10) unsigned NOT NULL,
+    `activated` tinyint(1) unsigned NOT NULL DEFAULT 1,
     PRIMARY KEY (`id`),
     KEY `entity` (`entityType`,`entityId`),
-    KEY `status` (`status`, `timeStamp`),
+    KEY `status` (`status`, `activated`, `timeStamp`),
     FULLTEXT KEY `entityText` (`text`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8;";
 

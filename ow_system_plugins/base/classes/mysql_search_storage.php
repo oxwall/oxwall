@@ -71,6 +71,7 @@ class BASE_CLASS_MysqlSearchStorage extends BASE_CLASS_AbstractSearchStorage
         $dto->entityId   = $entityId;
         $dto->text = $this->cleanSearchText($text); 
         $dto->timeStamp = $timeStamp;
+        $dto->activated = BOL_SearchEntityDao::ENTITY_ACTIVATED;
         $dto->status = !$status
                 ? BOL_SearchEntityDao::ENTITY_STATUS_ACTIVE
                 : $status;
@@ -92,7 +93,7 @@ class BASE_CLASS_MysqlSearchStorage extends BASE_CLASS_AbstractSearchStorage
     }
 
     /**
-     * Set entity status
+     * Set entities status
      * 
      * @param string $entityType
      * @param integer $entityId
@@ -100,9 +101,22 @@ class BASE_CLASS_MysqlSearchStorage extends BASE_CLASS_AbstractSearchStorage
      * @throws Exception
      * @return void
      */
-    public function setEntityStatus( $entityType, $entityId, $status = self::ENTITY_STATUS_ACTIVE )
+    public function setEntitiesStatus( $entityType, $entityId, $status = self::ENTITY_STATUS_ACTIVE )
     {
         $this->searchEntityDao->setEntitiesStatus($entityType, $status, $entityId);
+    }
+
+    /**
+     * Set entities status by tags
+     * 
+     * @param array $tags
+     * @param string $status
+     * @throws Exception
+     * @return void
+     */
+    public function setEntitiesStatusByTags( array $tags, $status = self::ENTITY_STATUS_ACTIVE )
+    {
+        $this->searchEntityDao->setEntitiesStatusByTags($tags, $status);
     }
 
     /**
@@ -188,7 +202,7 @@ class BASE_CLASS_MysqlSearchStorage extends BASE_CLASS_AbstractSearchStorage
      */
     public function deactivateAllEntities( $entityType = null )
     {
-        $this->searchEntityDao->setEntitiesStatus($entityType, self::ENTITY_STATUS_NOT_ACTIVE);
+        $this->searchEntityDao->changeActivationStatus($entityType, false);
     }
 
     /**
@@ -200,7 +214,7 @@ class BASE_CLASS_MysqlSearchStorage extends BASE_CLASS_AbstractSearchStorage
      */
     public function deactivateAllEntitiesByTags( array $tags )
     {
-        $this->searchEntityDao->setEntitiesStatusByTags($tags, self::ENTITY_STATUS_NOT_ACTIVE);
+        $this->searchEntityDao->changeActivationStatusByTags($tags, false);
     }
 
     /**
@@ -212,7 +226,7 @@ class BASE_CLASS_MysqlSearchStorage extends BASE_CLASS_AbstractSearchStorage
      */
     public function activateAllEntities( $entityType = null )
     {
-        $this->searchEntityDao->setEntitiesStatus($entityType);
+        $this->searchEntityDao->changeActivationStatus($entityType);
     }
     
     /**
@@ -224,7 +238,7 @@ class BASE_CLASS_MysqlSearchStorage extends BASE_CLASS_AbstractSearchStorage
      */
     public function activateAllEntitiesByTags( array $tags )
     {
-        $this->searchEntityDao->setEntitiesStatusByTags($tags, self::ENTITY_STATUS_ACTIVE);
+        $this->searchEntityDao->changeActivationStatusByTags($tags);
     }
 
     /**
