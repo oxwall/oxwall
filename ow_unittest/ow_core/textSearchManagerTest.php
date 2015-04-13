@@ -418,4 +418,60 @@ class TextSearchManagerTest extends PHPUnit_Framework_TestCase
         $this->assertInternalType('array', $searchEntities);
         $this->assertEquals(2, count($searchEntities));
     }
+
+    /**
+     * Test delete all entities by tags
+     */
+    public function testDeleteAllEntitiesByTags()
+    {
+        $testEntities = array(
+            array(
+                'entity_type' => 'forum_post',
+                'entity_id' => 1,
+                'text' => 'forum post title #1',
+                'tags' => array(
+                    'tag_1'
+                )
+            ),
+            array(
+                'entity_type' => 'forum_post',
+                'entity_id' => 2,
+                'text' => 'forum post title #2',
+                'tags' => array(
+                    'tag_2'
+                ),
+            ),
+            array(
+                'entity_type' => 'forum_post',
+                'entity_id' => 3,
+                'text' => 'forum post title #3',
+                'tags' => array(
+                    'tag_3'
+                )
+            ),
+            array(
+                'entity_type' => 'forum_post',
+                'entity_id' => 4,
+                'text' => 'forum post title #4',
+                'tags' => array(
+                    'tag_3'
+                )
+            )
+        );
+
+        // add test entities 
+        foreach ($testEntities as $entitiy)
+        {
+            OW::getTextSearchManager()->addEntity($entitiy['entity_type'], 
+                    $entitiy['entity_id'], $entitiy['text'],  time(), $entitiy['tags']);
+        }
+
+        // delete entities by tags
+        OW::getTextSearchManager()->deleteAllEntitiesByTags(array('tag_3', 'tag_2'));
+
+        // we should find only a one entity
+        $searchEntities = OW::getTextSearchManager()->searchEntities('forum post', 0, 100);
+        $this->assertInternalType('array', $searchEntities);
+        $this->assertEquals(1, count($searchEntities));
+    }
 }

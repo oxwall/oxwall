@@ -104,12 +104,12 @@ class BOL_SearchEntityTagDao extends OW_BaseDao
     }
 
     /**
-     * Delete all tags
+     * Optimize table
      * 
      * @return void
      */
-    public function deleteAllTags()
+    public function optimizeTable()
     {
-        $this->dbo->delete('TRUNCATE TABLE ' . $this->getTableName());
+        $this->dbo->query('OPTIMIZE TABLE ' . $this->getTableName());
     }
 }
