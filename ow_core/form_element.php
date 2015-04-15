@@ -2170,7 +2170,7 @@ class CaptchaField extends FormElement
     }
 }
 
-class AgeRange extends FormElement implements DateRangeInterface, AgeRangeInterface
+class AgeRange extends FormElement implements DateRangeInterface
 {
     const MIN_YEAR = 1900;
 
@@ -3425,15 +3425,4 @@ interface DateRangeInterface
     public function setMaxYear( $year );
 
     public function setMinYear( $year );
-}
-
-interface AgeRangeInterface 
-{
-    public function getMinAge();
-
-    public function getMaxAge();
-    
-    public function setMaxAge( $age );
-
-    public function setMinAge( $age );
 }
