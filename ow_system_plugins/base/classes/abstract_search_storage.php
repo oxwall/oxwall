@@ -44,12 +44,22 @@ abstract class BASE_CLASS_AbstractSearchStorage
     /**
      * Active entity status 
      */
-    CONST ENTITY_STATUS_ACTIVE = 1;
+    CONST ENTITY_STATUS_ACTIVE = 'active';
 
     /**
      * Not active entity status
      */
-    CONST ENTITY_STATUS_NOT_ACTIVE = 0;
+    CONST ENTITY_STATUS_NOT_ACTIVE = 'not_active';
+
+    /**
+     * Entity activated
+     */
+    CONST ENTITY_ACTIVATED = 1;
+    
+    /**
+     * Entity not activated
+     */
+    CONST ENTITY_NOT_ACTIVATED = 0;
 
     /**
      * Add entity
@@ -57,22 +67,34 @@ abstract class BASE_CLASS_AbstractSearchStorage
      * @param string $entityType
      * @param integer $entityId
      * @param string  $text
+     * @param integer $timeStamp
      * @param array $tags
+     * @param string $status
      * @throws Exception
      * @return void
      */
-    abstract public function addEntity( $entityType, $entityId, $text, array $tags = array() );
+    abstract public function addEntity( $entityType, $entityId, $text, $timeStamp, array $tags = array(), $status = null );
 
     /**
-     * Set entity status
+     * Set entities status
      * 
      * @param string $entityType
      * @param integer $entityId
-     * @param integer $status
+     * @param string $status
      * @throws Exception
      * @return void
      */
-    abstract public function setEntityStatus( $entityType, $entityId, $status = self::ENTITY_STATUS_ACTIVE );
+    abstract public function setEntitiesStatus( $entityType, $entityId, $status = self::ENTITY_STATUS_ACTIVE );
+
+    /**
+     * Set entities status by tags
+     * 
+     * @param array $tags
+     * @param string $status
+     * @throws Exception
+     * @return void
+     */
+    abstract public function setEntitiesStatusByTags( array $tags, $status = self::ENTITY_STATUS_ACTIVE );
 
     /**
      * Delete entity
@@ -94,6 +116,15 @@ abstract class BASE_CLASS_AbstractSearchStorage
     abstract public function deleteAllEntities( $entityType = null );
 
     /**
+     * Delete all entities by tags
+     *
+     * @param array $tags
+     * @throws Exception
+     * @return void
+     */
+    abstract public function deleteAllEntitiesByTags( array $tags );
+
+    /**
      * Deactivate all entities
      *
      * @param string $entityType
@@ -101,6 +132,15 @@ abstract class BASE_CLASS_AbstractSearchStorage
      * @return void
      */
     abstract public function deactivateAllEntities( $entityType = null );
+
+    /**
+     * Deactivate all entities by tags
+     *
+     * @param array $tags
+     * @throws Exception
+     * @return void
+     */
+    abstract public function deactivateAllEntitiesByTags( array $tags );
 
     /**
      * Activate all entities
@@ -112,14 +152,25 @@ abstract class BASE_CLASS_AbstractSearchStorage
     abstract public function activateAllEntities( $entityType = null );
 
     /**
+     * Activate all entities by tags
+     *
+     * @param array $tags
+     * @throws Exception
+     * @return void
+     */
+    abstract public function activateAllEntitiesByTags( array $tags );
+
+    /**
      * Search entities count
      *
      * @param string $text
      * @param array $tags
+     * @param integer $timeStampStart
+     * @param integer $timeStampEnd
      * @throws Exception
      * @return integer
      */
-    abstract public function searchEntitiesCount( $text, array $tags = array() );
+    abstract public function searchEntitiesCount( $text, array $tags = array(), $timeStampStart = 0, $timeStampEnd = 0);
 
     /**
      * Search entities
@@ -129,10 +180,12 @@ abstract class BASE_CLASS_AbstractSearchStorage
      * @param integer $limit
      * @param array $tags
      * @param string $sort
+     * @param integer $timeStampStart
+     * @param integer $timeStampEnd
      * @throws Exception
      * @return array
      */
-    abstract public function searchEntities( $text, $first, $limit, array $tags = array(), $sort = self::SORT_BY_RELEVANCE );
+    abstract public function searchEntities( $text, $first, $limit, array $tags = array(), $sort = self::SORT_BY_RELEVANCE, $timeStampStart = 0, $timeStampEnd = 0 );
 
     /**
      * Get all entities
@@ -153,6 +206,7 @@ abstract class BASE_CLASS_AbstractSearchStorage
      */
     protected function cleanSearchText( $text )
     {
-        return mb_strtolower(preg_replace('/[^\pL\pN]+/u', ' ', strip_tags($text)));
+        return mb_strtolower(trim(preg_replace('/[^\pL\pN]+/u', ' ', 
+                str_replace('&nbsp;', ' ', strip_tags($text)))));
     }
 }

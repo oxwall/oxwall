@@ -58,18 +58,23 @@ class BASE_CLASS_MysqlSearchStorage extends BASE_CLASS_AbstractSearchStorage
      * @param string $entityType
      * @param integer $entityId
      * @param string $text
+     * @param integer $timeStamp
      * @param array $tags
+     * @param string $status
      * @throws Exception
      * @return void
      */
-    public function addEntity( $entityType, $entityId, $text, array $tags = array() )
+    public function addEntity( $entityType, $entityId, $text, $timeStamp, array $tags = array(), $status = null )
     {
         $dto = new BOL_SearchEntity;
         $dto->entityType = $entityType; 
         $dto->entityId   = $entityId;
         $dto->text = $this->cleanSearchText($text); 
-        $dto->timeStamp = time();
-        $dto->status = BOL_SearchEntityDao::ENTITY_STATUS_ACTIVE;
+        $dto->timeStamp = $timeStamp;
+        $dto->activated = BOL_SearchEntityDao::ENTITY_ACTIVATED;
+        $dto->status = !$status
+                ? BOL_SearchEntityDao::ENTITY_STATUS_ACTIVE
+                : $status;
 
         $this->searchEntityDao->save($dto);
         $searchEntityId = $dto->id;
@@ -88,7 +93,7 @@ class BASE_CLASS_MysqlSearchStorage extends BASE_CLASS_AbstractSearchStorage
     }
 
     /**
-     * Set entity status
+     * Set entities status
      * 
      * @param string $entityType
      * @param integer $entityId
@@ -96,9 +101,22 @@ class BASE_CLASS_MysqlSearchStorage extends BASE_CLASS_AbstractSearchStorage
      * @throws Exception
      * @return void
      */
-    public function setEntityStatus( $entityType, $entityId, $status = self::ENTITY_STATUS_ACTIVE )
+    public function setEntitiesStatus( $entityType, $entityId, $status = self::ENTITY_STATUS_ACTIVE )
     {
         $this->searchEntityDao->setEntitiesStatus($entityType, $status, $entityId);
+    }
+
+    /**
+     * Set entities status by tags
+     * 
+     * @param array $tags
+     * @param string $status
+     * @throws Exception
+     * @return void
+     */
+    public function setEntitiesStatusByTags( array $tags, $status = self::ENTITY_STATUS_ACTIVE )
+    {
+        $this->searchEntityDao->setEntitiesStatusByTags($tags, $status);
     }
 
     /**
@@ -111,63 +129,67 @@ class BASE_CLASS_MysqlSearchStorage extends BASE_CLASS_AbstractSearchStorage
      */
     public function deleteEntity( $entityType, $entityId )
     {
-        // get all entity's parts
-        if ( null == ($entityParts = 
-                $this->searchEntityDao->findEntityParts($entityType, $entityId)) ) 
-        {
-            return false;
-        }
-
-        foreach ( $entityParts as $entity )
-        {
-            // get tags list
-            $tags = $this->searchEntityTagDao->findTags($entity->id);
-
-            // delete assigned tags
-            foreach ($tags as $tag) 
-            {
-                $this->searchEntityTagDao->deleteById($tag->id);
-            }
-
-            // delete an entity part
-            $this->searchEntityDao->deleteById($entity->id);
-        }
+        // mark entity as deleted
+        $this->searchEntityDao->
+                setEntitiesStatus($entityType, BOL_SearchEntityDao::ENTITY_STATUS_DELETED, $entityId);
     }
 
     /**
      * Delete all entities
      *
-     * @param string $entityTyp
+     * @param string $entityType
      * @throws Exception
      * @return void
      */
     public function deleteAllEntities( $entityType = null )
     {
-        if ( !$entityType ) 
+        // mark entities as deleted
+        $this->searchEntityDao->
+                setEntitiesStatus($entityType, BOL_SearchEntityDao::ENTITY_STATUS_DELETED);
+    }
+
+    /**
+     * Delete all entities by tags
+     *
+     * @param array $tags
+     * @throws Exception
+     * @return void
+     */
+    public function deleteAllEntitiesByTags( array $tags )
+    {
+        // mark entities as deleted
+        $this->searchEntityDao->
+                setEntitiesStatusByTags($tags, BOL_SearchEntityDao::ENTITY_STATUS_DELETED);
+    }
+
+    /**
+     * Real delete entities
+     *
+     * @throws Exception
+     * @return void
+     */
+    public function realDeleteEntities()
+    {
+        // get deleted entities
+        if ( null != ($entities = $this->searchEntityDao->findDeletedEntities()) ) 
         {
-            // truncate all entities and their tags
-            $this->searchEntityDao->deleteAllEntities();
-            $this->searchEntityTagDao->deleteAllTags();
-        }
-        else
-        {
-            // delete only specific entities
-            if ( null != ($entityParts = $this->searchEntityDao->findEntityParts($entityType)) ) {
-                foreach ($entityParts as $entity)
+            foreach ($entities as $entity)
+            {
+                // get tags list
+                $tags = $this->searchEntityTagDao->findTags($entity->id);
+
+                // delete assigned tags
+                foreach ($tags as $tag) 
                 {
-                    // get tags list
-                    $tags = $this->searchEntityTagDao->findTags($entity->id);
-
-                    // delete assigned tags
-                    foreach ($tags as $tag) 
-                    {
-                        $this->searchEntityTagDao->deleteById($tag->id);
-                    }
-
-                    // delete an entity part
-                    $this->searchEntityDao->deleteById($entity->id);
+                    $this->searchEntityTagDao->deleteById($tag->id);
                 }
+
+                // delete an entity part
+                $this->searchEntityDao->deleteById($entity->id);
             }
+
+            $this->searchEntityDao->optimizeTable();
+            $this->searchEntityTagDao->optimizeTable();
         }
     }
 
@@ -180,7 +202,19 @@ class BASE_CLASS_MysqlSearchStorage extends BASE_CLASS_AbstractSearchStorage
      */
     public function deactivateAllEntities( $entityType = null )
     {
-        $this->searchEntityDao->setEntitiesStatus($entityType, self::ENTITY_STATUS_NOT_ACTIVE);
+        $this->searchEntityDao->changeActivationStatus($entityType, false);
+    }
+
+    /**
+     * Deactivate all entities by tags
+     *
+     * @param array $tags
+     * @throws Exception
+     * @return void
+     */
+    public function deactivateAllEntitiesByTags( array $tags )
+    {
+        $this->searchEntityDao->changeActivationStatusByTags($tags, false);
     }
 
     /**
@@ -192,7 +226,19 @@ class BASE_CLASS_MysqlSearchStorage extends BASE_CLASS_AbstractSearchStorage
      */
     public function activateAllEntities( $entityType = null )
     {
-        $this->searchEntityDao->setEntitiesStatus($entityType);
+        $this->searchEntityDao->changeActivationStatus($entityType);
+    }
+    
+    /**
+     * Activate all entities by tags
+     *
+     * @param array $tags
+     * @throws Exception
+     * @return void
+     */
+    public function activateAllEntitiesByTags( array $tags )
+    {
+        $this->searchEntityDao->changeActivationStatusByTags($tags);
     }
 
     /**
@@ -203,13 +249,15 @@ class BASE_CLASS_MysqlSearchStorage extends BASE_CLASS_AbstractSearchStorage
      * @param integer $limit
      * @param array $tags
      * @param string $sort
+     * @param integer $timeStampStart
+     * @param integer $timeStampEnd
      * @throws Exception
      * @return array
      */
-    public function searchEntities( $text, $first, $limit, array $tags = array(), $sort = self::SORT_BY_RELEVANCE )
+    public function searchEntities( $text, $first, $limit, array $tags = array(), $sort = self::SORT_BY_RELEVANCE, $timeStampStart = 0, $timeStampEnd = 0 )
     {
         return $this->searchEntityDao->
-                findEntitiesByText($text, $first, $limit, $tags, $sort);
+                findEntitiesByText($text, $first, $limit, $tags, $sort, $timeStampStart, $timeStampEnd);
     }
 
     /**
@@ -217,12 +265,15 @@ class BASE_CLASS_MysqlSearchStorage extends BASE_CLASS_AbstractSearchStorage
      *
      * @param string $text
      * @param array $tags
+     * @param integer $timeStampStart
+     * @param integer $timeStampEnd
      * @throws Exception
      * @return integer
      */
-    public function searchEntitiesCount( $text, array $tags = array() )
+    public function searchEntitiesCount( $text, array $tags = array(), $timeStampStart = 0,  $timeStampEnd = 0)
     {
-        return $this->searchEntityDao->findEntitiesCountByText($text, $tags);
+        return $this->searchEntityDao->
+                findEntitiesCountByText($text, $tags, $timeStampStart, $timeStampEnd);
     }
 
     /**
