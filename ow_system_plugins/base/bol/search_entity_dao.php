@@ -307,11 +307,11 @@ class BOL_SearchEntityDao extends OW_BaseDao
      * 
      * @param string $text
      * @param array $tags
-     * @param integer $timeStampStart
-     * @param integer $timeStampEnd
+     * @param integer $timeStart
+     * @param integer $timeEnd
      * @return integer
      */
-    public function findEntitiesCountByText(  $text, array $tags = array(), $timeStampStart = 0, $timeStampEnd = 0)
+    public function findEntitiesCountByText(  $text, array $tags = array(), $timeStart = 0, $timeEnd = 0)
     {
         // sql params
         $queryParams = array(
@@ -323,21 +323,21 @@ class BOL_SearchEntityDao extends OW_BaseDao
         $subQueryTimeStampFilter = null;
 
         // filter by timestamp
-        if ( $timeStampStart || $timeStampEnd )
+        if ( $timeStart || $timeEnd )
         {
-            if ( $timeStampStart )
+            if ( $timeStart )
             {
                 $queryParams = array_merge($queryParams, array(
-                    ':timeStampStart' => $timeStampStart
+                    ':timeStampStart' => $timeStart
                 ));
 
                 $subQueryTimeStampFilter .= ' AND b.timeStamp >= :timeStampStart';
             }
 
-            if ( $timeStampEnd )
+            if ( $timeEnd )
             {
                 $queryParams = array_merge($queryParams, array(
-                    ':timeStampEnd' => $timeStampEnd
+                    ':timeStampEnd' => $timeEnd
                 ));
 
                 $subQueryTimeStampFilter .= ' AND b.timeStamp <= :timeStampEnd';
@@ -405,11 +405,13 @@ class BOL_SearchEntityDao extends OW_BaseDao
      * @param integer $limit
      * @param array $tags
      * @param string $sort
-     * @param integer $timeStampStart
-     * @param integer $timeStampEnd
+     * @param boolean $sortDesc
+     * @param integer $timeStart
+     * @param integer $timeEnd
      * @return array
      */
-    public function findEntitiesByText(  $text, $first, $limit, array $tags = array(), $sort = self::SORT_BY_RELEVANCE, $timeStampStart = 0, $timeStampEnd = 0)
+    public function findEntitiesByText(  $text, $first, $limit, 
+            array $tags = array(), $sort = self::SORT_BY_RELEVANCE, $sortDesc = true, $timeStart = 0, $timeEnd = 0)
     {
         // sql params
         $queryParams = array(
@@ -423,21 +425,21 @@ class BOL_SearchEntityDao extends OW_BaseDao
         $subQueryTimeStampFilter = null;
 
         // filter by timestamp
-        if ( $timeStampStart || $timeStampEnd )
+        if ( $timeStart || $timeEnd )
         {
-            if ( $timeStampStart )
+            if ( $timeStart )
             {
                 $queryParams = array_merge($queryParams, array(
-                    ':timeStampStart' => $timeStampStart
+                    ':timeStampStart' => $timeStart
                 ));
 
                 $subQueryTimeStampFilter .= ' AND b.timeStamp >= :timeStampStart';
             }
 
-            if ( $timeStampEnd )
+            if ( $timeEnd )
             {
                 $queryParams = array_merge($queryParams, array(
-                    ':timeStampEnd' => $timeStampEnd
+                    ':timeStampEnd' => $timeEnd
                 ));
 
                 $subQueryTimeStampFilter .= ' AND b.timeStamp <= :timeStampEnd';
@@ -459,7 +461,7 @@ class BOL_SearchEntityDao extends OW_BaseDao
                         AND
                     MATCH (b.' . self::TEXT . ') AGAINST (:search ' . $this->getFullTextSearchMode() . ')
                 ORDER BY 
-                    ' . ($sort == self::SORT_BY_DATE ? 'b.' . self::TIMESTAMP : 'relevance') . ' DESC';
+                    ' . ($sort == self::SORT_BY_DATE ? 'b.' . self::TIMESTAMP : 'relevance') . ($sortDesc ? ' DESC' : null);
         }
         else
         {
@@ -483,7 +485,7 @@ class BOL_SearchEntityDao extends OW_BaseDao
                 WHERE 
                     a.' . BOL_SearchEntityTagDao::ENTITY_TAG . ' IN (' . $this->dbo->mergeInClause($tags) . ')
                 ORDER BY 
-                    ' . ($sort == self::SORT_BY_DATE ? 'b.' . self::TIMESTAMP : 'relevance') . ' DESC';
+                    ' . ($sort == self::SORT_BY_DATE ? 'b.' . self::TIMESTAMP : 'relevance') . ($sortDesc ? ' DESC' : null);
         }
 
         // build main query

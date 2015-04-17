@@ -165,12 +165,12 @@ abstract class BASE_CLASS_AbstractSearchStorage
      *
      * @param string $text
      * @param array $tags
-     * @param integer $timeStampStart
-     * @param integer $timeStampEnd
+     * @param integer $timeStart
+     * @param integer $timeEnd
      * @throws Exception
      * @return integer
      */
-    abstract public function searchEntitiesCount( $text, array $tags = array(), $timeStampStart = 0, $timeStampEnd = 0);
+    abstract public function searchEntitiesCount( $text, array $tags = array(), $timeStart = 0, $timeEnd = 0);
 
     /**
      * Search entities
@@ -180,12 +180,14 @@ abstract class BASE_CLASS_AbstractSearchStorage
      * @param integer $limit
      * @param array $tags
      * @param string $sort
-     * @param integer $timeStampStart
-     * @param integer $timeStampEnd
+     * @param boolean $sortDesc
+     * @param integer $timeStart
+     * @param integer $timeEnd
      * @throws Exception
      * @return array
      */
-    abstract public function searchEntities( $text, $first, $limit, array $tags = array(), $sort = self::SORT_BY_RELEVANCE, $timeStampStart = 0, $timeStampEnd = 0 );
+    abstract public function searchEntities( $text, $first, $limit, 
+            array $tags = array(), $sort = self::SORT_BY_RELEVANCE, $sortDesc = true, $timeStart = 0, $timeEnd = 0 );
 
     /**
      * Get all entities
