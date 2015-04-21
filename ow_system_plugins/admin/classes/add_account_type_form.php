@@ -150,10 +150,12 @@ class ADMIN_CLASS_AddAccountTypeForm extends Form {
             'orderList' => array(),
         );
 
+        $list = array();
+        
         $accountType = BOL_QuestionService::getInstance()->findAccountTypeByName($accountTypeName);
 
         if (empty($accountType)) {
-            BOL_QuestionService::getInstance()->createAccountType($accountTypeName, '', $roleId);
+            $accountType = BOL_QuestionService::getInstance()->createAccountType($accountTypeName, '', $roleId);
             $result['add'] = true;
         } else {
             
@@ -183,7 +185,6 @@ class ADMIN_CLASS_AddAccountTypeForm extends Form {
                 // sorted account type list
                 $accountTypes = BOL_QuestionService::getInstance()->findAllAccountTypes();
 
-                $list = array();
                 $orderNumber = 0;
                 $flag = false;
 
@@ -222,6 +223,9 @@ class ADMIN_CLASS_AddAccountTypeForm extends Form {
                 BOL_QuestionService::getInstance()->reOrderAccountType($list);
                 $result['reorder'] = true;
                 $result['orderList'] = $list;
+                        
+                $event = new OW_Event(BOL_QuestionService::EVENT_ON_ACCOUNT_TYPE_REORDER, array('dto' => $accountType, 'id' => $accountType->id, 'orderList' => $list));
+                OW::getEventManager()->trigger($event);
             }
         }
 

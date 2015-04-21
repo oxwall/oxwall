@@ -146,7 +146,7 @@ class BOL_RateDao extends OW_BaseDao
 			FROM " . $this->getTableName() . "
                         WHERE `" . self::ENTITY_TYPE . "` = :entityType AND `" . self::ACTIVE . "` = 1 " . $excludeCond . "
 			GROUP BY `" . self::ENTITY_ID . "`
-                        ORDER BY `avgScore` DESC, `ratesCount` DESC
+                        ORDER BY `avgScore` DESC, `ratesCount` DESC, MAX(`timeStamp`) DESC
                         LIMIT :first, :count";
 
         return $this->dbo->queryForList($query, array('entityType' => $entityType, 'first' => (int) $first, 'count' => (int) $count));

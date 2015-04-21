@@ -2170,7 +2170,7 @@ class CaptchaField extends FormElement
     }
 }
 
-class AgeRange extends FormElement
+class AgeRange extends FormElement implements DateRangeInterface
 {
     const MIN_YEAR = 1900;
 
@@ -2252,6 +2252,16 @@ class AgeRange extends FormElement
 
         return $this;
     }
+    
+    public function getMaxYear()
+    {
+        return (int) date("Y") - (int) $this->minAge;
+    }
+
+    public function getMinYear()
+    {
+        return (int) date("Y") - (int) $this->maxAge;
+    }
 
     public function renderInput( $params = null )
     {
@@ -2260,8 +2270,8 @@ class AgeRange extends FormElement
         OW::getDocument()->addScript(OW::getPluginManager()->getPlugin("base")->getStaticJsUrl() . 'age_range_field.js');
         OW::getDocument()->addOnloadScript(" window." . $this->getName() . " = new AgeRangeField( " . json_encode($this->getName()) . ", " . json_encode($this->minAge) . ", " . ( $this->maxAge ) . " ); ");
 
-        $fromAgeOptionsString = UTIL_HtmlTag::generateTag('option', array('value' => ''), true);
-        $toAgeOptionsString = UTIL_HtmlTag::generateTag('option', array('value' => ''), true);
+        $fromAgeOptionsString = "";//UTIL_HtmlTag::generateTag('option', array('value' => ''), true);
+        $toAgeOptionsString = "";//UTIL_HtmlTag::generateTag('option', array('value' => ''), true);
 
         $defaultAgeFrom = isset($this->value['from']) ? (int) $this->value['from'] : $this->minAge;
         $defaultAgeTo = isset($this->value['to']) ? (int) $this->value['to'] : $this->maxAge;
@@ -2328,6 +2338,7 @@ class AgeRange extends FormElement
 
         return $js;
     }
+
 }
 
 class MatchAgeRange extends AgeRange
@@ -2502,8 +2513,8 @@ class Range extends FormElement
         OW::getDocument()->addScript(OW::getPluginManager()->getPlugin("base")->getStaticJsUrl() . 'range_field.js');
         OW::getDocument()->addOnloadScript(" window." . $this->getName() . " = new RangeField( '" . ( $this->getName() ) . "', " . ( $this->minValue ) . ", " . ( $this->maxValue ) . " ); ");
 
-        $fromValueOptionsString = UTIL_HtmlTag::generateTag('option', array('value' => ''), true);
-        $toValueOptionsString = UTIL_HtmlTag::generateTag('option', array('value' => ''), true);
+        $fromValueOptionsString = "";//UTIL_HtmlTag::generateTag('option', array('value' => ''), true);
+        $toValueOptionsString = "";//UTIL_HtmlTag::generateTag('option', array('value' => ''), true);
 
         $defaultValueFrom = isset($this->value['from']) ? (int) $this->value['from'] : $this->minValue;
         $defaultValueTo = isset($this->value['to']) ? (int) $this->value['to'] : $this->maxValue;
@@ -2563,7 +2574,7 @@ class Range extends FormElement
     }
 }
 
-class DateRange extends FormElement
+class DateRange extends FormElement  implements DateRangeInterface
 {
     protected $minDate;
     protected $maxDate;
@@ -2787,7 +2798,7 @@ class BillingGatewaySelectionField extends FormElement
     }
 }
 
-class YearRange extends FormElement
+class YearRange extends FormElement implements DateRangeInterface
 {
     const MIN_YEAR = 1800;
     const MAX_YEAR = 2100;
@@ -2866,6 +2877,16 @@ class YearRange extends FormElement
         $this->maxYear = (int) $year;
     }
 
+    public function getMaxYear()
+    {
+        return $this->maxYear;
+    }
+
+    public function getMinYear()
+    {
+        return $this->minYear;
+    }
+    
     public function renderInput( $params = null )
     {
         parent::renderInput($params);
@@ -2873,8 +2894,8 @@ class YearRange extends FormElement
         OW::getDocument()->addScript(OW::getPluginManager()->getPlugin("base")->getStaticJsUrl() . 'age_range_field.js');
         OW::getDocument()->addOnloadScript(" window." . $this->getName() . " = new AgeRangeField( " . json_encode($this->getName()) . ", " . json_encode($this->minYear) . ", " . json_encode($this->maxYear) . " ); ");
 
-        $fromAgeOptionsString = UTIL_HtmlTag::generateTag('option', array('value' => ''), true);
-        $toAgeOptionsString = UTIL_HtmlTag::generateTag('option', array('value' => ''), true);
+        $fromAgeOptionsString = "";//UTIL_HtmlTag::generateTag('option', array('value' => ''), true);
+        $toAgeOptionsString = "";//UTIL_HtmlTag::generateTag('option', array('value' => ''), true);
 
         $defaultYearFrom = isset($this->value['from']) ? (int) $this->value['from'] : $this->minYear;
         $defaultYearTo = isset($this->value['to']) ? (int) $this->value['to'] : $this->maxYear;
@@ -3265,7 +3286,7 @@ class WysiwygTextarea extends InvitationFormElement
     }
 }
 
-class TagsInputField extends FormElement
+class TagsInputField extends FormElement 
 {
     private $invLabel;
     private $delimiterChars;
@@ -3393,4 +3414,15 @@ var formElement = new OwFormElement('" . $this->getId() . "', '" . $this->getNam
     {
         $this->phpRegexp = $phpRegexp;
     }
+}
+
+interface DateRangeInterface 
+{
+    public function getMinYear();
+
+    public function getMaxYear();
+
+    public function setMaxYear( $year );
+
+    public function setMinYear( $year );
 }
