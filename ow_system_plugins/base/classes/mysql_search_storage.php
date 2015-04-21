@@ -249,15 +249,16 @@ class BASE_CLASS_MysqlSearchStorage extends BASE_CLASS_AbstractSearchStorage
      * @param integer $limit
      * @param array $tags
      * @param string $sort
-     * @param integer $timeStampStart
-     * @param integer $timeStampEnd
+     * @param integer $timeStart
+     * @param integer $timeEnd
      * @throws Exception
      * @return array
      */
-    public function searchEntities( $text, $first, $limit, array $tags = array(), $sort = self::SORT_BY_RELEVANCE, $timeStampStart = 0, $timeStampEnd = 0 )
+    public function searchEntities( $text, $first, $limit, 
+            array $tags = array(), $sort = self::SORT_BY_RELEVANCE, $sortDesc = true, $timeStart = 0, $timeEnd = 0 )
     {
         return $this->searchEntityDao->
-                findEntitiesByText($text, $first, $limit, $tags, $sort, $timeStampStart, $timeStampEnd);
+                findEntitiesByText($text, $first, $limit, $tags, $sort, $sortDesc, $timeStart, $timeEnd);
     }
 
     /**
@@ -265,15 +266,15 @@ class BASE_CLASS_MysqlSearchStorage extends BASE_CLASS_AbstractSearchStorage
      *
      * @param string $text
      * @param array $tags
-     * @param integer $timeStampStart
-     * @param integer $timeStampEnd
+     * @param integer $timeStart
+     * @param integer $timeEnd
      * @throws Exception
      * @return integer
      */
-    public function searchEntitiesCount( $text, array $tags = array(), $timeStampStart = 0,  $timeStampEnd = 0)
+    public function searchEntitiesCount( $text, array $tags = array(), $timeStart = 0,  $timeEnd = 0)
     {
         return $this->searchEntityDao->
-                findEntitiesCountByText($text, $tags, $timeStampStart, $timeStampEnd);
+                findEntitiesCountByText($text, $tags, $timeStart, $timeEnd);
     }
 
     /**

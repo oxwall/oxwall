@@ -280,21 +280,23 @@ final class OW_TextSearchManager
      * @param integer $limit
      * @param array $tags
      * @param string $sort
-     * @param integer $timeStampStart
-     * @param integer $timeStampEnd
+     * @param boolean $sortDesc
+     * @param integer $timeStart
+     * @param integer $timeEnd
      * @throws Exception
      * @return array
      */
-    public function searchEntities( $text, $first, $limit, array $tags = array(), $sort = self::SORT_BY_RELEVANCE, $timeStampStart = 0, $timeStampEnd = 0 )
+    public function searchEntities( $text, $first, $limit, 
+            array $tags = array(), $sort = self::SORT_BY_RELEVANCE, $sortDesc = true, $timeStart = 0, $timeEnd = 0 )
     {
         if ( $this->activeStorageInstance )
         {
             return $this->activeStorageInstance->
-                    searchEntities($text, $first, $limit, $tags, $sort, $timeStampStart, $timeStampEnd);
+                    searchEntities($text, $first, $limit, $tags, $sort, $sortDesc, $timeStart, $timeEnd);
         }
 
         return $this->defaultStorageInstance->
-                    searchEntities($text, $first, $limit, $tags, $sort, $timeStampStart, $timeStampEnd);
+                    searchEntities($text, $first, $limit, $tags, $sort, $sortDesc, $timeStart, $timeEnd);
     }
 
     /**
@@ -302,21 +304,21 @@ final class OW_TextSearchManager
      *
      * @param string $text
      * @param array $tags
-     * @param integer $timeStampStart
-     * @param integer $timeStampEnd
+     * @param integer $timeStart
+     * @param integer $timeEnd
      * @throws Exception
      * @return integer
      */
-    public function searchEntitiesCount( $text, array $tags = array(), $timeStampStart = 0, $timeStampEnd = 0 )
+    public function searchEntitiesCount( $text, array $tags = array(), $timeStart = 0, $timeEnd = 0 )
     {
         if ( $this->activeStorageInstance )
         {
             return $this->activeStorageInstance->
-                    searchEntitiesCount($text, $tags, $timeStampStart, $timeStampEnd);
+                    searchEntitiesCount($text, $tags, $timeStart, $timeEnd);
         }
 
         return $this->defaultStorageInstance->
-                searchEntitiesCount($text, $tags, $timeStampStart, $timeStampEnd);
+                searchEntitiesCount($text, $tags, $timeStart, $timeEnd);
     }
 
     /**

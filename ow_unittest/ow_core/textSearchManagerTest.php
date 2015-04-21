@@ -460,7 +460,7 @@ class TextSearchManagerTest extends PHPUnit_Framework_TestCase
                 searchEntitiesCount('forum post', array(), $yesterday, $yesterday));
 
         $searchEntities = OW::getTextSearchManager()->
-                searchEntities('forum post', 0, 100, array(), BASE_CLASS_AbstractSearchStorage::SORT_BY_DATE, $yesterday, $yesterday);
+                searchEntities('forum post', 0, 100, array(), BASE_CLASS_AbstractSearchStorage::SORT_BY_DATE, true, $yesterday, $yesterday);
 
         $this->assertInternalType('array', $searchEntities);
         $this->assertEquals(2, count($searchEntities));
