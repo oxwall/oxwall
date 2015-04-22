@@ -124,20 +124,19 @@ tr.placeholder td{
 				<td colspan="3" style="text-align: left;">
 					<label for="check_all">{text key='admin+permissions_check_all_selected'}</label>
 					<form>
-						{script}
-						{literal}
-
-							function delRoles(){
+                                                {capture name="selectRoleAlert"}{text key='admin+permissions_please_select_role'}{/capture}
+                                                {capture name="areYouSure"}{text key='admin+permissions_please_select_role'}{/capture}
+                                            
+						<script type="text/javascript">
+							window.delRoles = function(){
 								if( $('#roles tr.role td input:checkbox:checked').size() == 0 ){ 
-									alert('{/literal}{text key='admin+permissions_please_select_role'}{literal}'); 
+									alert('{$smarty.capture.selectRoleAlert|escape:"quotes"}');
 									return false;
 								}
 
-								return confirm('{/literal}{text key='admin+permissions_are_you_sure'}{literal}');								
-							}
-
-						{/literal}
-						{/script}
+								return confirm('{$smarty.capture.areYouSure|escape:"quotes"}');
+							};
+						</script>
 						{decorator name='button' type='submit' langLabel='admin+permissions_delete_role' class='ow_button ow_red ow_ic_delete' onclick="return delRoles()"}
 					</form>									
 				</td>
