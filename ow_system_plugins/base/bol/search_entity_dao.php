@@ -153,12 +153,14 @@ class BOL_SearchEntityDao extends OW_BaseDao
     /**
      * Finds deleted entities
      *
+     * @param integer $limit
      * @return OW_Entity
      */
-    public function findDeletedEntities()
+    public function findDeletedEntities($limit = 1000)
     {
         $example = new OW_Example();
         $example->andFieldEqual(self::STATUS, self::ENTITY_STATUS_DELETED);
+        $example->setLimitClause(0, $limit);
 
         return $this->findListByExample($example);
     }
@@ -272,34 +274,23 @@ class BOL_SearchEntityDao extends OW_BaseDao
     {
         $enityTags = BOL_SearchEntityTagDao::getInstance();
 
+        $params = array(
+            ($activate ? self::ENTITY_ACTIVATED : self::ENTITY_NOT_ACTIVATED)
+        );
+
         $query = '
-            SELECT 
-                b.id
-            FROM 
-                ' . $enityTags->getTableName() . ' a
+            UPDATE 
+                ' . $enityTags->getTableName() . ' AS a
             INNER JOIN
-                ' . $this->getTableName() . ' b
+                ' . $this->getTableName() . ' AS b
             ON
                 a.' . BOL_SearchEntityTagDao::ENTITY_SEARCH_ID . ' = b.id
-            WHERE 
+            SET 
+               b.' . self::ACTIVATED . ' = ?                
+            WHERE       
                 a.' . BOL_SearchEntityTagDao::ENTITY_TAG . ' IN (' . $this->dbo->mergeInClause($tags) . ')';
- 
-         $entities = $this->dbo->queryForList($query);
 
-         // set needed activation status
-         if ( $entities )
-         {
-             foreach ($entities as $entity) 
-             {
-                $params = array(
-                    ($activate ? self::ENTITY_ACTIVATED : self::ENTITY_NOT_ACTIVATED),
-                    $entity['id']
-                );
-
-                $query = 'UPDATE `' . $this->getTableName() . '` SET `' . self::ACTIVATED . '` = ? WHERE id = ?';
-                $this->dbo->query($query, $params);
-             }
-         }
+         $this->dbo->query($query, $params);
     }
 
     /**
@@ -515,40 +506,25 @@ class BOL_SearchEntityDao extends OW_BaseDao
         $enityTags = BOL_SearchEntityTagDao::getInstance();
 
         $params = array(
-            ':status' => self::ENTITY_STATUS_DELETED
+            ':deleted_status' => self::ENTITY_STATUS_DELETED,
+            ':status' => $status
         );
 
-        // find not deleted entities
         $query = '
-            SELECT 
-                b.id
-            FROM 
-                ' . $enityTags->getTableName() . ' a
+            UPDATE 
+                ' . $enityTags->getTableName() . ' AS a
             INNER JOIN
-                ' . $this->getTableName() . ' b
+                ' . $this->getTableName() . ' AS b
             ON
                 a.' . BOL_SearchEntityTagDao::ENTITY_SEARCH_ID . ' = b.id 
                     AND 
-                b.'. self::STATUS  . ' <> :status
-            WHERE 
+                b.'. self::STATUS  . ' <> :deleted_status
+            SET 
+               b.' . self::STATUS . ' = :status             
+            WHERE       
                 a.' . BOL_SearchEntityTagDao::ENTITY_TAG . ' IN (' . $this->dbo->mergeInClause($tags) . ')';
- 
-         $entities = $this->dbo->queryForList($query, $params);
 
-         // set needed status
-         if ( $entities )
-         {
-             foreach ($entities as $entity) 
-             {
-                $params = array(
-                    $status,
-                    $entity['id']
-                );
-
-                $query = 'UPDATE `' . $this->getTableName() . '` SET `' . self::STATUS . '` = ? WHERE id = ?';
-                $this->dbo->query($query, $params);
-             }
-         }
+         $this->dbo->query($query, $params);
     }
 
     /**
