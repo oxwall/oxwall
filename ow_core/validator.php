@@ -1344,7 +1344,12 @@ class RangeValidator extends OW_Validator
     public function isValid( $value )
     {
         // doesn't check empty values
-        if ( $value === null || mb_strlen(trim($value)) === 0 )
+        if ( $value === null )
+        {
+            return true;
+        }
+        
+        if ( is_string($value) && mb_strlen(trim($value)) === 0 )
         {
             return true;
         }
