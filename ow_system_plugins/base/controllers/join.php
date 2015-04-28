@@ -683,6 +683,12 @@ class JoinForm extends BASE_CLASS_UserQuestionForm
 
                         $this->sortedQuestionsList[$question['name']] = $this->questions[$sort];
                         $this->questionListBySection[$section][] = $this->questions[$sort];
+                        
+                        if ( !empty($valueList[$question['name']]) )
+                        {
+                            $this->questionValuesList[$question['name']] = $valueList[$question['name']];
+                        }
+                        
                         continue;
                     }
 
