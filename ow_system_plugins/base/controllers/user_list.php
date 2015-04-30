@@ -273,7 +273,7 @@ class BASE_Members extends BASE_CMP_Users
                     }
 
                     $fields[$uid][] = array(
-                        'label' => 'Birthday: ',
+                        'label' => OW::getLanguage()->text('birthdays', 'birthday'),
                         'value' => $birthdate
                     );
                 }
