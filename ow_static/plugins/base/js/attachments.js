@@ -26,7 +26,7 @@ var OWFileAttachment = function(params) {
                 '</div></div>');
 
         self.$previewCont.append(data['html']);
-        OW.trigger('base.attachment_rendered', {'data' : data});
+        OW.trigger('base.attachment_rendered', $.extend({'data' : data}, {'uid' : this.uid}));
  
         $('.ow_file_attachment_close', data['html']).one('click', function() {
             self.deleteItem(data['id']);
@@ -137,7 +137,7 @@ var OWFileAttachment = function(params) {
     };
 
     this.deleteItem = function(id) {
-        OW.trigger('base.attachment_deleted', {'id' : id});
+        OW.trigger('base.attachment_deleted', $.extend({'id' : id}, {'uid' : this.uid}));
  
         if (self.showPreview) {
             items[id]['html'].remove();
