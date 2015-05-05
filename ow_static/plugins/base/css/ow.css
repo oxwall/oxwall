@@ -2742,6 +2742,14 @@ a.ow_context_action_value {
     display: none;
 }
 
+/* Newsfeed formats*/
+.ow_video_playing iframe,
+.ow_video_playing object,
+.ow_video_playing embed {
+    width:100%;
+}
+/* end of Newsfeed formats*/
+
 /*Photo lists*/
 /* ---- New list for search & matchmaking ----*/
 .ow_photo_userlist .ow_photo_list {
