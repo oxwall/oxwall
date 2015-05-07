@@ -1729,7 +1729,7 @@ OWM.FloatBox = (function() {
         _overlay.show();
         
         this.container = _tpl.clone();
-        $("section", "#main").append(this.container);
+        $("#content").append(this.container);
         
         this.body = this.container.find("[data-tpl=body]");
         this.leftBtn = this.container.find("[data-tpl=left-btn]").hide();

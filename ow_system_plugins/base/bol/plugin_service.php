@@ -30,13 +30,13 @@
 class BOL_PluginService
 {
     /* list of plugin scripts */
-    const SCRIPT_INIT = "init.php";
-    const SCRIPT_INSTALL = "install.php";
-    const SCRIPT_UNINSTALL = "uninstall.php";
-    const SCRIPT_ACTIVATE = "activate.php";
-    const SCRIPT_DEACTIVATE = "deactivate.php";
-    const SCRIPT_ALLOC = "alloc.php";
-    const UPDATE_SERVER = "http://storage.oxwall.org/";
+    const SCRIPT_INIT = 'init.php';
+    const SCRIPT_INSTALL = 'install.php';
+    const SCRIPT_UNINSTALL = 'uninstall.php';
+    const SCRIPT_ACTIVATE = 'activate.php';
+    const SCRIPT_DEACTIVATE = 'deactivate.php';
+    const UPDATE_SERVER = 'https://storage.oxwall.org/';
+
 
     /**
      * @var BOL_PluginDao
