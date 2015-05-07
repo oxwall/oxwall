@@ -48,6 +48,7 @@ class BASE_CMP_UserList extends OW_Component
      * 
      * @param array $params
      *      integer count
+     *      string boxType
      */
     function __construct( array $params = array() )
     {
@@ -56,6 +57,10 @@ class BASE_CMP_UserList extends OW_Component
         $this->countUsers = !empty($params['count']) 
             ? (int) $params['count'] 
             : self::DEFAULT_USERS_COUNT;
+
+        $boxType = !empty($params['boxType']) 
+            ? $params['boxType']
+            : "";
 
         // init users short list
         $randId = UTIL_HtmlTag::generateAutoId('base_users_cmp');
@@ -99,6 +104,7 @@ class BASE_CMP_UserList extends OW_Component
         // assign view variables
         $this->assign('widgetId', $randId);
         $this->assign('data', $dataToAssign);
+        $this->assign('boxType', $boxType);
     }
 
     /**
