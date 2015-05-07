@@ -30,12 +30,13 @@
 class BOL_PluginService
 {
     /* list of plugin scripts */
-    const SCRIPT_INIT = 'init.php';
-    const SCRIPT_INSTALL = 'install.php';
-    const SCRIPT_UNINSTALL = 'uninstall.php';
-    const SCRIPT_ACTIVATE = 'activate.php';
-    const SCRIPT_DEACTIVATE = 'deactivate.php';
-    const UPDATE_SERVER = 'http://storage.oxwall.org/';
+    const SCRIPT_INIT = "init.php";
+    const SCRIPT_INSTALL = "install.php";
+    const SCRIPT_UNINSTALL = "uninstall.php";
+    const SCRIPT_ACTIVATE = "activate.php";
+    const SCRIPT_DEACTIVATE = "deactivate.php";
+    const SCRIPT_ALLOC = "alloc.php";
+    const UPDATE_SERVER = "http://storage.oxwall.org/";
 
     /**
      * @var BOL_PluginDao
@@ -84,11 +85,11 @@ class BOL_PluginService
 
     private function getPluginDaoCache()
     {
-        if( !$this->pluginDaoCache )
+        if ( !$this->pluginDaoCache )
         {
             $this->readPluginsList();
         }
-        
+
         return $this->pluginDaoCache;
     }
 
@@ -133,7 +134,7 @@ class BOL_PluginService
     public function findPluginByKey( $key, $developerKey = null )
     {
         $pluginDaoCache = $this->getPluginDaoCache();
-        
+
         /* @var $plugin BOL_Plugin */
         foreach ( $pluginDaoCache as $plugin )
         {
@@ -160,7 +161,7 @@ class BOL_PluginService
     {
         $activePlugins = array();
         $pluginDaoCache = $this->getPluginDaoCache();
-        
+
         /* @var $plugin BOL_Plugin */
         foreach ( $pluginDaoCache as $plugin )
         {
@@ -615,11 +616,13 @@ class BOL_PluginService
 
         $this->readPluginsList();
         OW::getPluginManager()->readPluginsList();
+    }
 
-        // copy static dir
-        $pluginStaticDir = OW_DIR_PLUGIN . $pluginDto->getModule() . DS . 'static' . DS;
+    public function addPluginDirs( BOL_Plugin $pluginDto )
+    {
+        $plugin = new OW_Plugin($pluginDto);
 
-        if ( !defined('OW_PLUGIN_XP') && file_exists($pluginStaticDir) )
+        if ( !defined('OW_PLUGIN_XP') && file_exists($plugin->getStaticDir()) )
         {
             $staticDir = OW_DIR_STATIC_PLUGIN . $pluginDto->getModule() . DS;
 
@@ -629,7 +632,7 @@ class BOL_PluginService
                 chmod($staticDir, 0777);
             }
 
-            UTIL_File::copyDir($pluginStaticDir, $staticDir);
+            UTIL_File::copyDir($plugin->getStaticDir(), $staticDir);
         }
 
         // create dir in pluginfiles
@@ -856,16 +859,5 @@ class BOL_PluginService
         }
 
         return $ftp;
-    }
-
-    /**
-     * @param BOL_Plugin $dto
-     * @return OW_Plugin
-     */
-    public function getPluginObject( BOL_Plugin $dto )
-    {
-        return $dto->isSystem ?
-            new OW_SystemPlugin(array('dir_name' => $dto->getModule(), 'key' => $dto->getKey(), 'active' => $dto->isActive(), 'dto' => $dto)) :
-            new OW_Plugin(array('dir_name' => $dto->getModule(), 'key' => $dto->getKey(), 'active' => $dto->isActive(), 'dto' => $dto));
     }
 }

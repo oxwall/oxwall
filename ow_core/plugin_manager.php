@@ -113,31 +113,28 @@ final class OW_PluginManager
             $initDirPath = $pluginObject->getApiDir();
         }
 
-        if ( file_exists($initDirPath . 'init.php') )
-        {
-            OW::getEventManager()->trigger(new OW_Event("core.performance_test", array("key" => "plugin_init.start", "pluginKey" => $pluginObject->getKey())));
-            include $initDirPath . 'init.php';
-            OW::getEventManager()->trigger(new OW_Event("core.performance_test", array("key" => "plugin_init.end", "pluginKey" => $pluginObject->getKey())));
-        }
+        OW::getEventManager()->trigger(new OW_Event("core.performance_test", array("key" => "plugin_init.start", "pluginKey" => $pluginObject->getKey())));
+        include $initDirPath . BOL_PluginService::SCRIPT_INIT;
+        OW::getEventManager()->trigger(new OW_Event("core.performance_test", array("key" => "plugin_init.end", "pluginKey" => $pluginObject->getKey())));
     }
 
     public function addPackagePointers( BOL_Plugin $pluginDto )
     {
-        $plugin = $this->pluginService->getPluginObject($pluginDto);
+        $plugin = new OW_Plugin($pluginDto);
         $upperedKey = mb_strtoupper($plugin->getKey());
         $autoloader = OW::getAutoloader();
 
-        $autoloader->addPackagePointer($upperedKey . '_CMP', $plugin->getCmpDir());
-        $autoloader->addPackagePointer($upperedKey . '_CTRL', $plugin->getCtrlDir());
-        $autoloader->addPackagePointer($upperedKey . '_BOL', $plugin->getBolDir());
-        $autoloader->addPackagePointer($upperedKey . '_CLASS', $plugin->getClassesDir());
-        $autoloader->addPackagePointer($upperedKey . '_MCMP', $plugin->getMobileCmpDir());
-        $autoloader->addPackagePointer($upperedKey . '_MCTRL', $plugin->getMobileCtrlDir());
-        $autoloader->addPackagePointer($upperedKey . '_MBOL', $plugin->getMobileBolDir());
-        $autoloader->addPackagePointer($upperedKey . '_MCLASS', $plugin->getMobileClassesDir());
-        $autoloader->addPackagePointer($upperedKey . '_ACTRL', $plugin->getApiCtrlDir());
-        $autoloader->addPackagePointer($upperedKey . '_ABOL', $plugin->getApiBolDir());
-        $autoloader->addPackagePointer($upperedKey . '_ACLASS', $plugin->getApiClassesDir());
+        $autoloader->addPackagePointer($upperedKey . "_CMP", $plugin->getCmpDir());
+        $autoloader->addPackagePointer($upperedKey . "_CTRL", $plugin->getCtrlDir());
+        $autoloader->addPackagePointer($upperedKey . "_BOL", $plugin->getBolDir());
+        $autoloader->addPackagePointer($upperedKey . "_CLASS", $plugin->getClassesDir());
+        $autoloader->addPackagePointer($upperedKey . "_MCMP", $plugin->getMobileCmpDir());
+        $autoloader->addPackagePointer($upperedKey . "_MCTRL", $plugin->getMobileCtrlDir());
+        $autoloader->addPackagePointer($upperedKey . "_MBOL", $plugin->getMobileBolDir());
+        $autoloader->addPackagePointer($upperedKey . "_MCLASS", $plugin->getMobileClassesDir());
+        $autoloader->addPackagePointer($upperedKey . "_ACTRL", $plugin->getApiCtrlDir());
+        $autoloader->addPackagePointer($upperedKey . "_ABOL", $plugin->getApiBolDir());
+        $autoloader->addPackagePointer($upperedKey . "_ACLASS", $plugin->getApiClassesDir());
     }
 
     /**
@@ -150,23 +147,21 @@ final class OW_PluginManager
         /* read all plugins from DB */
         $plugins = $this->pluginService->findActivePlugins();
 
-        usort($plugins, array(__CLASS__, 'sortPlugins'));
+        usort($plugins, function( BOL_Plugin $a, BOL_Plugin $b )
+        {
+            if ( $a->getId() == $b->getId() )
+            {
+                return 0;
+            }
+
+            return $a->getId() > $b->getId();
+        });
 
         /* @var $value BOL_Plugin */
         foreach ( $plugins as $value )
         {
-            $this->activePlugins[$value->getKey()] = $this->pluginService->getPluginObject($value);
+            $this->activePlugins[$value->getKey()] = new OW_Plugin($value);
         }
-    }
-
-    public static function sortPlugins( BOL_Plugin $a, BOL_Plugin $b )
-    {
-        if ( $a->getId() == $b->getId() )
-        {
-            return 0;
-        }
-
-        return $a->getId() > $b->getId();
     }
 
     /**
