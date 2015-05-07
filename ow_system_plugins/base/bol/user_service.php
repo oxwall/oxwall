@@ -896,7 +896,7 @@ final class BOL_UserService
 
     public function deleteExpiredOnlineUsers()
     {
-        $timestamp = OW::getConfig()->getValue('base', 'user_expired_time') ? time() - OW::getConfig()->getValue('base', 'user_expired_time') * 60 : time() - 30 * 60;
+        $timestamp = OW::getConfig()->configExists('base', 'user_expired_time') ? time() - OW::getConfig()->getValue('base', 'user_expired_time') * 60 : time() - 30 * 60;
         $this->userOnlineDao->deleteExpired($timestamp);
     }
 
