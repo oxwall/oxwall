@@ -153,12 +153,14 @@ class BOL_SearchEntityDao extends OW_BaseDao
     /**
      * Finds deleted entities
      *
+     * @param integer $limit
      * @return OW_Entity
      */
-    public function findDeletedEntities()
+    public function findDeletedEntities($limit = 1000)
     {
         $example = new OW_Example();
         $example->andFieldEqual(self::STATUS, self::ENTITY_STATUS_DELETED);
+        $example->setLimitClause(0, $limit);
 
         return $this->findListByExample($example);
     }
@@ -272,34 +274,23 @@ class BOL_SearchEntityDao extends OW_BaseDao
     {
         $enityTags = BOL_SearchEntityTagDao::getInstance();
 
+        $params = array(
+            ($activate ? self::ENTITY_ACTIVATED : self::ENTITY_NOT_ACTIVATED)
+        );
+
         $query = '
-            SELECT 
-                b.id
-            FROM 
-                ' . $enityTags->getTableName() . ' a
+            UPDATE 
+                ' . $enityTags->getTableName() . ' AS a
             INNER JOIN
-                ' . $this->getTableName() . ' b
+                ' . $this->getTableName() . ' AS b
             ON
                 a.' . BOL_SearchEntityTagDao::ENTITY_SEARCH_ID . ' = b.id
-            WHERE 
+            SET 
+               b.' . self::ACTIVATED . ' = ?                
+            WHERE       
                 a.' . BOL_SearchEntityTagDao::ENTITY_TAG . ' IN (' . $this->dbo->mergeInClause($tags) . ')';
- 
-         $entities = $this->dbo->queryForList($query);
 
-         // set needed activation status
-         if ( $entities )
-         {
-             foreach ($entities as $entity) 
-             {
-                $params = array(
-                    ($activate ? self::ENTITY_ACTIVATED : self::ENTITY_NOT_ACTIVATED),
-                    $entity['id']
-                );
-
-                $query = 'UPDATE `' . $this->getTableName() . '` SET `' . self::ACTIVATED . '` = ? WHERE id = ?';
-                $this->dbo->query($query, $params);
-             }
-         }
+         $this->dbo->query($query, $params);
     }
 
     /**
@@ -307,11 +298,11 @@ class BOL_SearchEntityDao extends OW_BaseDao
      * 
      * @param string $text
      * @param array $tags
-     * @param integer $timeStampStart
-     * @param integer $timeStampEnd
+     * @param integer $timeStart
+     * @param integer $timeEnd
      * @return integer
      */
-    public function findEntitiesCountByText(  $text, array $tags = array(), $timeStampStart = 0, $timeStampEnd = 0)
+    public function findEntitiesCountByText(  $text, array $tags = array(), $timeStart = 0, $timeEnd = 0)
     {
         // sql params
         $queryParams = array(
@@ -323,21 +314,21 @@ class BOL_SearchEntityDao extends OW_BaseDao
         $subQueryTimeStampFilter = null;
 
         // filter by timestamp
-        if ( $timeStampStart || $timeStampEnd )
+        if ( $timeStart || $timeEnd )
         {
-            if ( $timeStampStart )
+            if ( $timeStart )
             {
                 $queryParams = array_merge($queryParams, array(
-                    ':timeStampStart' => $timeStampStart
+                    ':timeStampStart' => $timeStart
                 ));
 
                 $subQueryTimeStampFilter .= ' AND b.timeStamp >= :timeStampStart';
             }
 
-            if ( $timeStampEnd )
+            if ( $timeEnd )
             {
                 $queryParams = array_merge($queryParams, array(
-                    ':timeStampEnd' => $timeStampEnd
+                    ':timeStampEnd' => $timeEnd
                 ));
 
                 $subQueryTimeStampFilter .= ' AND b.timeStamp <= :timeStampEnd';
@@ -394,6 +385,7 @@ class BOL_SearchEntityDao extends OW_BaseDao
             )as rows';
 
         $result = $this->dbo->queryForRow($query, $queryParams);
+
         return !empty($result['rowsCount']) ? $result['rowsCount'] : 0;
     }
 
@@ -405,11 +397,13 @@ class BOL_SearchEntityDao extends OW_BaseDao
      * @param integer $limit
      * @param array $tags
      * @param string $sort
-     * @param integer $timeStampStart
-     * @param integer $timeStampEnd
+     * @param boolean $sortDesc
+     * @param integer $timeStart
+     * @param integer $timeEnd
      * @return array
      */
-    public function findEntitiesByText(  $text, $first, $limit, array $tags = array(), $sort = self::SORT_BY_RELEVANCE, $timeStampStart = 0, $timeStampEnd = 0)
+    public function findEntitiesByText(  $text, $first, $limit, 
+            array $tags = array(), $sort = self::SORT_BY_RELEVANCE, $sortDesc = true, $timeStart = 0, $timeEnd = 0)
     {
         // sql params
         $queryParams = array(
@@ -423,21 +417,21 @@ class BOL_SearchEntityDao extends OW_BaseDao
         $subQueryTimeStampFilter = null;
 
         // filter by timestamp
-        if ( $timeStampStart || $timeStampEnd )
+        if ( $timeStart || $timeEnd )
         {
-            if ( $timeStampStart )
+            if ( $timeStart )
             {
                 $queryParams = array_merge($queryParams, array(
-                    ':timeStampStart' => $timeStampStart
+                    ':timeStampStart' => $timeStart
                 ));
 
                 $subQueryTimeStampFilter .= ' AND b.timeStamp >= :timeStampStart';
             }
 
-            if ( $timeStampEnd )
+            if ( $timeEnd )
             {
                 $queryParams = array_merge($queryParams, array(
-                    ':timeStampEnd' => $timeStampEnd
+                    ':timeStampEnd' => $timeEnd
                 ));
 
                 $subQueryTimeStampFilter .= ' AND b.timeStamp <= :timeStampEnd';
@@ -459,7 +453,7 @@ class BOL_SearchEntityDao extends OW_BaseDao
                         AND
                     MATCH (b.' . self::TEXT . ') AGAINST (:search ' . $this->getFullTextSearchMode() . ')
                 ORDER BY 
-                    ' . ($sort == self::SORT_BY_DATE ? 'b.' . self::TIMESTAMP : 'relevance') . ' DESC';
+                    ' . ($sort == self::SORT_BY_DATE ? 'b.' . self::TIMESTAMP : 'relevance') . ($sortDesc ? ' DESC' : null);
         }
         else
         {
@@ -483,8 +477,164 @@ class BOL_SearchEntityDao extends OW_BaseDao
                 WHERE 
                     a.' . BOL_SearchEntityTagDao::ENTITY_TAG . ' IN (' . $this->dbo->mergeInClause($tags) . ')
                 ORDER BY 
-                    ' . ($sort == self::SORT_BY_DATE ? 'b.' . self::TIMESTAMP : 'relevance') . ' DESC';
+                    ' . ($sort == self::SORT_BY_DATE ? 'b.' . self::TIMESTAMP : 'relevance') . ($sortDesc ? ' DESC' : null);
         }
+
+        // build main query
+        $query = '
+            SELECT 
+                DISTINCT ' .  
+                self::ENTITY_TYPE . ', ' . 
+                self::ENTITY_ID . '
+            FROM 
+                (' . $subQuery . ') result
+            LIMIT 
+                :first, 
+                :limit';
+
+        return $this->dbo->queryForList($query, $queryParams);
+    }
+
+    /**
+     * Find entities count by tags
+     * 
+     * @param array $tags
+     * @param integer $timeStart
+     * @param integer $timeEnd
+     * @return integer
+     */
+    public function findEntitiesCountByTags(  array $tags, $timeStart = 0, $timeEnd = 0)
+    {
+        $enityTags = BOL_SearchEntityTagDao::getInstance();
+
+        // sql params
+        $queryParams = array(
+            ':status' => self::ENTITY_STATUS_ACTIVE,
+            ':activated' => self::ENTITY_ACTIVATED
+        );
+
+        $subQueryTimeStampFilter = null;
+
+        // filter by timestamp
+        if ( $timeStart || $timeEnd )
+        {
+            if ( $timeStart )
+            {
+                $queryParams = array_merge($queryParams, array(
+                    ':timeStampStart' => $timeStart
+                ));
+
+                $subQueryTimeStampFilter .= ' AND b.timeStamp >= :timeStampStart';
+            }
+
+            if ( $timeEnd )
+            {
+                $queryParams = array_merge($queryParams, array(
+                    ':timeStampEnd' => $timeEnd
+                ));
+
+                $subQueryTimeStampFilter .= ' AND b.timeStamp <= :timeStampEnd';
+            }
+        }
+
+        $subQuery = '
+            SELECT 
+                b.' . self::ENTITY_TYPE . ', 
+                b.' . self::ENTITY_ID . ' 
+            FROM 
+                ' . $enityTags->getTableName() . ' a
+            INNER JOIN
+                ' . $this->getTableName() . ' b
+            ON
+                a.' . BOL_SearchEntityTagDao::ENTITY_SEARCH_ID . ' = b.id 
+                    AND 
+                b.'. self::STATUS  . ' = :status AND b.' . self::ACTIVATED . ' = :activated' . $subQueryTimeStampFilter . ' 
+            WHERE 
+                a.' . BOL_SearchEntityTagDao::ENTITY_TAG . ' IN (' . $this->dbo->mergeInClause($tags) . ')';
+
+        // build the main query
+        $query = '
+            SELECT
+                COUNT(*) as rowsCount
+            FROM (
+                SELECT 
+                    DISTINCT ' .  
+                    self::ENTITY_TYPE . ', ' . 
+                    self::ENTITY_ID . '
+                FROM 
+                    (' . $subQuery . ') result
+            )as rows';
+
+        $result = $this->dbo->queryForRow($query, $queryParams);
+
+        return !empty($result['rowsCount']) ? $result['rowsCount'] : 0;
+    }
+
+    /**
+     * Find entities by tags
+     * 
+     * @param array $tags
+     * @param integer $first
+     * @param integer $limit
+     * @param string $sort
+     * @param boolean $sortDesc
+     * @param integer $timeStart
+     * @param integer $timeEnd
+     * @return array
+     */
+    public function findEntitiesByTags( array $tags, $first, $limit, 
+            $sort = self::SORT_BY_DATE, $sortDesc = true, $timeStart = 0, $timeEnd = 0)
+    {
+        // sql params
+        $queryParams = array(
+            ':first' => $first,
+            ':limit' => $limit,
+            ':status' => self::ENTITY_STATUS_ACTIVE,
+            ':activated' => self::ENTITY_ACTIVATED
+        );
+
+        $subQueryTimeStampFilter = null;
+
+        // filter by timestamp
+        if ( $timeStart || $timeEnd )
+        {
+            if ( $timeStart )
+            {
+                $queryParams = array_merge($queryParams, array(
+                    ':timeStampStart' => $timeStart
+                ));
+
+                $subQueryTimeStampFilter .= ' AND b.timeStamp >= :timeStampStart';
+            }
+
+            if ( $timeEnd )
+            {
+                $queryParams = array_merge($queryParams, array(
+                    ':timeStampEnd' => $timeEnd
+                ));
+
+                $subQueryTimeStampFilter .= ' AND b.timeStamp <= :timeStampEnd';
+            }
+        }
+
+        $enityTags = BOL_SearchEntityTagDao::getInstance();
+
+        $subQuery = '
+            SELECT 
+                b.' . self::ENTITY_TYPE . ', 
+                b.' . self::ENTITY_ID . '
+            FROM 
+                ' . $enityTags->getTableName() . ' a
+            INNER JOIN
+                ' . $this->getTableName() . ' b
+            ON
+                a.' . BOL_SearchEntityTagDao::ENTITY_SEARCH_ID . ' = b.id 
+                    AND 
+                b.'. self::STATUS  . ' = :status AND b.' . self::ACTIVATED . ' = :activated' . $subQueryTimeStampFilter . '
+            WHERE 
+                a.' . BOL_SearchEntityTagDao::ENTITY_TAG . ' IN (' . $this->dbo->mergeInClause($tags) . ')
+            ORDER BY 
+                b.' . self::TIMESTAMP . ($sortDesc ? ' DESC' : null);
 
         // build main query
         $query = '
@@ -513,40 +663,25 @@ class BOL_SearchEntityDao extends OW_BaseDao
         $enityTags = BOL_SearchEntityTagDao::getInstance();
 
         $params = array(
-            ':status' => self::ENTITY_STATUS_DELETED
+            ':deleted_status' => self::ENTITY_STATUS_DELETED,
+            ':status' => $status
         );
 
-        // find not deleted entities
         $query = '
-            SELECT 
-                b.id
-            FROM 
-                ' . $enityTags->getTableName() . ' a
+            UPDATE 
+                ' . $enityTags->getTableName() . ' AS a
             INNER JOIN
-                ' . $this->getTableName() . ' b
+                ' . $this->getTableName() . ' AS b
             ON
                 a.' . BOL_SearchEntityTagDao::ENTITY_SEARCH_ID . ' = b.id 
                     AND 
-                b.'. self::STATUS  . ' <> :status
-            WHERE 
+                b.'. self::STATUS  . ' <> :deleted_status
+            SET 
+               b.' . self::STATUS . ' = :status             
+            WHERE       
                 a.' . BOL_SearchEntityTagDao::ENTITY_TAG . ' IN (' . $this->dbo->mergeInClause($tags) . ')';
- 
-         $entities = $this->dbo->queryForList($query, $params);
 
-         // set needed status
-         if ( $entities )
-         {
-             foreach ($entities as $entity) 
-             {
-                $params = array(
-                    $status,
-                    $entity['id']
-                );
-
-                $query = 'UPDATE `' . $this->getTableName() . '` SET `' . self::STATUS . '` = ? WHERE id = ?';
-                $this->dbo->query($query, $params);
-             }
-         }
+         $this->dbo->query($query, $params);
     }
 
     /**
