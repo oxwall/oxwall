@@ -278,6 +278,39 @@ class BASE_CLASS_MysqlSearchStorage extends BASE_CLASS_AbstractSearchStorage
     }
 
     /**
+     * Search entities count by tags
+     *
+     * @param array $tags
+     * @param integer $timeStart
+     * @param integer $timeEnd
+     * @throws Exception
+     * @return integer
+     */
+    public function searchEntitiesCountByTags( array $tags, $timeStart = 0,  $timeEnd = 0)
+    {
+        return $this->searchEntityDao->findEntitiesCountByTags($tags, $timeStart, $timeEnd);
+    }
+
+    /**
+     * Search entities by tags
+     *
+     * @param array $tags
+     * @param integer $first
+     * @param integer $limit
+     * @param string $sort
+     * @param integer $timeStart
+     * @param integer $timeEnd
+     * @throws Exception
+     * @return array
+     */
+    public function searchEntitiesByTags(  array $tags, $first, $limit, 
+            $sort = self::SORT_BY_DATE, $sortDesc = true, $timeStart = 0, $timeEnd = 0 )
+    {
+        return $this->searchEntityDao->
+                findEntitiesByTags($tags, $first, $limit, $sort, $sortDesc, $timeStart, $timeEnd);
+    }
+
+    /**
      * Get all entities
      *
      * @param integer $first
