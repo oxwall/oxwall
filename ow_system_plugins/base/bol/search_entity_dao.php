@@ -385,6 +385,7 @@ class BOL_SearchEntityDao extends OW_BaseDao
             )as rows';
 
         $result = $this->dbo->queryForRow($query, $queryParams);
+
         return !empty($result['rowsCount']) ? $result['rowsCount'] : 0;
     }
 
@@ -565,6 +566,7 @@ class BOL_SearchEntityDao extends OW_BaseDao
             )as rows';
 
         $result = $this->dbo->queryForRow($query, $queryParams);
+
         return !empty($result['rowsCount']) ? $result['rowsCount'] : 0;
     }
 
