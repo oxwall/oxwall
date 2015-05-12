@@ -190,6 +190,33 @@ abstract class BASE_CLASS_AbstractSearchStorage
             array $tags = array(), $sort = self::SORT_BY_RELEVANCE, $sortDesc = true, $timeStart = 0, $timeEnd = 0 );
 
     /**
+     * Search entities count by tags
+     *
+     * @param array $tags
+     * @param integer $timeStart
+     * @param integer $timeEnd
+     * @throws Exception
+     * @return integer
+     */
+    abstract public function searchEntitiesCountByTags( array $tags, $timeStart = 0, $timeEnd = 0);
+
+    /**
+     * Search entities by tags
+     *
+     * @param array $tags
+     * @param integer $first
+     * @param integer $limit
+     * @param string $sort
+     * @param boolean $sortDesc
+     * @param integer $timeStart
+     * @param integer $timeEnd
+     * @throws Exception
+     * @return array
+     */
+    abstract public function searchEntitiesByTags( array $tags, $first, $limit,
+            $sort = self::SORT_BY_DATE, $sortDesc = true, $timeStart = 0, $timeEnd = 0 );
+
+    /**
      * Get all entities
      *
      * @param integer $first
@@ -208,7 +235,7 @@ abstract class BASE_CLASS_AbstractSearchStorage
      */
     protected function cleanSearchText( $text )
     {
-        return mb_strtolower(trim(preg_replace('/[^\pL\pN]+/u', ' ', 
-                str_replace('&nbsp;', ' ', strip_tags($text)))));
+        return mb_strtolower(trim(preg_replace('/[^\pL\pN]+/u', 
+                ' ', str_replace('&nbsp;', ' ', strip_tags($text)))));
     }
 }

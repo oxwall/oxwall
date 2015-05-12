@@ -322,6 +322,53 @@ final class OW_TextSearchManager
     }
 
     /**
+     * Search entities by tags
+     *
+     * @param array $tags
+     * @param integer $first
+     * @param integer $limit     
+     * @param string $sort
+     * @param boolean $sortDesc
+     * @param integer $timeStart
+     * @param integer $timeEnd
+     * @throws Exception
+     * @return array
+     */
+    public function searchEntitiesByTags( array $tags, $first, $limit, 
+            $sort = self::SORT_BY_DATE, $sortDesc = true, $timeStart = 0, $timeEnd = 0 )
+    {
+        if ( $this->activeStorageInstance )
+        {
+            return $this->activeStorageInstance->
+                    searchEntitiesByTags($tags, $first, $limit, $sort, $sortDesc, $timeStart, $timeEnd);
+        }
+
+        return $this->defaultStorageInstance->
+                    searchEntitiesByTags($tags, $first, $limit, $sort, $sortDesc, $timeStart, $timeEnd);
+    }
+
+    /**
+     * Search entities count by tags
+     *
+     * @param array $tags
+     * @param integer $timeStart
+     * @param integer $timeEnd
+     * @throws Exception
+     * @return integer
+     */
+    public function searchEntitiesCountByTags( array $tags, $timeStart = 0, $timeEnd = 0 )
+    {
+        if ( $this->activeStorageInstance )
+        {
+            return $this->activeStorageInstance->
+                    searchEntitiesCountByTags($tags, $timeStart, $timeEnd);
+        }
+
+        return $this->defaultStorageInstance->
+                searchEntitiesCountByTags($tags, $timeStart, $timeEnd);
+    }
+
+    /**
      * Get all entities
      *
      * @param integer $first
