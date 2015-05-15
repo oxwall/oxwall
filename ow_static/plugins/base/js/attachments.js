@@ -18,7 +18,7 @@ var OWFileAttachment = function(params) {
         );
     };
 
-    this.addItem = function(data, loader) {
+    this.addItem = function(data, loader, customDeleteUrl) {
         data['html'] = $('<div><div class="ow_file_attachment_info">' +
                 '<div class="ow_file_attachment_name">' + data.name + ' <span class="ow_file_attachment_size" style="display: inline-block;">(' + data.size + 'KB)</span></div>' +
                 '<div class="ow_file_attachment_preload" style="display:' + (loader ? 'block' : 'none') + ';"></div>' +
@@ -29,9 +29,25 @@ var OWFileAttachment = function(params) {
         OW.trigger('base.attachment_rendered', {'data' : data}, this);
  
         $('.ow_file_attachment_close', data['html']).one('click', function() {
-            self.deleteItem(data['id']);
+            self.deleteItem(data['id'], customDeleteUrl);
         });
     };
+
+    /**
+     * Render uploaded items
+     * 
+     * @param object uploadedItems
+     * @param string customDeleteUrl
+     */
+    this.renderUploaded = function(uploadedItems, customDeleteUrl) {
+        $.each(uploadedItems, function(index, data) {
+            self.addItem(data, true, customDeleteUrl);
+            itemId++;
+        });
+
+        $.extend(items, uploadedItems);
+        refreshClasses();
+    }
 
     this.initInput = function() {
         var $input = $('<input class="mlt_file_input" type="file"' + (this.multiple ? ' multiple=""' : '') + ' name="ow_file_attachment[]" />');
@@ -136,7 +152,7 @@ var OWFileAttachment = function(params) {
         $('#hd_' + indexList.join('_')).remove();
     };
 
-    this.deleteItem = function(id) {
+    this.deleteItem = function(id, customDeleteUrl) {
         OW.trigger('base.attachment_deleted', {'id' : id}, this);
  
         if (self.showPreview) {
@@ -148,7 +164,10 @@ var OWFileAttachment = function(params) {
             return;
         }
 
-        $.ajax({url: self.deleteUrl, data: {id: items[id]['dbId']}});
+        $.ajax({
+            url: (typeof customDeleteUrl == "undefined" ? self.deleteUrl : customDeleteUrl), 
+            data: {id: items[id]['dbId']}
+        });
 
         delete items[id];
         if (self.showPreview) {
