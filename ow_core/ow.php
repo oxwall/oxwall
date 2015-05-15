@@ -482,4 +482,14 @@ final class OW
         $eventManager->trigger(new OW_Event("core.performance_test", array("key" => "component_construct.end", "params" => $params)));
         return $rClass->newInstanceArgs($arguments);
     }
+
+    /**
+     * Returns text search manager object.
+     *
+     * @return OW_TextSearchManager
+     */
+    public static function getTextSearchManager()
+    {
+        return OW_TextSearchManager::getInstance();
+    }
 }
