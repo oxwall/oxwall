@@ -1744,10 +1744,8 @@ OWM.FloatBox = (function() {
     var _stack = [];
     
     _overlay.on("click.fb", function() {
-        var fb = _stack.shift();
-        while ( fb  ) {
-            fb.close();
-            fb = _stack.shift();
+        while (_stack.length) {
+            _stack[0].close();
         }
     });
     
@@ -1963,7 +1961,7 @@ var OwMobileComments = function( contextId, formName, genId ){
 	this.$cmpContext = $('#' + contextId);
     this.genId = genId;
     
-}
+};
 
 OwMobileComments.prototype = {
     repaintCommentsList: function( data ){
@@ -2038,7 +2036,7 @@ OwMobileComments.prototype = {
 var OwMobileCommentsList = function( params ){
 	this.$context = $('#' + params.contextId);
 	$.extend(this, params, owCommentListCmps.staticData);
-}
+};
 
 OwMobileCommentsList.prototype = {
 	init: function(){
