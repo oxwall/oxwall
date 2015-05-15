@@ -183,7 +183,7 @@ var OWMobile = function(){
     };
 
     this.registerLanguageKey = function(prefix, key, value)
-    {
+    {   
             if ( langs[prefix] === undefined ) {
                     langs[prefix] = {};
             }
@@ -244,6 +244,14 @@ var OWMobile = function(){
         }
 
         return true;
+    };
+    
+    this.flagContent = function( entityType, entityId )
+    {
+        OWM.ajaxFloatBox("BASE_MCMP_Flag", [entityType, entityId], {
+            width: 315,
+            title: OWM.getLanguageText('base', 'flag_as')
+        });
     };
 
     this.addCssFile = function( url )

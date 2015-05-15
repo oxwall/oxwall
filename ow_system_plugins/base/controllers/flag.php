@@ -34,7 +34,10 @@ class BASE_CTRL_Flag extends OW_ActionController
     {
         if ( !OW::getUser()->isAuthenticated() )
         {
-            return;
+            exit(json_encode(array(
+                'result' => 'success',
+                'js' => 'OW.error(' . json_encode(OW::getLanguage()->text('base', 'sing_in_to_flag')) . ')'
+            )));
         }
 
         $entityType = $_POST["entityType"];
