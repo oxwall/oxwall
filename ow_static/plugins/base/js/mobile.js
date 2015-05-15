@@ -255,27 +255,57 @@ var OWMobile = function(){
         $('head').append($('<style type="text/css">'+css+'</style>'));
     };
 
-    this.addScriptFiles = function( urlList, callback ){
-        var scripts = $('script');
-
-        //TODO: Sardar require once check
-
-        if ( urlList && urlList.length > 0 ){
-            var recursiveInclude = function(urlList, i){
-
-                if( (i+1) == urlList.length )
+    var loadedScriptFiles = {};
+    this.loadScriptFiles = function( urlList, callback, options ){
+        
+        if ( $.isPlainObject(callback) ) {
+            options = callback;
+            callback = null;
+        }
+        
+        var addScript = function(url) {
+            return jQuery.ajax($.extend({
+                dataType: "script",
+                cache: true,
+                url: url
+            }, options || {})).done(function() {
+                loadedScriptFiles[url] = true;
+            });
+        };
+        
+        if( urlList && urlList.length > 0 ) {
+            var recursiveInclude = function(urlList, i) {
+                if( (i+1) === urlList.length )
                 {
-                    $.getScript(urlList[i], callback);
+                    addScript(urlList[i]).done(callback);
                     return;
                 }
 
-                $.getScript(urlList[i], function(){recursiveInclude(urlList, ++i);});
+                addScript(urlList[i]).done(function() {
+                    recursiveInclude(urlList, ++i);
+                });
             };
-
             recursiveInclude(urlList, 0);
-        }else{
+        } else {
             callback.apply(this);
         }
+    };
+
+    this.addScriptFiles = function( urlList, callback, once ) {
+        if ( once === false ) {
+            this.loadScriptFiles(urlList, callback);
+            return;
+        }
+        
+        $("script").each(function() {
+            loadedScriptFiles[this.src] = true;
+        });
+        
+        var requiredScripts = $.grep(urlList, function(url) {
+            return !loadedScriptFiles[url];
+        });
+
+        this.loadScriptFiles(requiredScripts, callback);
     };
 
     this.initWidgetMenu = function( items ){

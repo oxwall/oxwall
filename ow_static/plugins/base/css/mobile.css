@@ -1,0 +1,7 @@
+/* Newsfeed formats*/
+.owm_video_format.ow_video_playing iframe,
+.owm_video_format.ow_video_playing object,
+.owm_video_format.ow_video_playing embed {
+    width:100%;
+}
+/* end of Newsfeed formats*/
