@@ -183,7 +183,7 @@ var OWMobile = function(){
     };
 
     this.registerLanguageKey = function(prefix, key, value)
-    {
+    {   
             if ( langs[prefix] === undefined ) {
                     langs[prefix] = {};
             }
@@ -244,6 +244,14 @@ var OWMobile = function(){
         }
 
         return true;
+    };
+    
+    this.flagContent = function( entityType, entityId )
+    {
+        OWM.ajaxFloatBox("BASE_MCMP_Flag", [entityType, entityId], {
+            width: 315,
+            title: OWM.getLanguageText('base', 'flag_as')
+        });
     };
 
     this.addCssFile = function( url )
@@ -1706,10 +1714,8 @@ OWM.FloatBox = (function() {
     var _stack = [];
     
     _overlay.on("click.fb", function() {
-        var fb = _stack.shift();
-        while ( fb  ) {
-            fb.close();
-            fb = _stack.shift();
+        while (_stack.length) {
+            _stack[0].close();
         }
     });
     
@@ -1925,7 +1931,7 @@ var OwMobileComments = function( contextId, formName, genId ){
 	this.$cmpContext = $('#' + contextId);
     this.genId = genId;
     
-}
+};
 
 OwMobileComments.prototype = {
     repaintCommentsList: function( data ){
@@ -2000,7 +2006,7 @@ OwMobileComments.prototype = {
 var OwMobileCommentsList = function( params ){
 	this.$context = $('#' + params.contextId);
 	$.extend(this, params, owCommentListCmps.staticData);
-}
+};
 
 OwMobileCommentsList.prototype = {
 	init: function(){
