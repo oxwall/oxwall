@@ -25,63 +25,17 @@
 /**
  * Singleton. 'Flag' Data Access Object
  *
- * @author Aybat Duyshokov <duyshokov@gmail.com>
+ * @author Sergey Kambalin <greyexpert@gmail.com>
  * @package ow_system_plugins.base.components
  * @since 1.0
  */
-class BASE_CMP_Flag extends OW_Component
+class BASE_MCMP_Flag extends BASE_CMP_Flag
 {
 
     public function __construct( $entityType, $entityId )
     {
-        parent::__construct();
-
-        $this->addForm(new FlagForm($entityType, $entityId));
-    }
-}
-
-class FlagForm extends Form
-{
-
-    public function __construct( $entityType, $entityId )
-    {
-        parent::__construct('flag');
-
-        $this->setAjax(true);
-
-        $this->setAction(OW::getRouter()->urlFor('BASE_CTRL_Flag', 'flag'));
-
-        $element = new HiddenField('entityType');
-        $element->setValue($entityType);
-        $this->addElement($element);
+        parent::__construct($entityType, $entityId);
         
-        $element = new HiddenField('entityId');
-        $element->setValue($entityId);
-        $this->addElement($element);
-        
-
-        $element = new RadioField('reason');
-        $element->setOptions(array(
-            'spam' => OW::getLanguage()->text('base', 'flag_spam'),
-            'offence' => OW::getLanguage()->text('base', 'flag_offence'),
-            'illegal' => OW::getLanguage()->text('base', 'flag_illegal'))
-        );
-
-        $flagDto = BOL_FlagService::getInstance()->findFlag($entityType, $entityId, OW::getUser()->getId());
-        
-        if ( $flagDto !== null )
-        {
-            $element->setValue($flagDto->reason);
-        }
-
-        $this->addElement($element);
-
-        OW::getDocument()->addOnloadScript(
-            "owForms['{$this->getName()}'].bind('success', function(json){
-                if (json['result'] == 'success') {
-                    _scope.floatBox && _scope.floatBox.close();
-                    OW.addScript(json.js);
-                }
-            })");
+        $this->setTemplate(OW::getPluginManager()->getPlugin("base")->getMobileCmpViewDir() . "flag.html");
     }
 }
