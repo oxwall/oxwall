@@ -1,0 +1,7 @@
+<div class="flags-container owm_flag_win owm_padding">
+{form name="flag"}
+    <div class="flags-input">
+        {input name="reason" onchange="$(this.form).submit(); $('.flags-input').css('visibility', 'hidden'); $('.flags-container').addClass('owm_preloader');"}
+    </div>
+{/form}
+</div>
