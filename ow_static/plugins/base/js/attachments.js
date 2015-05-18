@@ -166,7 +166,8 @@ var OWFileAttachment = function(params) {
 
         $.ajax({
             url: (typeof customDeleteUrl == "undefined" ? self.deleteUrl : customDeleteUrl), 
-            data: {id: items[id]['dbId']}
+            data: {id: items[id]['dbId']},
+            method: "POST"
         });
 
         delete items[id];
