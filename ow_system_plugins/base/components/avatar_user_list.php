@@ -94,6 +94,14 @@ class BASE_CMP_AvatarUserList extends OW_Component
         }
 
         $avatars = $this->getAvatarInfo($this->idList);
+        
+        $event = new OW_Event('bookmarks.is_mark', array(), $avatars);
+        OW::getEventManager()->trigger($event);
+        
+        if ( $event->getData() )
+        {
+            $avatars = $event->getData();
+        }
 
         if ( $this->viewMoreUrl !== null )
         {

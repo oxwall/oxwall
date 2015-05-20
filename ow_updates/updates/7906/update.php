@@ -74,6 +74,11 @@ if ( !Updater::getConfigService()->configExists('base', 'attch_file_max_size_mb'
     Updater::getConfigService()->addConfig('base', 'attch_file_max_size_mb', 2);
 }
 
+if ( !UPDATE_ConfigService::getInstance()->configExists('base', 'users_on_page') )
+{
+    UPDATE_ConfigService::getInstance()->addConfig('base', 'users_on_page', 12);
+}
+
 if ( !Updater::getConfigService()->configExists('base', 'attch_ext_list') )
 {
     $ext = array(
@@ -102,8 +107,12 @@ BOL_PreferenceService::getInstance()->savePreference($preference);
 
 try
 {
-    OW::getNavigation()->addMenuItem(
-        OW_Navigation::ADMIN_MOBILE, 'mobile.admin_settings', 'mobile', 'mobile_admin_settings', OW_Navigation::VISIBLE_FOR_MEMBER);
+    Updater::getNavigationService()->addMenuItem(
+        OW_Navigation::ADMIN_MOBILE,
+        'mobile.admin_settings',
+        'mobile',
+        'mobile_admin_settings',
+        OW_Navigation::VISIBLE_FOR_MEMBER);
 }
 catch ( Exception $e )
 {
@@ -125,6 +134,37 @@ try
     Updater::getLanguageService()->deleteLangKey('base', 'form_validate_common_error_message');
     Updater::getLanguageService()->addValue('base', 'local_page_meta_tags_page-119658', ' ');
     Updater::getLanguageService()->addValue('base', 'local_page_meta_tags_page_81959573', ' ');
+}
+catch ( Exception $e )
+{
+    $logger->addEntry(json_encode($e));
+}
+
+if ( defined('SOFT_PACK') )
+{
+    
+    try
+    {
+        Updater::getLanguageService()->deleteLangKey('base', 'welcome_letter_template_html');
+        Updater::getLanguageService()->addValue('base', 'welcome_letter_template_html', 'Welcome to <a href="{$site_url}">{$site_name}</a>! Thanks for joining us. Here are some quick links that you need to find your way around:<br/><br />
+
+- <a href="{$site_url}">Main page</a> - welcome!<br/>
+- <a href="{$site_url}profile/edit">Change profile details</a> - again, people will only engage if they get some impression of you. Invest time in your profile;<br/>
+- <a href="{$site_url}users/search">Look who\'s in</a><br/><br />
+
+We are eager to send many dates your way!<br/><br />
+
+<a href="{$site_url}">{$site_name}</a> administration<br/>');
+    }
+    catch ( Exception $e )
+    {
+        $logger->addEntry(json_encode($e));
+    }
+}
+
+try
+{
+    Updater::getLanguageService()->addValue('base', 'no_items', 'No items');
 }
 catch ( Exception $e )
 {

@@ -81,7 +81,10 @@ class BASE_CMP_UserListWidget extends BASE_CMP_UsersWidget
                 );
         }
 
-        return $resultList;
+        $event = new OW_Event('base.userList.onToolbarReady', array(), $resultList);
+        OW::getEventManager()->trigger($event);
+
+        return $event->getData();
     }
 
     public static function getSettingList()

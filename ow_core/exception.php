@@ -225,9 +225,9 @@ class ApiResponseErrorException extends Exception
 {
     public $data = array();
     
-    public function __construct($data = array(), $code = null) 
+    public function __construct($data = array(), $code = 0) 
     {
-        parent::__construct(null, $code, null);
+        parent::__construct("", $code);
         
         $this->data = $data;
     }

@@ -45,7 +45,7 @@ class OW_ApiDefaultRoute extends OW_DefaultRoute
      */
     public function generateUri( $controller, $action = null, array $params = array() )
     {
-        throw LogicException("Cant generate URI in API context");
+        throw new LogicException("Cant generate URI in API context");
     }
 
     /**

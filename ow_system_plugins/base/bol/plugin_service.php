@@ -75,12 +75,21 @@ class BOL_PluginService
     private function __construct()
     {
         $this->pluginDao = BOL_PluginDao::getInstance();
-        $this->readPluginsList();
     }
 
-    public function readPluginsList()
+    private function readPluginsList()
     {
         $this->pluginDaoCache = $this->pluginDao->findAll();
+    }
+
+    private function getPluginDaoCache()
+    {
+        if( !$this->pluginDaoCache )
+        {
+            $this->readPluginsList();
+        }
+        
+        return $this->pluginDaoCache;
     }
 
     /**
@@ -91,7 +100,7 @@ class BOL_PluginService
     public function savePlugin( BOL_Plugin $pluginItem )
     {
         $this->pluginDao->save($pluginItem);
-        $this->pluginDaoCache = $this->pluginDao->findAll();
+        $this->readPluginsList();
     }
 
     /**
@@ -102,7 +111,7 @@ class BOL_PluginService
     public function deletePluginById( $id )
     {
         $this->pluginDao->deleteById($id);
-        $this->pluginDaoCache = $this->pluginDao->findAll();
+        $this->readPluginsList();
     }
 
     /**
@@ -112,7 +121,7 @@ class BOL_PluginService
      */
     public function findAllPlugins()
     {
-        return $this->pluginDaoCache;
+        return $this->getPluginDaoCache();
     }
 
     /**
@@ -123,8 +132,10 @@ class BOL_PluginService
      */
     public function findPluginByKey( $key, $developerKey = null )
     {
+        $pluginDaoCache = $this->getPluginDaoCache();
+        
         /* @var $plugin BOL_Plugin */
-        foreach ( $this->pluginDaoCache as $plugin )
+        foreach ( $pluginDaoCache as $plugin )
         {
             if ( $developerKey !== null )
             {
@@ -148,9 +159,10 @@ class BOL_PluginService
     public function findActivePlugins()
     {
         $activePlugins = array();
-
+        $pluginDaoCache = $this->getPluginDaoCache();
+        
         /* @var $plugin BOL_Plugin */
-        foreach ( $this->pluginDaoCache as $plugin )
+        foreach ( $pluginDaoCache as $plugin )
         {
             if ( $plugin->isActive() )
             {
@@ -169,7 +181,7 @@ class BOL_PluginService
     public function getAvailablePluginsList()
     {
         $availPlugins = array();
-        $dbPlugins = $this->pluginDaoCache;
+        $dbPlugins = $this->getPluginDaoCache();
         $dbPluginsArray = array();
 
         /* @var $plugin BOL_Plugin */
@@ -472,7 +484,7 @@ class BOL_PluginService
         $regularPlugins = array();
 
         /* @var $plugin BOL_Plugin */
-        foreach ( $this->pluginDaoCache as $plugin )
+        foreach ( $this->getPluginDaoCache() as $plugin )
         {
             if ( !$plugin->isSystem() )
             {
