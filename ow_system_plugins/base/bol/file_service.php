@@ -89,4 +89,35 @@ class BOL_FileService
 
         return $message;
     }
+    
+    public function getUploadMaxFilesize() {
+        $uploadMaxFilesize = (float) $this->getMegabytes(ini_get("upload_max_filesize"));
+        $postMaxSize = (float) $this->getMegabytes(ini_get("post_max_size"));
+        
+        $maxUploadMaxFilesize = $uploadMaxFilesize >= $postMaxSize ? $postMaxSize : $uploadMaxFilesize;
+        
+        return $maxUploadMaxFilesize;
+    }
+    
+    /**
+     *
+     * @param string number of megabytes
+     * @return float
+     */
+    private function getMegabytes($val) {
+        $val = trim($val);
+        $last = strtolower($val[strlen($val)-1]);
+        switch($last) {
+            // The 'G' modifier is available since PHP 5.1.0
+            case 'g':
+                $val *= 1024;
+            case 'm':
+                $val *= 1024;
+                break;
+            case 'k':
+                $val = $val/1024;
+        }
+
+        return $val;
+    }
 }
