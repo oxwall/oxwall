@@ -18,18 +18,31 @@ var OWFileAttachment = function(params) {
         );
     };
 
-    this.addItem = function(data, loader, customDeleteUrl) {
+    this.addItem = function(data, loader, customDeleteUrl, customConfirmation) {
         data['html'] = $('<div><div class="ow_file_attachment_info">' +
                 '<div class="ow_file_attachment_name">' + data.name + ' <span class="ow_file_attachment_size" style="display: inline-block;">(' + data.size + 'KB)</span></div>' +
                 '<div class="ow_file_attachment_preload" style="display:' + (loader ? 'block' : 'none') + ';"></div>' +
                 '<a href="javascript://" class="ow_file_attachment_close"></a>' +
                 '</div></div>');
 
+        if (typeof customDeleteUrl != "undefined") 
+        {
+            data['customDeleteUrl'] = customDeleteUrl;
+        }
+
         self.$previewCont.append(data['html']);
         OW.trigger('base.attachment_rendered', {'data' : data}, this);
  
-        $('.ow_file_attachment_close', data['html']).one('click', function() {
-            self.deleteItem(data['id'], customDeleteUrl);
+        $('.ow_file_attachment_close', data['html']).bind('click', function() {
+            var confirmed = true;
+ 
+            if (typeof customConfirmation != "undefined") {
+                confirmed = confirm(customConfirmation);
+            }
+ 
+            if (confirmed) {
+                self.deleteItem(data['id'], customDeleteUrl);
+            }
         });
     };
 
@@ -38,10 +51,11 @@ var OWFileAttachment = function(params) {
      * 
      * @param object uploadedItems
      * @param string customDeleteUrl
+     * @param string customConfirmation
      */
-    this.renderUploaded = function(uploadedItems, customDeleteUrl) {
+    this.renderUploaded = function(uploadedItems, customDeleteUrl, customConfirmation) {
         $.each(uploadedItems, function(index, data) {
-            self.addItem(data, true, customDeleteUrl);
+            self.addItem(data, true, customDeleteUrl, customConfirmation);
             itemId++;
         });
 
@@ -154,7 +168,7 @@ var OWFileAttachment = function(params) {
 
     this.deleteItem = function(id, customDeleteUrl) {
         OW.trigger('base.attachment_deleted', {'id' : id}, this);
- 
+
         if (self.showPreview) {
             items[id]['html'].remove();
         }
@@ -176,8 +190,12 @@ var OWFileAttachment = function(params) {
         }
     };
 
-    this.reset = function(id) {
+    this.reset = function(id, callback) {
         self.uid = id;
+
+        if (typeof callback != "undefined") {
+            callback.call({}, items);
+        }
 
         if (self.showPreview) {
             $.each(items,
