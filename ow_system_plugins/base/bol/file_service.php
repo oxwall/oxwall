@@ -111,8 +111,6 @@ class BOL_FileService
             // The 'G' modifier is available since PHP 5.1.0
             case 'g':
                 $val *= 1024;
-            case 'm':
-                $val *= 1024;
                 break;
             case 'k':
                 $val = $val/1024;
