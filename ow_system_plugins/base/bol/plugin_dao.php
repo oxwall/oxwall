@@ -41,6 +41,9 @@ class BOL_PluginDao extends OW_BaseDao
     const VERSION = 'version';
     const UPDATE = 'update';
     const LICENSE_KEY = 'licenseKey';
+    const UPDATE_VAL_UP_TO_DATE = 0;
+    const UPDATE_VAL_UPDATE = 1;
+    const UPDATE_VAL_MANUAL_UPDATE = 2;
 
     /**
      * Constructor.
@@ -144,7 +147,7 @@ class BOL_PluginDao extends OW_BaseDao
     public function findPluginsForUpdateCount()
     {
         $example = new OW_Example();
-        $example->andFieldEqual(self::UPDATE, 1);
+        $example->andFieldEqual(self::UPDATE, self::UPDATE_VAL_UPDATE);
 
         return $this->countByExample($example);
     }
@@ -155,7 +158,7 @@ class BOL_PluginDao extends OW_BaseDao
     public function findPluginForManualUpdate()
     {
         $example = new OW_Example();
-        $example->andFieldEqual(self::UPDATE, 2);
+        $example->andFieldEqual(self::UPDATE, self::UPDATE_VAL_MANUAL_UPDATE);
         $example->andFieldEqual(self::IS_ACTIVE, 1);
         $example->setLimitClause(0, 1);
 

@@ -37,11 +37,9 @@ final class OW_PluginManager
     private $pluginService;
 
     /**
-     * List of active plugins.
-     *
      * @var array
      */
-    private $activePlugins;
+    private $cachedObjects = array();
 
     /**
      * Constructor.
@@ -49,7 +47,6 @@ final class OW_PluginManager
     private function __construct()
     {
         $this->pluginService = BOL_PluginService::getInstance();
-        $this->readPluginsList();
     }
     /**
      * Singleton instance.
@@ -81,23 +78,53 @@ final class OW_PluginManager
      */
     public function getPlugin( $key )
     {
-        if ( !array_key_exists(mb_strtolower(trim($key)), $this->activePlugins) )
+        $plugin = $this->pluginService->findPluginByKey($key);
+
+        if ( $plugin === null || !$plugin->isActive() )
         {
-            throw new InvalidArgumentException("There is no active plugin with key `" . $key . "`");
+            throw new InvalidArgumentException("There is no active plugin with key `{$key}`!");
         }
 
-        return $this->activePlugins[mb_strtolower(trim($key))];
+        if ( !array_key_exists($plugin->getKey(), $this->cachedObjects) )
+        {
+            $this->cachedObjects[$plugin->getKey()] = OW_Plugin($plugin);
+        }
+
+        return $this->cachedObjects[$plugin->getKey()];
     }
 
+    /**
+     * Includes init script for all active plugins
+     */
     public function initPlugins()
     {
-        /* @var $value OW_Plugin */
-        foreach ( $this->activePlugins as $value )
+        $plugins = $this->pluginService->findActivePlugins();
+
+        usort($plugins, function( BOL_Plugin $a, BOL_Plugin $b )
         {
-            $this->initPlugin($value);
+            if ( $a->getId() == $b->getId() )
+            {
+                return 0;
+            }
+
+            return $a->getId() > $b->getId();
+        });
+
+        /* @var $value BOL_Plugin */
+        foreach ( $plugins as $plugin )
+        {
+            if ( !array_key_exists($plugin->getKey(), $this->cachedObjects) )
+            {
+                $this->cachedObjects[$plugin->getKey()] = new OW_Plugin($plugin);
+            }
+
+            $this->initPlugin($this->cachedObjects[$plugin->getKey()]);
         }
     }
 
+    /**
+     * Includes init script for provided plugin
+     */
     public function initPlugin( OW_Plugin $pluginObject )
     {
         $this->addPackagePointers($pluginObject->getDto());
@@ -118,6 +145,11 @@ final class OW_PluginManager
         OW::getEventManager()->trigger(new OW_Event("core.performance_test", array("key" => "plugin_init.end", "pluginKey" => $pluginObject->getKey())));
     }
 
+    /**
+     * Adds platform predefined package pointers
+     * 
+     * @param BOL_Plugin $pluginDto
+     */
     public function addPackagePointers( BOL_Plugin $pluginDto )
     {
         $plugin = new OW_Plugin($pluginDto);
@@ -139,33 +171,16 @@ final class OW_PluginManager
 
     /**
      * Update active plugins list for manager.
+     * 
+     * @deprecated since version 1.7.4
      */
     public function readPluginsList()
     {
-        $this->activePlugins = array();
-
-        /* read all plugins from DB */
-        $plugins = $this->pluginService->findActivePlugins();
-
-        usort($plugins, function( BOL_Plugin $a, BOL_Plugin $b )
-        {
-            if ( $a->getId() == $b->getId() )
-            {
-                return 0;
-            }
-
-            return $a->getId() > $b->getId();
-        });
-
-        /* @var $value BOL_Plugin */
-        foreach ( $plugins as $value )
-        {
-            $this->activePlugins[$value->getKey()] = new OW_Plugin($value);
-        }
+        
     }
 
     /**
-     * Returns plugin key for provided module name.
+     * Returns plugin key for provided module name, works only for active plugins
      *
      * @param string $moduleName
      * @return string
@@ -173,19 +188,22 @@ final class OW_PluginManager
      */
     public function getPluginKey( $moduleName )
     {
-        foreach ( $this->activePlugins as $key => $value )
+        $plugins = $this->pluginService->findActivePlugins();
+
+        /* @var $plugin BOL_Plugin */
+        foreach ( $plugins as $plugin )
         {
-            if ( $moduleName === $value->getModuleName() )
+            if ( $plugin->getModule() == $moduleName )
             {
-                return $key;
+                return $plugin->getKey();
             }
         }
 
-        throw new InvalidArgumentException('There is no plugin with module name `' . $moduleName . '` !');
+        throw new InvalidArgumentException("There is no plugin with module name `{$moduleName}`!");
     }
 
     /**
-     * Returns module name for provided plugin key.
+     * Returns module name for provided plugin key
      *
      * @param string $pluginKey
      * @return string
@@ -193,27 +211,31 @@ final class OW_PluginManager
      */
     public function getModuleName( $pluginKey )
     {
-        if ( !array_key_exists($pluginKey, $this->activePlugins) )
+        $plugin = $this->pluginService->findPluginByKey($pluginKey);
+
+        if ( $plugin == null )
         {
-            throw new InvalidArgumentException("There is no active plugin with key `" . $key . "`");
+            throw new InvalidArgumentException("There is no active plugin with key `{$key}`");
         }
 
-        return $this->activePlugins[$pluginKey]->getModuleName();
+        return $plugin->getModule();
     }
 
     /**
-     * Checks if plugin is active.
+     * Checks if plugin is active
      *
      * @param string $pluginKey
      * @return boolean
      */
     public function isPluginActive( $pluginKey )
     {
-        return array_key_exists($pluginKey, $this->activePlugins);
+        $plugin = $this->pluginService->findPluginByKey($pluginKey);
+
+        return $plugin !== null && $plugin->isActive();
     }
 
     /**
-     * Adds admin settings page route.
+     * Sets admin settings page route name for provided plugin
      *
      * @param string $pluginKey
      * @param string $routeName
@@ -230,7 +252,7 @@ final class OW_PluginManager
     }
 
     /**
-     * Adds spec. uninstall page route name.
+     * Sets uninstall page route name for provided plugin
      *
      * @param string $key
      * @param string $routName
