@@ -4,7 +4,7 @@
     {if $prev}
         <a class="owm_paging_prev" href="{$url}&{$prefix}page={math equation='x-1' x=$page}">&nbsp;</a>
     {else}
-        <a class="owm_paging_prev owm_paging_prev_disabled" href="javascript:void(0)">&nbsp;</a>
+        <a class="owm_paging_prev owm_paging_prev_disabled" href="javascript://">&nbsp;</a>
     {/if}
 
     <a class="owm_paging_first" href="{$url}&{$prefix}page=1">1</a>
@@ -29,6 +29,6 @@
     {if $next}
         <a class="owm_paging_next" href="{$url}&{$prefix}page={math equation='x+1' x=$page}">&nbsp;</a>
     {else}
-        <a class="owm_paging_next owm_paging_next_disabled" href="javascript:void(0)">&nbsp;</a>
+        <a class="owm_paging_next owm_paging_next_disabled" href="javascript://">&nbsp;</a>
     {/if}
 </div>
