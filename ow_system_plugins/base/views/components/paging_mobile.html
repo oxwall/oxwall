@@ -14,12 +14,10 @@
         <select onchange="location.href='{$url}&{$prefix}page=' + this.value">            
             {section name="paging" loop=$count+1 start=1 step=1}
                 {math equation="x + y" x=0  y=$smarty.section.paging.index assign='p'}
-                {if $p<=$count}
-                    {if $page == $p}
-                        <option selected="selected" value="{$p}">{$p}</option>
-                    {else}
-                        <option value="{$p}">{$p}</option>
-                    {/if}
+                {if $page == $p}
+                    <option selected="selected" value="{$p}">{$p}</option>
+                {else}
+                    <option value="{$p}">{$p}</option>
                 {/if}
             {/section}
         </select> 
