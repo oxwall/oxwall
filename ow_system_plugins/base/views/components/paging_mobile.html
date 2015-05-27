@@ -1,13 +1,34 @@
 <div class="owm_paging clearfix ow_smallmargin">
-    <span>{text key='base+pages_label'}</span>
-    {assign var='p' value='0' }
-    {if $less}<a href="{$url}&{$prefix}page=1">{text key="base+paging_label_first"}</a>{/if}
-    {if $prev}<a href="{$url}&{$prefix}page={math equation='x-1' x=$page}">{text key="base+paging_label_prev"}</a>{/if}
-    {if $less}<span>...</span>{/if}
-    {section name="paging" loop=$page_shortcut_count+1 start=1 step=1}
-    	{math equation="x + y" x=$start  y=$smarty.section.paging.index assign='p'}{if $p<=$count}<a {if $p == $page }class="active"{/if} href="{$url}&{$prefix}page={$p}">{$p}</a>{/if}
-    {/section}
-    {if $more}<span>...</span>{/if}
-    {if $next}<a href="{$url}&{$prefix}page={math equation='x+1' x=$page}">{text key='base+paging_label_next'}</a>{/if}
-    {if $more}<a href="{$url}&{$prefix}page={$count}">{text key='base+paging_label_last'}</a>{/if}
+    {assign var='p' value='0'}
+
+    {if $prev}
+        <a class="owm_paging_prev" href="{$url}&{$prefix}page={math equation='x-1' x=$page}">&nbsp;</a>
+    {else}
+        <a class="owm_paging_prev owm_paging_prev_disabled" href="javascript://">&nbsp;</a>
+    {/if}
+
+    <a class="owm_paging_first" href="{$url}&{$prefix}page=1">1</a>
+
+    <span class="owm_paging_select"> 
+        &#45;
+        <select onchange="location.href='{$url}&{$prefix}page=' + this.value">            
+            {section name="paging" loop=$count+1 start=1 step=1}
+                {math equation="x + y" x=0  y=$smarty.section.paging.index assign='p'}
+                {if $page == $p}
+                    <option selected="selected" value="{$p}">{$p}</option>
+                {else}
+                    <option value="{$p}">{$p}</option>
+                {/if}
+            {/section}
+        </select> 
+        &#45;
+    </span>
+
+    <a class="owm_paging_last" href="{$url}&{$prefix}page={$count}">{$count}</a>
+
+    {if $next}
+        <a class="owm_paging_next" href="{$url}&{$prefix}page={math equation='x+1' x=$page}">&nbsp;</a>
+    {else}
+        <a class="owm_paging_next owm_paging_next_disabled" href="javascript://">&nbsp;</a>
+    {/if}
 </div>
