@@ -159,6 +159,9 @@ class BASE_MCLASS_EventHandler extends BASE_CLASS_EventHandler
 
     public function onDocRenderAddJsDeclarations( $e )
     {
+        // Langs
+        OW::getLanguage()->addKeyForJs('base', 'flag_as');
+        
         $scriptGen = UTIL_JsGenerator::newInstance()->setVariable(
                 array('OWM', 'ajaxComponentLoaderRsp'), OW::getRouter()->urlFor('BASE_MCTRL_AjaxLoader', 'component')
         );

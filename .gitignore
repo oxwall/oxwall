@@ -5,7 +5,6 @@ ow_static/themes
 ow_smarty/template_c
 ow_install
 nbproject
-ow_log/error.log
 .settings
 .project
 .buildpath
@@ -36,3 +35,6 @@ ow_plugins/*
 
 ow_themes/*
 !ow_themes/.htaccess
+
+ow_log/*
+!ow_log/.htaccess
