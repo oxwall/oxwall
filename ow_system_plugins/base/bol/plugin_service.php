@@ -566,15 +566,16 @@ class BOL_PluginService
                 $pluginDto->setDeveloperKey(trim($pluginInfo['developerKey']));
             }
 
-            $this->pluginDao->save($pluginDto);
+            $this->pluginListCache[$pluginDto->getKey()] = $pluginDto;
 
-            $plugin = new OW_SystemPlugin($pluginInfo);
+            $plugin = new OW_Plugin($pluginInfo);
 
             if ( file_exists($plugin->getRootDir() . self::SCRIPT_INSTALL) )
             {
                 include_once $plugin->getRootDir() . self::SCRIPT_INSTALL;
             }
 
+            $this->pluginDao->save($pluginDto);
             $this->updatePluginListCache();
         }
     }
