@@ -35,7 +35,8 @@ class BOL_PluginService
     const SCRIPT_UNINSTALL = 'uninstall.php';
     const SCRIPT_ACTIVATE = 'activate.php';
     const SCRIPT_DEACTIVATE = 'deactivate.php';
-    const UPDATE_SERVER = 'http://storage.oxwall.org/';
+    const UPDATE_SERVER = 'https://storage.oxwall.org/';
+    const MANUAL_UPDATES_CHECK_INTERVAL_IN_SECONDS = 30;
 
     /**
      * @var BOL_PluginDao
@@ -45,7 +46,7 @@ class BOL_PluginService
     /**
      * @var array
      */
-    private $pluginDaoCache;
+    private $pluginListCache;
 
     /**
      * Singleton instance.
@@ -77,21 +78,6 @@ class BOL_PluginService
         $this->pluginDao = BOL_PluginDao::getInstance();
     }
 
-    private function readPluginsList()
-    {
-        $this->pluginDaoCache = $this->pluginDao->findAll();
-    }
-
-    private function getPluginDaoCache()
-    {
-        if( !$this->pluginDaoCache )
-        {
-            $this->readPluginsList();
-        }
-        
-        return $this->pluginDaoCache;
-    }
-
     /**
      * Saves and updates plugin items.
      *
@@ -100,7 +86,7 @@ class BOL_PluginService
     public function savePlugin( BOL_Plugin $pluginItem )
     {
         $this->pluginDao->save($pluginItem);
-        $this->readPluginsList();
+        $this->updatePluginListCache();
     }
 
     /**
@@ -111,58 +97,50 @@ class BOL_PluginService
     public function deletePluginById( $id )
     {
         $this->pluginDao->deleteById($id);
-        $this->readPluginsList();
+        $this->updatePluginListCache();
     }
 
     /**
-     * Returns all installed plugins.
+     * Returns all installed plugins
      *
      * @return array<BOL_Plugin>
      */
     public function findAllPlugins()
     {
-        return $this->getPluginDaoCache();
+        return $this->getPluginListCache();
     }
 
     /**
-     * Finds plugin item for provided key.
+     * Finds plugin item for provided key
      *
      * @param string $key
      * @return BOL_Plugin
      */
     public function findPluginByKey( $key, $developerKey = null )
     {
-        $pluginDaoCache = $this->getPluginDaoCache();
-        
-        /* @var $plugin BOL_Plugin */
-        foreach ( $pluginDaoCache as $plugin )
+        $key = strtolower($key);
+        $pluginList = $this->getPluginListCache();
+
+        if ( !array_key_exists($key, $pluginList) || ( $developerKey !== null && $pluginList[$key]->getDeveloperKey() != strtolower($developerKey) ) )
         {
-            if ( $developerKey !== null )
-            {
-                if ( $plugin->getKey() == $key && $plugin->getDeveloperKey() == $developerKey )
-                {
-                    return $plugin;
-                }
-            }
-            else if ( $plugin->getKey() == $key )
-            {
-                return $plugin;
-            }
+            return null;
         }
+
+        return $pluginList[$key];
     }
 
     /**
-     * Returns list of active plugins.
+     * Returns list of active plugins
      *
      * @return array
      */
     public function findActivePlugins()
     {
         $activePlugins = array();
-        $pluginDaoCache = $this->getPluginDaoCache();
-        
+        $pluginList = $this->getPluginListCache();
+
         /* @var $plugin BOL_Plugin */
-        foreach ( $pluginDaoCache as $plugin )
+        foreach ( $pluginList as $plugin )
         {
             if ( $plugin->isActive() )
             {
@@ -174,22 +152,14 @@ class BOL_PluginService
     }
 
     /**
-     * Returns list of plugins available for installation.
+     * Returns list of plugins available for installation
      *
      * @return array
      */
     public function getAvailablePluginsList()
     {
         $availPlugins = array();
-        $dbPlugins = $this->getPluginDaoCache();
-        $dbPluginsArray = array();
-
-        /* @var $plugin BOL_Plugin */
-        foreach ( $dbPlugins as $plugin )
-        {
-            $dbPluginsArray[] = $plugin->getKey();
-        }
-
+        $dbPluginsArray = array_keys($this->getPluginListCache());
         $xmlPlugins = $this->getPluginsXmlInfo();
 
         foreach ( $xmlPlugins as $key => $plugin )
@@ -204,7 +174,7 @@ class BOL_PluginService
     }
 
     /**
-     * Returns all plugins XML info.
+     * Returns all plugins XML info
      */
     public function getPluginsXmlInfo()
     {
@@ -227,6 +197,9 @@ class BOL_PluginService
         return $resultArray;
     }
 
+    /**
+     * Synchronizes plugins DB data with xml info
+     */
     public function updatePluginsXmlInfo()
     {
         $info = $this->getPluginsXmlInfo();
@@ -246,7 +219,7 @@ class BOL_PluginService
     }
 
     /**
-     * Reads provided XML file and returns plugin info array.
+     * Reads provided XML file and returns plugin info array
      *
      * @param string $pluginXmlPath
      * @return array|null
@@ -268,13 +241,19 @@ class BOL_PluginService
         return $xml;
     }
 
+    /**
+     * Returns the count of plugins ready for update
+     * 
+     * @return int
+     */
     public function findPluginsForUpdateCount()
     {
         return $this->pluginDao->findPluginsForUpdateCount();
     }
 
     /**
-     * Cron function.
+     * Cron function. Requests info from update server 
+     * 
      */
     public function checkUpdates()
     {
@@ -317,6 +296,7 @@ class BOL_PluginService
             $data = array();
         }
 
+        //TODO add request url to class constants list
         $requestUrl = OW::getRequest()->buildUrlQueryString(self::UPDATE_SERVER . 'get-items-update-info/');
 
         $data['plugins'] = urlencode(json_encode($pluginsRequestArray));
@@ -371,6 +351,13 @@ class BOL_PluginService
         }
     }
 
+    /**
+     * Return item (plugin/theme) update info
+     * 
+     * @param string $key
+     * @param string $devKey
+     * @return array
+     */
     public function getItemInfoForUpdate( $key, $devKey )
     {
         $params = array('key' => trim($key), 'developerKey' => $devKey);
@@ -383,12 +370,18 @@ class BOL_PluginService
             $data = $params;
         }
 
+        //TODO add request url to class constants list
         $requestUrl = OW::getRequest()->buildUrlQueryString(self::UPDATE_SERVER . 'get-item-info', $data);
 
-        return (array) json_decode((file_get_contents($requestUrl)));
+        return json_decode((file_get_contents($requestUrl)), true);
     }
 
-    public function getCoreInfoForUpdate()
+    /**
+     * Returns platform update info
+     * 
+     * @return array
+     */
+    public function getPlatformInfoForUpdate()
     {
         $event = new OW_Event('base.on_plugin_info_update');
         OW::getEventManager()->trigger($event);
@@ -400,12 +393,18 @@ class BOL_PluginService
             $data = array();
         }
 
+        //TODO add request url to class constants list
         $requestUrl = OW::getRequest()->buildUrlQueryString(self::UPDATE_SERVER . 'platform-info', $data);
 
-        return (array) json_decode((file_get_contents($requestUrl)));
+        return json_decode((file_get_contents($requestUrl)), true);
     }
 
-    public function downloadCore( $archivePath )
+    /**
+     * Downloads platform archive and moves it to provided location
+     * 
+     * @param string $archivePath
+     */
+    public function downloadPlatform( $archivePath )
     {
         $params = array(
             'platform-version' => OW::getConfig()->getValue('base', 'soft_version'),
@@ -421,12 +420,22 @@ class BOL_PluginService
             $data = $params;
         }
 
+        //TODO add request url to class constants list
         $requestUrl = OW::getRequest()->buildUrlQueryString(self::UPDATE_SERVER . 'download-platform', $data);
 
         $fileContents = file_get_contents($requestUrl);
         file_put_contents($archivePath, $fileContents);
     }
 
+    /**
+     * Downloads plugin archive and returns archive path
+     * 
+     * @param string $key
+     * @param string $devKey
+     * @param string $licenseKey
+     * @return string
+     * @throws LogicException
+     */
     public function downloadItem( $key, $devKey, $licenseKey = null )
     {
         $params = array('key' => trim($key), 'developerKey' => trim($devKey), 'licenseKey' => $licenseKey);
@@ -440,13 +449,14 @@ class BOL_PluginService
             $data = $params;
         }
 
+        //TODO add request url to class constants list
         $requestUrl = OW::getRequest()->buildUrlQueryString(self::UPDATE_SERVER . 'get-item', $data);
 
         $fileContents = file_get_contents($requestUrl);
 
         if ( empty($fileContents) )
         {
-            throw new LogicException("Can't download file. Server returned empty file.");
+            throw new LogicException("Can't download file! Server returned empty file!");
         }
 
         $filePath = OW_DIR_PLUGINFILES . 'ow' . DS . 'temp' . rand(1, 1000000) . '.zip';
@@ -456,6 +466,14 @@ class BOL_PluginService
         return $filePath;
     }
 
+    /**
+     * Checks license key for provided plugin
+     * 
+     * @param string $key
+     * @param string $developerKey
+     * @param string $licenseKey
+     * @return bool
+     */
     public function checkLicenseKey( $key, $developerKey, $licenseKey )
     {
         $params = array('key' => trim($key), 'licenseKey' => $licenseKey, 'developerKey' => $developerKey);
@@ -484,7 +502,7 @@ class BOL_PluginService
         $regularPlugins = array();
 
         /* @var $plugin BOL_Plugin */
-        foreach ( $this->getPluginDaoCache() as $plugin )
+        foreach ( $this->getPluginListCache() as $plugin )
         {
             if ( !$plugin->isSystem() )
             {
@@ -496,7 +514,7 @@ class BOL_PluginService
     }
 
     /**
-     * @param string $module
+     * Installs all available system plugins
      */
     public function installSystemPlugins()
     {
@@ -528,7 +546,7 @@ class BOL_PluginService
 
         if ( !array_key_exists("base", $pluginData) )
         {
-            throw new LogicException("Base plugin is not found in `" . $basePluginRootDir . "`");
+            throw new LogicException("Base plugin is not found in `{$basePluginRootDir}`!");
         }
 
         // install plugins list
@@ -548,19 +566,21 @@ class BOL_PluginService
                 $pluginDto->setDeveloperKey(trim($pluginInfo['developerKey']));
             }
 
+            $this->pluginDao->save($pluginDto);
+
             $plugin = new OW_SystemPlugin($pluginInfo);
 
-            if ( file_exists($plugin->getRootDir() . "install.php") )
+            if ( file_exists($plugin->getRootDir() . self::SCRIPT_INSTALL) )
             {
-                include_once $plugin->getRootDir() . "install.php";
+                include_once $plugin->getRootDir() . self::SCRIPT_INSTALL;
             }
 
-            $this->processPluginInstall($pluginDto);
+            $this->updatePluginListCache();
         }
     }
 
     /**
-     * Installs plugins.
+     * Installs plugin
      *
      * @param string $key
      */
@@ -570,7 +590,7 @@ class BOL_PluginService
 
         if ( empty($key) || !array_key_exists($key, $availablePlugins) )
         {
-            throw new LogicException('Invalid plugin key - `' . $key . '` provided!');
+            throw new LogicException("Invalid plugin key - `{$key}` provided for install!");
         }
 
         $pluginInfo = $availablePlugins[$key];
@@ -592,10 +612,11 @@ class BOL_PluginService
             $pluginDto->setDeveloperKey(trim($pluginInfo['developerKey']));
         }
 
-        $this->processPluginInstall($pluginDto);
+        $this->pluginDao->save($pluginDto);
+        $this->updatePluginListCache();
 
-        include_once OW_DIR_PLUGIN . $pluginDto->getModule() . DS . 'install.php';
-        include_once OW_DIR_PLUGIN . $pluginDto->getModule() . DS . 'activate.php';
+        include_once OW_DIR_PLUGIN . $pluginDto->getModule() . DS . self::SCRIPT_INSTALL;
+        include_once OW_DIR_PLUGIN . $pluginDto->getModule() . DS . self::SCRIPT_ACTIVATE;
 
         if ( $generateCache )
         {
@@ -609,17 +630,16 @@ class BOL_PluginService
         return $pluginDto;
     }
 
-    private function processPluginInstall( BOL_Plugin $pluginDto )
+    /**
+     * Creates platform reserved dirs for plugin, copies all plugin static data
+     * 
+     * @param BOL_Plugin $pluginDto
+     */
+    public function addPluginDirs( BOL_Plugin $pluginDto )
     {
-        $this->pluginDao->save($pluginDto);
+        $plugin = new OW_Plugin($pluginDto);
 
-        $this->readPluginsList();
-        OW::getPluginManager()->readPluginsList();
-
-        // copy static dir
-        $pluginStaticDir = OW_DIR_PLUGIN . $pluginDto->getModule() . DS . 'static' . DS;
-
-        if ( !defined('OW_PLUGIN_XP') && file_exists($pluginStaticDir) )
+        if ( !defined('OW_PLUGIN_XP') && file_exists($plugin->getStaticDir()) )
         {
             $staticDir = OW_DIR_STATIC_PLUGIN . $pluginDto->getModule() . DS;
 
@@ -629,7 +649,7 @@ class BOL_PluginService
                 chmod($staticDir, 0777);
             }
 
-            UTIL_File::copyDir($pluginStaticDir, $staticDir);
+            UTIL_File::copyDir($plugin->getStaticDir(), $staticDir);
         }
 
         // create dir in pluginfiles
@@ -652,7 +672,7 @@ class BOL_PluginService
     }
 
     /**
-     * Uninstalls plugin.
+     * Uninstalls plugin
      *
      * @param string $key
      */
@@ -660,24 +680,24 @@ class BOL_PluginService
     {
         if ( empty($key) )
         {
-            throw new LogicException('');
+            throw new LogicException("Empty plugin key provided for uninstall");
         }
 
         $pluginDto = $this->findPluginByKey(trim($key));
 
         if ( $pluginDto === null )
         {
-            throw new LogicException('');
+            throw new LogicException("Invalid plugin key - `{$key}` provided for uninstall!");
         }
 
         // trigger event
-        $event = new OW_Event(OW_EventManager::ON_BEFORE_PLUGIN_UNINSTALL, array('pluginKey' => $pluginDto->getKey()));
+        $event = new OW_Event(OW_EventManager::ON_BEFORE_PLUGIN_UNINSTALL, array("pluginKey" => $pluginDto->getKey()));
         OW::getEventManager()->trigger($event);
 
-        include OW_DIR_PLUGIN . $pluginDto->getModule() . DS . 'deactivate.php';
+        include OW_DIR_PLUGIN . $pluginDto->getModule() . DS . self::SCRIPT_DEACTIVATE;
 
         // include plugin custom uninstall script
-        include OW_DIR_PLUGIN . $pluginDto->getModule() . DS . 'uninstall.php';
+        include OW_DIR_PLUGIN . $pluginDto->getModule() . DS . self::SCRIPT_UNINSTALL;
 
         // delete plugin work dirs
         $dirsToRemove = array(
@@ -731,31 +751,55 @@ class BOL_PluginService
 
         //remove entry in DB
         $this->deletePluginById($pluginDto->getId());
+        $this->updatePluginListCache();
     }
 
+    /**
+     * Activates plugin
+     * 
+     * @param string $key
+     */
     public function activate( $key )
     {
         $pluginDto = $this->pluginDao->findPluginByKey($key);
+
         $pluginDto->setIsActive(true);
         $this->pluginDao->save($pluginDto);
         OW::getPluginManager()->addPackagePointers($pluginDto);
-        include OW_DIR_PLUGIN . $pluginDto->getModule() . DS . 'activate.php';
+        include OW_DIR_PLUGIN . $pluginDto->getModule() . DS . self::SCRIPT_ACTIVATE;
+        $this->updatePluginListCache();
     }
 
+    /**
+     * Deactivates plugin
+     * 
+     * @param sring $key
+     */
     public function deactivate( $key )
     {
         $pluginDto = $this->pluginDao->findPluginByKey($key);
 
         $pluginDto->setIsActive(false);
         $this->pluginDao->save($pluginDto);
-        include OW::getPluginManager()->getPlugin($pluginDto->getKey())->getRootDir() . 'deactivate.php';
+        include OW::getPluginManager()->getPlugin($pluginDto->getKey())->getRootDir() . self::SCRIPT_DEACTIVATE;
+        $this->updatePluginListCache();
     }
 
+    /**
+     * Returns the count of plugins available for update
+     * 
+     * @return int
+     */
     public function getPluginsToUpdateCount()
     {
         return $this->pluginDao->findPluginsForUpdateCount();
     }
 
+    /**
+     * Checks if plugin source code was updated, if yes changes the update status in DB
+     * 
+     * @return void
+     */
     public function checkManualUpdates()
     {
         if ( defined('OW_PLUGIN_XP') )
@@ -765,7 +809,7 @@ class BOL_PluginService
 
         $timestamp = OW::getConfig()->getValue('base', 'check_mupdates_ts');
 
-        if ( ( time() - (int) $timestamp ) < 30 )
+        if ( ( time() - (int) $timestamp ) < self::MANUAL_UPDATES_CHECK_INTERVAL_IN_SECONDS )
         {
             return;
         }
@@ -778,7 +822,7 @@ class BOL_PluginService
         {
             if ( !empty($xmlInfo[$plugin->getKey()]) && (int) $plugin->getBuild() < (int) $xmlInfo[$plugin->getKey()]['build'] )
             {
-                $plugin->setUpdate(2);
+                $plugin->setUpdate(BOL_PluginDao::UPDATE_VAL_MANUAL_UPDATE);
                 $this->pluginDao->save($plugin);
             }
         }
@@ -787,21 +831,13 @@ class BOL_PluginService
     }
 
     /**
+     * Returns next plugin for manual update if it's available
+     * 
      * @return BOL_Plugin
      */
     public function findNextManualUpdatePlugin()
     {
         return $this->pluginDao->findPluginForManualUpdate();
-    }
-
-    public function getCoreXmlInfo()
-    {
-        return (array) simplexml_load_file(OW_DIR_ROOT . 'ow_version.xml');
-    }
-
-    public function findAdsEnabledPluginList()
-    {
-        return array('base' => $this->pluginDao->findPluginByKey('base'));
     }
 
     /**
@@ -858,14 +894,25 @@ class BOL_PluginService
         return $ftp;
     }
 
-    /**
-     * @param BOL_Plugin $dto
-     * @return OW_Plugin
-     */
-    public function getPluginObject( BOL_Plugin $dto )
+    private function updatePluginListCache()
     {
-        return $dto->isSystem ?
-            new OW_SystemPlugin(array('dir_name' => $dto->getModule(), 'key' => $dto->getKey(), 'active' => $dto->isActive(), 'dto' => $dto)) :
-            new OW_Plugin(array('dir_name' => $dto->getModule(), 'key' => $dto->getKey(), 'active' => $dto->isActive(), 'dto' => $dto));
+        $this->pluginListCache = array();
+        $dbData = $this->pluginDao->findAll();
+
+        /* @var $plugin BOL_Plugin */
+        foreach ( $dbData as $plugin )
+        {
+            $this->pluginListCache[$plugin->getKey()] = $plugin;
+        }
+    }
+
+    private function getPluginListCache()
+    {
+        if ( !$this->pluginListCache )
+        {
+            $this->updatePluginListCache();
+        }
+
+        return $this->pluginListCache;
     }
 }

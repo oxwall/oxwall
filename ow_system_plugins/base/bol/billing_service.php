@@ -31,6 +31,9 @@
  */
 final class BOL_BillingService
 {
+    const EVENT_ON_AFTER_INIT_SALE = "base.billing.after_init_sale";
+    const EVENT_ON_AFTER_DELIVER_SALE = "base.billing.on_after_delivered_sale";
+    
     /**
      * @var BOL_BillingSaleDao
      */
@@ -190,7 +193,12 @@ final class BOL_BillingService
         $sale->gatewayId = $gateway->id;
 
         $this->billingSaleDao->save($sale);
-
+        
+        
+        $event = new OW_Event(self::EVENT_ON_AFTER_INIT_SALE, array("saleDbo" => $sale, "gateway" => $gateway));
+        OW::getEventManager()->trigger($event);
+        
+        
         return $sale->id;
     }
 
@@ -262,7 +270,8 @@ final class BOL_BillingService
         {
             $sale->status = BOL_BillingSaleDao::STATUS_DELIVERED;
             $this->saveSale($sale);
-
+            $event = new OW_Event(self::EVENT_ON_AFTER_DELIVER_SALE, array("saleDbo" => $sale, "adapter" => $adapter));
+            OW::getEventManager()->trigger($event);
             return true;
         }
 
