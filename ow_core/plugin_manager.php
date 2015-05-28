@@ -87,7 +87,7 @@ final class OW_PluginManager
 
         if ( !array_key_exists($plugin->getKey(), $this->cachedObjects) )
         {
-            $this->cachedObjects[$plugin->getKey()] = OW_Plugin($plugin);
+            $this->cachedObjects[$plugin->getKey()] = new OW_Plugin($plugin);
         }
 
         return $this->cachedObjects[$plugin->getKey()];
