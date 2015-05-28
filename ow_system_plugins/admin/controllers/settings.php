@@ -163,10 +163,7 @@ class ADMIN_CTRL_Settings extends ADMIN_CTRL_Abstract
         $commentsRichMedia->setDescription($language->text('admin', 'input_settings_comments_rich_media_disable_desc'));
         $settingsForm->addElement($commentsRichMedia);
 
-        $uploadMaxFilesize = (float) ini_get("upload_max_filesize");
-        $postMaxSize = (float) ini_get("post_max_size");
-
-        $maxUploadMaxFilesize = $uploadMaxFilesize >= $postMaxSize ? $postMaxSize : $uploadMaxFilesize;
+        $maxUploadMaxFilesize = BOL_FileService::getInstance()->getUploadMaxFilesize();
 
         $this->assign('maxUploadMaxFilesize', $maxUploadMaxFilesize);
 
@@ -277,8 +274,8 @@ class ADMIN_CTRL_Settings extends ADMIN_CTRL_Abstract
         $uploadMaxFilesize = (float) ini_get("upload_max_filesize");
         $postMaxSize = (float) ini_get("post_max_size");
 
-        $maxUploadMaxFilesize = $uploadMaxFilesize >= $postMaxSize ? $postMaxSize : $uploadMaxFilesize;
-        $this->assign('maxUploadMaxFilesize', $maxUploadMaxFilesize);        
+        $maxUploadMaxFilesize = BOL_FileService::getInstance()->getUploadMaxFilesize();
+        $this->assign('maxUploadMaxFilesize', $maxUploadMaxFilesize);       
         
         $userSettingsForm = new UserSettingsForm($maxUploadMaxFilesize);
         $this->addForm($userSettingsForm);
