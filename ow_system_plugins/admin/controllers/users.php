@@ -95,7 +95,7 @@ class ADMIN_CTRL_Users extends ADMIN_CTRL_Abstract
         $form->addElement($emails);
         $emails->setRequired();
         $emails->setHasInvitation(true);
-        $emails->setInvitation($language->text('admin', 'invite_members_textarea_invitation_text'));
+        $emails->setInvitation($language->text('admin', 'invite_members_textarea_invitation_text', array('limit' => (int)OW::getConfig()->getValue('base', 'user_invites_limit'))));
 
         $submit = new Submit('submit');
         $submit->setValue($language->text('admin', 'invite_members_submit_label'));
