@@ -568,7 +568,7 @@ class BOL_PluginService
 
             $this->pluginListCache[$pluginDto->getKey()] = $pluginDto;
 
-            $plugin = new OW_Plugin($pluginInfo);
+            $plugin = new OW_Plugin($pluginDto);
 
             if ( file_exists($plugin->getRootDir() . self::SCRIPT_INSTALL) )
             {
