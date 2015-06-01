@@ -1,3 +1,45 @@
+Oxwall 1.7.4 beta, 2015-05-25
+====================================
+
+Platform:
+- avatar size limit can be changed in admin area now
+- fixed issues with responsive google ads displaying
+- fixed issues with robots.txt syntax 
+- Flag Content button shows only for loged in users now in mobile/desktop versions
+- fixed issues with Custom Page termination
+- fixed fatal error with Date field type on Search page
+- added User list component
+
+Forum:
+- added advanced search
+- added an optional search engine Zend Lucene - increases search results relevancy significantly 
+- added "Filter by user" language key
+
+Photos:
+- now users can edit/view personal photos when service "View photo" is not active
+
+Messages: 
+- fixed issues with plugin using all memory running a cron task
+- fixed issue with a Logged Out user showing as Online in Mobile Version
+- fixed issue with Read messages showing as Unread
+- fixed interface issues with Conversation Windows and Messages Page
+
+Newsfeed:
+- Like and Delete buttons work in mobile version now
+- fixed issues with Status Update video upload
+- fixed issue with an uploaded video not playing in mobile version
+
+Groups: 
+- added lang keys for group invitations in site console
+
+Social Sharing:
+- social services' management interface is based on Ajax now
+
+Birthday:
+- added missing lang keys
+- fixed Birthday icon in Newsfeed item
+
+
 Oxwall 1.7.3, 2015-04-14
 ====================================
 
