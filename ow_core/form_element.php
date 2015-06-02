@@ -2958,7 +2958,8 @@ class MobileWysiwygTextarea extends Textarea
     private $buttons = array(
         BOL_TextFormatService::WS_BTN_BOLD,
         BOL_TextFormatService::WS_BTN_ITALIC,
-        BOL_TextFormatService::WS_BTN_UNDERLINE
+        BOL_TextFormatService::WS_BTN_UNDERLINE,
+        BOL_TextFormatService::WS_BTN_LINK
     );
 
     /**
@@ -3008,6 +3009,33 @@ class MobileWysiwygTextarea extends Textarea
         OW::getDocument()->addOnloadScript($js);
 
         return parent::renderInput($params);
+    }
+
+    /**
+     * Makes form element required.
+     *
+     * @param boolean $value
+     * @return FormElement
+     */
+    public function setRequired( $value = true )
+    {
+        if ( $value )
+        {
+            $this->addValidator(new WyswygRequiredValidator());
+        }
+        else
+        {
+            foreach ( $this->validators as $key => $validator )
+            {
+                if ( $validator instanceof WyswygRequiredValidator )
+                {
+                    unset($this->validators[$key]);
+                    break;
+                }
+            }
+        }
+
+        return $this;
     }
 }
 
