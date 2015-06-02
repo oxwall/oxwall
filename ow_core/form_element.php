@@ -3000,10 +3000,12 @@ class MobileWysiwygTextarea extends Textarea
 
         $this->addAttribute('class', 'owm_suitup_wyswyg');
 
-        $buttons = "'" . implode("','", $this->buttons) . "'";
-        OW::getDocument()->addOnloadScript("
-            $('#{$this->getId()}').suitUp([{$buttons}]).show();
-        ");
+        $js = UTIL_JsGenerator::composeJsString('$("#" + {$uniqId}).suitUp({$buttons}).show();', array(
+            'buttons' => $this->buttons,
+            'uniqId' => $this->getId()
+        ));
+
+        OW::getDocument()->addOnloadScript($js);
 
         return parent::renderInput($params);
     }
