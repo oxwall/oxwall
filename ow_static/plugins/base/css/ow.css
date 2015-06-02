@@ -2657,6 +2657,37 @@ a.ow_context_action_value,
     height: 22px;
     padding: 0 8px;
 }
+.extra_action {
+    float: left;
+}
+.extra_action .ow_context_action_block .ow_context_action,
+.extra_action .ow_context_action_block .ow_context_action:last-child {
+    border: 1px solid #b3b6b7;
+    border-top-left-radius: 3px;
+    border-top-right-radius: 3px;
+    padding: 0 8px;
+}
+.extra_action .ow_context_action_block .ow_context_action a.ow_context_action_value {
+    display: inline-block;
+    border: 0px;
+}
+.ow_profile_gallery_action_toolbar .extra_action .ow_context_action_list li{
+    float: none;
+    margin-bottom: 0px;
+}
+.extra_action .ow_context_action_list a{
+    background: #fff;
+    border: 1px solid #fff;
+    line-height: inherit;
+    height: auto;
+}
+.extra_action .ow_context_action_list a:hover {
+    text-decoration: none;
+    color: #494949;
+    text-shadow: #f8f8f8 1px 1px 0;
+    background: #e6e6e6;
+    border: 1px solid #f1f1f1;
+}
 a.ow_context_action_value {
     padding-right: 6px;
 }
