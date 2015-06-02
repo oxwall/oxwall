@@ -2944,6 +2944,76 @@ class YearRange extends FormElement implements DateRangeInterface
 /**
  * Form element: Textarea.
  * 
+ * @author Alex Ermashev <alexermashev@gmail.com>
+ * @package ow_core
+ * @since 1.0
+ */
+class MobileWysiwygTextarea extends Textarea
+{           
+    /**
+     * Buttons list
+     * 
+     * @var array
+     */
+    private $buttons = array(
+        BOL_TextFormatService::WS_BTN_BOLD,
+        BOL_TextFormatService::WS_BTN_ITALIC,
+        BOL_TextFormatService::WS_BTN_UNDERLINE
+    );
+
+    /**
+     * Constructor.
+     *
+     * @param string $name
+     */
+    public function __construct( $name, array $buttons = array() )
+    {
+        parent::__construct($name);
+
+        // init list of buttons
+        if ( !empty($buttons) )
+        {
+            $this->buttons = $buttons;
+        }
+
+        $stringValidator = new StringValidator(0, 50000);
+        $stringValidator->setErrorMessage(OW::getLanguage()->text('base', 'text_is_too_long', array('max_symbols_count' => 50000)));
+
+        $this->addValidator($stringValidator);
+    }
+
+    /**
+     * @see FormElement::renderInput()
+     *
+     * @param array $params
+     * @return string
+     */
+    public function renderInput( $params = null )
+    {
+        
+	if ( OW::getRegistry()->get('baseWsInit') === null )
+        {         
+            OW::getDocument()->addScript(OW::getPluginManager()->getPlugin('base')->getStaticJsUrl() . 'suitup.jquery.js?aa=aaa'.time());
+            OW::getDocument()->addStyleSheet(OW::getPluginManager()->getPlugin('base')->getStaticCssUrl() . 'suitup.css?aa=aaa'.time());
+            OW::getRegistry()->set('baseWsInit', true);
+        }
+
+        $this->addAttribute('class', 'owm_suitup_wyswyg');
+
+        $js = UTIL_JsGenerator::composeJsString('$("#" + {$uniqId}).suitUp({$buttons}).show();', array(
+            'buttons' => $this->buttons,
+            'uniqId' => $this->getId()
+        ));
+
+        OW::getDocument()->addOnloadScript($js);
+
+        return parent::renderInput($params);
+    }
+}
+
+/**
+ * Form element: Textarea.
+ * 
  * @author Sardar Madumarov <madumarov@gmail.com>
  * @package ow_core
  * @since 1.0

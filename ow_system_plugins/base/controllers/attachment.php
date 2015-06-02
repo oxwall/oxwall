@@ -186,7 +186,8 @@ class BASE_CTRL_Attachment extends OW_ActionController
             exit;
         }
 
-        $this->service->deleteAttachment(OW::getUser()->getId(), (int) $_GET['id']);
+        $fileId = !empty($_POST['id']) ? (int) $_POST['id'] : -1;
+        $this->service->deleteAttachment(OW::getUser()->getId(), $fileId);
 
         exit;
     }

@@ -1,0 +1,62 @@
+.owm_suitup-controls {
+    background: #e5e5e5 none repeat scroll 0 0;
+    display: block;
+    min-height: 30px;
+    padding-left:10px;
+    padding-right:10px;
+}
+
+.owm_suitup_wyswyg {
+    display:none !important;
+}
+
+.owm_suitup-editor {
+    padding: 10px;
+    border: 1px solid #b9b9b9;
+    overflow: auto;
+    background-color: white;
+    height:200px;
+}
+
+a.owm_suitup-control, span.owm_suitup-control {
+    background-color: #fff ;
+    background-position: center center;
+    background-repeat: no-repeat;
+    border-color: #ccc;
+    border-style: solid;
+    border-width: 1px 1px 1px 0;
+    display: inline-block;
+    height: 28px;
+    vertical-align: top;
+    width: 28px;
+    margin-bottom: 10px;
+    margin-top: 10px;
+}
+
+a.owm_suitup-control.active{ 
+    background-color: red; 
+}
+
+a.owm_suitup-control[data-command="bold"] {
+    background-image: url("images/ico_wysiwyg_b.png");
+}
+
+a.owm_suitup-control.active[data-command="bold"] {
+    background-image: url("images/ico_wysiwyg_b_hover.png");
+}
+
+a.owm_suitup-control[data-command="italic"] {
+    background-image: url("images/ico_wysiwyg_i.png");
+}
+
+a.owm_suitup-control.active[data-command="italic"] {
+    background-image: url("images/ico_wysiwyg_i_hover.png");
+}
+
+a.owm_suitup-control[data-command="underline"] {
+    background-image: url("images/ico_wysiwyg_u.png");
+}
+
+a.owm_suitup-control.active[data-command="underline"] {
+    background-image: url("images/ico_wysiwyg_u_hover.png");
+}
