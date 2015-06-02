@@ -3,6 +3,10 @@
         {foreach from=$toolbar item='action'}
             {if isset($action.html)}
                 {$action.html}
+            {elseif isset($action.extra_label)}
+                <div class="extra_action">
+                    {$action.extra_label}
+                </div>
             {else}
                 <li>
                     <a {$action.attrs} >
