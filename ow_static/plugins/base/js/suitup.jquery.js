@@ -6,14 +6,49 @@ var create = function( tagName, props ) {
 
 $.suitUp = {
         // default controls
-	controls: [ 'italic', 'bold' ],
-	
+	controls: [ 'italic', 'bold', 'undeline', 'link' ],
+        
 	commands: {
 	},
-	
+
 	custom: {
+            link: function( textarea, suitUpBlock ) {
+                
+                return create( 'a', {
+                    className: 'owm_suitup-control',
+                    href: 'javascript://'
+                }).attr({
+                    'data-command': 'createlink' // adding same style as for createlink command button
+                }).on( 'click', function() {
+                    if( !$.suitUp.hasSelectedNodeParent( 'a' ) ) {
+                        // remember the text selection
+                        var oldSelection = $.suitUp.getSelection();
+
+                        var floatBox = OWM.ajaxFloatBox("BASE_MCMP_LinkSelect", [{ "linkText" : $.suitUp.getSelectedText() }], {
+                            "title" : OW.getLanguageText('base', 'insert_link'),
+                            "scope" : {
+                                "success" : function(data) {
+                                    floatBox.close();
+                                    $(suitUpBlock).find(".owm_suitup-editor").focus();
+                                    $.suitUp.restoreSelection(oldSelection);
+
+                                    document.execCommand('insertHTML', false, '<a href="' + data.link + '" rel="nofollow" target="_blank">' + data.title + '</a> ');
+                                    textarea.value = $( suitUpBlock ).find( '.owm_suitup-editor' ).html();
+                                }
+                            }
+                        });
+                    } else {
+                        doc.execCommand( 'unlink', false, null );
+                        textarea.value = $( suitUpBlock ).find( '.owm_suitup-editor' ).html();
+                    }
+                });
+            }
 	},
-	
+
+        getSelectedText: function() {
+            return this.getSelection().toString();
+        },
+ 
 	getSelection: function() {
 		var range;
 		if( win.getSelection ) {
@@ -74,7 +109,6 @@ $.fn.suitUp = function( controls ) {
 		lastSelectionElement,
 		commands = $.suitUp.commands,
 		custom = $.suitUp.custom,
-		getSelection = suitUp.getSelection,
 		restoreSelection = suitUp.restoreSelection;
 	
 	controls = controls || $.suitUp.controls;
