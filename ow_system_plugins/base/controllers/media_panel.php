@@ -16,8 +16,44 @@ class BASE_CTRL_MediaPanel extends OW_ActionController
             return;
         }
 
-        OW::getDocument()->getMasterPage()->setTemplate(OW::getThemeManager()->getMasterPageTemplate(OW_MasterPage::TEMPLATE_BLANK));
-        OW::getDocument()->addStyleDeclaration(".ow_footer{display:none;}");
+        if ( !OW::getRequest()->isAjax() ) 
+        {
+            OW::getDocument()->getMasterPage()->setTemplate(OW::getThemeManager()->getMasterPageTemplate(OW_MasterPage::TEMPLATE_BLANK));
+            OW::getDocument()->addStyleDeclaration(".ow_footer{display:none;}");
+        }
+    }
+
+    public function ajaxUpload( $params )
+    {
+        $pluginKey = $params['pluginKey'];
+        $result = array();
+
+        if (OW::getRequest()->isPost())
+        {
+            if ( !empty($_POST['command']) && $_POST['command'] == 'image-upload' )
+            {
+                $imageId = UploadImageForm::addFile($pluginKey);
+
+                if ( is_numeric($imageId) )
+                {
+                    $img = BOL_MediaPanelService::getInstance()->findImage($imageId);
+                    $url = OW::getStorage()->getFileUrl(OW::getPluginManager()->
+                            getPlugin('base')->getUserFilesDir() . $img->id . '-' . $img->getData()->name);
+
+                    $result = array(
+                        'file_url' => OW::getStorage()->
+                                getFileUrl(OW::getPluginManager()->getPlugin('base')->getUserFilesDir() . $img->id . '-' . $img->getData()->name),
+                    );
+                }
+                else {
+                    $result = array(
+                        'error_message' => $imageId,
+                    );
+                }
+            }
+        }
+
+        die(json_encode($result));
     }
 
     public function index( $params )
@@ -162,24 +198,27 @@ class UploadImageForm extends Form
         return $this;
     }
 
-    public static function process( $plugin, $params )
+    /**
+     * Add file
+     * 
+     * @param string $plugin
+     * @return integer|string
+     */
+    public static function addFile( $plugin )
     {
-        $language = OW::getLanguage();
         $uploaddir = OW::getPluginManager()->getPlugin('base')->getUserFilesDir();
         $name = $_FILES['file']['name'];
 
         if ( !UTIL_File::validateImage($name) )
         {
-            OW::getFeedback()->error("Invalid file type. Acceptable file types: JPG/PNG/GIF");
-            OW::getApplication()->redirect();
+            return OW::getLanguage()->text('base', 'Invalid file type. Acceptable file types: JPG/PNG/GIF');
         }
 
         $tmpname = $_FILES['file']['tmp_name'];
 
         if ( (int) $_FILES['file']['size'] > (float) OW::getConfig()->getValue('base', 'tf_max_pic_size') * 1024 * 1024 )
         {
-            OW::getFeedback()->error($language->text('base', 'upload_file_max_upload_filesize_error'));
-            OW::getApplication()->redirect();
+            return OW::getLanguage()->text('base', 'upload_file_max_upload_filesize_error');
         }
 
         $image = new UTIL_Image($tmpname);
@@ -190,7 +229,19 @@ class UploadImageForm extends Form
         OW::getStorage()->copyFile($tmpname, $uploaddir . $id . '-' . $name);
         @unlink($tmpname);
 
-        $params['pid'] = $id;
+        return $id;
+    }
+
+    public static function process( $plugin, $params )
+    {
+        $imageId = self::addFile($plugin);
+
+        if (!is_numeric($imageId)) {
+            OW::getFeedback()->error($imageId);
+            OW::getApplication()->redirect();
+        }
+
+        $params['pid'] = $imageId;
         OW::getApplication()->redirect(OW::getRouter()->urlFor('BASE_CTRL_MediaPanel', 'gallery', $params) . '#bottom');
     }
 }

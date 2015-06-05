@@ -68,3 +68,11 @@ a.owm_suitup-control[data-command="createlink"] {
 a.owm_suitup-control.active[data-command="createlink"] {
     background-image: url("images/ico_wysiwyg_l_hover.png");
 }
+
+a.owm_suitup-control[data-command="insertImage"] {
+    background-image: url("images/ico_wysiwyg_photo.png");
+}
+
+a.owm_suitup-control.active[data-command="insertImage"] {
+    background-image: url("images/ico_wysiwyg_photo_hover.png");
+}
