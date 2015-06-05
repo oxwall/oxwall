@@ -1,0 +1,2983 @@
+.ow_hover_catch{
+
+}
+
+.ow_hover{
+
+}
+.ow_inline {
+    display: inline;
+}
+/* FloatBox */
+.floatbox_nooverflow {
+    overflow: hidden;
+}
+
+.ow_floatbox_preloader
+{
+    background: url(images/floatbox_preloader.gif) no-repeat center;
+    height: 3px;
+    width: 320px;
+    margin: 0px auto;
+}
+
+/* Main floatbox preloader */
+.floatbox_preloader
+{
+    margin:83px auto 0px;
+}
+
+/* Inner floatbox preloader */
+.floatbox_canvas_sub .floatbox_preloader
+{
+}
+
+/* Main floatbox container */
+.floatbox_canvas .floatbox_container {
+    margin: 50px auto 20px;
+    position: static;
+}
+
+/* Inner floatbox container */
+.floatbox_canvas_sub .floatbox_container {
+    border-width: 6px;
+    margin-top:115px;
+}
+
+
+.ow_floatbox_loading .floatbox_container
+{
+    visibility: hidden;
+}
+
+.floatbox_preloader_container
+{
+    display: none;
+}
+
+.ow_floatbox_loading .floatbox_preloader_container
+{
+    display: block;
+}
+
+.floatbox_string_preloader
+{
+    text-align: center;
+}
+
+.floatbox_string_preloader span
+{
+    font-size: 20px;
+    border: 10px solid #555555;
+    border-radius: 5px;
+    background-color: #EEEEEE;
+    color: #333333;
+    display: inline-block;
+    padding: 20px;
+    min-width: 300px;
+    text-align: left;
+}
+
+.floatbox_canvas {
+    top: 0px;
+    left: 0px;
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    z-index: 102;
+    overflow-y: auto;
+}
+
+.floatbox_canvas_sub {
+    height: 0px;
+    overflow: visible;
+}
+
+.floatbox_body {
+    overflow-y: auto;
+}
+
+.floatbox_canvas .floatbox_container .clearfix:after
+{
+    content: " ";
+}
+
+/* FloatBox Layout empty */
+
+.floatbox_empty .floatbox_container
+{
+    border-width: 0px;
+}
+
+.floatbox_empty .floatbox_header,
+.floatbox_empty .floatbox_body,
+.floatbox_empty .floatbox_bottom
+{
+    padding: 0px;
+}
+
+.floatbox_empty .floatbox_header
+{
+    position: relative;
+}
+
+.floatbox_empty .ow_box_cap_icons {
+    position: absolute;
+    margin: 0px;
+    top: -22px;
+    right: -22px;
+}
+
+
+/*Custom Scroll*/
+.jspContainer
+{
+    overflow: hidden;
+    position: relative;
+}
+
+.jspPane
+{
+    position: absolute;
+}
+
+.jspVerticalBar
+{
+    position: absolute;
+    top: 0;
+    right: 1px;
+    width: 4px;
+    height: 100%;
+}
+
+.jspHorizontalBar
+{
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+}
+
+.jspVerticalBar *,
+.jspHorizontalBar *
+{
+    margin: 0;
+    padding: 0;
+}
+
+.jspCap
+{
+    display: none;
+}
+
+.jspHorizontalBar .jspCap
+{
+    float: left;
+}
+
+.jspTrack
+{
+    position: relative;
+    /*display: none;*/
+}
+
+.jspDrag
+{
+    background: none repeat scroll 0 0 #999999;
+    border-radius: 2px 2px 2px 2px;
+    right: 0px;
+    width: 4px;
+    position: relative;
+    top: 0;
+    cursor: pointer;
+}
+
+.jspHorizontalBar .jspTrack,
+.jspHorizontalBar .jspDrag
+{
+    float: left;
+    height: 100%;
+}
+
+.jspArrow
+{
+    background: #50506d;
+    text-indent: -20000px;
+    display: block;
+    cursor: pointer;
+}
+
+.jspArrow.jspDisabled
+{
+    cursor: default;
+    background: #80808d;
+}
+
+.jspVerticalBar .jspArrow
+{
+    height: 16px;
+}
+
+.jspHorizontalBar .jspArrow
+{
+    width: 16px;
+    float: left;
+    height: 100%;
+}
+
+.jspVerticalBar .jspArrow:focus
+{
+    outline: none;
+}
+
+.jspCorner
+{
+    background: #eeeef4;
+    float: left;
+    height: 100%;
+}
+
+/* Yuk! CSS Hack for IE6 3 pixel bug :( */
+* html .jspCorner
+{
+    margin: 0 -3px 0 0;
+}
+
+.ow_scrollable
+{
+    overflow-y: auto;
+}
+
+/*.ow_scrollable:hover .jspTrack
+{
+    display: block;
+}*/
+
+.ow_console_list_preloader
+{
+    height: 30px;
+}
+/* ---- Console Flags styles ---- */
+
+.ow_console_lang_ad {
+    background: url(images/flags/AD.png) no-repeat 0px 3px;
+}
+.ow_console_lang_ae {
+    background: url(images/flags/AE.png) no-repeat 0px 3px;
+}
+.ow_console_lang_af {
+    background: url(images/flags/AF.png) no-repeat 0px 3px;
+}
+.ow_console_lang_ag {
+    background: url(images/flags/AG.png) no-repeat 0px 3px;
+}
+.ow_console_lang_ai {
+    background: url(images/flags/AI.png) no-repeat 0px 3px;
+}
+.ow_console_lang_al {
+    background: url(images/flags/AL.png) no-repeat 0px 3px;
+}
+.ow_console_lang_am {
+    background: url(images/flags/AM.png) no-repeat 0px 3px;
+}
+.ow_console_lang_ao {
+    background: url(images/flags/AO.png) no-repeat 0px 3px;
+}
+.ow_console_lang_aq {
+    background: url(images/flags/AQ.png) no-repeat 0px 3px;
+}
+.ow_console_lang_ar {
+    background: url(images/flags/AR.png) no-repeat 0px 3px;
+}
+.ow_console_lang_as {
+    background: url(images/flags/AS.png) no-repeat 0px 3px;
+}
+.ow_console_lang_at {
+    background: url(images/flags/AT.png) no-repeat 0px 3px;
+}
+.ow_console_lang_au {
+    background: url(images/flags/AU.png) no-repeat 0px 3px;
+}
+.ow_console_lang_aw {
+    background: url(images/flags/AW.png) no-repeat 0px 3px;
+}
+.ow_console_lang_ax {
+    background: url(images/flags/AX.png) no-repeat 0px 3px;
+}
+.ow_console_lang_az {
+    background: url(images/flags/AZ.png) no-repeat 0px 3px;
+}
+.ow_console_lang_ba {
+    background: url(images/flags/BA.png) no-repeat 0px 3px;
+}
+.ow_console_lang_bb {
+    background: url(images/flags/BB.png) no-repeat 0px 3px;
+}
+.ow_console_lang_bd {
+    background: url(images/flags/BD.png) no-repeat 0px 3px;
+}
+.ow_console_lang_be {
+    background: url(images/flags/BE.png) no-repeat 0px 3px;
+}
+.ow_console_lang_bf {
+    background: url(images/flags/BF.png) no-repeat 0px 3px;
+}
+.ow_console_lang_bg {
+    background: url(images/flags/BG.png) no-repeat 0px 3px;
+}
+.ow_console_lang_bh {
+    background: url(images/flags/BH.png) no-repeat 0px 3px;
+}
+.ow_console_lang_bi {
+    background: url(images/flags/BI.png) no-repeat 0px 3px;
+}
+.ow_console_lang_bj {
+    background: url(images/flags/BJ.png) no-repeat 0px 3px;
+}
+.ow_console_lang_bl {
+    background: url(images/flags/BL.png) no-repeat 0px 3px;
+}
+.ow_console_lang_bm {
+    background: url(images/flags/BM.png) no-repeat 0px 3px;
+}
+.ow_console_lang_bn {
+    background: url(images/flags/BN.png) no-repeat 0px 3px;
+}
+.ow_console_lang_bo {
+    background: url(images/flags/BO.png) no-repeat 0px 3px;
+}
+.ow_console_lang_bq {
+    background: url(images/flags/BQ.png) no-repeat 0px 3px;
+}
+.ow_console_lang_br {
+    background: url(images/flags/BR.png) no-repeat 0px 3px;
+}
+.ow_console_lang_bs {
+    background: url(images/flags/BS.png) no-repeat 0px 3px;
+}
+.ow_console_lang_bt {
+    background: url(images/flags/BT.png) no-repeat 0px 3px;
+}
+.ow_console_lang_bv {
+    background: url(images/flags/BV.png) no-repeat 0px 3px;
+}
+.ow_console_lang_bw {
+    background: url(images/flags/BW.png) no-repeat 0px 3px;
+}
+.ow_console_lang_by {
+    background: url(images/flags/BY.png) no-repeat 0px 3px;
+}
+.ow_console_lang_bz {
+    background: url(images/flags/BZ.png) no-repeat 0px 3px;
+}
+.ow_console_lang_ca {
+    background: url(images/flags/CA.png) no-repeat 0px 3px;
+}
+.ow_console_lang_cc {
+    background: url(images/flags/CC.png) no-repeat 0px 3px;
+}
+.ow_console_lang_cd {
+    background: url(images/flags/CD.png) no-repeat 0px 3px;
+}
+.ow_console_lang_cf {
+    background: url(images/flags/CF.png) no-repeat 0px 3px;
+}
+.ow_console_lang_cg {
+    background: url(images/flags/CG.png) no-repeat 0px 3px;
+}
+.ow_console_lang_ch {
+    background: url(images/flags/CH.png) no-repeat 0px 3px;
+}
+.ow_console_lang_ci {
+    background: url(images/flags/CI.png) no-repeat 0px 3px;
+}
+.ow_console_lang_ck {
+    background: url(images/flags/CK.png) no-repeat 0px 3px;
+}
+.ow_console_lang_cl {
+    background: url(images/flags/CL.png) no-repeat 0px 3px;
+}
+.ow_console_lang_cm {
+    background: url(images/flags/CM.png) no-repeat 0px 3px;
+}
+.ow_console_lang_cn {
+    background: url(images/flags/CN.png) no-repeat 0px 3px;
+}
+.ow_console_lang_co {
+    background: url(images/flags/CO.png) no-repeat 0px 3px;
+}
+.ow_console_lang_cr {
+    background: url(images/flags/CR.png) no-repeat 0px 3px;
+}
+.ow_console_lang_cu {
+    background: url(images/flags/CU.png) no-repeat 0px 3px;
+}
+.ow_console_lang_cv {
+    background: url(images/flags/CV.png) no-repeat 0px 3px;
+}
+.ow_console_lang_cw {
+    background: url(images/flags/CW.png) no-repeat 0px 3px;
+}
+.ow_console_lang_cx {
+    background: url(images/flags/CX.png) no-repeat 0px 3px;
+}
+.ow_console_lang_cy {
+    background: url(images/flags/CY.png) no-repeat 0px 3px;
+}
+.ow_console_lang_cz {
+    background: url(images/flags/CZ.png) no-repeat 0px 3px;
+}
+.ow_console_lang_de {
+    background: url(images/flags/DE.png) no-repeat 0px 3px;
+}
+.ow_console_lang_dj {
+    background: url(images/flags/DJ.png) no-repeat 0px 3px;
+}
+.ow_console_lang_dk {
+    background: url(images/flags/DK.png) no-repeat 0px 3px;
+}
+.ow_console_lang_dm {
+    background: url(images/flags/DM.png) no-repeat 0px 3px;
+}
+.ow_console_lang_do {
+    background: url(images/flags/DO.png) no-repeat 0px 3px;
+}
+.ow_console_lang_dz {
+    background: url(images/flags/DZ.png) no-repeat 0px 3px;
+}
+.ow_console_lang_ec {
+    background: url(images/flags/EC.png) no-repeat 0px 3px;
+}
+.ow_console_lang_ee {
+    background: url(images/flags/EE.png) no-repeat 0px 3px;
+}
+.ow_console_lang_eg {
+    background: url(images/flags/EG.png) no-repeat 0px 3px;
+}
+.ow_console_lang_eh {
+    background: url(images/flags/EH.png) no-repeat 0px 3px;
+}
+.ow_console_lang_er {
+    background: url(images/flags/ER.png) no-repeat 0px 3px;
+}
+.ow_console_lang_es {
+    background: url(images/flags/ES.png) no-repeat 0px 3px;
+}
+.ow_console_lang_et {
+    background: url(images/flags/ET.png) no-repeat 0px 3px;
+}
+.ow_console_lang_eu {
+    background: url(images/flags/EU.png) no-repeat 0px 3px;
+}
+.ow_console_lang_fi {
+    background: url(images/flags/FI.png) no-repeat 0px 3px;
+}
+.ow_console_lang_fj {
+    background: url(images/flags/FJ.png) no-repeat 0px 3px;
+}
+.ow_console_lang_fk {
+    background: url(images/flags/FK.png) no-repeat 0px 3px;
+}
+.ow_console_lang_fm {
+    background: url(images/flags/FM.png) no-repeat 0px 3px;
+}
+.ow_console_lang_fo {
+    background: url(images/flags/FO.png) no-repeat 0px 3px;
+}
+.ow_console_lang_fr {
+    background: url(images/flags/FR.png) no-repeat 0px 3px;
+}
+.ow_console_lang_ga {
+    background: url(images/flags/GA.png) no-repeat 0px 3px;
+}
+.ow_console_lang_gb {
+    background: url(images/flags/GB.png) no-repeat 0px 3px;
+}
+.ow_console_lang_gd {
+    background: url(images/flags/GD.png) no-repeat 0px 3px;
+}
+.ow_console_lang_ge {
+    background: url(images/flags/GE.png) no-repeat 0px 3px;
+}
+.ow_console_lang_gf {
+    background: url(images/flags/GF.png) no-repeat 0px 3px;
+}
+.ow_console_lang_gg {
+    background: url(images/flags/GG.png) no-repeat 0px 3px;
+}
+.ow_console_lang_gh {
+    background: url(images/flags/GH.png) no-repeat 0px 3px;
+}
+.ow_console_lang_gi {
+    background: url(images/flags/GI.png) no-repeat 0px 3px;
+}
+.ow_console_lang_gl {
+    background: url(images/flags/GL.png) no-repeat 0px 3px;
+}
+.ow_console_lang_gm {
+    background: url(images/flags/GM.png) no-repeat 0px 3px;
+}
+.ow_console_lang_gn {
+    background: url(images/flags/GN.png) no-repeat 0px 3px;
+}
+.ow_console_lang_gp {
+    background: url(images/flags/GP.png) no-repeat 0px 3px;
+}
+.ow_console_lang_gq {
+    background: url(images/flags/GQ.png) no-repeat 0px 3px;
+}
+.ow_console_lang_gr {
+    background: url(images/flags/GR.png) no-repeat 0px 3px;
+}
+.ow_console_lang_gs {
+    background: url(images/flags/GS.png) no-repeat 0px 3px;
+}
+.ow_console_lang_gt {
+    background: url(images/flags/GT.png) no-repeat 0px 3px;
+}
+.ow_console_lang_gu {
+    background: url(images/flags/GU.png) no-repeat 0px 3px;
+}
+.ow_console_lang_gw {
+    background: url(images/flags/GW.png) no-repeat 0px 3px;
+}
+.ow_console_lang_gy {
+    background: url(images/flags/GY.png) no-repeat 0px 3px;
+}
+.ow_console_lang_hk {
+    background: url(images/flags/HK.png) no-repeat 0px 3px;
+}
+.ow_console_lang_hm {
+    background: url(images/flags/HM.png) no-repeat 0px 3px;
+}
+.ow_console_lang_hn {
+    background: url(images/flags/HN.png) no-repeat 0px 3px;
+}
+.ow_console_lang_hr {
+    background: url(images/flags/HR.png) no-repeat 0px 3px;
+}
+.ow_console_lang_ht {
+    background: url(images/flags/HT.png) no-repeat 0px 3px;
+}
+.ow_console_lang_hu {
+    background: url(images/flags/HU.png) no-repeat 0px 3px;
+}
+.ow_console_lang_id {
+    background: url(images/flags/ID.png) no-repeat 0px 3px;
+}
+.ow_console_lang_ie {
+    background: url(images/flags/IE.png) no-repeat 0px 3px;
+}
+.ow_console_lang_il {
+    background: url(images/flags/IL.png) no-repeat 0px 3px;
+}
+.ow_console_lang_im {
+    background: url(images/flags/IM.png) no-repeat 0px 3px;
+}
+.ow_console_lang_in {
+    background: url(images/flags/IN.png) no-repeat 0px 3px;
+}
+.ow_console_lang_io {
+    background: url(images/flags/IO.png) no-repeat 0px 3px;
+}
+.ow_console_lang_iq {
+    background: url(images/flags/IQ.png) no-repeat 0px 3px;
+}
+.ow_console_lang_ir {
+    background: url(images/flags/IR.png) no-repeat 0px 3px;
+}
+.ow_console_lang_is {
+    background: url(images/flags/IS.png) no-repeat 0px 3px;
+}
+.ow_console_lang_it {
+    background: url(images/flags/IT.png) no-repeat 0px 3px;
+}
+.ow_console_lang_je {
+    background: url(images/flags/JE.png) no-repeat 0px 3px;
+}
+.ow_console_lang_jm {
+    background: url(images/flags/JM.png) no-repeat 0px 3px;
+}
+.ow_console_lang_jo {
+    background: url(images/flags/JO.png) no-repeat 0px 3px;
+}
+.ow_console_lang_jp {
+    background: url(images/flags/JP.png) no-repeat 0px 3px;
+}
+.ow_console_lang_ke {
+    background: url(images/flags/KE.png) no-repeat 0px 3px;
+}
+.ow_console_lang_kg {
+    background: url(images/flags/KG.png) no-repeat 0px 3px;
+}
+.ow_console_lang_kh {
+    background: url(images/flags/KH.png) no-repeat 0px 3px;
+}
+.ow_console_lang_ki {
+    background: url(images/flags/KI.png) no-repeat 0px 3px;
+}
+.ow_console_lang_km {
+    background: url(images/flags/KM.png) no-repeat 0px 3px;
+}
+.ow_console_lang_kn {
+    background: url(images/flags/KN.png) no-repeat 0px 3px;
+}
+.ow_console_lang_kp {
+    background: url(images/flags/KP.png) no-repeat 0px 3px;
+}
+.ow_console_lang_kr {
+    background: url(images/flags/KR.png) no-repeat 0px 3px;
+}
+.ow_console_lang_kw {
+    background: url(images/flags/KW.png) no-repeat 0px 3px;
+}
+.ow_console_lang_ky {
+    background: url(images/flags/KY.png) no-repeat 0px 3px;
+}
+.ow_console_lang_kz {
+    background: url(images/flags/KZ.png) no-repeat 0px 3px;
+}
+.ow_console_lang_la {
+    background: url(images/flags/LA.png) no-repeat 0px 3px;
+}
+.ow_console_lang_lb {
+    background: url(images/flags/LB.png) no-repeat 0px 3px;
+}
+.ow_console_lang_lc {
+    background: url(images/flags/LC.png) no-repeat 0px 3px;
+}
+.ow_console_lang_li {
+    background: url(images/flags/LI.png) no-repeat 0px 3px;
+}
+.ow_console_lang_lk {
+    background: url(images/flags/LK.png) no-repeat 0px 3px;
+}
+.ow_console_lang_lr {
+    background: url(images/flags/LR.png) no-repeat 0px 3px;
+}
+.ow_console_lang_ls {
+    background: url(images/flags/LS.png) no-repeat 0px 3px;
+}
+.ow_console_lang_lt {
+    background: url(images/flags/LT.png) no-repeat 0px 3px;
+}
+.ow_console_lang_lu {
+    background: url(images/flags/LU.png) no-repeat 0px 3px;
+}
+.ow_console_lang_lv {
+    background: url(images/flags/LV.png) no-repeat 0px 3px;
+}
+.ow_console_lang_ly {
+    background: url(images/flags/LY.png) no-repeat 0px 3px;
+}
+.ow_console_lang_ma {
+    background: url(images/flags/MA.png) no-repeat 0px 3px;
+}
+.ow_console_lang_mc {
+    background: url(images/flags/MC.png) no-repeat 0px 3px;
+}
+.ow_console_lang_md {
+    background: url(images/flags/MD.png) no-repeat 0px 3px;
+}
+.ow_console_lang_me {
+    background: url(images/flags/ME.png) no-repeat 0px 3px;
+}
+.ow_console_lang_mf {
+    background: url(images/flags/MF.png) no-repeat 0px 3px;
+}
+.ow_console_lang_mg {
+    background: url(images/flags/MG.png) no-repeat 0px 3px;
+}
+.ow_console_lang_mh {
+    background: url(images/flags/MH.png) no-repeat 0px 3px;
+}
+.ow_console_lang_mk {
+    background: url(images/flags/MK.png) no-repeat 0px 3px;
+}
+.ow_console_lang_ml {
+    background: url(images/flags/ML.png) no-repeat 0px 3px;
+}
+.ow_console_lang_mm {
+    background: url(images/flags/MM.png) no-repeat 0px 3px;
+}
+.ow_console_lang_mn {
+    background: url(images/flags/MN.png) no-repeat 0px 3px;
+}
+.ow_console_lang_mo {
+    background: url(images/flags/MO.png) no-repeat 0px 3px;
+}
+.ow_console_lang_mp {
+    background: url(images/flags/MP.png) no-repeat 0px 3px;
+}
+.ow_console_lang_mq {
+    background: url(images/flags/MQ.png) no-repeat 0px 3px;
+}
+.ow_console_lang_mr {
+    background: url(images/flags/MR.png) no-repeat 0px 3px;
+}
+.ow_console_lang_ms {
+    background: url(images/flags/MS.png) no-repeat 0px 3px;
+}
+.ow_console_lang_mt {
+    background: url(images/flags/MT.png) no-repeat 0px 3px;
+}
+.ow_console_lang_mu {
+    background: url(images/flags/MU.png) no-repeat 0px 3px;
+}
+.ow_console_lang_mv {
+    background: url(images/flags/MV.png) no-repeat 0px 3px;
+}
+.ow_console_lang_mw {
+    background: url(images/flags/MW.png) no-repeat 0px 3px;
+}
+.ow_console_lang_mx {
+    background: url(images/flags/MX.png) no-repeat 0px 3px;
+}
+.ow_console_lang_my {
+    background: url(images/flags/MY.png) no-repeat 0px 3px;
+}
+.ow_console_lang_mz {
+    background: url(images/flags/MZ.png) no-repeat 0px 3px;
+}
+.ow_console_lang_na {
+    background: url(images/flags/NA.png) no-repeat 0px 3px;
+}
+.ow_console_lang_nc {
+    background: url(images/flags/NC.png) no-repeat 0px 3px;
+}
+.ow_console_lang_ne {
+    background: url(images/flags/NE.png) no-repeat 0px 3px;
+}
+.ow_console_lang_nf {
+    background: url(images/flags/NF.png) no-repeat 0px 3px;
+}
+.ow_console_lang_ng {
+    background: url(images/flags/NG.png) no-repeat 0px 3px;
+}
+.ow_console_lang_ni {
+    background: url(images/flags/NI.png) no-repeat 0px 3px;
+}
+.ow_console_lang_nl {
+    background: url(images/flags/NL.png) no-repeat 0px 3px;
+}
+.ow_console_lang_no {
+    background: url(images/flags/NO.png) no-repeat 0px 3px;
+}
+.ow_console_lang_np {
+    background: url(images/flags/NP.png) no-repeat 0px 3px;
+}
+.ow_console_lang_nr {
+    background: url(images/flags/NR.png) no-repeat 0px 3px;
+}
+.ow_console_lang_nu {
+    background: url(images/flags/NU.png) no-repeat 0px 3px;
+}
+.ow_console_lang_nz {
+    background: url(images/flags/NZ.png) no-repeat 0px 3px;
+}
+.ow_console_lang_om {
+    background: url(images/flags/OM.png) no-repeat 0px 3px;
+}
+.ow_console_lang_pa {
+    background: url(images/flags/PA.png) no-repeat 0px 3px;
+}
+.ow_console_lang_pe {
+    background: url(images/flags/PE.png) no-repeat 0px 3px;
+}
+.ow_console_lang_pf {
+    background: url(images/flags/PF.png) no-repeat 0px 3px;
+}
+.ow_console_lang_pg {
+    background: url(images/flags/PG.png) no-repeat 0px 3px;
+}
+.ow_console_lang_ph {
+    background: url(images/flags/PH.png) no-repeat 0px 3px;
+}
+.ow_console_lang_pk {
+    background: url(images/flags/PK.png) no-repeat 0px 3px;
+}
+.ow_console_lang_pl {
+    background: url(images/flags/PL.png) no-repeat 0px 3px;
+}
+.ow_console_lang_pm {
+    background: url(images/flags/PM.png) no-repeat 0px 3px;
+}
+.ow_console_lang_pn {
+    background: url(images/flags/PN.png) no-repeat 0px 3px;
+}
+.ow_console_lang_pr {
+    background: url(images/flags/PR.png) no-repeat 0px 3px;
+}
+.ow_console_lang_ps {
+    background: url(images/flags/PS.png) no-repeat 0px 3px;
+}
+.ow_console_lang_pt {
+    background: url(images/flags/PT.png) no-repeat 0px 3px;
+}
+.ow_console_lang_pw {
+    background: url(images/flags/PW.png) no-repeat 0px 3px;
+}
+.ow_console_lang_py {
+    background: url(images/flags/PY.png) no-repeat 0px 3px;
+}
+.ow_console_lang_qa {
+    background: url(images/flags/QA.png) no-repeat 0px 3px;
+}
+.ow_console_lang_re {
+    background: url(images/flags/RE.png) no-repeat 0px 3px;
+}
+.ow_console_lang_ro {
+    background: url(images/flags/RO.png) no-repeat 0px 3px;
+}
+.ow_console_lang_rs {
+    background: url(images/flags/RS.png) no-repeat 0px 3px;
+}
+.ow_console_lang_ru {
+    background: url(images/flags/RU.png) no-repeat 0px 3px;
+}
+.ow_console_lang_rw {
+    background: url(images/flags/RW.png) no-repeat 0px 3px;
+}
+.ow_console_lang_sa {
+    background: url(images/flags/SA.png) no-repeat 0px 3px;
+}
+.ow_console_lang_sb {
+    background: url(images/flags/SB.png) no-repeat 0px 3px;
+}
+.ow_console_lang_sc {
+    background: url(images/flags/SC.png) no-repeat 0px 3px;
+}
+.ow_console_lang_sd {
+    background: url(images/flags/SD.png) no-repeat 0px 3px;
+}
+.ow_console_lang_se {
+    background: url(images/flags/SE.png) no-repeat 0px 3px;
+}
+.ow_console_lang_sg {
+    background: url(images/flags/SG.png) no-repeat 0px 3px;
+}
+.ow_console_lang_sh {
+    background: url(images/flags/SH.png) no-repeat 0px 3px;
+}
+.ow_console_lang_si {
+    background: url(images/flags/SI.png) no-repeat 0px 3px;
+}
+.ow_console_lang_sj {
+    background: url(images/flags/SJ.png) no-repeat 0px 3px;
+}
+.ow_console_lang_sk {
+    background: url(images/flags/SK.png) no-repeat 0px 3px;
+}
+.ow_console_lang_sl {
+    background: url(images/flags/SL.png) no-repeat 0px 3px;
+}
+.ow_console_lang_sm {
+    background: url(images/flags/SM.png) no-repeat 0px 3px;
+}
+.ow_console_lang_sn {
+    background: url(images/flags/SN.png) no-repeat 0px 3px;
+}
+.ow_console_lang_so {
+    background: url(images/flags/SO.png) no-repeat 0px 3px;
+}
+.ow_console_lang_sr {
+    background: url(images/flags/SR.png) no-repeat 0px 3px;
+}
+.ow_console_lang_ss {
+    background: url(images/flags/SS.png) no-repeat 0px 3px;
+}
+.ow_console_lang_st {
+    background: url(images/flags/ST.png) no-repeat 0px 3px;
+}
+.ow_console_lang_sv {
+    background: url(images/flags/SV.png) no-repeat 0px 3px;
+}
+.ow_console_lang_sx {
+    background: url(images/flags/SX.png) no-repeat 0px 3px;
+}
+.ow_console_lang_sy {
+    background: url(images/flags/SY.png) no-repeat 0px 3px;
+}
+.ow_console_lang_sz {
+    background: url(images/flags/SZ.png) no-repeat 0px 3px;
+}
+.ow_console_lang_tc {
+    background: url(images/flags/TC.png) no-repeat 0px 3px;
+}
+.ow_console_lang_td {
+    background: url(images/flags/TD.png) no-repeat 0px 3px;
+}
+.ow_console_lang_tf {
+    background: url(images/flags/TF.png) no-repeat 0px 3px;
+}
+.ow_console_lang_tg {
+    background: url(images/flags/TG.png) no-repeat 0px 3px;
+}
+.ow_console_lang_th {
+    background: url(images/flags/TH.png) no-repeat 0px 3px;
+}
+.ow_console_lang_tj {
+    background: url(images/flags/TJ.png) no-repeat 0px 3px;
+}
+.ow_console_lang_tk {
+    background: url(images/flags/TK.png) no-repeat 0px 3px;
+}
+.ow_console_lang_tl {
+    background: url(images/flags/TL.png) no-repeat 0px 3px;
+}
+.ow_console_lang_tm {
+    background: url(images/flags/TM.png) no-repeat 0px 3px;
+}
+.ow_console_lang_tn {
+    background: url(images/flags/TN.png) no-repeat 0px 3px;
+}
+.ow_console_lang_to {
+    background: url(images/flags/TO.png) no-repeat 0px 3px;
+}
+.ow_console_lang_tr {
+    background: url(images/flags/TR.png) no-repeat 0px 3px;
+}
+.ow_console_lang_tt {
+    background: url(images/flags/TT.png) no-repeat 0px 3px;
+}
+.ow_console_lang_tv {
+    background: url(images/flags/TV.png) no-repeat 0px 3px;
+}
+.ow_console_lang_tw {
+    background: url(images/flags/TW.png) no-repeat 0px 3px;
+}
+.ow_console_lang_tz {
+    background: url(images/flags/TZ.png) no-repeat 0px 3px;
+}
+.ow_console_lang_ua {
+    background: url(images/flags/UA.png) no-repeat 0px 3px;
+}
+.ow_console_lang_ug {
+    background: url(images/flags/UG.png) no-repeat 0px 3px;
+}
+.ow_console_lang_um {
+    background: url(images/flags/UM.png) no-repeat 0px 3px;
+}
+.ow_console_lang_us,
+.ow_console_lang_en {
+    background: url(images/flags/US.png) no-repeat 0px 3px;
+}
+.ow_console_lang_uy {
+    background: url(images/flags/UY.png) no-repeat 0px 3px;
+}
+.ow_console_lang_uz {
+    background: url(images/flags/UZ.png) no-repeat 0px 3px;
+}
+.ow_console_lang_va {
+    background: url(images/flags/VA.png) no-repeat 0px 3px;
+}
+.ow_console_lang_vc {
+    background: url(images/flags/VC.png) no-repeat 0px 3px;
+}
+.ow_console_lang_ve {
+    background: url(images/flags/VE.png) no-repeat 0px 3px;
+}
+.ow_console_lang_vg {
+    background: url(images/flags/VG.png) no-repeat 0px 3px;
+}
+.ow_console_lang_vi {
+    background: url(images/flags/VI.png) no-repeat 0px 3px;
+}
+.ow_console_lang_vn {
+    background: url(images/flags/VN.png) no-repeat 0px 3px;
+}
+.ow_console_lang_vu {
+    background: url(images/flags/VU.png) no-repeat 0px 3px;
+}
+.ow_console_lang_wf {
+    background: url(images/flags/WF.png) no-repeat 0px 3px;
+}
+.ow_console_lang_ws {
+    background: url(images/flags/WS.png) no-repeat 0px 3px;
+}
+.ow_console_lang_ye {
+    background: url(images/flags/YE.png) no-repeat 0px 3px;
+}
+.ow_console_lang_yt {
+    background: url(images/flags/YT.png) no-repeat 0px 3px;
+}
+.ow_console_lang_za {
+    background: url(images/flags/ZA.png) no-repeat 0px 3px;
+}
+.ow_console_lang_zm {
+    background: url(images/flags/ZM.png) no-repeat 0px 3px;
+}
+.ow_console_lang_zw {
+    background: url(images/flags/ZW.png) no-repeat 0px 3px;
+}
+/* ---- End of Console Flags styles ---- */
+
+.ow_dnd_widget_customize .ow_box_cap_body {
+    position: relative;
+}
+.ow_dnd_widget_customize .ow_box_icons {
+    position: absolute;
+    right: 0px;
+}
+.ow_dnd_schem_item .action a {
+    background-position: center center;
+    background-repeat: no-repeat;
+    display: inline-block;
+    height: 16px;
+    text-decoration: none;
+    width: 18px;
+}
+body .ow_dnd_schem_item span.action {
+    width: auto;
+    top: 6px;
+}
+/* tags field styles */
+div.tagsinput { 
+    background-repeat: repeat-x;
+    background-position: 0px 0px;
+    border: 1px solid #ccc;
+    font-family: "Lucida Grande", "Verdana";
+    font-size: 0px;
+    line-height: 28px;
+    padding: 4px 4px 1px;
+    margin: 0px 0px 20px 0px;
+    border-radius: 3px;
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
+    width:auto; 
+    height:auto; 
+    overflow-y: auto;
+    cursor: text;
+}
+div.tagsinput span.tag {
+    background: #f8f8f8 url(images/tag_bg.png) repeat-x 0px 0px;
+    border: 1px solid #dcdcdc;
+    float: left;
+    line-height: 22px;
+    margin-right: 4px;
+    margin-bottom: 3px;
+    border-radius: 2px;
+    -moz-border-radius: 2px;
+    -webkit-border-radius: 2px;
+}
+div.tagsinput span.tag span {
+    display: table-cell;
+    padding: 0px 9px;
+    font-size: 11px;
+    vertical-align: middle;    
+}
+div.tagsinput span.tag a { 
+    background: url(images/tag_close_btn.png) no-repeat center center;
+    border-left: 1px solid #dcdcdc;
+    display: table-cell;
+    width: 22px;
+    height: 22px;
+    vertical-align: middle;
+    text-decoration:none;  
+}
+div.tagsinput input {
+    width: 100px;
+    background: transparent;
+    border: 1px solid transparent;
+    line-height: 22px;
+    margin:0 4px 3px 0;
+    padding: 0px;
+    background: transparent; 
+    outline:0px;
+    height: 22px;
+}
+div.tagsinput div { 
+    display:block; 
+    float: left; 
+}
+
+span.tag {
+    background: #f8f8f8 url(images/tag_bg.png) repeat-x 0px 0px;
+    border: 1px solid #dcdcdc;
+    float: left;
+    line-height: 22px;
+    margin-right: 4px;
+    margin-bottom: 3px;
+    border-radius: 2px;
+    -moz-border-radius: 2px;
+    -webkit-border-radius: 2px;
+}
+span.tag span {
+    display: table-cell;
+    padding: 0px 9px;
+    font-size: 11px;
+    vertical-align: middle;
+}
+span.tag a {
+    background: url(images/tag_close_btn.png) no-repeat center center;
+    border-left: 1px solid #dcdcdc;
+    display: table-cell;
+    width: 22px;
+    height: 22px;
+    vertical-align: middle;
+    text-decoration:none;
+}
+
+.tags_clear { 
+    clear: both; 
+    width: 100%; 
+    height: 0px; 
+}
+.not_valid {
+    background: #FBD8DB !important; 
+    color: #90111A !important;
+}
+
+input.tagsinput_wide, div.tagsinput_wide{
+    width:95% !important;
+}
+
+/* tags fileds end */
+
+/* Profile action toolbar */
+body ul.ow_profile_action_toolbar li {
+    margin-bottom: 4px;
+    float: left;
+}
+body ul.ow_profile_action_toolbar li:first-child {
+    margin-left: 0px;
+}
+/* Profile action toolbar end */
+
+/* Group action toolbar */
+body ul.uh-action-toolbar li {
+    float: left;
+    margin-bottom: 4px;
+}
+body ul.uh-action-toolbar li:first-child {
+    margin-left: 0px;
+}
+/* Group action toolbar end */
+
+/* Content min-height for advertisment */
+.ow_content_height {
+    min-height: 470px;
+}
+/* End of the Content min-height for advertisment */
+
+/* Form elements styles */
+.ow_range_from {
+    padding-left: 5px;
+    padding-right: 5px;
+}
+.ow_range_to {
+    padding-left: 5px;
+    padding-right: 5px;
+}
+.ow_range_label {
+    padding-left: 5px;
+}
+/* End of the Form elements styles */
+/* Chat styles */
+.ow_chat_mailchat_buttons .ow_attachment_btn {
+    float: right;
+    margin: 0 0 0 4px;
+    padding: 0;
+}
+.ow_chat_mailchat_buttons .ow_attachment_btn span.ow_button {
+    background-color: #F5F5F5;
+    background-image: none;
+    background-position: left center;
+    background-repeat: repeat-x;
+    border-color: #EBEBEB;
+    border-radius: 4px;
+    display: inline-block;
+    padding: 1px;
+    text-align: center;
+}
+.ow_chat_mailchat_buttons .ow_attachment_btn span.ow_button span {
+    background-color: #FAA274;
+    background-image: url(images/btn_bg.gif);
+    background-position: 0 0;
+    background-repeat: repeat-x;
+    border-color: #F7B63C #F68D2D #F57D26 #F6932F;
+    border-radius: 2px;
+    border-width: 1px;
+    display: inline-block;
+    margin: 1px;
+}
+.ow_chat_mailchat_buttons .ow_attachment_btn span.ow_button input[type="submit"], 
+.ow_chat_mailchat_buttons .ow_attachment_btn span.ow_button input[type="button"] {
+    background: none repeat scroll 0 0 rgba(0, 0, 0, 0);
+    color: #FFFFFF;
+    height: 22px;
+    padding: 1px 8px 4px;
+    text-shadow: 1px 1px #F2471A;
+    font-size: 13px;
+    font-weight: normal;
+    text-transform: uppercase;
+    font-family: 'UbuntuBold',"Trebuchet MS","Helvetica CY", sans-serif;
+}
+.ow_chat_dialog_wrap .ow_chat_message_block textarea {
+    background: #fff;
+}
+.ow_chat_dialog_wrap .ow_count_bg,
+.ow_chat .ow_count_bg {
+    border: none;
+    border-radius: 2px;
+    -moz-border-radius: 2px;
+    -webkit-border-radius: 2px;
+    display: inline-block;
+    background: #acacac;
+    min-height: 15px; 
+    overflow: hidden;
+}
+.ow_chat_dialog_wrap .ow_count,
+.ow_chat .ow_count {
+    color: #fff;
+    padding: 0 4px 0 4px;
+    text-shadow: none;
+}
+.ow_chat_dialog_wrap .ow_count_active,
+.ow_chat .ow_count_active {
+    background: none repeat scroll 0 0 #ff7000;
+    border: none;
+}
+
+
+.ow_chat_cont {
+    position:fixed;
+    bottom:0;
+    right:0;
+    z-index:88;
+}
+.ow_chat_wrap {
+    position:relative;
+}
+.ow_chat {
+    position:absolute;
+    bottom:-9px;
+    right:-3px;
+}
+.ow_chat_block .ow_bot_panel {
+    position:relative;
+    width:252px;
+    height:25px;    
+}
+span.ow_count_txt {
+    font-weight: bold;
+    padding-right: 5px;
+    color: #000;
+}
+a.ow_btn_sound, span.ow_btn_sort_users {
+    display:block;
+    width:20px;
+    height:20px;
+    -moz-border-radius:2px;
+    -webkit-border-radius: 2px;
+    -khtml-border-radius:2px;
+    border-radius:2px; 
+    
+}
+a.ow_btn_sound span, span.ow_btn_sort_users span{
+    display:block;
+    width:20px;
+    height:20px;
+    background-position: center center;
+    background-repeat: no-repeat;
+    border: 1px solid transparent;
+    border-radius: 2px;
+    -moz-border-radius: 2px;
+    -webkit-border-radius: 2px;
+}
+a.ow_btn_sound span {
+    background-image:url(images/chat_btn_sound.png);
+    background-position: top center;
+}
+span.ow_btn_sort_users span {
+    background-image:url(images/chat_btn_sort.png);
+    background-position: top center;
+}
+a.ow_btn_sound span.ow_btn_sound_off {
+    background-position: center -20px;
+}
+span.ow_btn_sort_users span.ow_btn_sort_online {
+    background-position: center -20px;
+}
+a.ow_btn_sound:hover span, span.ow_btn_sort_users span:hover {
+    background-color: #fefefe;
+    border: 1px solid #ccc;
+}
+.ow_chat_block .ow_bot_panel a.ow_btn_sound {
+    position:absolute;
+    left:2px; top:2px;
+}
+.ow_chat_block_main .ow_top_panel .btn2_panel span.ow_btn_sort_users {
+    position:absolute;
+    left:2px; top:3px;
+}
+.ow_chat_block.ow_active .ow_bot_panel .ow_count_block {
+    visibility:hidden;
+}
+.ow_chat_in_block {
+    padding:0;
+    background:#fff;
+    border-bottom:1px solid #ccc;
+}
+.ow_chat_block .ow_chat_search {
+    border-bottom:1px solid #ccc;
+    border-top:1px solid #ccc;
+    background:#fafafa;
+}
+.ow_chat_block .ow_chat_search span {
+    display:block;
+    height:28px;
+    position:relative;
+}
+.ow_chat_block_main .ow_chat_search input[type="text"], 
+.ow_chat_block_main .ow_chat_search input[type="password"] {
+    outline:none;
+    height: 28px;
+    padding:0 20px 0 7px;
+    color:#666;
+    font-size:11px;
+    line-height:18px;
+    background: #fff none;
+    border-radius: 0;
+    -moz-border-radius: 0;
+    -webkit-border-radius: 0;
+    border: none;
+    background: #fff;
+}
+.ow_chat_search_highlight {
+    background-color: #aed707;
+}
+.ow_btn_close_search {
+     display:block;
+     width:20px; height:20px;
+     position: absolute;
+     top:4px; right:4px;
+     background: url(images/chat_btn_close_search.png) 0px 0px no-repeat;
+}
+.ow_btn_close_search:hover {
+ background: url(images/chat_btn_close_search.png) 0px -21px no-repeat;
+}
+.ow_chat_list {
+    position:relative;
+    overflow:hidden;
+    height:320px;
+}
+.ow_scroll {
+    position:absolute;
+    top:0;
+    right:0;
+    width:5px;
+    height:100%;
+}
+.ow_scroll div {
+    position:absolute;
+    top:100px;
+    right:1px;
+    width:4px;
+    height:70px;
+    background:#999;
+    -moz-border-radius:2px;
+    -webkit-border-radius: 2px;
+    -khtml-border-radius:2px;
+    border-radius:2px;
+}
+.ow_chat_list ul {
+    list-style:none;
+    margin:0;
+    padding:2px 0;
+    background:#fff;
+}
+.ow_chat_list ul li {
+    padding:1px 0;
+    margin:0;
+}
+.ow_chat_list ul li a {
+    padding: 2px 3px 2px 41px;
+    margin:0;
+    display:block;
+    text-decoration:none;
+}
+.ow_chat_list ul li a:hover, .ow_mailchat_autocomplete ul li a:hover{
+    background:#f1f1f1;
+}
+.ow_mailchat_autocomplete ul li.selected{
+    background:#f1f1f1;
+}
+.ow_mailchat_autocomplete {
+    z-index: 1;
+}
+.ow_chat_user_not_found {
+    display:block; 
+    padding: 8px 8px 8px 4px; 
+    font-weight:normal;
+}
+span.ow_chat_item,
+span.ow_chat_item_photo,
+span.ow_chat_item_author,
+span.ow_chat_item_photo_wrap,
+span.ow_chat_item_text {
+    display:block;
+}
+span.ow_chat_item_photo_wrap {
+    width:38px;
+    height:38px;
+    float:left;
+    position:relative;
+    z-index:1;
+}
+.ow_dialog_item_mailchat {
+    padding: 4px 0 12px;
+}
+.ow_chat_in_dialog .ow_chat_item_photo_wrap {
+    margin-right: -42px;
+}
+.ow_dialog_item_mailchat_text {
+    display: inline-block;
+    float: right;
+    width: 200px;
+    margin-left: 42px;
+    line-height: 14px;
+}
+
+.ow_chat_block.ow_compact .ow_chat_item.ow_active .ow_chat_item_photo_wrap {
+    background:#ff7000;
+    webkit-box-shadow: none;
+    -moz-box-shadow: none;
+    -ms-box-shadow: none;
+    box-shadow: none;
+}
+.ow_chat_block.ow_compact .ow_chat_item.ow_active .ow_chat_item_photo_wrap img {
+    border-color: #f1f1f1;
+}
+.ow_chat_block.ow_active.ow_compact .ow_chat_item.ow_active .ow_count_wrap {
+    display: none;
+}
+
+span.ow_chat_item_photo {
+    margin:2px 0 0 2px;
+}
+span.ow_chat_in_item_photo {
+    width:34px;
+    height:34px;
+    position:relative;
+    overflow:hidden;
+}
+span.ow_chat_in_item_photo img {
+    border:1px solid transparent;
+}
+span.ow_chat_item_author,
+span.ow_chat_item_text {
+    max-width:100%;
+    float:left;
+    color:#444;
+    padding:8px 17px 0 0;
+    margin:0;
+    position: relative;
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+}
+span.ow_chat_in_item_author,
+span.ow_chat_in_item_text {
+    padding:0;
+    margin:0 0 0 9px;
+    line-height: 20px;
+    display: block;
+    height: 20px;
+    overflow:hidden;
+}
+.ow_chat_item_author_wrap .ow_chat_item_author span {
+    display: inline-block;
+    vertical-align: top;
+    margin:0 0 0 3px;
+    line-height: 16px;
+    height: 18px;
+}
+.ow_chat_item_author_wrap .ow_chat_item_author .ow_chat_message_to {
+    display: none;
+}
+.ow_chat_dialog_active .ow_chat_item_author_wrap .ow_chat_item_author .ow_chat_message_to {
+    display: inline-block;
+}
+.ow_chat_block.ow_active.ow_compact span.ow_chat_item_author {
+    display:none;
+}
+.ow_chat_block.ow_active.ow_compact .ow_bot_panel {
+    width:51px;
+    height:23px;
+}
+.ow_chat_block.ow_active.ow_compact .ow_top_panel {
+    width:51px;
+}
+.ow_chat_block.ow_active.ow_compact .ow_chat_search input,
+.ow_chat_block.ow_active.ow_compact .ow_chat_search a.ow_btn_close_search {
+     display:none;
+}
+.ow_chat_block.ow_active.ow_compact span.ow_count_txt {
+    display:none;
+}
+.ow_chat_block.ow_active.ow_compact .ow_bot_panel a.ow_btn_settings {
+    display:none;
+}
+div.ow_chat_dialog.ow_chat_new_message {
+    background:#e0e0e0;
+}
+.ow_chat_block_main .ow_count_wrap {
+     margin-top:1px;
+}
+.ow_chat .ow_count_block a {
+     height:18px;
+}
+.ow_btn_settings {
+    border-radius: 2px;
+    display: block;
+    height: 20px;
+    width: 20px;
+}
+a.ow_btn_settings span {
+    background: url(images/chat_btn_settings.png) no-repeat scroll;
+    display: block;
+    height: 20px;
+    width: 20px;
+}
+a.ow_btn_settings:hover span,
+a.ow_btn_settings.ow_active span {
+    background-position: 0 -21px;
+}
+/*........ow_chat_dialog...........*/
+.ow_chat_dialog_wrap {
+    position: fixed;
+    right: 265px;
+    bottom: -5px;
+    z-index: 88;
+}
+.ow_chat_dialog {
+    display:none;
+    width:251px;
+    margin-left:8px;
+    font-size:11px;
+    background:#f1f1f1;
+    -moz-border-radius:3px;
+    -webkit-border-radius: 3px;
+    -khtml-border-radius:3px;
+    border-radius:3px;
+    -webkit-box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    -moz-box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    box-shadow:0 2px 4px rgba(0, 0, 0, 0.2);
+    vertical-align: text-bottom;
+    position:relative;
+}
+.ow_chat_dialog_wrap
+.ow_mailchat_new_message.ow_chat_dialog {
+    width: 508px;
+}
+.ow_chat_dialog .ow_chat_block {
+    padding-bottom:4px;
+}
+.ow_chat_dialog.ow_open {
+    display:inline-block;
+}
+.ow_chat_dialog .ow_author_block {
+    padding: 3px 31px 3px 3px;
+    font-weight:bold;
+    width: 100%;
+    overflow: hidden;
+    position: relative;
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+}
+.ow_chat_dialog_active.ow_chat_dialog .ow_author_block{
+    padding: 8px 31px 8px 42px;
+} 
+.ow_dialog_date_cap {
+    width: 100%;
+    border-top: 1px solid #ececec;
+    border-bottom: 1px solid #ececec;
+    background-color: #f5f5f5;
+    font-size: 11px;
+    z-index: 2;
+    color: #757575;
+    padding-left: 8px;
+    margin: 8px 0;
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+}
+.ow_dialog_date_cap span {
+    line-height: 24px;
+}
+.ow_dialog_date_cap.sticky {
+    position: absolute;
+    top: 0;
+    left: 0;
+    margin: 0;
+    width: 100%;
+}
+.ow_mailchat_new_message.ow_chat_dialog .ow_mailchat_select_user.ow_author_block {
+    background-color: #fff;
+}
+.ow_mailchat_new_message.ow_chat_dialog.ow_active .ow_author_block.ow_mailchat_selected_user {
+    padding: 3px 31px 3px 37px;
+}
+.ow_chat_dialog_active.ow_chat_dialog.ow_mailchat_new_message .ow_author_block {
+    padding: 3px 31px 3px 3px;
+}
+.ow_mailchat_new_message .ow_chat_subject_block {
+    display: none;
+}
+.ow_chat_block_wrap {
+    position:relative;
+    float:right;
+    margin:0 0 0 10px;
+    font-size:11px;
+    background:#f1f1f1;
+    border-width:0;
+    border-style:solid;
+    -moz-border-radius:4px;
+    -webkit-border-radius: 4px;
+    -khtml-border-radius:4px;
+    border-radius:4px;
+    -webkit-box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    -moz-box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    box-shadow:0 2px 4px rgba(0, 0, 0, 0.2);
+    padding-bottom:9px;
+}
+.ow_chat_block {
+    border: 1px solid #CCCCCC;
+    border-radius: 3px;
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
+    margin: 0px;
+}
+.ow_chat_block.ow_chat_block_active {
+    border: 1px solid #999798;
+}
+.ow_chat_block .ow_chat_block_main {
+    position:relative;
+    display:none;
+}
+.ow_chat_block.ow_active .ow_chat_block_main {
+    display:block;
+}
+.ow_chat_block .ow_top_panel .ow_count_block,
+.ow_chat_block .ow_bot_panel .ow_count_block {
+    padding:5px 0;
+    margin:0;
+    text-align:center;
+    color:#000;
+    font-weight:normal;
+    visibility:visible;
+}
+.ow_chat_block .ow_bot_panel .ow_count_block {
+    padding:5px 0 0 0;
+}
+.ow_count_block a {
+    display:block;
+}
+.ow_chat_block.ow_active .ow_count_block a:hover{
+    background: url(images/chat_tiny_arrow_down.png) 233px 5px no-repeat;   
+}
+.ow_count_block a:hover{
+    background: url(images/chat_tiny_arrow_up.png) 233px 5px no-repeat; 
+}
+.ow_chat_dialog .ow_chat_subject_block input {
+    width: 100%;
+    height: 40px;
+    border-radius: 0;
+    -moz-border-radius: 0;
+    -webkit-border-radius: 0;
+    border-width: 1px 0 0 0;
+    border-style: solid;
+    border-color: #ccc;
+    resize: none;
+    font-size: 12px;
+    padding: 8px;
+    color: #585858;
+    font-size: 12px;
+    background: #fff;
+}
+.ow_chat_dialog .ow_chat_subject_block input.invitation,
+.ow_chat_mailchat_inputarea textarea.invitation,
+.ow_mailchat_new_message.ow_chat_dialog.ow_active .ow_mailchat_select_user input {
+    color: #999;
+}
+.ow_chat_message .ow_attachment_icons {
+    float: right;
+    position: absolute;
+    top: 10px;
+    right: 8px;
+    z-index: 2;
+}
+.ow_chat_message.scroll .ow_attachment_icons {
+    right: 20px;
+}
+.ow_chat_message_block .ow_chat_message.scroll  textarea {
+    padding-right: 46px;
+}
+.ow_chat_wink {
+    margin: 3px;
+    padding: 5px;
+}
+.ow_chat_in_dialog .ow_chat_wink {
+    color: #757575;
+}
+.ow_chat_wink .ow_lbutton {
+    margin-top: 4px;
+}
+.ow_chat_dialog_wrap .ow_attachments a {
+    border-color: #ccc;
+    border-style: solid;
+    border-width: 1px;
+    height: 22px;
+    width: 22px;
+}
+.ow_chat_dialog_wrap .ow_attachments a.attach {
+    background: url(images/wysiwyg.png) no-repeat scroll -241px 1px rgba(0, 0, 0, 0);
+}
+.ow_chat_dialog_wrap .ow_attachments a.attach.uploading {
+    background: url(images/ajax_preloader_button.gif) no-repeat center center;
+}
+.ow_chat_dialog_wrap .ow_attachments a:hover {
+    border-color: #9f9f9f;
+}
+.ow_chat_dialog_wrap .ow_attachments .buttons {
+    background-color: #fafafa;
+    border-color: #EBEBEB;
+}
+.ow_chat_block .ow_oembed_attachment_preview{
+    border: none;
+    padding: 0 0 0 88px;
+    background-color: transparent;
+    margin-top: 12px;
+}
+.ow_chat_block .ow_oembed_attachment_preview .ow_attachment_delete {
+    display: none;
+}
+.ow_chat_block .ow_oembed_attachment_preview .ow_attachment_description {
+    padding-right: 0px;
+}
+.ow_chat_block .ow_oembed_attachment_pic {
+    left: 0;
+    top: 0;
+}
+.ow_chat_dialog .ow_chat_disabled_subject_block {
+    border-top: 1px solid #CCCCCC;
+    width:100%;
+    height: 40px;
+    overflow: hidden;
+    display: none;
+}
+.ow_chat_dialog .ow_chat_disabled_subject_block span {
+    line-height: 40px;
+    padding: 8px;
+    max-width: 250px;
+}
+.ow_mailchat_new_message .ow_chat_mailchat_inputarea {
+    width: 100%;
+    border-top: 1px solid #ccc;
+    padding: 8px 8px 0 8px;
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    background: #fff;
+    display: none;
+    position: relative;
+}
+.ow_chat_block form .ow_chat_mailchat_inputarea .jhtmlarea {
+    width: 100%;
+    resize: none;
+    border: none;
+    background-image: none;
+    margin-bottom: 8px;
+    padding: 0;
+    border-radius: 0;
+    -moz-border-radius: 0;
+    -webkit-border-radius: 0;
+    font-size: 12px;
+    color: #585858;
+    height: 219px;
+    background: #fff;
+}
+form .ow_chat_mailchat_inputarea .toolbar {
+    background: #fafafa;
+    border-bottom: 1px solid #e8e8e8;
+}
+form .ow_chat_mailchat_inputarea .toolbar ul li a {
+    background-image: url(images/wysiwyg.png);
+    border: 1px solid #ccc;
+}
+body form .ow_chat_mailchat_inputarea .toolbar ul li a:hover {
+    border-color: #626060;
+}
+.ow_chat_mailchat_buttons {
+    border-top: 1px solid #ccc;
+    padding: 6px 8px;
+    margin: 0 -8px;
+    background-color: #f1f1f1;
+}
+.ow_chat_block.ow_mailchat_select_user_wrap .ow_mailchat_selected_user,
+.ow_chat_block.ow_mailchat_selected_user_wrap .ow_mailchat_select_user{
+    display: none;
+}
+.ow_chat_dialog.ow_active .ow_author_block a,
+.ow_chat_dialog .ow_author_block a{
+    display:block;
+}
+.ow_chat_dialog.ow_active .ow_author_block a.ow_chat_item_author_wrap {
+    height: 34px;
+}
+.ow_mailchat_new_message .ow_author_block a.ow_chat_item_author_wrap {
+    width: 100%;
+}
+.ow_mailchat_new_message.ow_chat_dialog .ow_author_block a.ow_chat_item_author_wrap {
+    width: 100%;
+}
+.ow_mailchat_new_message.ow_chat_dialog.ow_active .ow_mailchat_select_user {
+    height: 40px;
+    overflow: visible;
+}
+.ow_mailchat_new_message.ow_chat_dialog.ow_chat_dialog_active .ow_mailchat_select_user {
+    height: 25px;
+}
+.ow_mailchat_new_message .ow_mailchat_select_user a.ow_chat_minimize_btn {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    top: 50%;
+    margin-top: -10px;
+    right: 28px;
+    background: url(images/chat_tiny_arrow_down.png) center center no-repeat;
+    display: none;
+}
+.ow_mailchat_new_message.ow_chat_dialog_active .ow_mailchat_select_user a.ow_chat_minimize_btn {
+    background: url(images/chat_tiny_arrow_up.png) center center no-repeat;
+}
+.ow_mailchat_new_message .ow_mailchat_select_user:hover a.ow_chat_minimize_btn {
+    display: block;
+}
+.ow_mailchat_new_message .ow_mailchat_select_user input {
+    width: 455px;
+    height: 34px;
+    position: absolute;
+    top: 3;
+    left: 3;
+    border-radius: 0;
+    -moz-border-radius: 0;
+    -webkit-border-radius: 0;
+    border: none;
+    background-image: none;
+    color: #585858;
+    background: #fff;
+}
+.ow_mailchat_new_message.ow_chat_dialog.ow_chat_dialog_active .ow_mailchat_select_user input  {
+    display: none;
+}
+.ow_mailchat_new_message.ow_chat_dialog.ow_active .ow_mailchat_select_user .ow_mailchat_new_message_title {
+    display: none;
+}
+.ow_mailchat_new_message.ow_chat_dialog.ow_chat_dialog_active .ow_mailchat_select_user .ow_mailchat_new_message_title {
+    display: block;
+    width: 455px;
+    height: 25px;
+    overflow: hidden;
+    padding-left: 4px;
+    color: #000;
+}
+.ow_mailchat_new_message .ow_mailchat_select_user .ow_mailchat_autocomplete {
+    position: absolute;
+    left: 6px;
+    top: 41px;
+    background-color: #fafafa;
+    border-width: 0 1px 1px 1px;
+    border-style: solid;
+    border-color: #e8e8e8;
+    width: 275px;
+    max-height: 316px;
+    overflow: hidden;
+}
+.ow_mailchat_new_message .ow_mailchat_select_user .ow_mailchat_autocomplete_inner {
+    overflow: auto;
+    width: 295px;
+    max-height: 316px;
+}
+.ow_mailchat_new_message .ow_mailchat_select_user a.ow_chat_item_author_wrap:hover {
+    background:url(images/chat_tiny_arrow_down.png) 463px 50% no-repeat; 
+}
+.ow_chat_dialog .ow_author_block a.ow_chat_item_author_wrap {
+    width:100%;
+    height:18px;
+    padding-right: 18px;
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+}
+.ow_chat_dialog .ow_author_block span.ow_chat_in_item_photo {
+    float: left;
+    display:none;
+}
+.ow_chat_dialog.ow_open.ow_active .ow_chat_item_author_wrap:hover {
+    background:url(images/chat_tiny_arrow_down.png) right 50% no-repeat; 
+}
+.ow_mailchat_new_message.ow_chat_dialog.ow_open.ow_active .ow_chat_item_author_wrap:hover {
+    background:url(images/chat_tiny_arrow_down.png) right 50% no-repeat; 
+}
+.ow_chat_dialog.ow_open .ow_chat_item_author_wrap:hover {
+    background:url(images/chat_tiny_arrow_up.png) right 7px no-repeat; 
+}
+.ow_mailchat_new_message.ow_chat_dialog.ow_open .ow_chat_item_author_wrap:hover {
+    background:url(images/chat_tiny_arrow_up.png) right 7px no-repeat; 
+}
+a.ow_btn_close {
+    display:block;
+    width:20px;
+    height:20px;
+}
+a.ow_btn_close span{
+    display:block;
+    width:20px;
+    height:20px;
+    background:url(images/chat_btn_close.png) 0px 0px no-repeat; 
+}
+a.ow_btn_close:hover {
+    background: #fefefe url(images/chat_btn_close.png) 0px -21px no-repeat; 
+}
+.ow_chat_dialog .ow_author_block a.ow_btn_close {
+    position:absolute;
+    right: 4px;
+    top: 50%;
+    margin-top: -10px;
+}
+.ow_chat_in_dialog_wrap {
+    position: relative;
+    border-width: 1px 0 1px 0;
+    border-style: solid;
+    border-color: #cccccc;
+}
+.ow_chat_in_dialog {
+    padding: 0px;
+    background: #fff;
+    position: relative;
+    overflow: hidden;
+    height: 250px;
+    display: none;
+}
+.ow_chat_in_dialog,
+.ow_chat_in_dialog .jspContainer,
+.ow_chat_in_dialog .jspPane {
+    width: 100% !important;
+}
+.ow_chat_in_dialog .jspTrack {
+    z-index: 2;
+}
+.ow_chat_preloader{
+     display:block;
+     width:16px; height:16px;
+     position:absolute;
+     top: 50%; left: 50%;
+     margin: -8px 0 0 -8px;
+     background: url(images/ajax_preloader_content.gif) no-repeat center center;
+}
+.ow_chat_block.ow_compact .ow_chat_preloader{
+    left: 22px;
+}
+.ow_dialog_item {
+    margin:3px;
+    padding:5px;
+    position:relative;
+}
+
+.ow_dialog_item.odd {
+    float:left;
+    max-width: 80%;
+}
+.ow_dialog_item.even {
+    float:right;
+    max-width: 80%;
+}
+body .ow_dialog_item.ow_chat_video_item {
+    max-width: 227px;
+}
+.ow_chat_in_dialog_wrap .ow_dialog_items_wrap {
+    width: 100%;
+}
+.ow_dialog_items_wrap .ow_chat_video_item p,
+.ow_mailbox_log_wrap .ow_chat_video_item p {
+    margin-bottom: 8px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid #E8E8E8;
+}
+.ow_dialog_item.odd .ow_dialog_in_item {
+    background-color:#fff;
+}
+.ow_dialog_item.even .ow_dialog_in_item {
+    background-color:#fafafa;
+}
+.ow_chat_dialog_wrap .ow_dialog_in_item p {
+    color: #444;
+}
+.ow_dialog_in_item p {
+    margin:0;
+    padding:0;
+     word-wrap: break-word;     
+    line-height: 14px;
+}
+.ow_dialog_item i {
+    position:absolute;
+    display:block;
+    width:11px;
+    height:6px;
+}
+.ow_chat_dialog_wrap .ow_dialog_item i {
+    background:url(images/dialog_tail.png) 0 -6px no-repeat; 
+}
+.ow_dialog_item.odd i {
+    top:0;
+    left:12px;
+}
+.ow_dialog_item.even i {
+    bottom:0;
+    right:12px;
+    background-position: 0 -1px;
+}
+.ow_chat_in_dialog .ow_time_block,
+.ow_mailbox_log .ow_time_block {
+    padding: 3px 0;
+    text-align: center;
+    margin:0;
+    clear:both;
+}
+.ow_mailbox_message_content img {
+    max-width: 80%;
+    height: auto;
+}
+.ow_chat_in_dialog .ow_time_block p {
+    margin:0;
+    padding:0;
+}
+.ow_chat_in_dialog .ow_time_block p span.ow_time_text {
+    line-height: 1px;
+    font-size: 10px;
+    color: #ccc;
+    margin: -5px 0 0 0;
+}
+.ow_chat_message_block {
+    position:relative;
+    overflow:hidden;
+    display: none;
+    width:100%;
+}
+.ow_chat_message_block span.in_chat_item_photo {
+    float:right;
+}
+.ow_chat_message_block .ow_chat_message {
+    width:100%;
+    float:left;
+    position:relative;
+}
+.ow_input_tail {
+    width: 6px;
+    height: 10px;
+    position:absolute;
+    top: 12px; right:0;
+    background: url(images/chat_input_tail.png) no-repeat 0 0;
+}
+.ow_chat_message_block .ow_chat_message textarea {
+    height: 42px;
+    line-height: 17px;
+    font-size: 12px;
+    position:relative;
+    overflow:auto;
+    border: none;
+    border-radius: 0;
+    margin: 0;
+    min-height: 17px;
+    padding: 12px 36px 4px 6px;
+    resize: none;
+    width: 100%;
+}
+.ow_chat_dialog_wrap .ow_chat_message_block .ow_chat_message textarea {
+    background-color: #fff;
+    color: #333;
+}
+.ow_chat_dialog .ow_chat_message_block span.ow_chat_in_item_photo {
+    float:right;
+}
+.ow_chat_dialog .ow_dialog_items_wrap .clearfix {
+    width: 100%;
+}
+.ow_chat_dialog.ow_active .ow_chat_block .ow_chat_in_dialog,
+.ow_chat_dialog.ow_active .ow_chat_block .ow_chat_message_block,
+.ow_chat_dialog.ow_active .ow_chat_block .ow_author_block span.ow_chat_in_item_photo,
+.ow_chat_dialog.ow_active .ow_chat_block .ow_chat_disabled_subject_block,
+.ow_chat_dialog.ow_active .ow_chat_block .ow_chat_subject_block,
+.ow_chat_dialog.ow_active .ow_chat_block .ow_chat_mailchat_inputarea {
+    display:block;
+}
+.ow_chat_dialog .ow_author_block span.ow_chat_item_author {
+    padding: 1px 17px 0 0;
+}
+.ow_chat_dialog.ow_active .ow_author_block span.ow_chat_item_author {
+    padding: 9px 17px 0 0;
+    max-width: 100%;
+}
+.ow_mailchat_new_message.ow_chat_dialog .ow_author_block span.ow_chat_item_author {
+    display: inline-block;
+    width: auto;
+    padding-right: 0px;
+}
+.ow_mailchat_new_message.ow_chat_dialog.ow_active .ow_author_block .ow_mailchat_delete_receiver {
+    display: inline-block;
+    width: 15px;
+    height: 15px;
+    background:url(images/tag_close_btn.png) center center no-repeat;
+    margin-top: 9px;
+    margin-left: 4px;
+}
+.ow_chat_dialog_wrap .ow_dialog_in_item {
+    border:1px solid #e8e8e8;
+}
+.ow_dialog_in_item {
+    margin:0;
+    padding: 4px 6px;
+    -moz-border-radius:3px;
+    -webkit-border-radius: 3px;
+    -khtml-border-radius:3px;
+    border-radius:3px;
+    -moz-box-shadow:none;
+    -webkit-box-shadow:none;
+    box-shadow:none;
+}
+div.ow_dialog_item.ow_dialog_video_embed .ow_dialog_in_item {
+    padding: 0;
+}
+div.ow_dialog_item.ow_dialog_video_embed .ow_dialog_in_item iframe {
+    width: 225px !important;
+    height: auto !important;
+}
+.ow_dialog_video_item .ow_dialog_in_item {
+    height: 60px;
+    width: 80px;
+}
+.ow_dialog_video_item .ow_dialog_in_item img {
+    background-color: #ECECEC;
+    height: 60px;
+    width: 80px;
+}
+.ow_dialog_picture_item {
+    min-height: 148px;
+}
+.ow_dialog_picture_item .ow_dialog_in_item {
+    padding: 4px;
+}
+.ow_dialog_picture_item .ow_dialog_in_item img {
+    max-width: 100%;
+    max-height: 120px;
+    border: 1px solid #e6e6e6;
+    border-width: 1px;
+    border-style: solid;
+    border-color: #dbdbdb #e6e6e6 #e6e6e6 #e6e6e6;
+}
+.ow_chat_dialog .ow_author_block .ow_chat_in_item_photo_wrap {
+    display: none;
+}
+.ow_chat_dialog.ow_active .ow_author_block .ow_chat_in_item_photo_wrap {
+    width:34px;
+    float:left;
+    margin-left: -34px;
+}
+.ow_chat_dialog.ow_active .ow_author_block .ow_chat_item_author_wrap {
+    float:left;
+}
+.ow_chat_dialog.ow_open .ow_chat_in_item_photo {
+    width:34px;
+    height:34px;
+}
+.ow_chat_dialog.ow_open .ow_chat_in_item_photo img{
+    border:1px solid trasparent;
+}
+.ow_chat_dialog.ow_open .ow_author_block .ow_chat_in_item_photo:hover img {
+    border:1px solid #6b6969;
+}
+.ow_chat_dialog.ow_open .ow_chat_message_block .ow_chat_in_item_photo img {
+    border:none;
+}
+/*Chat status*/
+.ow_chat_item_author_wrap .ow_chat_item_author div.ow_chat_status {
+    display: inline-block;
+    width: 15px;
+    height: 18px;
+    line-height: 18px;
+    vertical-align: top;
+    position: absolute;
+    right: 0;
+    bottom: 0;
+}
+body .ow_chat_list .ow_chat_item div.ow_chat_status {
+    display: block;
+    position: absolute;
+    width: 15px;
+    height: 15px;
+    top: 12px;
+    right: 6px;
+    margin-left: 0;
+}
+div.ow_chat_status.status_online {
+    background: url(images/chat_status_online.png) no-repeat center center;
+}
+div.ow_chat_status.status_mobile {
+    background: url(images/chat_status_mobile.png) no-repeat center center;
+}
+div.ow_chat_status.status_mail {
+    background: url(images/chat_status_mail.png) no-repeat center center;
+}
+div.ow_chat_status.status_mail_d {
+    background: url(images/chat_status_mail_d.png) no-repeat center center;
+}
+.ow_chat_dialog_offline .ow_author_block .ow_chat_in_item_photo_wrap,
+.ow_chat_dialog_offline .ow_author_block .ow_chat_in_item_author,
+.ow_chat_dialog_offline .ow_chat_item_photo_wrap,
+.ow_chat_dialog_offline .ow_chat_item_author .ow_chat_in_item_author
+ {
+    opacity: 0.4;
+}
+.ow_chat_dialog_offline .ow_author_block .ow_chat_item_author .ow_chat_status,
+body .ow_chat_list .ow_chat_dialog_offline .ow_chat_item .ow_chat_status {
+    display: none;
+}
+/*End of chat status*/
+/*......*ow_chat_settings*&*ow_chat_selector_list......*/
+.ow_chat_settings,
+.ow_chat_selector_list {
+    position:absolute;
+    color:#5a5a5a;
+    font-size:11px;
+    max-width:250px;
+    padding:0;
+    margin:0;
+    z-index:99;
+}
+.ow_chat_settings .ow_tooltip_body,
+.ow_chat_selector_list .ow_tooltip_body {
+    -webkit-box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    -moz-box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    box-shadow:0 2px 4px rgba(0, 0, 0, 0.2);
+}
+.ow_chat_selector_list {
+    bottom:33px;
+    left:-1px;
+}
+.ow_chat_settings {
+    bottom:37px;
+    left:-1px;
+}
+.ow_chat_settings.ow_tooltip_bottom_right {
+    left:-101px;
+}
+ul.ow_settings_items,
+ul.ow_chat_selector_items {
+    min-width:95px;
+    overflow-x:auto;
+}
+ul.ow_settings_items a,
+ul.ow_chat_selector_items a {
+    color:#5a5a5a;
+    display:block;
+    text-decoration: none;
+    margin-right: 25px;
+}
+li.ow_settings_item,
+li.ow_chat_selector_item {
+    padding:0px 8px;
+    line-height:24px;
+    height:24px;
+    min-width: 95px;
+    white-space:nowrap;
+    border:1px solid transparent;
+    -moz-border-radius:2px;
+    -webkit-border-radius: 2px;
+    -khtml-border-radius:2px;
+    border-radius:2px;
+    text-align:left;
+    position:relative;
+}
+li.ow_settings_item.ow_sets_button:hover,
+li.ow_chat_selector_item.ow_sets_button:hover {
+    border:1px solid #ccc;
+    background: #fff url(images/console_item_bg.png) repeat-x center 0px;
+}
+input.ow_settings_check {
+    margin:7px 7px 0 -4px;
+    padding:0;
+    float:left;
+}
+li.ow_settings_item p,
+li.ow_chat_selector_item p {
+    margin-right:8px;
+}
+.ow_settings_item label {
+     padding-left: 0px;
+}
+
+/*...............ow_chat_dialog_selector.............*/
+.ow_chat_selector {
+    position: absolute;
+    bottom: 0px;
+    left: -48px;
+    font-size:9px;
+    background:#f1f1f1;
+    border:1px solid #ccc;
+    -moz-border-radius:3px;
+    -webkit-border-radius: 3px;
+    -khtml-border-radius:3px;
+    border-radius:3px;
+    -webkit-box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    -moz-box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    box-shadow:0 2px 4px rgba(0, 0, 0, 0.2);
+    z-index: 999;
+}
+.ow_selector_panel {
+    position:relative;
+    width:41px;
+    text-align:right;
+}
+a.ow_btn_dialogs {
+    display:block;
+    width:20px;
+    height:20px;
+    -moz-border-radius:2px;
+    -webkit-border-radius: 2px;
+    -khtml-border-radius:2px;
+    border-radius:2px; 
+
+}
+a.ow_btn_dialogs span{
+    display:block;
+    width:20px;
+    height:20px;
+    background:url(images/chat_btn_dialogs.png) 0px 0px no-repeat; 
+}
+a.ow_btn_dialogs:hover span {
+    background-position:0 -21px;
+}
+a.ow_btn_dialogs.ow_active span {
+    background-position:0 -42px;
+}
+.ow_chat_block .ow_selector_panel a.ow_btn_dialogs {
+    position:absolute;
+    top:-1px;
+    left:1px;
+    width:39px;
+}
+.ow_dialog_count {
+    display:block;
+    height:18px;
+    margin:2px 3px 6px 3px;
+    padding:0 4px 0 0;
+}
+.ow_selector_panel .ow_count_wrap,
+.ow_chat_dialog .ow_count_wrap {
+    position: absolute;
+    top:-10px;
+    left:-10px;
+}
+.ow_chat_selector_item .ow_count_wrap {
+    position:absolute;
+    right:5px;
+    top:5px;
+}
+.ow_chat_item_author .ow_count_wrap {
+    display: none;
+    position: static;
+    border-radius: 2px;
+    -moz-border-radius: 2px;
+    -webkit-border-radius: 2px;
+    margin-left: 4px;
+}
+.ow_chat_item_author .ow_count_wrap.ow_count_active {
+    display: inline-block;
+}
+.ow_chat_dialog.ow_active .ow_chat_item_author .ow_count_wrap.ow_count_active {
+    display: none;
+}
+
+/*...........ow_chat_notifications.........*/
+.ow_chat_notification_wrap {
+    position:fixed;
+    bottom:444px;
+    right:-3px;
+    z-index:99;
+}
+.ow_chat_notification {
+    float:right;
+    clear:right;
+    margin-bottom:10px;
+    width:254px;
+    font-size:11px;
+    background:#f1f1f1;
+    border:1px solid #ccc;
+    -moz-border-radius:2px;
+    -webkit-border-radius: 2px;
+    -khtml-border-radius:2px;
+    border-radius:2px;
+    -webkit-box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    -moz-box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    box-shadow:0 2px 4px rgba(0, 0, 0, 0.2);
+}
+.ow_chat_notification .ow_author_block {
+    height:39px;
+    margin:2px;
+    overflow:hidden;
+    padding:0;
+    position:relative;
+}
+.ow_chat_notification:hover {
+    background: #e9e9e9;
+}
+.ow_chat_notification .ow_chat_item_photo_wrap {
+    background:transparent;
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+    -ms-box-shadow: none;
+    box-shadow: none;
+    -moz-border-radius: 0px;
+    -webkit-border-radius: 0px;
+    -khtml-border-radius: 0px;
+    border-radius: 0px;
+}
+.ow_chat_notification .ow_chat_item_photo img {
+    border:1px solid transparent;
+}
+.ow_chat_notification span.ow_chat_item_author,
+.ow_chat_notification span.ow_chat_item_text {
+    padding: 9px 0 0 0;
+    width: 170px;
+}
+.ow_chat_notification .ow_author_block a.ow_btn_close {
+    position:absolute;
+    right:3px;
+    top:8px;
+}
+.ow_chat_notification.ow_compact span.ow_chat_item_author {
+    display:none;
+}
+.ow_chat_notification.ow_compact a.ow_btn_close {
+    display:none;
+}
+.ow_chat_notification.ow_compact {
+    width:53px;
+}
+.ow_vertical_puller {
+    position: absolute;
+    top: -10px;
+    left: 9px;
+    width: 100%;
+    height: 15px;
+    cursor: row-resize;
+    display:none;
+}
+.ow_diagonal_puller {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 9px;
+    height: 9px;
+    background: url(images/diagonal_puller.png) no-repeat center center;
+    cursor:nwse-resize;
+    display: none;
+}
+.ow_chat .ow_vertical_puller {
+    width: 250px;
+    margin-left: 10px;
+}
+.ow_chat_dialog.ow_open.ow_active .ow_vertical_puller,
+.ow_chat_dialog.ow_open.ow_active .ow_diagonal_puller,
+.ow_chat .ow_puller {
+    display:block;
+}
+.ow_chat_list ul li a.ow_chat_item {
+    position: relative;
+}
+.ow_chat_list ul li a.ow_chat_item .ow_chat_item_photo_wrap {
+    margin-left: -38px;
+}
+.ow_chat_list ul li a.ow_chat_item .ow_chat_item_author {
+    width: 100%;
+}
+.ow_chat_list ul li a.ow_chat_item .ow_count_wrap {
+    position: absolute;
+    top:11px;
+    right:7px;
+}
+
+/*...safari-fix...*/
+.ow_chat_cont a:hover,
+.ow_chat_dialog_wrap a:hover,
+.ow_chat_notification_wrap a:hover{
+    text-decoration: none;
+}
+
+/*... dialog_active_styles....*/
+.ow_chat_dialog.ow_chat_dialog_active {
+    border-color: #949293;
+}
+.ow_chat_dialog.ow_chat_dialog_active .ow_chat_message_block .ow_chat_message textarea {
+    border-color: #949293;
+}
+.ow_chat_dialog.ow_chat_dialog_active .ow_chat_message_block .ow_chat_message .ow_input_tail {
+    background: url(images/chat_input_tail.png) no-repeat 0px -10px;
+}
+/*File attachments*/
+.ow_mailchat_new_message .ow_file_attachment_preview {
+    width: 100%;
+    height: auto;
+    margin-top: -2px;
+    margin-bottom: 6px;
+}
+.ow_mailchat_new_message .ow_file_attachment_block1, .ow_mailchat_new_message .ow_file_attachment_block2 {
+    float: left;
+    width: 50%;
+    box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    margin: 2px 0;
+}
+.ow_mailchat_new_message .ow_file_attachment_block1 {
+    padding-right: 4px;
+}
+.ow_mailchat_new_message .ow_file_attachment_block2 {
+    padding-left: 4px;
+}
+.ow_mailchat_new_message .ow_file_attachment_info {
+    border: 1px solid #DCDCDC;
+    border-radius: 2px;
+    -moz-border-radius: 2px;
+    -webkit-border-radius: 2px;
+    padding-right: 50px;
+    position: relative;
+    height: 22px;
+    overflow: hidden;
+}
+.ow_mailchat_new_message .ow_file_attachment_info a {
+    line-height: 22px;
+    padding-left: 8px;
+}
+.ow_mailchat_new_message .ow_dialog_in_item.fileattach {
+    padding-top: 1px;
+    padding-bottom: 1px;
+}
+.ow_mailchat_new_message .ow_dialog_in_item.fileattach .ow_file_attachment_info {
+    border: none;
+}
+.ow_mailchat_new_message .ow_file_attachment_name {
+    width: 100%;
+    line-height: 22px;
+    height: 22px;
+    overflow: hidden;
+    padding-left: 8px;
+    font-size: 11px;
+    font-weight: bold;
+}
+.ow_mailchat_new_message .ow_file_attachment_size {
+    font-weight: normal;
+    display: none;
+}
+.ow_mailchat_new_message .ow_file_attachment_close {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 22px;
+    height: 22px;
+    border-left: 1px solid #DCDCDC;
+    background-image: url(images/tag_close_btn.png);
+    background-repeat: no-repeat;
+    background-position: center center;
+    box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+}
+.ow_mailchat_new_message .ow_file_attachment_preload {
+    position: absolute;
+    top: 0;
+    right: 25px;
+    width: 16px;
+    height: 22px;
+    background: url(images/ajax_preloader_content.gif) center center no-repeat;
+    display: none;
+}
+/* ----- End of chat styles ---- */
+
+/*IE fix for inputs scroll*/
+input[type=text],
+input[type=password],
+textarea,
+select,
+div.jhtmlarea,
+.ow_photo_upload_description,
+.ow_photo_preview_edit .CodeMirror{
+    overflow: auto;
+}
+.ow_photo_upload_description {
+    overflow: hidden;
+}
+/*Fixes*/
+.ow_console_invt_cont .ow_console_invt_no_img .ow_console_invt_txt {
+    width: 100%;
+}
+body .ow_dialog_in_item  .ow_oembed_attachment_preview {
+    margin-top: 8px;
+}
+.ow_dialog_item .ow_oembed_attachment_preview {
+    background-color: transparent;
+}
+.ow_dialog_in_item .ow_attachment_title a {
+    height: auto;
+}
+.ow_chat_dialog_wrap a {
+    color: #2a80ae;
+}
+
+/*Profile view*/
+.ow_context_action_value_block {
+    margin-left: 4px;
+}
+.ow_context_action_block.ow_context_action_value_block {
+    float: left;
+}
+.ow_context_action_value_block,
+a.ow_context_action_value,
+.ow_context_action_value_block .ow_context_action .ow_context_more {
+    line-height: 21px;
+}
+.ow_context_action_value_block .ow_tooltip_top_right .ow_tooltip_tail span {
+    background-position: 0 -6px;
+}
+.ow_context_action_value_block .ow_context_action {
+    height: 22px;
+    padding: 0 8px;
+}
+a.ow_context_action_value {
+    padding-right: 6px;
+}
+.ow_context_action_value_block .ow_context_action .ow_context_more,
+.ow_context_action_value_block .ow_context_action:hover .ow_context_more {
+    padding: 0;
+    background-position: 1px 9px;
+}
+.ow_context_action_value_block .ow_context_action .ow_tooltip {
+    margin-top: 4px;
+}
+.ow_context_action_value_block .ow_tooltip .ow_tooltip_body {
+    padding: 4px 0;
+}
+.ow_context_action_value_block .ow_tooltip .ow_tooltip_body a {
+    padding: 4px 12px;
+}
+.ow_context_action_value_block:hover .ow_tooltip {
+    display: block;
+}
+
+/*Messages tooltip*/
+.ow_tip_top.ow_tip_top_left .ow_tip_arrow {
+    left: 16px;
+    margin-left: 0;
+}
+.ow_tip_top.ow_tip_top_left.chat .ow_tip_box {
+    background-color:#505050;
+    color:#fff;
+}
+.ow_tip_top.ow_tip_top_left.chat .ow_tip_arrow span {
+    border-top-color:#505050;
+}
+
+/*Attachments oembed fixes*/
+.ow_comments_input_wrap .ow_comments_input {
+    margin-bottom: 7px;
+}
+.ow_newsfeed_oembed_atch .ow_newsfeed_item_picture {
+    margin-top: 4px;
+    position: relative;
+}
+.ow_newsfeed_oembed_atch {
+    padding-left: 108px;
+}
+.ow_newsfeed_oembed_atch.ow_video_playing {
+    padding-left: 0;
+}
+.ow_newsfeed_oembed_atch .ow_newsfeed_item_picture {
+    margin-left: -108px;
+}
+.ow_newsfeed_oembed_atch .ow_newsfeed_item_content {
+    max-width: none;
+    width: auto;
+}
+.ow_newsfeed_oembed_atch.ow_video_playing .ow_newsfeed_item_picture {
+    margin: 0 0 4px 0;
+    width: 100%;
+}
+.ow_oembed_video_cover {
+    position: absolute;
+    background-image: url(images/video_play.png);
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-color: rgba(78,78,78,0.75);
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    opacity: 0.5;
+}
+.ow_oembed_video_cover:hover {
+    opacity: 1;
+    background-color: rgba(78,78,78,0.375);
+}
+
+
+.ow_more_text[data-collapsed="1"] span:nth-child(1) {
+    display: none;
+}
+
+.ow_more_text[data-collapsed="0"] span:nth-child(2) {
+    display: none;
+}
+
+/*Photo lists*/
+/* ---- New list for search & matchmaking ----*/
+.ow_photo_userlist .ow_photo_list {
+    margin: -4px -4px 16px;
+}
+.ow_photo_userlist.ow_photo_list_wrap div.ow_photo_item_wrap {
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    float: left;
+    height: auto;
+    padding: 4px;
+    position: relative;
+    width: 25%;
+}
+.ow_photo_userlist .ow_photo_item_wrap img {
+    border-radius: 4px 4px 0 0;
+    height: auto;
+    width: 100%;
+}
+.ow_photo_userlist.ow_photo_list_wrap div.ow_photo_item {
+    background-position: center center;
+    background-size: cover;
+    border-radius: 3px;
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    cursor: pointer;
+    position: relative;
+    width: 100%;
+}
+.ow_photo_userlist.ow_photo_list_wrap .ow_photo_item_wrap .ow_photo_item_info {
+    border-radius: 0;
+    bottom: 0;
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    height: auto;
+    left: 0;
+    padding: 4px 8px;
+    position: absolute;
+    width: 100%;
+    opacity: 1;
+    background-color: rgba(0, 0, 0, 0.5);
+    text-decoration: none;
+}
+.ow_photo_userlist .ow_photo_item_info .ow_live_on {
+    width: 9px;
+    height: 9px;
+    padding-bottom: 2px;
+}
+body a.ow_photo_userlist_info {
+    color: #fff;
+    display: block;
+}
+a.ow_usearch_user_info:hover {
+    text-decoration: none;
+}
+.ow_photo_userlist_info:first-child {
+    position: relative;
+    padding-right: 18px;
+}
+.ow_photo_userlist_info:last-child {
+    margin-bottom: 2px;
+}
+.ow_explore_photos_show {
+    display: inline-block;
+    font-size: 11px;
+    padding: 0 8px 0 0;
+}
+.ow_fw_menu {
+    margin-bottom: 16px;
+    line-height: 21px;
+}
+.ow_fw_menu.ow_preloader a {
+    display: none;
+}
+/*Photo context action*/
+.ow_photo_context_action {
+    background-color: rgba(0, 0, 0, 0.75);
+    border-radius: 3px;
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
+    opacity: 0;
+    position: absolute;
+    right: 16px;
+    top: 16px;
+    transition: opacity 0.3s;
+    -webkit-transition: opacity 0.3s;
+    -moz-transition: opacity 0.3s;
+}
+.ow_photo_item .ow_photo_context_action {
+    right: 4px;
+    top: 4px;
+}
+.ow_photo_item:hover .ow_photo_context_action {
+    opacity: 1;
+    transition: opacity 0.3s;
+    -webkit-transition: opacity 0.3s;
+    -moz-transition: opacity 0.3s;
+}
+body .ow_photo_context_action .ow_context_action {
+    background-repeat: no-repeat;
+    background-position: center center;
+    padding: 0;
+    width: 20px;
+    height: 20px;
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    border-radius: 2px;
+    -webkit-border-radius: 2px;
+    -moz-border-radius: 2px;
+}
+body .ow_photo_context_action .ow_context_action:hover {
+    background-repeat: no-repeat;
+    background-position: center center;
+}
+.ow_photo_context_action .ow_tooltip .ow_tooltip_body {
+    border-radius: 4px;
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+}
+body .ow_photo_context_action a.ow_context_action_divider {
+    line-height: 1px;
+    height: 1px;
+    border-bottom: none;
+    margin: 3px 0px 2px;
+    padding: 0;
+}
+.ow_context_action_divider_wrap {
+    padding: 0 4px;
+    margin-bottom: 1px;
+}
+
+/*Box Toolbar*/
+.ow_bl.ow_box_toolbar  li {
+    float: left;
+    line-height: 24px;
+}
+.ow_bl.ow_box_toolbar li a {
+    display: inline-block;
+}
+
+/* Avatar field */
+.ow_avatar_field_preview {
+    width: 100px;
+    height: 100px;
+    position: relative;
+    cursor: pointer;
+}
+.ow_avatar_field_preview span {
+    width: 20px;
+    height: 20px;
+    position: absolute;
+    right: 2px;
+    top: 2px;
+    background: url(images/chat_btn_close.png) no-repeat center top;
+    cursor: pointer;
+}
+.ow_avatar_field_preview img {
+    width: 100%;
+    height: 100%;
+}
+
+/* Moderation */
+.ow_moderation_wrap {
+    margin-left: 206px;
+}
+.ow_moderation_sticky {
+	width: 190px;
+	margin-left: -206px; 
+	float: left;
+}
+.ow_vertical_nav {
+	width: 100%; 
+	overflow: hidden;
+	border-radius: 4px;
+	border-width: 1px;
+	border-style: solid;
+}
+.ow_vertical_nav_item {
+	cursor: pointer;
+	border-width: 0 0 1px 0;
+	border-style: solid;
+	padding: 10px 38px 10px 16px;
+}
+.ow_vertical_nav_item:hover {
+    text-decoration: none;
+}
+.ow_vertical_nav_item:last-child {
+	border-bottom: none;
+}
+.ow_moderation_label_bnts {
+	max-width: 100%;
+	text-align: center;
+	vertical-align: middle
+}
+.ow_moderation_content_wrap {
+	width: 100%;
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+	padding-left: 16px;
+	position: relative;
+}
+.ow_moderation_content_wrap input[type="checkbox"] {
+	margin-left: -16px;
+	margin-top: 18px;
+	width: 13px;
+	height: 13px;
+}
+.ow_moderation_table tr td,
+.ow_moderation_table tr th {
+	padding: 8px;
+} 
+.ow_vertical_nav_item .ow_count_wrap {
+	float: right;
+	margin-right: -26px;
+	margin-top: 2px;
+}
+/*Premoderation console button*/
+.ow_pending_approval_list ul.ow_console_dropdown .ow_console_dropdown_cont a {
+    padding-right: 30px;
+}
+.ow_pending_approval_list ul.ow_console_dropdown .ow_console_dropdown_cont a .ow_count_wrap {
+    margin-right: -24px;
+}
+.ow_pending_approval_list ul.ow_console_dropdown {
+    overflow-x: visible;
+}
+/*Video iframe*/
+.ow_ws_video iframe,
+.ow_ws_video object,
+.ow_ws_video embed,
+.ow_video_playing iframe {
+	width: 100%;
+}
+/*End of the Video iframe*/
