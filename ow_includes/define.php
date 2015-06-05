@@ -21,21 +21,85 @@
  * Display of Attribution Information is required in Larger Works which are defined in the CPAL as a work
  * which combines Covered Code or portions thereof with code not governed by the terms of the CPAL.
  */
-define('OW_DIR_STATIC_PLUGIN', OW_DIR_STATIC . 'plugins' . DS);
-define('OW_DIR_STATIC_THEME', OW_DIR_STATIC . 'themes' . DS);
-define('OW_DIR_PLUGIN_USERFILES', OW_DIR_USERFILES . 'plugins' . DS);
-define('OW_DIR_THEME_USERFILES', OW_DIR_USERFILES . 'themes' . DS);
-define('OW_DIR_LOG', OW_DIR_ROOT . 'ow_log' . DS);
-
-if ( defined('OW_URL_STATIC') )
+if ( !defined("OW_DIR_USERFILES") )
 {
-    define('OW_URL_STATIC_THEMES', OW_URL_STATIC . 'themes/');
-    define('OW_URL_STATIC_PLUGINS', OW_URL_STATIC . 'plugins/');
+    define("OW_DIR_USERFILES", OW_DIR_ROOT . "ow_userfiles" . DS);
 }
 
-if ( defined('OW_URL_USERFILES') )
+if ( !defined("OW_DIR_STATIC") )
 {
-    define('OW_URL_PLUGIN_USERFILES', OW_URL_USERFILES . 'plugins/');
-    define('OW_URL_THEME_USERFILES', OW_URL_USERFILES . 'themes/');
+    define("OW_DIR_STATIC", OW_DIR_ROOT . "ow_static" . DS);
+}
+if ( !defined("OW_URL_STATIC") )
+{
+    define("OW_URL_STATIC", OW_URL_HOME . "ow_static/");
+}
+
+if ( !defined("OW_URL_USERFILES") )
+{
+    define("OW_URL_USERFILES", OW_URL_HOME . "ow_userfiles/");
+}
+
+if ( !defined("OW_DIR_PLUGINFILES") )
+{
+    define("OW_DIR_PLUGINFILES", OW_DIR_ROOT . "ow_pluginfiles/");
+}
+
+if ( !defined("OW_DIR_CORE") )
+{
+    define("OW_DIR_CORE", OW_DIR_ROOT . "ow_core" . DS);
+}
+
+if ( !defined("OW_DIR_INC") )
+{
+    define("OW_DIR_INC", OW_DIR_ROOT . "ow_includes" . DS);
+}
+
+if ( !defined("OW_DIR_LIB") )
+{
+    define("OW_DIR_LIB", OW_DIR_ROOT . "ow_libraries" . DS);
+}
+
+if ( !defined("OW_DIR_UTIL") )
+{
+    define("OW_DIR_UTIL", OW_DIR_ROOT . "ow_utilities" . DS);
+}
+
+if ( !defined("OW_DIR_PLUGIN") )
+{
+    define("OW_DIR_PLUGIN", OW_DIR_ROOT . "ow_plugins" . DS);
+}
+
+if ( !defined("OW_DIR_THEME") )
+{
+    define("OW_DIR_THEME", OW_DIR_ROOT . "ow_themes" . DS);
+}
+
+if ( !defined("OW_DIR_SYSTEM_PLUGIN") )
+{
+    define("OW_DIR_SYSTEM_PLUGIN", OW_DIR_ROOT . "ow_system_plugins" . DS);
+}
+
+if ( !defined("OW_DIR_SMARTY") )
+{
+    define("OW_DIR_SMARTY", OW_DIR_ROOT . "ow_smarty" . DS);
+}
+
+define("OW_DIR_STATIC_PLUGIN", OW_DIR_STATIC . "plugins" . DS);
+define("OW_DIR_STATIC_THEME", OW_DIR_STATIC . "themes" . DS);
+define("OW_DIR_PLUGIN_USERFILES", OW_DIR_USERFILES . "plugins" . DS);
+define("OW_DIR_THEME_USERFILES", OW_DIR_USERFILES . "themes" . DS);
+define("OW_DIR_LOG", OW_DIR_ROOT . "ow_log" . DS);
+
+if ( defined("OW_URL_STATIC") )
+{
+    define("OW_URL_STATIC_THEMES", OW_URL_STATIC . "themes/");
+    define("OW_URL_STATIC_PLUGINS", OW_URL_STATIC . "plugins/");
+}
+
+if ( defined("OW_URL_USERFILES") )
+{
+    define("OW_URL_PLUGIN_USERFILES", OW_URL_USERFILES . "plugins/");
+    define("OW_URL_THEME_USERFILES", OW_URL_USERFILES . "themes/");
 }
 
