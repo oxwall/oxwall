@@ -22,93 +22,7 @@
      */
     var saveHtml = function(textarea, suitUpBlock)
     {
-        // remove all wrappers
-        var $clonedWrapper = $(suitUpBlock).clone(false);
- 
-        $clonedWrapper.find(".owm_attach_preview").each(function() {
-            $(this).replaceWith($(this).find(".owm_preview_content").html());
-        });
-
-        textarea.value = $clonedWrapper.html();
-        console.log(textarea.value);
-    };
-
-    /**
-     * Get media wrapper
-     * 
-     * @param string wrapperId
-     * @param string type
-     * @param string content
-     * @return string
-     */
-    var getMediaWrapper = function(wrapperId, type, content)
-    {
-        content = content || '';
-        var preloader = !content  ? 'owm_preloader' : '';
-
-        return '<div id="attach_preview_' + wrapperId + '" contenteditable="false" style="min-height:50px;margin:0;padding:0;background-color:#c0c0c0;position:relative" class="owm_attach_preview owm_std_margin_bottom ' + type + ' ' + preloader + '">' 
-                    + '<a class="owm_attach_preview_close" href="#"></a>' 
-                    + '<div class="owm_preview_content" style="overflow:hidden">' + content + '</div>' + 
-                '</div>' + (!content ? '<br />' : '');
-    }
-
-    /**
-     * Generate media wrapper id
-     * 
-     * @return integer
-     */
-    var generateMediaWrapperId = function()
-    {
-        return Math.random().toString(36).slice(2);
-    }
-
-    /**
-     * Init media wrappers close buttons
-     * 
-     * @param object suitUpBlock
-     * @param object textarea
-     * @return void
-     */
-    var initMediaWrappersCloseButtons = function(suitUpBlock, textarea)
-    {
-       $(suitUpBlock).find(".owm_attach_preview_close").unbind().on("click", function(e){
-           e.preventDefault();
-           $(this).parent().remove();
-           saveHtml(textarea, suitUpBlock);
-       }); 
-    }
-
-    /**
-     * Apply media wrappers
-     * 
-     * @param object suitUpBlock
-     * @param object textarea
-     * @return void
-     */
-    var applyMediaWrappers = function(suitUpBlock, textarea)
-    {
-        var content = '';
-        var mediaWrapper = '';
-
-        // find and wrapp all images
-        $(suitUpBlock).find("img").each(function() {
-            var $parent = $(this).parent();
-
-            if ($parent.is("a")) {
-                content = $("<div />").append( $parent.clone() ).html();
-                mediaWrapper = getMediaWrapper(generateMediaWrapperId(), "owm_photo_attach_preview", content);
-
-                $parent.replaceWith(mediaWrapper);
-            }
-            else {
-                content = $("<div />").append( $(this).clone() ).html();
-                mediaWrapper = getMediaWrapper(generateMediaWrapperId(), "owm_photo_attach_preview", content);
-
-                $(this).replaceWith(mediaWrapper);
-            }
-        });
-
-        initMediaWrappersCloseButtons(suitUpBlock, textarea);
+        textarea.value = suitUpBlock.html();
     };
 
     /**
@@ -152,7 +66,7 @@
              */
             image: function(textarea, suitUpBlock) 
             {
-                var wrapperId = '';
+                var oldSelection = '';
  
                 // create the upload image input
                 var $uploadImage = $('<input type="file" class="suitup_upload_image"  style="display:none" />' ).html5_upload({
@@ -164,33 +78,35 @@
                     },
                     onStartOne: function(event, name, number, total) 
                     {
-                        wrapperId = generateMediaWrapperId();
-
-                        // add a new media wrapper
                         suitUpBlock.focus();
-                        document.execCommand('insertHTML', false, getMediaWrapper(wrapperId, "owm_photo_attach_preview"));                       
-                        initMediaWrappersCloseButtons(suitUpBlock, textarea);
-
+                        oldSelection = $.suitUp.getSelection();
+                        suitUpBlock.addClass("owm_preloader");
                         return true;
                     },
                     onFinishOne: function(event, response, name, number, total) 
                     {
+                        suitUpBlock.removeClass("owm_preloader");
                         var result = jQuery.parseJSON(response);
-                        var $wrapper = $(suitUpBlock).find("#attach_preview_" + wrapperId);
  
                         // show an error message
                         if ( typeof result.error_message != "undefined" && result.error_message )
                         {
                            OWM.message(result.error_message, 'error');
-                           $wrapper.remove();
                            return;
                         }
  
+                        suitUpBlock.focus();
+                        $.suitUp.restoreSelection(oldSelection);
+ 
                         // show the image
-                        var content = '<a href="' + result.file_url + '" target="_blank"><img src="' + result.file_url + '"></a>';
-                        $wrapper.removeClass("owm_preloader").find(".owm_preview_content").html(content);
-
+                        var content = '<a href="' + result.file_url + 
+                                '" target="_blank"><img style="max-height:150px;" src="' + result.file_url + '"></a><br />';
+ 
+                        document.execCommand('insertHTML', false, content);
                         saveHtml(textarea, suitUpBlock);
+                    },
+                    onError: function(event, name, error) {
+                        suitUpBlock.removeClass("owm_preloader");
                     }
                 });
 
@@ -216,6 +132,7 @@
                     "data-command": "createlink"
                 }).on("click", function() {
                     if (!$.suitUp.hasSelectedNodeParent("a")) {
+                        suitUpBlock.focus();
                         var oldSelection = $.suitUp.getSelection();
 
                         var floatBox = OWM.ajaxFloatBox("BASE_MCMP_LinkSelect", [{ "linkText" : $.suitUp.getSelectedText() }], {
@@ -382,10 +299,6 @@ $.fn.suitUp = function( controls, imageUploadUrl )
                             className: 'owm_suitup'
                     }),
 
-                    controlsBlock = create( 'div', {
-                            className: 'owm_suitup-controls'
-                    }).appendTo( mainBlock ),
-
                     containerBlock = create( 'div', {
                             className: 'owm_suitup-editor',
                             contentEditable: true
@@ -401,6 +314,9 @@ $.fn.suitUp = function( controls, imageUploadUrl )
                     .html( that.value )
                     .appendTo( mainBlock ),
 
+                    controlsBlock = create( 'div', {
+                            className: 'owm_suitup-controls'
+                    }).appendTo( mainBlock ),
 
                     updateTextarea = function() {
                          saveHtml(that, containerBlock);
@@ -515,9 +431,7 @@ $.fn.suitUp = function( controls, imageUploadUrl )
                     } 
             }
 
-            applyMediaWrappers(containerBlock, that);
             mainBlock.insertBefore(that);
-
     });
 };
 })( window, document, jQuery );
