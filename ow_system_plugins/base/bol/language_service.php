@@ -56,6 +56,13 @@ class BOL_LanguageService
 
     private function loadFromCahce()
     {
+        $allLanguages = $this->getLanguages();
+        
+        // exit if no active laguages
+        if ( empty($allLanguages) ) {
+            return;
+        }
+        
         $filename = $this->languageCacheDir . $this->getCacheFilename($this->getCurrent()->getId());
         $language = array();
 

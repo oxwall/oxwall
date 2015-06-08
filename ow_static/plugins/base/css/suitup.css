@@ -1,3 +1,7 @@
+.owm_suitup {
+    position: relative;
+}
+
 .owm_suitup-controls {
     background: #e5e5e5 none repeat scroll 0 0;
     display: block;
@@ -15,7 +19,7 @@
     border: 1px solid #b9b9b9;
     overflow: auto;
     background-color: white;
-    height:200px;
+    height:130px;
 }
 
 a.owm_suitup-control, span.owm_suitup-control {
@@ -67,4 +71,20 @@ a.owm_suitup-control[data-command="createlink"] {
 
 a.owm_suitup-control.active[data-command="createlink"] {
     background-image: url("images/ico_wysiwyg_l_hover.png");
+}
+
+a.owm_suitup-control[data-command="insertImage"] {
+    background-image: url("images/ico_wysiwyg_photo.png");
+}
+
+a.owm_suitup-control.active[data-command="insertImage"] {
+    background-image: url("images/ico_wysiwyg_photo_hover.png");
+}
+
+a.owm_suitup-control[data-command="insertVideo"] {
+    background-image: url("images/ico_wysiwyg_video.png");
+}
+
+a.owm_suitup-control.active[data-command="insertVideo"] {
+    background-image: url("images/ico_wysiwyg_video_hover.png");
 }

@@ -23,13 +23,13 @@
  */
 
 /**
- * Singleton. 'LinkSelect' Data Access Object
+ * Singleton. 'InsertLink' Data Access Object
  *
  * @author Alex Ermashev <alexermashev@gmail.com>
  * @package ow_system_plugins.base.components
  * @since 1.0
  */
-class BASE_MCMP_LinkSelect extends OW_MobileComponent
+class BASE_MCMP_InsertLink extends OW_MobileComponent
 {
     /**
      * Class constructor
@@ -46,7 +46,7 @@ class BASE_MCMP_LinkSelect extends OW_MobileComponent
             : null;
 
         // add a form
-        $form = new LinkSelectForm();
+        $form = new InsertLinkForm();
         $form->setValues(array(
            'title' => $title  
         ));
@@ -55,7 +55,7 @@ class BASE_MCMP_LinkSelect extends OW_MobileComponent
     }
 }
 
-class LinkSelectForm extends Form
+class InsertLinkForm extends Form
 {
     /**
      * Min title length
@@ -79,11 +79,11 @@ class LinkSelectForm extends Form
 
     public function __construct()
     {
-        parent::__construct('linkSelect');
+        parent::__construct('insertLink');
  
         // title
         $titleField = new TextField('title');
-        $titleField->setRequired(true)->setHasInvitation(true)->setInvitation(OW::getLanguage()->text('base', 'text_to_display'));
+        $titleField->setRequired(true)->setHasInvitation(true)->setInvitation(OW::getLanguage()->text('base', 'ws_link_text_label'));
 
         $sValidator = new StringValidator(self::MIN_TITLE_LENGTH, self::MAX_TITLE_LENGTH);
         $sValidator->setErrorMessage(OW::getLanguage()->
@@ -94,17 +94,18 @@ class LinkSelectForm extends Form
 
         // link
         $linkField = new TextField('link');
-        $linkField->setRequired(true)->setHasInvitation(true)->setInvitation(OW::getLanguage()->text('base', 'add_link'));
+        $linkField->setRequired(true)->setHasInvitation(true)->setInvitation(OW::getLanguage()->text('base', 'ws_link_url_label'));
         $sValidator = new StringValidator(self::MIN_LINK_LENGTH, self::MAX_LINK_LENGTH);
         $sValidator->setErrorMessage(OW::getLanguage()->
                 text('base', 'chars_limit_exceeded', array('limit' => self::MAX_LINK_LENGTH)));
 
         $linkField->addValidator($sValidator);
+        $linkField->addValidator(new UrlValidator());
         $this->addElement($linkField);
 
         // submit
         $submit = new Submit('submit');
-        $submit->setValue(OW::getLanguage()->text('base', 'submit'));
+        $submit->setValue(OW::getLanguage()->text('base', 'ws_insert_label'));
         $this->addElement($submit);
     }
 }

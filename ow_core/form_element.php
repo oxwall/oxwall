@@ -2949,7 +2949,13 @@ class YearRange extends FormElement implements DateRangeInterface
  * @since 1.0
  */
 class MobileWysiwygTextarea extends Textarea
-{           
+{
+    /**
+     * Plugin key
+     * @var string
+     */
+    protected $pluginKey;
+
     /**
      * Buttons list
      * 
@@ -2959,17 +2965,23 @@ class MobileWysiwygTextarea extends Textarea
         BOL_TextFormatService::WS_BTN_BOLD,
         BOL_TextFormatService::WS_BTN_ITALIC,
         BOL_TextFormatService::WS_BTN_UNDERLINE,
-        BOL_TextFormatService::WS_BTN_LINK
+        BOL_TextFormatService::WS_BTN_LINK,
+        BOL_TextFormatService::WS_BTN_IMAGE,
+        BOL_TextFormatService::WS_BTN_VIDEO
     );
 
     /**
      * Constructor.
      *
      * @param string $name
+     * @param string $pluginKey
+     * @param array $buttons
      */
-    public function __construct( $name, array $buttons = array() )
+    public function __construct( $name, $pluginKey = 'blog', array $buttons = array() )
     {
         parent::__construct($name);
+
+        $this->pluginKey = $pluginKey;
 
         // init list of buttons
         if ( !empty($buttons) )
@@ -2993,17 +3005,33 @@ class MobileWysiwygTextarea extends Textarea
     {
         
 	if ( OW::getRegistry()->get('baseWsInit') === null )
-        {         
-            OW::getDocument()->addScript(OW::getPluginManager()->getPlugin('base')->getStaticJsUrl() . 'suitup.jquery.js?aa=aaa'.time());
-            OW::getDocument()->addStyleSheet(OW::getPluginManager()->getPlugin('base')->getStaticCssUrl() . 'suitup.css?aa=aaa'.time());
+        {
+            if ( in_array(BOL_TextFormatService::WS_BTN_IMAGE, $this->buttons) )
+            {
+                OW::getDocument()->addScript(OW::getPluginManager()->getPlugin('base')->getStaticJsUrl() . 'jquery.html5_upload.js');
+            }
+
+            OW::getDocument()->addScript(OW::getPluginManager()->getPlugin('base')->getStaticJsUrl() . 'suitup.jquery.js?a='.time());
+            OW::getDocument()->addStyleSheet(OW::getPluginManager()->getPlugin('base')->getStaticCssUrl() . 'suitup.css?a='.time());
+
+            // register js langs
+            OW::getLanguage()->addKeyForJs('base', 'ws_button_label_link');
+            OW::getLanguage()->addKeyForJs('base', 'ws_button_label_video');
+            OW::getLanguage()->addKeyForJs('base', 'ws_error_video');
+
             OW::getRegistry()->set('baseWsInit', true);
         }
 
         $this->addAttribute('class', 'owm_suitup_wyswyg');
+        $js = UTIL_JsGenerator::newInstance();
 
-        $js = UTIL_JsGenerator::composeJsString('$("#" + {$uniqId}).suitUp({$buttons}).show();', array(
+        $js->addScript('$("#" + {$uniqId}).suitUp({$buttons}, {$imageUploadUrl}, {$embedUrl}).show();', array(
             'buttons' => $this->buttons,
-            'uniqId' => $this->getId()
+            'uniqId' => $this->getId(),
+            'imageUploadUrl' => OW::getRouter()->urlFor('BASE_CTRL_MediaPanel', 'ajaxUpload', array(
+                'pluginKey' => $this->pluginKey
+            )),
+            'embedUrl' => OW::getRouter()->urlFor('BASE_MCTRL_Oembed', 'getAjaxEmbedCode')
         ));
 
         OW::getDocument()->addOnloadScript($js);
