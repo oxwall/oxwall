@@ -211,7 +211,7 @@ class UploadImageForm extends Form
 
         if ( !UTIL_File::validateImage($name) )
         {
-            return OW::getLanguage()->text('base', 'Invalid file type. Acceptable file types: JPG/PNG/GIF');
+            return OW::getLanguage()->text('base', 'invalid_file_type_acceptable_file_types_jpg_png_gif');
         }
 
         $tmpname = $_FILES['file']['tmp_name'];

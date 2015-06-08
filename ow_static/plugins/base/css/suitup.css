@@ -80,3 +80,11 @@ a.owm_suitup-control[data-command="insertImage"] {
 a.owm_suitup-control.active[data-command="insertImage"] {
     background-image: url("images/ico_wysiwyg_photo_hover.png");
 }
+
+a.owm_suitup-control[data-command="insertVideo"] {
+    background-image: url("images/ico_wysiwyg_video.png");
+}
+
+a.owm_suitup-control.active[data-command="insertVideo"] {
+    background-image: url("images/ico_wysiwyg_video_hover.png");
+}

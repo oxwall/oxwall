@@ -23,13 +23,13 @@
  */
 
 /**
- * Singleton. 'LinkSelect' Data Access Object
+ * Singleton. 'InsertLink' Data Access Object
  *
  * @author Alex Ermashev <alexermashev@gmail.com>
  * @package ow_system_plugins.base.components
  * @since 1.0
  */
-class BASE_MCMP_LinkSelect extends OW_MobileComponent
+class BASE_MCMP_InsertLink extends OW_MobileComponent
 {
     /**
      * Class constructor
@@ -46,7 +46,7 @@ class BASE_MCMP_LinkSelect extends OW_MobileComponent
             : null;
 
         // add a form
-        $form = new LinkSelectForm();
+        $form = new InsertLinkForm();
         $form->setValues(array(
            'title' => $title  
         ));
@@ -55,7 +55,7 @@ class BASE_MCMP_LinkSelect extends OW_MobileComponent
     }
 }
 
-class LinkSelectForm extends Form
+class InsertLinkForm extends Form
 {
     /**
      * Min title length
@@ -79,7 +79,7 @@ class LinkSelectForm extends Form
 
     public function __construct()
     {
-        parent::__construct('linkSelect');
+        parent::__construct('insertLink');
  
         // title
         $titleField = new TextField('title');

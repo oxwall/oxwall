@@ -34,7 +34,7 @@
          * 
          * @var array
          */
-        controls: [ 'italic', 'bold', 'undeline', 'link', 'image' ],
+        controls: [ 'italic', 'bold', 'undeline', 'link', 'image', 'video' ],
 
         /**
          * Image upload url
@@ -69,7 +69,7 @@
                 var oldSelection = '';
  
                 // create the upload image input
-                var $uploadImage = $('<input type="file" class="suitup_upload_image"  style="display:none" />' ).html5_upload({
+                var $uploadImage = $('<input type="file" class="suitup_upload_image" style="display:none" accept="image/*" />' ).html5_upload({
                     url: $.suitUp.getImageUploadUrl(),
                     sendBoundary: window.FormData || $.browser.mozilla,
                     fieldName : 'file',
@@ -135,7 +135,7 @@
                         suitUpBlock.focus();
                         var oldSelection = $.suitUp.getSelection();
 
-                        var floatBox = OWM.ajaxFloatBox("BASE_MCMP_LinkSelect", [{ "linkText" : $.suitUp.getSelectedText() }], {
+                        var floatBox = OWM.ajaxFloatBox("BASE_MCMP_InsertLink", [{ "linkText" : $.suitUp.getSelectedText() }], {
                             "title" : OW.getLanguageText('base', 'ws_button_label_link'),
                             "scope" : {
                                 "success" : function(data) {
@@ -152,6 +152,52 @@
                         doc.execCommand('unlink', false, null);
                         saveHtml(textarea, suitUpBlock);
                     }
+                });
+            },
+            video: function(textarea, suitUpBlock) 
+            {
+                return create("a", {
+                    className: "owm_suitup-control",
+                    href: "javascript://"
+                }).attr({
+                    "data-command": "insertVideo"
+                }).on("click", function() {
+                    suitUpBlock.focus();
+                    var oldSelection = $.suitUp.getSelection();
+
+                    var floatBox = OWM.ajaxFloatBox("BASE_MCMP_InsertVideo", [], {
+                         "title" : OW.getLanguageText('base', 'ws_button_label_video'),
+                         "scope" : {
+                            "success" : function(data) {
+                                $.ajax({
+                                    url: $.suitUp.embedUrl,
+                                    data: { url: data.link },
+                                    cache: false,
+                                    success: function(response) {
+                                        var data = jQuery.parseJSON(response);
+
+                                        if (typeof data.type == "undefined" 
+                                            || typeof data.html == "undefined" 
+                                            || data.type != "video") {
+
+                                            OWM.message(OW.getLanguageText('base', 'ws_error_video'), 'error');
+                                            return;
+                                        }
+
+                                        floatBox.close();
+                                        suitUpBlock.focus();
+                                        $.suitUp.restoreSelection(oldSelection);
+
+                                        document.execCommand('insertHTML', false, data.html);
+                                        saveHtml(textarea, suitUpBlock);
+                                    },
+                                    'error' : function() {
+                                        OWM.message(OW.getLanguageText('base', 'ws_error_video'), 'error');
+                                    }
+                                });
+                            }
+                         }
+                     });
                 });
             }
         },
@@ -271,8 +317,9 @@
  * 
  * @param array controls
  * @param string imageUploadUrl
+ * @param string embedUrl
  */
-$.fn.suitUp = function( controls, imageUploadUrl ) 
+$.fn.suitUp = function(controls, imageUploadUrl, embedUrl) 
 {
     var suitUp = $.suitUp,
             lastSelectionRange,
@@ -285,6 +332,7 @@ $.fn.suitUp = function( controls, imageUploadUrl )
     controls = controls instanceof Array ? controls : Array.prototype.slice.call( arguments ); // IE changes the arguments object when one of the arguments is redefined
 
     $.suitUp.imageUploadUrl = imageUploadUrl || '';
+    $.suitUp.embedUrl = embedUrl || '';
  
     return this.each( function() {
             var that = this,

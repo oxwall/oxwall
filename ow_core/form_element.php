@@ -2966,7 +2966,8 @@ class MobileWysiwygTextarea extends Textarea
         BOL_TextFormatService::WS_BTN_ITALIC,
         BOL_TextFormatService::WS_BTN_UNDERLINE,
         BOL_TextFormatService::WS_BTN_LINK,
-        BOL_TextFormatService::WS_BTN_IMAGE
+        BOL_TextFormatService::WS_BTN_IMAGE,
+        BOL_TextFormatService::WS_BTN_VIDEO
     );
 
     /**
@@ -3012,21 +3013,25 @@ class MobileWysiwygTextarea extends Textarea
 
             OW::getDocument()->addScript(OW::getPluginManager()->getPlugin('base')->getStaticJsUrl() . 'suitup.jquery.js?a='.time());
             OW::getDocument()->addStyleSheet(OW::getPluginManager()->getPlugin('base')->getStaticCssUrl() . 'suitup.css?a='.time());
-            OW::getRegistry()->set('baseWsInit', true);
+
+            // register js langs
             OW::getLanguage()->addKeyForJs('base', 'ws_button_label_link');
+            OW::getLanguage()->addKeyForJs('base', 'ws_button_label_video');
+            OW::getLanguage()->addKeyForJs('base', 'ws_error_video');
+
+            OW::getRegistry()->set('baseWsInit', true);
         }
 
         $this->addAttribute('class', 'owm_suitup_wyswyg');
         $js = UTIL_JsGenerator::newInstance();
 
-        $imageUploadUrl = OW::getRouter()->urlFor('BASE_CTRL_MediaPanel', 'ajaxUpload', array(
-            'pluginKey' => $this->pluginKey
-        ));
-
-        $js->addScript('$("#" + {$uniqId}).suitUp({$buttons}, {$imageUploadUrl}).show();', array(
+        $js->addScript('$("#" + {$uniqId}).suitUp({$buttons}, {$imageUploadUrl}, {$embedUrl}).show();', array(
             'buttons' => $this->buttons,
             'uniqId' => $this->getId(),
-            'imageUploadUrl' => $imageUploadUrl
+            'imageUploadUrl' => OW::getRouter()->urlFor('BASE_CTRL_MediaPanel', 'ajaxUpload', array(
+                'pluginKey' => $this->pluginKey
+            )),
+            'embedUrl' => OW::getRouter()->urlFor('BASE_MCTRL_Oembed', 'getAjaxEmbedCode')
         ));
 
         OW::getDocument()->addOnloadScript($js);
