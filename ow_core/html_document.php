@@ -730,7 +730,7 @@ class OW_HtmlDocument extends OW_Document
         {
             foreach ( $scripts as $script )
             {
-                $jsData .= '(function(_scope) {' . $script . '})(window);' . PHP_EOL;
+                $jsData .= '(function(_scope) {' . $script . '})({});' . PHP_EOL;
             }
         }
 
