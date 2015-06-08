@@ -100,6 +100,7 @@ class InsertLinkForm extends Form
                 text('base', 'chars_limit_exceeded', array('limit' => self::MAX_LINK_LENGTH)));
 
         $linkField->addValidator($sValidator);
+        $linkField->addValidator(new UrlValidator());
         $this->addElement($linkField);
 
         // submit
