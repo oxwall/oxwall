@@ -1047,8 +1047,13 @@ class BASE_CLASS_EventHandler
         $event->add($action);
     }
 
-    public static function actionToolbarAddUserApproveAction( BASE_CLASS_EventCollector $event )
+    public function onActionToolbarAddUserApproveActionTool( BASE_CLASS_EventCollector $event )
     {
+        if ( !OW::getUser()->isAdmin() )
+        {
+            return;
+        }
+
         if ( !OW::getUser()->isAuthorized('base') )
         {
             return;
@@ -1078,15 +1083,6 @@ class BASE_CLASS_EventHandler
         );
 
         $event->add($action);
-    }
-
-    public function onActionToolbarAddUserApproveActionTool( BASE_CLASS_EventCollector $event )
-    {
-        if ( !OW::getUser()->isAdmin() )
-        {
-            return;
-        }
-        BASE_CLASS_EventHandler::actionToolbarAddUserApproveAction($event);
     }
 
     public function onActionToolbarAddAuthActionTool( BASE_CLASS_EventCollector $event )
