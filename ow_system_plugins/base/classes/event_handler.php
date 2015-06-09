@@ -1054,11 +1054,6 @@ class BASE_CLASS_EventHandler
             return;
         }
 
-        if ( !OW::getUser()->isAuthorized('base') )
-        {
-            return;
-        }
-
         $params = $event->getParams();
 
         if ( empty($params['userId']) )
