@@ -100,7 +100,7 @@
  
                         // show the image
                         var content = '<br /><a href="' + result.file_url + 
-                                '" target="_blank"><img style="max-height:150px;" src="' + result.file_url + '"></a><br /><br />';
+                                '" target="_blank"><img src="' + result.file_url + '"></a><br /><br />';
  
                         document.execCommand('insertHTML', false, content);
                         saveHtml(textarea, suitUpBlock);
