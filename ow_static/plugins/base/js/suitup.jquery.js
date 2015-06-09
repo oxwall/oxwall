@@ -99,8 +99,8 @@
                         $.suitUp.restoreSelection(oldSelection);
  
                         // show the image
-                        var content = '<a href="' + result.file_url + 
-                                '" target="_blank"><img style="max-height:150px;" src="' + result.file_url + '"></a><br />';
+                        var content = '<br /><a href="' + result.file_url + 
+                                '" target="_blank"><img style="max-height:150px;" src="' + result.file_url + '"></a><br /><br />';
  
                         document.execCommand('insertHTML', false, content);
                         saveHtml(textarea, suitUpBlock);
@@ -188,7 +188,7 @@
                                         suitUpBlock.focus();
                                         $.suitUp.restoreSelection(oldSelection);
 
-                                        document.execCommand('insertHTML', false, data.html);
+                                        document.execCommand('insertHTML', false, '<br />' + data.html + '<br /><br />');
                                         saveHtml(textarea, suitUpBlock);
                                     },
                                     'error' : function() {
