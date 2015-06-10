@@ -111,35 +111,35 @@ abstract class BASE_CTRL_AjaxComponentPanel extends OW_ActionController
     {
         $this->checkComponentClass($componentClassName);
 
-        return call_user_func(array($componentClassName, 'getSettingList'));
+        return call_user_func(array($componentClassName, 'getSettingList'), $params["componentId"]);
     }
 
     protected function getComponentAccess( $componentClassName, $params = array() )
     {
         $this->checkComponentClass($componentClassName);
 
-        return call_user_func(array($componentClassName, 'getAccess'));
+        return call_user_func(array($componentClassName, 'getAccess'), $params["componentId"]);
     }
 
     protected function getComponentStandardSettingValueList( $componentClassName, $params = array() )
     {
         $this->checkComponentClass($componentClassName);
 
-        return call_user_func(array($componentClassName, 'getStandardSettingValueList'));
+        return call_user_func(array($componentClassName, 'getStandardSettingValueList'), $params["componentId"]);
     }
 
     protected function validateComponentSettingList( $componentClassName, $settingList, $place, $params = array() )
     {
         $this->checkComponentClass($componentClassName);
 
-        return call_user_func(array($componentClassName, 'validateSettingList'), $settingList, $place );
+        return call_user_func(array($componentClassName, 'validateSettingList'), $settingList, $place, $params["componentId"]);
     }
 
     protected function processSettingList( $componentClassName, $settingList, $place, $isAdmin, $params = array() )
     {
         $this->checkComponentClass($componentClassName);
 
-        return call_user_func(array($componentClassName, 'processSettingList'), $settingList, $place, $isAdmin);
+        return call_user_func(array($componentClassName, 'processSettingList'), $settingList, $place, $isAdmin, $params["componentId"]);
     }
 
     protected function getComponentMarkup( BASE_CMP_DragAndDropItem $viewInstance, $renderView = false )

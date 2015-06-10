@@ -148,7 +148,7 @@ class BASE_CMP_DragAndDropItem extends OW_Component
         $paramObject = $this->componentParamObject;
 
         $componentSettingList = array();
-        foreach ( call_user_func(array($this->componentContentClass, 'getSettingList')) as $key => $item )
+        foreach ( call_user_func(array($this->componentContentClass, 'getSettingList'), $this->componentParamObject->widgetDetails->uniqName) as $key => $item )
         {
             $componentSettingList[$key] = empty($item['value']) ? null : $item['value'];
         }
@@ -226,7 +226,7 @@ class BASE_CMP_DragAndDropItem extends OW_Component
         }
         else
         {
-            $standardSettingValueList = call_user_func(array($this->componentContentClass, 'getStandardSettingValueList'));
+            $standardSettingValueList = call_user_func(array($this->componentContentClass, 'getStandardSettingValueList'), $this->componentParamObject->widgetDetails->uniqName);
         }
 
         return array_merge($this->boxSettingList, $standardSettingValueList);
@@ -234,7 +234,7 @@ class BASE_CMP_DragAndDropItem extends OW_Component
 
     private function getComponentAccess()
     {
-        return call_user_func(array($this->componentContentClass, 'getAccess'));
+        return call_user_func(array($this->componentContentClass, 'getAccess'), $this->componentParamObject->widgetDetails->uniqName);
     }
 
     private function isComponentAvaliable( BASE_CLASS_WidgetParameter $paramsObject )
