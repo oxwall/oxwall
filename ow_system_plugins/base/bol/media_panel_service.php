@@ -84,6 +84,11 @@ class BOL_MediaPanelService
         return $this->dao->findImages($plugin, $userId, $first, $count);
     }
 
+    public function findImage( $imageId )
+    {
+        return $this->dao->findImage($imageId);
+    }
+
     public function countGalleryImages( $plugin, $userId=null )
     {
         return $this->dao->countGalleryImages($plugin, $userId);

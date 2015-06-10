@@ -2944,6 +2944,132 @@ class YearRange extends FormElement implements DateRangeInterface
 /**
  * Form element: Textarea.
  * 
+ * @author Alex Ermashev <alexermashev@gmail.com>
+ * @package ow_core
+ * @since 1.0
+ */
+class MobileWysiwygTextarea extends Textarea
+{
+    /**
+     * Plugin key
+     * @var string
+     */
+    protected $pluginKey;
+
+    /**
+     * Buttons list
+     * 
+     * @var array
+     */
+    private $buttons = array(
+        BOL_TextFormatService::WS_BTN_BOLD,
+        BOL_TextFormatService::WS_BTN_ITALIC,
+        BOL_TextFormatService::WS_BTN_UNDERLINE,
+        BOL_TextFormatService::WS_BTN_LINK,
+        BOL_TextFormatService::WS_BTN_IMAGE,
+        BOL_TextFormatService::WS_BTN_VIDEO
+    );
+
+    /**
+     * Constructor.
+     *
+     * @param string $name
+     * @param string $pluginKey
+     * @param array $buttons
+     */
+    public function __construct( $name, $pluginKey = 'blog', array $buttons = array() )
+    {
+        parent::__construct($name);
+
+        $this->pluginKey = $pluginKey;
+
+        // init list of buttons
+        if ( !empty($buttons) )
+        {
+            $this->buttons = $buttons;
+        }
+
+        $stringValidator = new StringValidator(0, 50000);
+        $stringValidator->setErrorMessage(OW::getLanguage()->text('base', 'text_is_too_long', array('max_symbols_count' => 50000)));
+
+        $this->addValidator($stringValidator);
+    }
+
+    /**
+     * @see FormElement::renderInput()
+     *
+     * @param array $params
+     * @return string
+     */
+    public function renderInput( $params = null )
+    {
+        
+	if ( OW::getRegistry()->get('baseWsInit') === null )
+        {
+            if ( in_array(BOL_TextFormatService::WS_BTN_IMAGE, $this->buttons) )
+            {
+                OW::getDocument()->addScript(OW::getPluginManager()->getPlugin('base')->getStaticJsUrl() . 'jquery.html5_upload.js');
+            }
+
+            OW::getDocument()->addScript(OW::getPluginManager()->getPlugin('base')->getStaticJsUrl() . 'suitup.jquery.js?a='.time());
+            OW::getDocument()->addStyleSheet(OW::getPluginManager()->getPlugin('base')->getStaticCssUrl() . 'suitup.css?a='.time());
+
+            // register js langs
+            OW::getLanguage()->addKeyForJs('base', 'ws_button_label_link');
+            OW::getLanguage()->addKeyForJs('base', 'ws_button_label_video');
+            OW::getLanguage()->addKeyForJs('base', 'ws_error_video');
+
+            OW::getRegistry()->set('baseWsInit', true);
+        }
+
+        $this->addAttribute('class', 'owm_suitup_wyswyg');
+        $js = UTIL_JsGenerator::newInstance();
+
+        $js->addScript('$("#" + {$uniqId}).suitUp({$buttons}, {$imageUploadUrl}, {$embedUrl}).show();', array(
+            'buttons' => $this->buttons,
+            'uniqId' => $this->getId(),
+            'imageUploadUrl' => OW::getRouter()->urlFor('BASE_CTRL_MediaPanel', 'ajaxUpload', array(
+                'pluginKey' => $this->pluginKey
+            )),
+            'embedUrl' => OW::getRouter()->urlFor('BASE_MCTRL_Oembed', 'getAjaxEmbedCode')
+        ));
+
+        OW::getDocument()->addOnloadScript($js);
+
+        return parent::renderInput($params);
+    }
+
+    /**
+     * Makes form element required.
+     *
+     * @param boolean $value
+     * @return FormElement
+     */
+    public function setRequired( $value = true )
+    {
+        if ( $value )
+        {
+            $this->addValidator(new WyswygRequiredValidator());
+        }
+        else
+        {
+            foreach ( $this->validators as $key => $validator )
+            {
+                if ( $validator instanceof WyswygRequiredValidator )
+                {
+                    unset($this->validators[$key]);
+                    break;
+                }
+            }
+        }
+
+        return $this;
+    }
+}
+
+/**
+ * Form element: Textarea.
+ * 
  * @author Sardar Madumarov <madumarov@gmail.com>
  * @package ow_core
  * @since 1.0
