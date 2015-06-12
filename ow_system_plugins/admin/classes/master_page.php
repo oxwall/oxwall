@@ -163,14 +163,15 @@ class ADMIN_CLASS_MasterPage extends OW_MasterPage
         {
             $id = 'mi' . rand(1, 10000);
 
+            $value->setCategory($key);
             $value->onBeforeRender();
 
-            $arrayToAssign[$key] = array('id' => $id, 'key' => $key, 'isActive' => $value->isActive(), 'label' => $language->text('admin', 'sidebar_' . $key), 'cmp' => ( $value->getElementsCount() < 2 || $value->isActive() ) ? '' : $value->render());
+            $arrayToAssign[$key] = array('id' => $id, 'key' => $key, 'isActive' => $value->isActive(), 'label' => $language->text('admin', 'sidebar_' . $key), 'sub_menu' => ( $value->getElementsCount() < 2 ) ? '' : $value->render(), 'active_sub_menu' => ( $value->getElementsCount() < 2 ) ? '' : $value->render('ow_admin_submenu'));
 
-            if ( $value->isActive() && $value->getElementsCount() > 1 )
+           /* if ( $value->isActive() && $value->getElementsCount() > 1 )
             {
                 $this->assign('submenu', $value->render());
-            }
+            }*/
 
             $menuItem = $value->getFirstElement();
 
