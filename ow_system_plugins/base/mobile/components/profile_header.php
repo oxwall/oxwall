@@ -32,9 +32,11 @@ class BASE_MCMP_ProfileHeader extends OW_MobileComponent
         $isModerator = (OW::getUser()->isAuthorized('base') || OW::getUser()->isAdmin());
                 
         $avatarData[$this->user->id]['src'] = BOL_AvatarService::getInstance()->getAvatarUrl( $this->user->getId(), 1, null, true, !($owner || $isModerator) );
-        
+        $default_avatar['src'] = BOL_AvatarService::getInstance()->getDefaultAvatarUrl(1);
+
         $user = array();
-        $user["avatar"] = $avatarData[$this->user->id];
+
+        $user["avatar"] = !empty($avatarData[$this->user->id]['src']) ? $avatarData[$this->user->id] : $default_avatar;
         $user["displayName"] = $avatarData[$this->user->id]["title"];
         
         $this->assign("user", $user);
