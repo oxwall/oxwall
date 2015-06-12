@@ -49,6 +49,14 @@ class ADMIN_CMP_AdminMenu extends BASE_CMP_Menu
         $this->setTemplate(null);
     }
 
+    public function render($subMenuClass = null)
+    {
+        $this->assign('isActive', $this->active);
+        $this->assign('subMenuClass', $subMenuClass);
+
+        return parent::render();
+    }
+
     public function onBeforeRender()
     {
         parent::onBeforeRender();
@@ -92,5 +100,10 @@ class ADMIN_CMP_AdminMenu extends BASE_CMP_Menu
     public function isActive()
     {
         return $this->active;
+    }
+
+    public function setCategory($category)
+    {
+        $this->assign('category', $category);
     }
 }

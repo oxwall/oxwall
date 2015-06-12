@@ -1,10 +1,6 @@
-<span class="ow_tooltip_tail"><span></span></span>	
-<ul class="{$class} clearfix ow_tooltip_body">
-{foreach from=$data item='item'}
-	<li class="{$item.class}{if !empty($item.active)} active{/if}">
-		<a href="{$item.url}"{if !empty($item.new_window)} target="_blank"{/if}>
-		   <span>{$item.label}</span>
-		</a>
-	</li>
-{/foreach}
+<ul class="{if $subMenuClass}{$subMenuClass}{else}ow_admin_submenu_hover{/if}">
+    <li class="ow_admin_submenu_title">{text key="admin+sidebar_`$category`"}</li>
+    {foreach from=$data item='item'}
+        <li {if $item.active}class="active"{/if}><a href="{$item.url}" {if !empty($item.new_window)} target="_blank"{/if}>{$item.label}</a></li>
+    {/foreach}
 </ul>
