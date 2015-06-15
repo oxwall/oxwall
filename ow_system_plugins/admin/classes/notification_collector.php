@@ -31,24 +31,16 @@
  */
 class ADMIN_CLASS_NotificationCollector extends BASE_CLASS_EventCollector
 {
-    public function add( $item, $iconClass = "default")
-    {
-        $this->addNotice($item, $iconClass);
-    }
+    const NOTIFICATION_UPDATE = 'update';
+    const NOTIFICATION_SETTINGS = 'settings';
+    const NOTIFICATION_INFO = 'info';
+    const NOTIFICATION_WARNING = 'warning';
 
-    public function addNotice( $item, $iconClass = "default" )
+    public function add( $item, $type = self::NOTIFICATION_INFO )
     {
         $this->data[] = array(
             'message' => $item,
-            'iconClass' => $iconClass
-        );
-    }
-
-    public function addWarning( $item, $iconClass = "default" )
-    {
-        $this->data[] = array(
-            'message' => $item,
-            'iconClass' => $iconClass
+            'type' => $type
         );
     }
 }

@@ -35,28 +35,6 @@ class ADMIN_CLASS_EventHandler
         $eventManager->bind('admin.disable_fields_on_edit_profile_question', array($this, 'onGetDisableActionList'));
         $eventManager->bind('admin.disable_fields_on_edit_profile_question', array($this, 'onGetJoinStampDisableActionList'), 999);
         $eventManager->bind('admin.add_admin_notification', array($this, 'addAdminNotification'));
-        $eventManager->bind('admin.add_admin_warning', array($this, 'addAdminWarning'));
-    }
-
-    public function addAdminWarning( ADMIN_CLASS_NotificationCollector $coll )
-    {
-        if ( OW::getConfig()->configExists('base', 'cron_is_active') && (int) OW::getConfig()->getValue('base', 'cron_is_active') === 0 )
-        {
-            $coll->addWarning(
-                OW::getLanguage()->text('admin', 'warning_cron_is_not_active', 
-                        array('path' => OW_DIR_ROOT . 'ow_cron' . DS . 'run.php')),
-
-                'cron_active'
-            );
-        }
-
-        if ( !ini_get('allow_url_fopen') )
-        {
-            $coll->addWarning(
-                OW::getLanguage()->text('admin', 'warning_url_fopen_disabled'),
-                'fopen_disabled'
-            );
-        }
     }
 
     public function addAdminNotification( ADMIN_CLASS_NotificationCollector $coll )
@@ -64,11 +42,11 @@ class ADMIN_CLASS_EventHandler
         // update soft
         if ( OW::getConfig()->getValue('base', 'update_soft') )
         {
-            $coll->addNotice(
+            $coll->add(
                 OW::getLanguage()->text('admin', 'notification_soft_update', 
                         array('link' => OW::getRouter()->urlForRoute('admin_core_update_request'))),
 
-                'soft_update'
+                ADMIN_CLASS_NotificationCollector::NOTIFICATION_UPDATE
             );
         }
 
@@ -77,11 +55,11 @@ class ADMIN_CLASS_EventHandler
         // plugins update
         if ( $pluginsCount > 0 )
         {
-            $coll->addNotice(
+            $coll->add(
                 OW::getLanguage()->text('admin', 'notification_plugins_to_update', 
                         array('link' => OW::getRouter()->urlForRoute('admin_plugins_installed'), 'count' => $pluginsCount)),
 
-                'plugin_update'
+                ADMIN_CLASS_NotificationCollector::NOTIFICATION_UPDATE
             );
         }
 
@@ -90,11 +68,29 @@ class ADMIN_CLASS_EventHandler
         // themes update
         if ( $themesCount > 0 )
         {
-            $coll->addNotice(
+            $coll->add(
                 OW::getLanguage()->text('admin', 'notification_themes_to_update', 
                         array('link' => OW::getRouter()->urlForRoute('admin_themes_choose'), 'count' => $themesCount)),
 
-                'theme_update'
+                ADMIN_CLASS_NotificationCollector::NOTIFICATION_UPDATE
+            );
+        }
+
+        if ( OW::getConfig()->configExists('base', 'cron_is_active') && (int) OW::getConfig()->getValue('base', 'cron_is_active') === 0 )
+        {
+            $coll->add(
+                OW::getLanguage()->text('admin', 'warning_cron_is_not_active', 
+                        array('path' => OW_DIR_ROOT . 'ow_cron' . DS . 'run.php')),
+
+                ADMIN_CLASS_NotificationCollector::NOTIFICATION_WARNING
+            );
+        }
+
+        if ( !ini_get('allow_url_fopen') )
+        {
+            $coll->add(
+                OW::getLanguage()->text('admin', 'warning_url_fopen_disabled'),
+                ADMIN_CLASS_NotificationCollector::NOTIFICATION_WARNING
             );
         }
     }

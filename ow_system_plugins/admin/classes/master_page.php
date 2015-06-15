@@ -85,10 +85,6 @@ class ADMIN_CLASS_MasterPage extends OW_MasterPage
         OW::getEventManager()->trigger($event);
         $this->assign('notifications', $event->getData());
 
-        $event = new ADMIN_CLASS_NotificationCollector('admin.add_admin_warning');
-        OW::getEventManager()->trigger($event);
-        $this->assign('warnings', $event->getData());
-
         // platform info        
         $event = new OW_Event('admin.get_soft_version_text');
         OW_EventManager::getInstance()->trigger($event);
