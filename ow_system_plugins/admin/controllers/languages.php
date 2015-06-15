@@ -187,6 +187,14 @@ class ADMIN_CTRL_Languages extends ADMIN_CTRL_Abstract
                 }
                 /* @var $entity BOL_LanguageValue */
                 $entity = $languageService->findValue($language->getId(), $key);
+                
+                if ( empty($entity) )
+                {
+                    $entity = new BOL_LanguageValue();
+
+                    $entity->setLanguageId($language->getId())
+                        ->setKeyId($key);
+                }
 
                 $entity->setValue($value);
                 $languageService->saveValue($entity, false);
