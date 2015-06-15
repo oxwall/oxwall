@@ -498,10 +498,12 @@ html body .ow_admin_permissions.ow_superwide {
 	background-position: center center;
 	background-repeat: no-repeat;
 }
-.ow_admin_update_item .ow_admin_notification_pic {
+.ow_console_plugin_update .ow_admin_notification_pic,
+.ow_console_soft_update .ow_admin_notification_pic,
+.ow_console_theme_update .ow_admin_notification_pic {
 	background-image: url(images/admin_notification_update.png);
 }
-.ow_admin_config_item .ow_admin_notification_pic {
+.ow_console_default .ow_admin_notification_pic {
 	background-image: url(images/admin_notification_config.png);
 }
 .ow_admin_notification_text {
@@ -567,25 +569,25 @@ html body .ow_admin_permissions.ow_superwide {
 	background-position: top left;
 	background-color: transparent;
 }
-.ow_admin_menu_item.dashboard {
+.ow_admin_menu_item.menu_admin {
 	background-image: url(images/admin_dashboard.png);
 }
-.ow_admin_menu_item.users {
+.ow_admin_menu_item.menu_users {
 	background-image: url(images/admin_users.png);
 }
-.ow_admin_menu_item.settings {
+.ow_admin_menu_item.menu_settings {
 	background-image: url(images/admin_settings.png);
 }
-.ow_admin_menu_item.appearance {
+.ow_admin_menu_item.menu_appearance {
 	background-image: url(images/admin_appearance.png);
 }
-.ow_admin_menu_item.pages {
+.ow_admin_menu_item.menu_pages {
 	background-image: url(images/admin_pages.png);
 }
-.ow_admin_menu_item.plugins {
+.ow_admin_menu_item.menu_plugins {
 	background-image: url(images/admin_plugins.png);
 }
-.ow_admin_menu_item.mobile {
+.ow_admin_menu_item.menu_mobile {
 	background-image: url(images/admin_mobile.png);
 }
 .ow_admin_menu_item_label {
