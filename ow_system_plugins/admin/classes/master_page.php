@@ -43,7 +43,7 @@ class ADMIN_CLASS_MasterPage extends OW_MasterPage
         OW::getThemeManager()->setCurrentTheme(BOL_ThemeService::getInstance()->getThemeObjectByName(BOL_ThemeService::DEFAULT_THEME));
 
         $menuTypes = array(
-            BOL_NavigationService::MENU_TYPE_ADMIN, BOL_NavigationService::MENU_TYPE_APPEARANCE, BOL_NavigationService::MENU_TYPE_PRIVACY,
+            BOL_NavigationService::MENU_TYPE_ADMIN, BOL_NavigationService::MENU_TYPE_APPEARANCE,
             BOL_NavigationService::MENU_TYPE_PAGES, BOL_NavigationService::MENU_TYPE_PLUGINS, BOL_NavigationService::MENU_TYPE_SETTINGS,
             BOL_NavigationService::MENU_TYPE_USERS, BOL_NavigationService::MENU_TYPE_MOBILE
         );
@@ -68,7 +68,6 @@ class ADMIN_CLASS_MasterPage extends OW_MasterPage
             'menu_admin' => BOL_NavigationService::MENU_TYPE_ADMIN,
             'menu_users' => BOL_NavigationService::MENU_TYPE_USERS,
             'menu_settings' => BOL_NavigationService::MENU_TYPE_SETTINGS,
-            'menu_privacy' => BOL_NavigationService::MENU_TYPE_PRIVACY,
             'menu_appearance' => BOL_NavigationService::MENU_TYPE_APPEARANCE,
             'menu_pages' => BOL_NavigationService::MENU_TYPE_PAGES,
             'menu_plugins' => BOL_NavigationService::MENU_TYPE_PLUGINS,
