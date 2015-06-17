@@ -317,7 +317,7 @@ class Jevix
             return false;
         }
 
-        while ( (($this->curChClass & self::NAME) == self::NAME || ($minus && !in_array($this->curCh, array( ' ', '=', '>' )) ) ) )
+        while ( (($this->curChClass & self::NAME) == self::NAME || ($minus && !in_array($this->curCh, array(' ', '=', '>')) ) ) )
         {
             $name.=$this->curCh;
             $this->getCh();
@@ -938,13 +938,39 @@ class Jevix
         $this->saveState();
         $url = '';
         $urlChMask = self::URL | self::ALPHA;
-
-        while ( $this->curChClass & $urlChMask || in_array($this->curCh, array(":", ",", "!", "'", "~")) )
-        {
+        $urlPunctValidChars = array(":", ",", "!", "'", "~", ".", ";");
+        
+        while ( $this->curChClass & $urlChMask || in_array($this->curCh, $urlPunctValidChars) )
+        {            
             $url.= $this->curCh;
             $this->getCh();
         }
- 
+        
+        $chCount = 0;        
+        
+        for( $i = (mb_strlen($url) - 1); $i >= 0; $i-- )
+        {
+            if( in_array(mb_substr($url, $i, 1), $urlPunctValidChars) )
+            {
+                $chCount++;
+            }
+            else
+            {
+                break;
+            }
+        }
+        
+        if( $chCount > 0 )
+        {
+            $url = mb_substr($url, 0, mb_strlen($url) - $chCount);
+            $this->goToPosition($this->curPos-$chCount);
+        }       
+        
+        if( mb_strlen($url) == 0 )
+        {
+            return false;
+        }
+        
         if ( !mb_strlen($url) )
         {
             $this->restoreState();
