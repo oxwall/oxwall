@@ -946,8 +946,7 @@ class Jevix
             $this->getCh();
         }
         
-        $chCount = 0;
-        $urlStrLen = mb_strlen($url);
+        $chCount = 0;        
         
         for( $i = (mb_strlen($url) - 1); $i >= 0; $i-- )
         {
