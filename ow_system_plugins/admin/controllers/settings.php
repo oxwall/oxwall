@@ -291,6 +291,12 @@ class ADMIN_CTRL_Settings extends ADMIN_CTRL_Abstract
         $userSettingsForm->getElement('bigAvatarSize')->setValue($bigAvatarSize);
         $userSettingsForm->getElement('displayName')->setValue($conf->getValue('base', 'display_name_question'));
 
+        // privacy
+        $userSettingsForm->getElement('who_can_join')->setValue($conf->getValue('base', 'who_can_join'));
+        $userSettingsForm->getElement('who_can_invite')->setValue($conf->getValue('base', 'who_can_invite'));
+        $userSettingsForm->getElement('guests_can_view')->setValue($conf->getValue('base', 'guests_can_view'));
+        $userSettingsForm->getElement('user_approve')->setValue($conf->getValue('base', 'mandatory_user_approve'));
+
         $this->assign('displayConfirmEmail', !defined('OW_PLUGIN_XP'));
 
         if ( OW::getRequest()->isPost() && $userSettingsForm->isValid($_POST) )
@@ -299,6 +305,19 @@ class ADMIN_CTRL_Settings extends ADMIN_CTRL_Abstract
                 || !empty($_FILES['bigAvatar']['tmp_name']) && !UTIL_File::validateImage($_FILES['bigAvatar']['name']) )
             {
                 OW::getFeedback()->error($language->text('base', 'not_valid_image'));
+                $this->redirect();
+            }
+
+            $values = $userSettingsForm->getValues();
+
+            if ( (int) $values['guests_can_view'] === 3 && empty($values['password']) )
+            {
+                OW::getFeedback()->error($language->text('admin', 'permission_global_privacy_empty_pass_error_message'));
+                $this->redirect();
+            }
+            else if ( (int) $values['guests_can_view'] === 3 && strlen(trim($values['password'])) < 4 )
+            {
+                OW::getFeedback()->error($language->text('admin', 'permission_global_privacy_pass_length_error_message'));
                 $this->redirect();
             }
 
@@ -915,6 +934,43 @@ class UserSettingsForm extends Form
         $joinConfigField->setValue(OW::getConfig()->getValue('base', 'join_display_terms_of_use'));
         $this->addElement($joinConfigField);
 
+        //--- privacy -----///
+        $config = OW::getConfig();
+        $baseConfigs = $config->getValues('base');
+
+        $userApprove = new CheckboxField('user_approve');
+        $userApprove->setLabel($language->text('admin', 'permissions_index_user_approve'));
+        $this->addElement($userApprove);
+
+        $whoCanJoin = new RadioField('who_can_join');
+        $whoCanJoin->addOptions(array('1' => $language->text('admin', 'permissions_index_anyone_can_join'), '2' => $language->text('admin', 'permissions_index_by_invitation_only_can_join')));
+        $whoCanJoin->setLabel($language->text('admin', 'permissions_index_who_can_join'));
+        $this->addElement($whoCanJoin);
+
+        $whoCanInvite = new RadioField('who_can_invite');
+        $whoCanInvite->addOptions(array('1' => $language->text('admin', 'permissions_index_all_users_can_invate'), '2' => $language->text('admin', 'permissions_index_admin_only_can_invate')));
+        $whoCanInvite->setLabel($language->text('admin', 'permissions_index_who_can_invite'));
+        $this->addElement($whoCanInvite);
+
+        $guestsCanView = new RadioField('guests_can_view');
+        $guestsCanView->addOptions(array('1' => $language->text('admin', 'permissions_index_yes'), '2' => $language->text('admin', 'permissions_index_no'), '3' => $language->text('admin', 'permissions_index_with_password')));
+        $guestsCanView->setLabel($language->text('admin', 'permissions_index_guests_can_view_site'));
+        $guestsCanView->setDescription($language->text('admin', 'permissions_idex_if_not_yes_will_override_settings'));
+        $this->addElement($guestsCanView);
+
+        $password = new TextField('password');
+        $password->setHasInvitation(true);
+        if($baseConfigs['guests_can_view'] == 3)
+        {
+            $password->setInvitation($language->text('admin', 'change_password'));
+        }
+        else
+        {
+            $password->setInvitation($language->text('admin', 'add_password'));
+        }
+        $this->addElement($password);
+        // --- //
+
         // submit
         $submit = new Submit('save');
         $submit->setValue($language->text('admin', 'save_btn_label'));
@@ -958,6 +1014,15 @@ class UserSettingsForm extends Form
             $avatarService->setCustomDefaultAvatar(2, $_FILES['bigAvatar']);
         }
 
+        // privacy
+        $config->saveConfig('base', 'who_can_join', (int) $values['who_can_join']);
+        $config->saveConfig('base', 'who_can_invite', (int) $values['who_can_invite']);
+        $config->saveConfig('base', 'mandatory_user_approve', ((bool) $values['user_approve'] ? 1 : 0));
+
+        $values['password'] = crypt($values['password'], OW_PASSWORD_SALT);
+        $config->saveConfig('base', 'guests_can_view', (int) $values['guests_can_view']);
+        $config->saveConfig('base', 'guests_can_view_password', $values['password']);
+   
         return array('result' => true);
     }
 }
