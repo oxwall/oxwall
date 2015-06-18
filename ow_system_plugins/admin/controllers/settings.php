@@ -297,6 +297,10 @@ class ADMIN_CTRL_Settings extends ADMIN_CTRL_Abstract
         $userSettingsForm->getElement('guests_can_view')->setValue($conf->getValue('base', 'guests_can_view'));
         $userSettingsForm->getElement('user_approve')->setValue($conf->getValue('base', 'mandatory_user_approve'));
 
+        // profile questions 
+        $userSettingsForm->getElement('user_view_presentation')->
+                setValue((OW::getConfig()->getValue('base', 'user_view_presentation') == 'tabs'));
+
         $this->assign('displayConfirmEmail', !defined('OW_PLUGIN_XP'));
 
         if ( OW::getRequest()->isPost() && $userSettingsForm->isValid($_POST) )
@@ -971,6 +975,14 @@ class UserSettingsForm extends Form
         $this->addElement($password);
         // --- //
 
+        //-- profile questions --//
+        $userViewPresentationnew = new CheckboxField("user_view_presentation");
+        $userViewPresentationnew->setLabel($language->text('base', 'questions_config_user_view_presentation_label'));
+        $userViewPresentationnew->setDescription($language->text('base', 'questions_config_user_view_presentation_description'));
+
+        $this->addElement($userViewPresentationnew);
+        // --- //
+
         // submit
         $submit = new Submit('save');
         $submit->setValue($language->text('admin', 'save_btn_label'));
@@ -1022,7 +1034,12 @@ class UserSettingsForm extends Form
         $values['password'] = crypt($values['password'], OW_PASSWORD_SALT);
         $config->saveConfig('base', 'guests_can_view', (int) $values['guests_can_view']);
         $config->saveConfig('base', 'guests_can_view_password', $values['password']);
-   
+
+        // profile questions 
+        isset($_POST['user_view_presentation'])
+            ? $config->saveConfig('base', 'user_view_presentation', 'tabs')
+            : $config->saveConfig('base', 'user_view_presentation', 'table');
+
         return array('result' => true);
     }
 }
