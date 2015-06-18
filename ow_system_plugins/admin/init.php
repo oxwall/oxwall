@@ -48,7 +48,6 @@ $router->addRoute(new OW_Route('questions_properties', 'admin/questions/pages', 
 
 $router->addRoute(new OW_Route('admin_themes_edit', 'admin/theme', 'ADMIN_CTRL_Theme', 'settings'));
 $router->addRoute(new OW_Route('admin_themes_choose', 'admin/themes', 'ADMIN_CTRL_Themes', 'chooseTheme'));
-$router->addRoute(new OW_Route('admin_themes_add_new', 'admin/themes/add', 'ADMIN_CTRL_Themes', 'addTheme'));
 
 $router->addRoute(new OW_Route('admin_pages_edit_external', 'admin/pages/edit-external/id/:id', 'ADMIN_CTRL_PagesEditExternal', 'index'));
 $router->addRoute(new OW_Route('admin_pages_edit_local', 'admin/pages/edit-local/id/:id', 'ADMIN_CTRL_PagesEditLocal', 'index'));
