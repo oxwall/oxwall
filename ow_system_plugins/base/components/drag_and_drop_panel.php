@@ -64,7 +64,7 @@ abstract class BASE_CMP_DragAndDropPanel extends OW_Component
 
         foreach ( $this->componentList as $widget )
         {
-            $this->standartSettings[$widget['className']] = call_user_func(array($widget['className'], 'getStandardSettingValueList'));
+            $this->standartSettings[$widget['className']] = call_user_func(array($widget['className'], 'getStandardSettingValueList'), $widget["uniqName"]);
         }
 
         OW_ViewRenderer::getInstance()->registerFunction('dd_component', array($this, 'tplComponent'));
