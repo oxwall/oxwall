@@ -45,7 +45,6 @@ $router->addRoute(new OW_Route('admin_users_browse_membership_owners', 'admin/us
 $router->addRoute(new OW_Route('questions_index', 'admin/questions/account-types', 'ADMIN_CTRL_Questions', 'accountTypes'));
 $router->addRoute(new OW_Route('questions_account_types', 'admin/questions/account-types', 'ADMIN_CTRL_Questions', 'accountTypes'));
 $router->addRoute(new OW_Route('questions_properties', 'admin/questions/pages', 'ADMIN_CTRL_Questions', 'pages'));
-$router->addRoute(new OW_Route('questions_settings', 'admin/questions/settings/', 'ADMIN_CTRL_Questions', 'settings'));
 
 $router->addRoute(new OW_Route('admin_themes_edit', 'admin/theme', 'ADMIN_CTRL_Theme', 'settings'));
 $router->addRoute(new OW_Route('admin_themes_choose', 'admin/themes', 'ADMIN_CTRL_Themes', 'chooseTheme'));
