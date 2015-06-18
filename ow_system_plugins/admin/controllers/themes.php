@@ -130,18 +130,10 @@ class ADMIN_CTRL_Themes extends ADMIN_CTRL_Abstract
         OW::getEventManager()->trigger($event);
         $this->assign('themes', $event->getData());
         $this->assign('defaultThemeImgDir', $defaultThemeImgUrl);
-    }
-
-    public function addTheme()
-    {
-        $this->checkXP();
-
-        OW::getNavigation()->activateMenuItem(OW_Navigation::ADMIN_PLUGINS, 'admin', 'sidebar_menu_themes_add');
-        $this->setPageHeading(OW::getLanguage()->text('admin', 'themes_add_theme_page_heading'));
-        $this->setPageHeadingIconClass('ow_ic_monitor');
-
-        $language = OW::getLanguage();
-
+        
+        
+        // add theme
+        
         $form = new Form('theme-add');
         $form->setEnctype(Form::ENCTYPE_MULTYPART_FORMDATA);
         $file = new FileField('file');
@@ -234,6 +226,19 @@ class ADMIN_CTRL_Themes extends ADMIN_CTRL_Abstract
                 $this->redirect(OW::getRequest()->buildUrlQueryString(OW::getRouter()->urlFor(__CLASS__, 'processAdd'), array('dir' => urlencode($tempDir))));
             }
         }
+    }
+
+    public function addTheme()
+    {
+        $this->checkXP();
+
+        OW::getNavigation()->activateMenuItem(OW_Navigation::ADMIN_PLUGINS, 'admin', 'sidebar_menu_themes_add');
+        $this->setPageHeading(OW::getLanguage()->text('admin', 'themes_add_theme_page_heading'));
+        $this->setPageHeadingIconClass('ow_ic_monitor');
+
+        $language = OW::getLanguage();
+
+        
     }
 
     public function processAdd()
