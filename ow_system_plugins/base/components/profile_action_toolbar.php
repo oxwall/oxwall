@@ -37,7 +37,7 @@ class BASE_CMP_ProfileActionToolbar extends OW_Component
     const EVENT_NAME = 'base.add_profile_action_toolbar';
     const EVENT_PROCESS_TOOLBAR = 'base.process_profile_action_toolbar';
     const DATA_KEY_LABEL = 'label';
-    const DATA_KEY_EXTRA_LABEL = 'extra_label';
+    const DATA_KEY_EXTRA_LABEL = 'extraLabel';
     const DATA_KEY_LINK_ID = 'id';
     const DATA_KEY_LINK_CLASS = 'linkClass';
     const DATA_KEY_CMP_CLASS = 'cmpClass';

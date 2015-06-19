@@ -3,9 +3,9 @@
         {foreach from=$toolbar item='action'}
             {if isset($action.html)}
                 {$action.html}
-            {elseif isset($action.extra_label)}
+            {elseif isset($action.extraLabel)}
                 <div class="extra_action">
-                    {$action.extra_label}
+                    {$action.extraLabel}
                 </div>
             {else}
                 <li>
