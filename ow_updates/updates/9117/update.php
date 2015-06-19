@@ -22,7 +22,7 @@
  * which combines Covered Code or portions thereof with code not governed by the terms of the CPAL.
  */
 
-$languages = BOL_LanguageService::getInstance()->getLanguages();
+$languages = Updater::getLanguageService()->getLanguages();
 foreach ($languages as $lang)
 {
     if ($lang->tag == 'en')
