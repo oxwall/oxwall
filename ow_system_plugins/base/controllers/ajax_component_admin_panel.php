@@ -132,7 +132,7 @@ class BASE_CTRL_AjaxComponentAdminPanel extends BASE_CTRL_AjaxComponentPanel
         $componentId = $this->componentService->findPlaceComponent($componentPlaceUniqName)->componentId;
 
         $componentClass = $this->componentService->findComponent($componentId)->className;
-
+        
         $componentSettingList = $this->getComponentSettingList($componentClass, $data);
         $componentStandardSettingValueList = $this->getComponentStandardSettingValueList($componentClass, $data);
         $componentAccess = $this->getComponentAccess($componentClass, $data);

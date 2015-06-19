@@ -1,0 +1,26 @@
+{script}
+    $("#insert-video-wrapper").on("submit", function(e){
+        e.preventDefault();
+        _scope.success && _scope.success({
+            "link" : $(this).find("[name = link]").val(),
+        });
+    });
+{/script}
+
+<div id="insert-video-wrapper">
+    {form name="insertVideo"}
+        <div class="owm_add_video">
+            <div class="owm_video_field owm_bg_color_1">
+                {input name="link"}
+                <div class="owm_error_txt">{error name="link"}</div>
+            </div>
+        </div>
+        <div class="owm_btn_toolbar owm_border owm_bg_color_1 owm_padding clearfix">
+            <div class="owm_float_right">
+                <span class="ow_button">
+                    {submit name="submit"}
+                </span>
+            </div>
+        </div>
+    {/form}
+</div>

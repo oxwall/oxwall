@@ -1049,7 +1049,7 @@ class BASE_CLASS_EventHandler
 
     public function onActionToolbarAddUserApproveActionTool( BASE_CLASS_EventCollector $event )
     {
-        if ( !OW::getUser()->isAuthorized('base') )
+        if ( !OW::getUser()->isAdmin() )
         {
             return;
         }
