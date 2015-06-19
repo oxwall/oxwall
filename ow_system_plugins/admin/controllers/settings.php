@@ -53,9 +53,6 @@ class ADMIN_CTRL_Settings extends ADMIN_CTRL_Abstract
 
         $language = OW::getLanguage();
 
-        $menu = $this->getMenu();
-        $this->addComponent('menu', $menu);
-
         $configSaveForm = new ConfigSaveForm();
         $this->addForm($configSaveForm);
 
@@ -107,44 +104,10 @@ class ADMIN_CTRL_Settings extends ADMIN_CTRL_Abstract
         OW::getDocument()->addOnloadScript($script);
     }
 
-    private function getUsersMenu()
-    {
-        $language = OW::getLanguage();
-
-        $menuItems = array();
-
-        $item = new BASE_MenuItem();
-        $item->setLabel($language->text('admin', 'menu_item_user_settings_general'));
-        $item->setUrl(OW::getRouter()->urlForRoute('admin_settings_user'));
-        $item->setKey('general');
-        $item->setIconClass('ow_ic_gear_wheel');
-        $item->setOrder(0);
-        $menuItems[] = $item;
-
-        $item = new BASE_MenuItem();
-        $item->setLabel($language->text('admin', 'menu_item_user_settings_content_input'));
-        $item->setUrl(OW::getRouter()->urlForRoute('admin_settings_user_input'));
-        $item->setKey('content_input');
-        $item->setIconClass('ow_ic_file');
-        $item->setOrder(1);
-        $menuItems[] = $item;
-
-        return new BASE_CMP_ContentMenu($menuItems);
-    }
-
     public function userInput()
     {
-        if ( !OW::getRequest()->isAjax() )
-        {
-            OW::getNavigation()->activateMenuItem(OW_Navigation::ADMIN_SETTINGS, 'admin', 'sidebar_menu_item_user_settings');
-        }
-
         $language = OW::getLanguage();
         $config = OW::getConfig();
-
-        $menu = $this->getUsersMenu();
-        $menu->getElement('content_input')->setActive(true);
-        $this->addComponent('menu', $menu);
 
         $settingsForm = new Form('input_settings');
 
@@ -254,10 +217,6 @@ class ADMIN_CTRL_Settings extends ADMIN_CTRL_Abstract
 
         $language = OW::getLanguage();
 
-        $menu = $this->getUsersMenu();
-        $menu->getElement('general')->setActive(true);
-        $this->addComponent('menu', $menu);
-
         $avatarService = BOL_AvatarService::getInstance();
 
         if ( isset($_GET['del-avatar']) && in_array($_GET['del-avatar'], array(1, 2)) )
@@ -357,8 +316,6 @@ class ADMIN_CTRL_Settings extends ADMIN_CTRL_Abstract
         }
 
         $language = OW::getLanguage();
-        $menu = $this->getMenu();
-        $this->addComponent('menu', $menu);
 
         if ( !OW::getRequest()->isAjax() )
         {
@@ -460,9 +417,6 @@ class ADMIN_CTRL_Settings extends ADMIN_CTRL_Abstract
         }
 
         $language = OW::getLanguage();
-
-        $menu = $this->getMenu();
-        $this->addComponent('menu', $menu);
 
         $mailSettingsForm = new MailSettingsForm();
         $this->addForm($mailSettingsForm);

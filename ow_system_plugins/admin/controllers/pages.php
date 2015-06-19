@@ -126,15 +126,26 @@ class ADMIN_CTRL_Pages extends ADMIN_CTRL_Abstract
         exit();
     }
 
-    public function splashScreen()
+    public function maintenance()
     {
         $language = OW::getLanguage();
 
-        $this->setPageHeading($language->text('admin', 'splash_screen_page_heading'));
-        $this->setPageTitle($language->text('admin', 'splash_screen_page_title'));
+        $this->setPageHeading($language->text('admin', 'maintenance_page_heading'));
+        $this->setPageTitle($language->text('admin', 'maintenance_page_title'));
 
-        $form = new Form('splash_screen');
+        $form = new Form('maintenance');
 
+        $maintananceEnable = new CheckboxField('maintenance_enable');
+        $maintananceEnable->setLabel($language->text('admin', 'maintenance_enable_label'));
+        $maintananceEnable->setDescription($language->text('admin', 'maintenance_enable_desc'));
+        $form->addElement($maintananceEnable);
+
+        $intro = new Textarea('maintenance_text');
+        $intro->setLabel($language->text('admin', 'maintenance_text_label'));
+        $intro->setDescription($language->text('admin', 'maintenance_text_desc'));
+        $form->addElement($intro);
+
+        // splash screen
         $splashScreenEnable = new CheckboxField('splash_screen');
         $splashScreenEnable->setLabel($language->text('admin', 'splash_enable_label'));
         $splashScreenEnable->setDescription($language->text('admin', 'splash_enable_desc'));
@@ -170,6 +181,33 @@ class ADMIN_CTRL_Pages extends ADMIN_CTRL_Abstract
 
                 $langService = BOL_LanguageService::getInstance();
 
+                $key = $langService->findKey('admin', 'maintenance_text_value');
+
+                if ( $key === null )
+                {
+                    $prefix = $langService->findPrefix('admin');
+                    $key = new BOL_LanguageKey();
+                    $key->setKey('maintenance_text_value');
+                    $key->setPrefixId($prefix->getId());
+                    $langService->saveKey($key);
+                }
+
+                $value = $langService->findValue($langService->getCurrent()->getId(), $key->getId());
+
+                if ( $value === null )
+                {
+                    $value = new BOL_LanguageValue();
+                    $value->setKeyId($key->getId());
+                    $value->setLanguageId($langService->getCurrent()->getId());
+                }
+
+                $value->setValue($data['maintenance_text']);
+                $langService->saveValue($value);
+
+
+                OW::getConfig()->saveConfig('base', 'maintenance', (bool) $data['maintenance_enable']);
+
+                // save splash screen
                 $key = $langService->findKey('admin', 'splash_intro_value');
 
                 if ( $key === null )
@@ -181,6 +219,7 @@ class ADMIN_CTRL_Pages extends ADMIN_CTRL_Abstract
                     $langService->saveKey($key);
                 }
 
+                
                 $value = $langService->findValue($langService->getCurrent()->getId(), $key->getId());
 
                 if ( $value === null )
@@ -225,75 +264,6 @@ class ADMIN_CTRL_Pages extends ADMIN_CTRL_Abstract
 
                 OW::getConfig()->saveConfig('base', 'splash_leave_url', $url);
                 OW::getConfig()->saveConfig('base', 'splash_screen', (bool) $data['splash_screen']);
-                OW::getFeedback()->info($language->text('admin', 'splash_screen_submit_success_message'));
-                $this->redirect();
-            }
-        }
-
-        $form->getElement('intro')->setValue($language->text('admin', 'splash_intro_value'));
-        $form->getElement('button_label')->setValue($language->text('admin', 'splash_button_value'));
-        $form->getElement('leave_url')->setValue(OW::getConfig()->getValue('base', 'splash_leave_url'));
-        $form->getElement('splash_screen')->setValue((bool) OW::getConfig()->getValue('base', 'splash_screen'));
-    }
-
-    public function maintenance()
-    {
-        $language = OW::getLanguage();
-
-        $this->setPageHeading($language->text('admin', 'maintenance_page_heading'));
-        $this->setPageTitle($language->text('admin', 'maintenance_page_title'));
-
-        $form = new Form('maintenance');
-
-        $maintananceEnable = new CheckboxField('maintenance_enable');
-        $maintananceEnable->setLabel($language->text('admin', 'maintenance_enable_label'));
-        $maintananceEnable->setDescription($language->text('admin', 'maintenance_enable_desc'));
-        $form->addElement($maintananceEnable);
-
-        $intro = new Textarea('maintenance_text');
-        $intro->setLabel($language->text('admin', 'maintenance_text_label'));
-        $intro->setDescription($language->text('admin', 'maintenance_text_desc'));
-        $form->addElement($intro);
-
-        $submit = new Submit('save');
-        $submit->setValue($language->text('admin', 'permissions_index_save'));
-        $form->addElement($submit);
-
-        $this->addForm($form);
-
-        if ( OW::getRequest()->isPost() )
-        {
-            if ( $form->isValid($_POST) )
-            {
-                $data = $form->getValues();
-
-                $langService = BOL_LanguageService::getInstance();
-
-                $key = $langService->findKey('admin', 'maintenance_text_value');
-
-                if ( $key === null )
-                {
-                    $prefix = $langService->findPrefix('admin');
-                    $key = new BOL_LanguageKey();
-                    $key->setKey('maintenance_text_value');
-                    $key->setPrefixId($prefix->getId());
-                    $langService->saveKey($key);
-                }
-
-                $value = $langService->findValue($langService->getCurrent()->getId(), $key->getId());
-
-                if ( $value === null )
-                {
-                    $value = new BOL_LanguageValue();
-                    $value->setKeyId($key->getId());
-                    $value->setLanguageId($langService->getCurrent()->getId());
-                }
-
-                $value->setValue($data['maintenance_text']);
-                $langService->saveValue($value);
-
-
-                OW::getConfig()->saveConfig('base', 'maintenance', (bool) $data['maintenance_enable']);
 
                 OW::getFeedback()->info($language->text('admin', 'maintenance_submit_success_message'));
                 $this->redirect();
@@ -302,6 +272,12 @@ class ADMIN_CTRL_Pages extends ADMIN_CTRL_Abstract
 
         $form->getElement('maintenance_text')->setValue($language->text('admin', 'maintenance_text_value'));
         $form->getElement('maintenance_enable')->setValue((bool) OW::getConfig()->getValue('base', 'maintenance'));
+
+        // splash screen
+        $form->getElement('intro')->setValue($language->text('admin', 'splash_intro_value'));
+        $form->getElement('button_label')->setValue($language->text('admin', 'splash_button_value'));
+        $form->getElement('leave_url')->setValue(OW::getConfig()->getValue('base', 'splash_leave_url'));
+        $form->getElement('splash_screen')->setValue((bool) OW::getConfig()->getValue('base', 'splash_screen'));
     }
 
 }

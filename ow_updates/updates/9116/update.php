@@ -24,6 +24,12 @@
 
 Updater::getLanguageService()->deleteLangKey('admin', 'sidebar_menu_pages');
 Updater::getLanguageService()->deleteLangKey('admin', 'sidebar_menu_item_pages_manage');
+Updater::getLanguageService()->deleteLangKey('admin', 'splash_screen_page_heading');
+Updater::getLanguageService()->deleteLangKey('admin', 'splash_screen_page_title');
+Updater::getLanguageService()->deleteLangKey('admin', 'splash_screen_submit_success_message');
+Updater::getLanguageService()->deleteLangKey('admin', 'permissions_index_save');
+Updater::getLanguageService()->deleteLangKey('admin', 'permission_global_privacy_settings_success_message');
+Updater::getLanguageService()->deleteLangKey('admin', 'question_settings_updated');
 
 UPDATE_LanguageService::getInstance()->importPrefixFromZip(dirname(__FILE__) . DS . 'langs.zip', 'admin');
 
