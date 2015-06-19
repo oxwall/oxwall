@@ -37,7 +37,10 @@ if ( !defined('OW_ERROR_LOG_ENABLE') || (bool) OW_ERROR_LOG_ENABLE )
     $errorManager->setLogger($logger);
 }
 
-@include OW_DIR_ROOT . 'ow_install' . DS . 'install.php';
+if ( file_exists(OW_DIR_ROOT . 'ow_install' . DS . 'install.php') ) // Check if install exists
+{
+    include OW_DIR_ROOT . 'ow_install' . DS . 'install.php';
+}
 
 OW::getSession()->start();
 
