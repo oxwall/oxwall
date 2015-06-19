@@ -55,7 +55,6 @@ $router->addRoute(new OW_Route('admin_pages_edit_plugin', 'admin/pages/edit-plug
 
 $router->addRoute(new OW_Route('admin_pages_add', 'admin/pages/add/type/:type', 'ADMIN_CTRL_Pages', 'index'));
 $router->addRoute(new OW_Route('admin_pages_main', 'admin/pages/manage', 'ADMIN_CTRL_Pages', 'manage'));
-$router->addRoute(new OW_Route('admin_pages_splash_screen', 'admin/pages/splash-screen', 'ADMIN_CTRL_Pages', 'splashScreen'));
 $router->addRoute(new OW_Route('admin_pages_maintenance', 'admin/pages/maintenance', 'ADMIN_CTRL_Pages', 'maintenance'));
 
 $router->addRoute(new OW_Route('admin_pages_user_dashboard', 'admin/user-dashboard', 'ADMIN_CTRL_Components', 'dashboard'));
