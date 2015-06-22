@@ -58,7 +58,7 @@ class Updater
     /**
      * @return UPDATE_WidgetService
      */
-    public static function getMobilWidgeteService()
+    public static function getMobileWidgeteService()
     {
         return UPDATE_MobileWidgetService::getInstance();
     }
