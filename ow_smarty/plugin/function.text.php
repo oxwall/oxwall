@@ -12,9 +12,12 @@ function smarty_function_text($params, $smarty)
     
     if ( isset($params["escape"]) )
     {
+        // Load built in smarty modifier
+        $smarty->loadPlugin("smarty_modifier_escape");
+        
         // Call built in smarty modifier 
-       $out = smarty_modifier_escape($out, $params["escape"]);
+        $out = smarty_modifier_escape($out, $params["escape"]);
     }
-    
+                
     return $out;
 }
