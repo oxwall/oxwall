@@ -183,14 +183,12 @@ class BOL_MailService
 
         try
         {
-            $mailer->SmtpConnect();
+            return $mailer->SmtpConnect();
         }
         catch ( phpmailerException $e )
         {
-            return $e->getMessage();
+            throw new InvalidArgumentException($e->getMessage());
         }
-
-        return true;
     }
 
     /**
