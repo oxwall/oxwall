@@ -33,6 +33,10 @@ class ADMIN_CTRL_MobileNavigation extends ADMIN_CTRL_Abstract
 {
     public function index()
     {
+        $language = OW::getLanguage();
+        $this->setPageTitle($language->text('admin', 'page_title_mobile_menus'));
+        $this->setPageHeading($language->text('admin', 'page_title_mobile_menus'));
+
         $dnd = new ADMIN_CMP_MobileNavigation();
         $this->setup($dnd);
         

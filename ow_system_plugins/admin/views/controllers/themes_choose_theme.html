@@ -138,7 +138,7 @@ html body .selected_theme_info_stick{
 
 <div class="selected_theme_info">
 <div class="selected_theme_info_stick">
-{block_decorator name='box' type='empty' iconClass="ow_ic_info" langLabel='admin+theme_info_cap_label'}
+{block_decorator name='box' type='empty' addClass='ow_stdmargin' iconClass="ow_ic_info" langLabel='admin+theme_info_cap_label'}
 
 <div class="themes_preview">
     <div class="theme_wrap"><a onclick="{literal}new OW_FloatBox({$contents:$('.selected_theme_info .theme_preview'), $title:'Preview', width:'720px'}){/literal}" class="theme_icon" style="background-image:url({$themeInfo.previewUrl});"></a></div>
@@ -166,7 +166,7 @@ html body .selected_theme_info_stick{
 </div>
 
 <div class="theme_thumbs">
-{block_decorator name='box' type='empty' iconClass="ow_ic_monitor" langLabel='admin+themes_choose_list_cap_title'}
+{block_decorator name='box' type='empty' addClass='ow_stdmargin' iconClass="ow_ic_monitor" langLabel='admin+themes_choose_list_cap_title'}
 <div class="themes_select clearfix">
 {foreach from=$themes item='theme'}
 <div class="theme_item{if $theme.active} active{/if}{if $theme.update_url} theme_update{/if}">
@@ -179,7 +179,7 @@ html body .selected_theme_info_stick{
 {/foreach}
 </div>
 {/block_decorator}
-{block_decorator name='box' type='empty' iconClass="ow_ic_monitor" langLabel='admin+themes_admin_list_cap_title'}
+{block_decorator name='box' type='empty' addClass='ow_stdmargin' iconClass="ow_ic_monitor" langLabel='admin+themes_admin_list_cap_title'}
 <div class="themes_select admin_themes_select clearfix">
 {foreach from=$adminThemes item='theme'}
 

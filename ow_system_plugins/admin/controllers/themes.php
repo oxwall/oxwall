@@ -158,7 +158,7 @@ class ADMIN_CTRL_Themes extends ADMIN_CTRL_Abstract
                 if ( ($_FILES['file']['error'] != UPLOAD_ERR_OK && $_FILES['file']['error'] == UPLOAD_ERR_INI_SIZE ) || ( empty($_FILES['file']) || $_FILES['file']['size'] > $serverLimit * 1024 * 1024 ) )
                 {
                     OW::getFeedback()->error($language->text('admin', 'manage_plugins_add_size_error_message', array('limit' => $serverLimit)));
-                    $this->redirect();
+                    $this->redirect(OW::getRouter()->urlForRoute('admin_themes_choose'));
                 }
 
                 if ( $_FILES['file']['error'] != UPLOAD_ERR_OK )
@@ -194,13 +194,13 @@ class ADMIN_CTRL_Themes extends ADMIN_CTRL_Abstract
                     }
 
                     OW::getFeedback()->error($error);
-                    $this->redirect();
+                    $this->redirect(OW::getRouter()->urlForRoute('admin_themes_choose'));
                 }
 
                 if ( !is_uploaded_file($_FILES['file']['tmp_name']) )
                 {
                     OW::getFeedback()->error($language->text('admin', 'manage_themes_add_empty_field_error_message'));
-                    $this->redirect();
+                    $this->redirect(OW::getRouter()->urlForRoute('admin_themes_choose'));
                 }
 
                 $tempFile = OW_DIR_PLUGINFILES . 'ow' . DS . uniqid('theme_add') . '.zip';
@@ -218,7 +218,7 @@ class ADMIN_CTRL_Themes extends ADMIN_CTRL_Abstract
                 else
                 {
                     OW::getFeedback()->error(OW::getLanguage()->text('admin', 'manage_theme_add_extract_error'));
-                    $this->redirectToAction();
+                    $this->redirect(OW::getRouter()->urlForRoute('admin_themes_choose'));
                 }
 
                 unlink($tempFile);
@@ -235,7 +235,7 @@ class ADMIN_CTRL_Themes extends ADMIN_CTRL_Abstract
         if ( empty($_GET['dir']) || !file_exists(urldecode($_GET['dir'])) )
         {
             OW::getFeedback()->error($language->text('admin', 'manage_plugins_add_ftp_move_error'));
-            $this->redirectToAction('add');
+            $this->redirect(OW::getRouter()->urlForRoute('admin_themes_choose'));
         }
 
         $tempDir = urldecode($_GET['dir']);
@@ -263,20 +263,20 @@ class ADMIN_CTRL_Themes extends ADMIN_CTRL_Abstract
         else
         {
             OW::getFeedback()->error(OW::getLanguage()->text('admin', 'theme_add_extract_error'));
-            $this->redirectToAction('addTheme');
+            $this->redirect(OW::getRouter()->urlForRoute('admin_themes_choose'));
         }
 
         if ( file_exists(OW_DIR_THEME . $innerDir) )
         {
             OW::getFeedback()->error(OW::getLanguage()->text('admin', 'theme_add_duplicated_dir_error', array('dir' => $innerDir)));
-            $this->redirectToAction('addTheme');
+            $this->redirect(OW::getRouter()->urlForRoute('admin_themes_choose'));
         }
 
         $ftp = $this->getFtpConnection();
         $ftp->uploadDir($localDir, OW_DIR_THEME . $innerDir);
         UTIL_File::removeDir($tempDir);
         OW::getFeedback()->info($language->text('base', 'themes_item_add_success_message'));
-        $this->redirectToAction('chooseTheme');
+        $this->redirect(OW::getRouter()->urlForRoute('admin_themes_choose'));
     }
 
     public function changeTheme( $params )
@@ -328,14 +328,14 @@ class ADMIN_CTRL_Themes extends ADMIN_CTRL_Abstract
         {
             $this->assign('mode', 'error');
             $this->assign('text', $language->text('admin', 'theme_update_request_error'));
-            $this->assign('returnUrl', OW::getRouter()->urlFor('ADMIN_CTRL_Themes', 'chooseTheme'));
+            $this->assign('returnUrl', OW::getRouter()->urlForRoute('admin_themes_choose'));
         }
         else if ( (bool) $remoteThemeInfo['freeware'] )
         {
             $this->assign('mode', 'free');
             $this->assign('text', $language->text('admin', 'free_theme_request_text', array('oldVersion' => $themeDto->getBuild(), 'newVersion' => $remoteThemeInfo['build'], 'name' => $themeDto->getTitle())));
             $this->assign('redirectUrl', OW::getRouter()->urlFor('ADMIN_CTRL_Themes', 'update', $params));
-            $this->assign('returnUrl', OW::getRouter()->urlFor('ADMIN_CTRL_Themes', 'chooseTheme'));
+            $this->assign('returnUrl', OW::getRouter()->urlForRoute('admin_themes_choose'));
         }
         else if ( $remoteThemeInfo['build'] === null )
         {
@@ -344,7 +344,7 @@ class ADMIN_CTRL_Themes extends ADMIN_CTRL_Abstract
 
             $this->assign('mode', 'error');
             $this->assign('text', $language->text('admin', 'theme_update_not_available_error'));
-            $this->assign('returnUrl', OW::getRouter()->urlFor('ADMIN_CTRL_Themes', 'chooseTheme'));
+            $this->assign('returnUrl', OW::getRouter()->urlForRoute('admin_themes_choose'));
         }
         else
         {
@@ -364,7 +364,7 @@ class ADMIN_CTRL_Themes extends ADMIN_CTRL_Abstract
 
             $button = new Button('button');
             $button->setValue($language->text('admin', 'license_form_leave_label'));
-            $button->addAttribute('onclick', "window.location='" . OW::getRouter()->urlFor('ADMIN_CTRL_Themes', 'chooseTheme') . "'");
+            $button->addAttribute('onclick', "window.location='" . OW::getRouter()->urlForRoute('admin_themes_choose') . "'");
             $form->addElement($button);
 
             $this->addForm($form);
@@ -413,7 +413,7 @@ class ADMIN_CTRL_Themes extends ADMIN_CTRL_Abstract
                     break;
             }
 
-            $this->redirectToAction('chooseTheme');
+            $this->redirect(OW::getRouter()->urlForRoute('admin_themes_choose'));
         }
 
         $themeDto = $this->getThemeDtoByName($params);
@@ -427,13 +427,13 @@ class ADMIN_CTRL_Themes extends ADMIN_CTRL_Abstract
         catch ( Exception $e )
         {
             OW::getFeedback()->error($e->getMessage());
-            $this->redirectToAction('chooseTheme');
+            $this->redirect(OW::getRouter()->urlForRoute('admin_themes_choose'));
         }
 
         if ( !file_exists($archivePath) )
         {
             OW::getFeedback()->error(OW::getLanguage()->text('admin', 'theme_update_download_error'));
-            $this->redirectToAction('chooseTheme');
+            $this->redirect(OW::getRouter()->urlForRoute('admin_themes_choose'));
         }
 
         $zip = new ZipArchive();
@@ -448,7 +448,7 @@ class ADMIN_CTRL_Themes extends ADMIN_CTRL_Abstract
         else
         {
             OW::getFeedback()->error(OW::getLanguage()->text('admin', 'theme_update_download_error'));
-            $this->redirectToAction('chooseTheme');
+            $this->redirect(OW::getRouter()->urlForRoute('admin_themes_choose'));
         }
 
         if ( file_exists($tempDir . 'theme.xml') )
@@ -478,7 +478,6 @@ class ADMIN_CTRL_Themes extends ADMIN_CTRL_Abstract
             else
             {
                 OW::getFeedback()->error(OW::getLanguage()->text('admin', 'theme_update_download_error'));
-                $this->redirectToAction('chooseTheme');
             }
         }
 
@@ -509,13 +508,13 @@ class ADMIN_CTRL_Themes extends ADMIN_CTRL_Abstract
         if ( OW::getThemeManager()->getDefaultTheme()->getDto()->getName() == $themeDto->getName() )
         {
             OW::getFeedback()->error($language->text('admin', 'themes_cant_delete_default_theme'));
-            $this->redirectToAction('chooseTheme');
+            $this->redirect(OW::getRouter()->urlForRoute('admin_themes_choose'));
         }
 
         if ( OW::getThemeManager()->getCurrentTheme()->getDto()->getName() == $themeDto->getName() )
         {
             OW::getFeedback()->error($language->text('admin', 'themes_cant_delete_active_theme'));
-            $this->redirectToAction('chooseTheme');
+            $this->redirect(OW::getRouter()->urlForRoute('admin_themes_choose'));
         }
 
         $ftp = $this->getFtpConnection();
@@ -523,7 +522,7 @@ class ADMIN_CTRL_Themes extends ADMIN_CTRL_Abstract
         $ftp->rmDir($this->themeService->getRootDir($themeDto->getName()));
 
         OW::getFeedback()->info($language->text('admin', 'themes_delete_success_message'));
-        $this->redirectToAction('chooseTheme');
+        $this->redirect(OW::getRouter()->urlForRoute('admin_themes_choose'));
     }
 
     private function getThemeDtoByName( $params )
@@ -539,6 +538,6 @@ class ADMIN_CTRL_Themes extends ADMIN_CTRL_Abstract
         }
 
         OW::getFeedback()->error(OW::getLanguage()->text('admin', 'manage_themes_theme_not_found'));
-        $this->redirectToAction('chooseTheme');
+        $this->redirect(OW::getRouter()->urlForRoute('admin_themes_choose'));
     }
 }
