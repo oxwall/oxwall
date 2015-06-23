@@ -68,7 +68,7 @@ class BASE_CMP_AboutMeWidget extends BASE_CLASS_Widget
             }
 
             $this->assign('ownerMode', false);
-            $content = htmlspecialchars($content);
+
             $content = UTIL_HtmlTag::autoLink($content);
             $this->assign('contentText', $content);
         }
