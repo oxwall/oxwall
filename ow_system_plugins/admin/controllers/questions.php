@@ -64,8 +64,6 @@ class ADMIN_CTRL_Questions extends ADMIN_CTRL_Abstract
 
     public function pages( $params = array() )
     {
-        $this->addContentMenu();
-
         $serviceLang = BOL_LanguageService::getInstance();
         $language = OW::getLanguage();
         $currentLanguageId = OW::getLanguage()->getCurrentId();

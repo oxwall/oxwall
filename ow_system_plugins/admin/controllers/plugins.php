@@ -103,6 +103,10 @@ class ADMIN_CTRL_Plugins extends ADMIN_CTRL_Abstract
     {
         OW::getNavigation()->activateMenuItem(OW_Navigation::ADMIN_PLUGINS, 'admin', 'sidebar_menu_plugins_available');
 
+        $language = OW::getLanguage();
+        $this->setPageTitle($language->text('admin', 'page_title_available_plugins'));
+        $this->setPageHeading($language->text('admin', 'page_title_available_plugins'));
+
         // read plugins dir and find available plugins
         $arrayToAssign = $this->pluginService->getAvailablePluginsList();
 
@@ -140,6 +144,10 @@ class ADMIN_CTRL_Plugins extends ADMIN_CTRL_Abstract
         $this->checkXP();
 
         OW::getNavigation()->activateMenuItem(OW_Navigation::ADMIN_PLUGINS, 'admin', 'sidebar_menu_plugins_add');
+
+        $language = OW::getLanguage();
+        $this->setPageTitle($language->text('admin', 'page_title_add_new_plugin'));
+        $this->setPageHeading($language->text('admin', 'page_title_add_new_plugin'));
 
         $language = OW::getLanguage();
 

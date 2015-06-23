@@ -30,6 +30,24 @@ Updater::getLanguageService()->deleteLangKey('admin', 'splash_screen_submit_succ
 Updater::getLanguageService()->deleteLangKey('admin', 'permissions_index_save');
 Updater::getLanguageService()->deleteLangKey('admin', 'permission_global_privacy_settings_success_message');
 Updater::getLanguageService()->deleteLangKey('admin', 'question_settings_updated');
+Updater::getLanguageService()->deleteLangKey('admin', 'admin_dashboard');
+Updater::getLanguageService()->deleteLangKey('admin', 'heading_user_roles');
+Updater::getLanguageService()->deleteLangKey('admin', 'heading_main_settings');
+Updater::getLanguageService()->deleteLangKey('admin', 'heading_user_input_settings');
+Updater::getLanguageService()->deleteLangKey('admin', 'heading_page_settings');
+Updater::getLanguageService()->deleteLangKey('admin', 'heading_mail_settings');
+Updater::getLanguageService()->deleteLangKey('admin', 'themes_choose_page_title');
+Updater::getLanguageService()->deleteLangKey('admin', 'themes_settings_page_title');
+Updater::getLanguageService()->deleteLangKey('admin', 'pages_page_heading');
+Updater::getLanguageService()->deleteLangKey('admin', 'maintenance_page_heading');
+Updater::getLanguageService()->deleteLangKey('admin', 'maintenance_section_label');
+Updater::getLanguageService()->deleteLangKey('admin', 'splash_screen_section_label');
+Updater::getLanguageService()->deleteLangKey('admin', 'widgets_admin_profile_heading');
+Updater::getLanguageService()->deleteLangKey('admin', 'page_title_manage_plugins');
+Updater::getLanguageService()->deleteLangKey('admin', 'manage_plugins_available_box_cap_label');
+Updater::getLanguageService()->deleteLangKey('admin', 'manage_plugins_add_box_cap_label');
+Updater::getLanguageService()->deleteLangKey('admin', 'heading_mobile_settings');
+Updater::getLanguageService()->deleteLangKey('admin', 'mobile_settings_tabe_heading');
 
 UPDATE_LanguageService::getInstance()->importPrefixFromZip(dirname(__FILE__) . DS . 'langs.zip', 'admin');
 
