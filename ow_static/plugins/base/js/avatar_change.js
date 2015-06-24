@@ -173,6 +173,8 @@ var avatarChange = function( params )
             params.url = self.url;
         }
 
+        params.changeUserAvatar = self.params.changeUserAvatar;
+
         $.ajax({
             url: self.params.ajaxResponder,
             type: 'POST',

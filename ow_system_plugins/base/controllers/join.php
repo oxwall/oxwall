@@ -312,7 +312,7 @@ class BASE_CTRL_Join extends OW_ActionController
                 OW::getUser()->login($user->id);
 
                 // create Avatar
-                $this->createAvatar($user->id);
+                BOL_AvatarService::getInstance()->createAvatar($user->id);
 
                 $event = new OW_Event(OW_EventManager::ON_USER_REGISTER, array('userId' => $user->id, 'method' => 'native', 'params' => $params));
                 OW::getEventManager()->trigger($event);
@@ -333,55 +333,6 @@ class BASE_CTRL_Join extends OW_ActionController
         {
             OW::getFeedback()->error($language->text('base', 'join_join_error'));
         }
-    }
-
-    protected function createAvatar( $userId )
-    {
-        $avatarService = BOL_AvatarService::getInstance();
-
-        $key = $avatarService->getAvatarChangeSessionKey();
-        $path = $avatarService->getTempAvatarPath($key, 2);
-        
-        if ( !file_exists($path) )
-        {
-            return false;
-        }
-
-        if ( !UTIL_File::validateImage($path) )
-        {
-            return false;
-        }
-
-        $event = new OW_Event('base.before_avatar_change', array(
-            'userId' => $userId,
-            'avatarId' => null,
-            'upload' => true,
-            'crop' => false,
-            'isModerable' => false
-        ));
-        OW::getEventManager()->trigger($event);
-
-        $avatarSet = $avatarService->setUserAvatar($userId, $path, array('isModerable' => false, 'trackAction' => false ));
-
-        if ( $avatarSet )
-        {
-            $avatar = $avatarService->findByUserId($userId);
-            
-            if ( $avatar )
-            {
-                $event = new OW_Event('base.after_avatar_change', array(
-                    'userId' => $userId,
-                    'avatarId' => $avatar->id,
-                    'upload' => true,
-                    'crop' => false
-                ));
-                OW::getEventManager()->trigger($event);
-            }
-            
-            $avatarService->deleteUserTempAvatar($key);
-        }
-
-        return $avatarSet;
     }
 }
 
