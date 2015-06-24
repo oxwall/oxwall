@@ -170,14 +170,11 @@ class BASE_CTRL_Edit extends OW_ActionController
 
         $displayPhotoUpload = OW::getConfig()->getValue('base', 'join_display_photo_upload');
 
-        switch ( $displayPhotoUpload )
+        // add the required avatar validator
+        if ( $displayPhotoUpload == BOL_UserService::CONFIG_JOIN_DISPLAY_AND_SET_REQUIRED_PHOTO_UPLOAD ) 
         {
-            case BOL_UserService::CONFIG_JOIN_DISPLAY_AND_SET_REQUIRED_PHOTO_UPLOAD :
-                $avatarValidator = OW::getClassInstance("BASE_CLASS_AvatarFieldValidator", true);
-                $editAvatar->addValidator($avatarValidator);
-               break;
-
-           default :
+            $avatarValidator = OW::getClassInstance("BASE_CLASS_AvatarFieldValidator", true);
+            $editAvatar->addValidator($avatarValidator);
         }
 
         $editForm->addElement($editAvatar);
