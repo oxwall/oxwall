@@ -93,6 +93,11 @@ class BOL_MediaPanelFileDao extends OW_BaseDao
         return $this->findListByExample($ex);
     }
 
+    public function findImage( $imageId )
+    {
+        return $this->findById($imageId);
+    }
+
     public function countGalleryImages( $plugin, $userId=null )
     {
         $ex = new OW_Example();

@@ -1,0 +1,31 @@
+{script}
+    $("#insert-link-wrapper").on("submit", function(e){
+        e.preventDefault();
+        _scope.success && _scope.success({
+            "title" : $(this).find("[name = title]").val(),
+            "link" : $(this).find("[name = link]").val(),
+        });
+    });
+{/script}
+
+<div id="insert-link-wrapper">
+    {form name="insertLink"}
+        <div class="owm_add_link">
+            <div class="owm_link_text owm_bg_color_1">
+                {input name="title"}
+                <div class="owm_error_txt">{error name="title"}</div>
+            </div>
+            <div class="owm_link_field owm_bg_color_1">
+                {input name="link"}
+                <div class="owm_error_txt">{error name="link"}</div>
+            </div>
+        </div>
+        <div class="owm_btn_toolbar owm_border owm_bg_color_1 owm_padding clearfix">
+            <div class="owm_float_right">
+                <span class="ow_button">
+                    {submit name="submit"}
+                </span>
+            </div>
+        </div>
+    {/form}
+</div>
