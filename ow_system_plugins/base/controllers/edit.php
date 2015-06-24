@@ -163,6 +163,25 @@ class BASE_CTRL_Edit extends OW_ActionController
             $this->assign('displayAccountType', true);
         }
 
+        // add avatar field
+        $editAvatar = OW::getClassInstance("BASE_CLASS_AvatarField", 'avatar', false);
+        $editAvatar->setLabel(OW::getLanguage()->text('base', 'questions_question_user_photo_label'));
+        $editAvatar->setValue(BOL_AvatarService::getInstance()->getAvatarUrl($user->id));
+
+        $displayPhotoUpload = OW::getConfig()->getValue('base', 'join_display_photo_upload');
+
+        switch ( $displayPhotoUpload )
+        {
+            case BOL_UserService::CONFIG_JOIN_DISPLAY_AND_SET_REQUIRED_PHOTO_UPLOAD :
+                $avatarValidator = OW::getClassInstance("BASE_CLASS_AvatarFieldValidator", true);
+                $editAvatar->addValidator($avatarValidator);
+               break;
+
+           default :
+        }
+
+        $editForm->addElement($editAvatar);
+
         $editSubmit = new Submit('editSubmit');
         $editSubmit->addAttribute('class', 'ow_button ow_ic_save');
 
@@ -228,6 +247,20 @@ class BASE_CTRL_Edit extends OW_ActionController
                 {
                     if ( $this->questionService->saveQuestionsData($data, $user->id) )
                     {
+                        // delete avatar
+                        if ( empty($data['avatar']) ) 
+                        {
+                            if ( empty($_POST['avatarPreloaded']) )
+                            {
+                                BOL_AvatarService::getInstance()->deleteUserAvatar($user->id);
+                            }
+                        }
+                        else 
+                        {
+                            // update user avatar
+                            BOL_AvatarService::getInstance()->createAvatar($user->id);
+                        }
+
                         if ( !$adminMode )
                         {
                             $event = new OW_Event(OW_EventManager::ON_USER_EDIT, array('userId' => $user->id, 'method' => 'native',));
@@ -310,7 +343,7 @@ class BASE_CTRL_Edit extends OW_ActionController
             }
         }
     }
-    
+
     public function ajaxResponder()
     {
         $adminMode = false;

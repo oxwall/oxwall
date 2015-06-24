@@ -71,6 +71,20 @@
             {/if}
             {/if}
         {/foreach}
+        <tr class="ow_tr_delimiter"><td></td></tr>
+        <tr class="ow_tr_first">
+            <th colspan="3">{text key='base+questions_section_user_photo_label'}</th>
+        </tr>
+        <tr>
+            <td class="ow_alt1 ow_label">
+                {label name='avatar'}
+            </td>
+            <td class="ow_alt1 ow_value">
+                {input name='avatar'}
+                {error name='avatar'}
+            </td>
+            <td class="ow_alt1 ow_desc ow_small"></td>
+        </tr>
     </table>
 	<div class="clearfix ow_stdmargin{if !$isAdmin} ow_btn_delimiter{/if}">
 	   <div class="ow_right">
