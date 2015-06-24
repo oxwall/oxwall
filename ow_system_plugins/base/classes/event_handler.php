@@ -88,6 +88,9 @@ class BASE_CLASS_EventHandler
         BASE_CLASS_ContentProvider::getInstance()->init();
         $eventManager->bind('base.after_avatar_update', array($this, 'onAfterAvatarUpdate'));
         
+        $eventManager->bind("base.user_list.get_displayed_fields", array($this, 'onGetUserListFields'));
+        $eventManager->bind("base.user_list.get_questions", array($this, 'onGetUserListQuestions'));
+        $eventManager->bind("base.user_list.get_field_data", array($this, 'onGetUserListFieldValue'));
     }
 
     public function init()
