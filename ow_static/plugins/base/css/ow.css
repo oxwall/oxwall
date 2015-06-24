@@ -88,11 +88,6 @@
     overflow-y: auto;
 }
 
-.floatbox_canvas_sub {
-    height: 0px;
-    overflow: visible;
-}
-
 .floatbox_body {
     overflow-y: auto;
 }
