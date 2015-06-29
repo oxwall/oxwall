@@ -153,6 +153,7 @@ class BASE_CTRL_Avatar extends OW_ActionController
             return array('result' => false, 'case' => 0);
         }
 
+        $changeUserAvatar = isset($params['changeUserAvatar']) && is_bool($params['changeUserAvatar']) === false ? false : true;
         $coords = $params['coords'];
         $viewSize = $params['view_size'];
         $path = null;
@@ -188,7 +189,7 @@ class BASE_CTRL_Avatar extends OW_ActionController
         }
 
         $userId = OW_Auth::getInstance()->getUserId();
-        if ( $userId )
+        if ( $userId && $changeUserAvatar)
         {
             $avatar = $avatarService->findByUserId($userId);
 
