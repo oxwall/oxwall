@@ -887,6 +887,29 @@ OW::getDbo()->query("CREATE TABLE `" . OW_DB_PREFIX . "base_vote` (
   KEY `entityType` (`entityType`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;");
 
+OW::getDbo()->query("CREATE TABLE `" . OW_DB_PREFIX . "base_search_entity` (
+    `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+    `entityType` varchar(50) NOT NULL,
+    `entityId` int(10) unsigned NOT NULL,
+    `text` text NOT NULL,
+    `status` varchar(20) NOT NULL DEFAULT 'active',
+    `timeStamp` int(10) unsigned NOT NULL,
+    `activated` tinyint(1) unsigned NOT NULL DEFAULT 1,
+    PRIMARY KEY (`id`),
+    KEY `entity` (`entityType`,`entityId`),
+    KEY `status` (`status`, `activated`, `timeStamp`),
+    FULLTEXT KEY `entityText` (`text`)
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8;");
+
+OW::getDbo()->query("CREATE TABLE `" . OW_DB_PREFIX . "base_search_entity_tag` (
+    `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+    `entityTag` varchar(50) NOT NULL,
+    `searchEntityId` int(10) unsigned NOT NULL,
+    PRIMARY KEY (`id`),
+    KEY `searchEntityId` (`searchEntityId`),
+    KEY `entityTag` (`entityTag`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;");
+
 // Configs
 
 OW::getConfig()->addConfig("base", "avatar_big_size", "190", "User avatar width");
@@ -955,9 +978,6 @@ OW::getConfig()->addConfig("base", "install_complete", null, null);
 OW::getConfig()->addConfig("base", "users_on_page", "12", null);
 OW::getConfig()->addConfig("base", "avatar_max_upload_size", "1", "Enable file attachments");
 
-// Langs
-OW::getLanguage()->importPluginLangs(dirname(__FILE__) . DS . "langs.zip", "base");
-
 // Menus
 OW::getNavigation()->addMenuItem("main", "base_index", "base", "main_menu_index", OW_Navigation::VISIBLE_FOR_ALL);
 OW::getNavigation()->addMenuItem("bottom", "NULL", "base", "openwack", OW_Navigation::VISIBLE_FOR_ALL);
@@ -973,3 +993,7 @@ OW::getNavigation()->addMenuItem("mobile_bottom", "base.desktop_version", "base"
 OW::getNavigation()->addMenuItem("mobile_bottom", "NULL", "ow_custom", "mobile_page_14788567", OW_Navigation::VISIBLE_FOR_ALL);
 OW::getNavigation()->addMenuItem("mobile_top", "base_index", "base", "index_menu_item", OW_Navigation::VISIBLE_FOR_ALL);
 OW::getNavigation()->addMenuItem("bottom", "base.mobile_version", "base", "mobile_version_menu_item", OW_Navigation::VISIBLE_FOR_ALL);
+
+
+// Langs
+OW::getLanguage()->importPluginLangs(dirname(__FILE__) . DS . "langs.zip", "base");
