@@ -770,17 +770,17 @@ class BOL_LanguageService
 
     public static function getImportDirPath()
     {
-        return OW::getPluginManager()->getPlugin('admin')->getPluginFilesDir() . 'languages' . DS . 'import' . DS;
+        return OW::getPluginManager()->getPlugin('base')->getPluginFilesDir() . 'languages' . DS . 'import' . DS;
     }
 
     public static function getExportDirPath()
     {
-        return OW::getPluginManager()->getPlugin('admin')->getPluginFilesDir() . 'languages' . DS . 'export' . DS;
+        return OW::getPluginManager()->getPlugin('base')->getPluginFilesDir() . 'languages' . DS . 'export' . DS;
     }
 
     public static function getTmpDirPath()
     {
-        return OW::getPluginManager()->getPlugin('admin')->getPluginFilesDir() . 'languages' . DS . 'tmp' . DS;
+        return OW::getPluginManager()->getPlugin('base')->getPluginFilesDir() . 'languages' . DS . 'tmp' . DS;
     }
 
     public function findActiveList()
