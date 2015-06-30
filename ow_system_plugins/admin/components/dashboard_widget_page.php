@@ -23,21 +23,21 @@
  */
 
 /**
- * Widgets index panel
+ * Widgets admin page
  *
  * @author Sergey Kambalin <greyexpert@gmail.com>
- * @package ow_system_plugins.base.components
+ * @package ow_system_plugins.admin.components
  * @since 1.0
  */
-class BASE_CMP_DragAndDropIndex extends BASE_CMP_DragAndDropFrontendPanel
+class ADMIN_CMP_DashboardWidgetPage extends BASE_CMP_DragAndDropFrontendPanel
 {
-    public function __construct( $placeName, array $componentList, $customizeMode, $componentTemplate )
+    public function __construct( $placeName, array $componentList, $customizeMode, $componentTemplate = null )
     {
+        if ( empty($componentTemplate) )
+        {
+            $componentTemplate = $customizeMode ? 'drag_and_drop_page_customize' : 'drag_and_drop_page';
+        }
+        
         parent::__construct($placeName, $componentList, $customizeMode, $componentTemplate);
-    }
-
-    public function setSidebarPosition( $value )
-    {
-        $this->assign('sidebarPosition', $value);
     }
 }

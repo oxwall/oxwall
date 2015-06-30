@@ -22,22 +22,18 @@
  * which combines Covered Code or portions thereof with code not governed by the terms of the CPAL.
  */
 
-/**
- * Widgets index panel
- *
- * @author Sergey Kambalin <greyexpert@gmail.com>
- * @package ow_system_plugins.base.components
- * @since 1.0
- */
-class BASE_CMP_DragAndDropIndex extends BASE_CMP_DragAndDropFrontendPanel
-{
-    public function __construct( $placeName, array $componentList, $customizeMode, $componentTemplate )
-    {
-        parent::__construct($placeName, $componentList, $customizeMode, $componentTemplate);
-    }
+$queryList = array(
+    "REPLACE INTO `" . OW_DB_PREFIX . "base_place` (`id`, `name`, `editableByUser`) VALUES (NULL, 'admin.dashboard', '0');"
+);
 
-    public function setSidebarPosition( $value )
+foreach ( $queryList as $query )
+{
+    try
     {
-        $this->assign('sidebarPosition', $value);
+        Updater::getDbo()->query($query);
+    }
+    catch ( Exception $e )
+    {
+        Updater::getLogger()->addEntry(json_encode($e));
     }
 }

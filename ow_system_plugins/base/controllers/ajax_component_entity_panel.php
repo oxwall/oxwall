@@ -128,7 +128,7 @@ class BASE_CTRL_AjaxComponentEntityPanel extends BASE_CTRL_AjaxComponentPanel
         $componentId = $this->componentService->findComponentPlace($componentPlaceUniqName, $entity)->componentId;
         $componentClass = $this->componentService->findComponent($componentId)->className;
         $componentSettingList = $this->getComponentSettingList($componentClass, $data);
-        $componentStandardSettingValueList = $this->getComponentStandardSettingValueList($componentClass);
+        $componentStandardSettingValueList = $this->getComponentStandardSettingValueList($componentClass, $data);
         $componentAccess = $this->getComponentAccess($componentClass, $data);
 
         $defaultSettingList = BOL_ComponentAdminService::getInstance()->findSettingList($componentPlaceUniqName);
