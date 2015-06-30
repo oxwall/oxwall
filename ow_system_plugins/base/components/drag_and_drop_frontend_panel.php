@@ -42,12 +42,9 @@ class BASE_CMP_DragAndDropFrontendPanel extends BASE_CMP_DragAndDropPanel
 
         $this->responderController = $responderController;
         $this->customizeMode = (bool) $customizeMode;
-
-        OW_ViewRenderer::getInstance()->registerFunction('dd_component', array($this, 'tplComponent'));
-
+        
         $this->assign('customizeMode', $this->customizeMode);
         $this->assign('allowCustomize', $this->allowCustomize);
-        $this->assign('placeName', $placeName);
     }
 
     public function onBeforeRender()
