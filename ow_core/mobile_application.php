@@ -140,10 +140,10 @@ class OW_MobileApplication extends OW_Application
             OW::getRouter()->addRoute(new OW_Route($value->getKey(), $value->getUri(), $staticPageDispatchAttrs['controller'], $staticPageDispatchAttrs['action'], array('documentKey' => array(OW_Route::PARAM_OPTION_HIDDEN_VAR => $value->getKey()))));
 
             // TODO refactor - hotfix for TOS page
-//            if ( UTIL_String::removeFirstAndLastSlashes($value->getUri()) == 'terms-of-use' )
-//            {
-//                OW::getRequestHandler()->addCatchAllRequestsExclude('base.members_only', $staticPageDispatchAttrs['controller'], $staticPageDispatchAttrs['action'], array('documentKey' => $value->getKey()));
-//            }
+            if ( UTIL_String::removeFirstAndLastSlashes($value->getUri()) == 'terms-of-use' )
+            {
+                OW::getRequestHandler()->addCatchAllRequestsExclude('base.members_only', $staticPageDispatchAttrs['controller'], $staticPageDispatchAttrs['action'], array('documentKey' => $value->getKey()));
+            }
         }
 
         //adding index page route

@@ -38,7 +38,8 @@ class BASE_CMP_AvatarChange extends OW_Component
         $entityType = !empty($params['entityType']) ? $params['entityType'] : null;
         $entityId = !empty($params['entityId']) ? $params['entityId'] : null;
         $id = !empty($params['id']) ? $params['id'] : null;
-        
+        $changeUserAvatar = isset($params['changeUserAvatar']) && $params['changeUserAvatar'] == false ? false : true;
+
         $hideSteps = !empty($params['hideSteps']) ? $params['hideSteps'] : false;
         $displayPreloader = !empty($params['displayPreloader']) ? $params['displayPreloader'] : false;
 
@@ -82,7 +83,8 @@ class BASE_CMP_AvatarChange extends OW_Component
             'step' => $step,
             'limit' => BOL_AvatarService::AVATAR_CHANGE_GALLERY_LIMIT,
             'inputId' => $inputId,
-            'minCropSize' => $minSize
+            'minCropSize' => $minSize,
+            'changeUserAvatar' => $changeUserAvatar
         );
 
         if ( $library && $entityType && $id )

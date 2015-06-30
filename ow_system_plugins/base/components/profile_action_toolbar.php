@@ -37,6 +37,7 @@ class BASE_CMP_ProfileActionToolbar extends OW_Component
     const EVENT_NAME = 'base.add_profile_action_toolbar';
     const EVENT_PROCESS_TOOLBAR = 'base.process_profile_action_toolbar';
     const DATA_KEY_LABEL = 'label';
+    const DATA_KEY_EXTRA_LABEL = 'extraLabel';
     const DATA_KEY_LINK_ID = 'id';
     const DATA_KEY_LINK_CLASS = 'linkClass';
     const DATA_KEY_CMP_CLASS = 'cmpClass';
@@ -160,6 +161,19 @@ class BASE_CMP_ProfileActionToolbar extends OW_Component
                     );
                 }
                 $tplGroups[$item[self::DATA_KEY_LINK_GROUP_KEY]]["toolbar"][] = $action;
+            }
+            elseif (isset($item[self::DATA_KEY_EXTRA_LABEL]) && !empty($item[self::DATA_KEY_EXTRA_LABEL]))
+            {
+                $label = $action['label'];
+                $action['label'] = $item[self::DATA_KEY_EXTRA_LABEL];
+                $fake_group = array(
+                    'key' => $action['key'],
+                    'label' => $label,
+                    'toolbar' => array($action)
+                );
+                $action[self::DATA_KEY_EXTRA_LABEL] = $this->getGroupMenu($fake_group);
+                unset($action['html']);
+                $tplActions[] = $action;
             }
             else
             {
