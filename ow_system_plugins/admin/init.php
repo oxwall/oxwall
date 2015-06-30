@@ -23,7 +23,13 @@
  */
 $plugin = OW::getPluginManager()->getPlugin('admin');
 
-OW::getRouter()->addRoute(new OW_Route('admin_default', 'admin', 'ADMIN_CTRL_Base', 'index'));
+OW::getRouter()->addRoute(new OW_Route('admin_default', 'admin', 'ADMIN_CTRL_Base', 'dashboard'));
+
+OW::getRouter()->addRoute(new OW_Route('admin_dashboard', 'admin', 'ADMIN_CTRL_Base', 'dashboard'));
+OW::getRouter()->addRoute(new OW_Route('admin_dashboard_customize', 'admin/dashboard/customize', 'ADMIN_CTRL_Base', 'dashboard', array(
+    'mode' => array(OW_Route::PARAM_OPTION_HIDDEN_VAR => 'customize'
+))));
+
 OW::getRouter()->addRoute(new OW_Route('admin_finance', 'admin/finance', 'ADMIN_CTRL_Finance', 'index'));
 OW::getRouter()->addRoute(new OW_Route('admin_settings_language', 'admin/settings/languages', 'ADMIN_CTRL_Languages', 'index'));
 
