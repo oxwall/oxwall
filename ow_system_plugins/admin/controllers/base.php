@@ -46,10 +46,8 @@ class ADMIN_CTRL_Base extends ADMIN_CTRL_Abstract
         
         $place = BOL_ComponentAdminService::PLASE_ADMIN_DASHBOARD;
         $customize = !empty($paramList['mode']) && $paramList['mode'] == 'customize';
-        $template = $customize ? 'drag_and_drop_page_customize' : 'drag_and_drop_page';
         
         $service = BOL_ComponentAdminService::getInstance();
-        
         $schemeList = $service->findSchemeList();
         $state = $service->findCache($place);
 
@@ -69,7 +67,7 @@ class ADMIN_CTRL_Base extends ADMIN_CTRL_Abstract
             $state['defaultScheme'] = reset($schemeList);
         }
 
-        $componentPanel = new ADMIN_CMP_DashboardWidgetPage($place, $state['defaultComponents'], $customize, $template);
+        $componentPanel = new ADMIN_CMP_DashboardWidgetPage($place, $state['defaultComponents'], $customize);
         $componentPanel->allowCustomize(true);
 
         $customizeUrls = array(
