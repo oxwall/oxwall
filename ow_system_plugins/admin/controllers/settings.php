@@ -477,20 +477,20 @@ class ADMIN_CTRL_Settings extends ADMIN_CTRL_Abstract
 
         try
         {
-            $result = @BOL_MailService::getInstance()->smtpTestConnection();
+            $result = BOL_MailService::getInstance()->smtpTestConnection();
         }
         catch ( LogicException $e )
         {
             exit($e->getMessage());
         }
 
-        if ( $result === true )
+        if ( $result )
         {
             $responce = OW::getLanguage()->text('admin', 'smtp_test_connection_success');
         }
         else
         {
-            $responce = $result;
+            $responce = OW::getLanguage()->text('admin', 'smtp_test_connection_failed');
         }
 
         exit($responce);

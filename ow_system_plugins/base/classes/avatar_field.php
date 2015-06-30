@@ -34,10 +34,11 @@ class BASE_CLASS_AvatarField extends FormElement
     /**
      * @param string $name
      */
-    public function __construct( $name )
+    public function __construct( $name, $changeUserAvatar = true )
     {
         parent::__construct($name);
 
+        $this->changeUserAvatar = $changeUserAvatar;
         $this->addAttribute('type', 'file');
     }
 
@@ -53,10 +54,28 @@ class BASE_CLASS_AvatarField extends FormElement
 
         $deleteLabel = OW::getLanguage()->text('base', 'delete');
 
+        if ( $this->value )
+        {
+            // hide the input
+            $this->attributes = array_merge($this->attributes, array(
+                'style' => 'display:none'
+            ));
+        }
+
         $markup = '<div class="ow_avatar_field">';
         $markup .= UTIL_HtmlTag::generateTag('input', $this->attributes);
-        $markup .= '<div class="ow_avatar_field_preview" style="display: none;"><img src="" alt="" /><span title="'.$deleteLabel.'"></span></div>';
-        $markup .= '<input type="hidden" name="" value="" class="ow_avatar_field_value" />';
+
+        if ( !$this->value )
+        {
+            $markup .= '<div class="ow_avatar_field_preview" style="display: none;"><img src="" alt="" /><span title="'.$deleteLabel.'"></span></div>';
+        }
+        else 
+        {
+            $markup .= '<div class="ow_avatar_field_preview" style="display: block;"><img src="' . $this->value . '" alt="" /><span title="'.$deleteLabel.'"></span></div>';            
+            $markup .= '<input type="hidden" id="' . $this->getId() . '_preload_avatar" name="avatarPreloaded" value="1" />';
+        }
+
+        $markup .= '<input type="hidden" name="" value="' . $this->value . '" class="ow_avatar_field_value" />';
         $markup .= '</div>';
 
         return $markup;
@@ -65,7 +84,8 @@ class BASE_CLASS_AvatarField extends FormElement
     public function getElementJs()
     {
         $params = array(
-            'ajaxResponder' => OW::getRouter()->urlFor('BASE_CTRL_Avatar', 'ajaxResponder')
+            'ajaxResponder' => OW::getRouter()->urlFor('BASE_CTRL_Avatar', 'ajaxResponder'),
+            'changeUserAvatar' => $this->changeUserAvatar
         );
         $jsString = "var formElement = new OwAvatarField(" . json_encode($this->getId()) . ", " . json_encode($this->getName()) . ", ".json_encode($params).");";
 

@@ -979,4 +979,51 @@ final class BOL_AvatarService
             OW::getSession()->set(self::AVATAR_CHANGE_SESSION_KEY, $key);
         }
     }
+
+    public function createAvatar( $userId )
+    {
+        $key = $this->getAvatarChangeSessionKey();
+        $path = $this->getTempAvatarPath($key, 2);
+
+        if ( !file_exists($path) )
+        {
+            return false;
+        }
+
+        if ( !UTIL_File::validateImage($path) )
+        {
+            return false;
+        }
+
+        $event = new OW_Event('base.before_avatar_change', array(
+            'userId' => $userId,
+            'avatarId' => null,
+            'upload' => true,
+            'crop' => false,
+            'isModerable' => false
+        ));
+        OW::getEventManager()->trigger($event);
+
+        $avatarSet = $this->setUserAvatar($userId, $path, array('isModerable' => false, 'trackAction' => false ));
+
+        if ( $avatarSet )
+        {
+            $avatar = $this->findByUserId($userId);
+
+            if ( $avatar )
+            {
+                $event = new OW_Event('base.after_avatar_change', array(
+                    'userId' => $userId,
+                    'avatarId' => $avatar->id,
+                    'upload' => true,
+                    'crop' => false
+                ));
+                OW::getEventManager()->trigger($event);
+            }
+
+            $this->deleteUserTempAvatar($key);
+        }
+
+        return $avatarSet;
+    }
 }

@@ -320,6 +320,7 @@ final class BOL_AttachmentService
         }
 
         OW::getStorage()->copyFile($tempPath, $uploadPath);
+        OW::getStorage()->chmod($uploadPath, 0666);
         unlink($tempPath);
 
         return array('uid' => $attachDto->getBundle(), 'dto' => $attachDto, 'path' => $uploadPath, 'url' => $this->getAttachmentsUrl() . $attachDto->getFileName());

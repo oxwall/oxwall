@@ -132,6 +132,10 @@ var OWMobile = function(){
         this.message(message, 'error');
     };
 
+    this.warning = function( message ){
+    	this.message(message, 'warning');
+    };
+
     this.info = function( message ){
         this.message(message, 'info');
     };
@@ -1066,9 +1070,19 @@ OwForm.prototype = {
         if( this.events[event] == undefined || this.events[event].length == 0 ){
             return;
         }
+        
+        var result = undefined, returnVal;
 
         for( var i = 0; i < this.events[event].length; i++ ){
-            this.events[event][i].apply(this.form, [data]);
+            
+            returnVal = this.events[event][i].apply(this.form, [data]);
+            if(returnVal === false || returnVal === true ){
+                result = returnVal;
+            }
+        }
+        
+        if( result !== undefined ){
+            return result;
         }
     },
 
@@ -1131,7 +1145,9 @@ OwForm.prototype = {
         }
 
         var dataToSend = this.getValues();
-        self.trigger('submit', dataToSend);
+        if( self.trigger('submit', dataToSend) === false ){
+            return false;
+        }
 
         var buttons = $('input[type=button], input[type=submit], button', '#' + this.id).addClass('ow_inprogress');
 
@@ -1140,10 +1156,10 @@ OwForm.prototype = {
             var postString = '';
 
             $.each( dataToSend, function( index, data ){
-                if( $.isArray(data) ){
-                    for( var i = 0; i < data.length; i++ ){
-                        postString += index + '[]=' + encodeURIComponent(data[i]) + '&';
-                    }
+                if ( $.isArray(data) || $.isPlainObject(data) ) {
+                    $.each(data, function (key, value){
+                        postString += index + '[' + key + ']=' + encodeURIComponent(value) + '&';
+                    });
                 }
                 else{
                     postString += index + '=' + encodeURIComponent(data) + '&';

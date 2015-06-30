@@ -7,7 +7,9 @@
         <div class="owm_avatar">
             {decorator name='avatar_item' data=$avatars[$id]}
         </div>
-        <div class="owm_user_list_name"><span>{$displayNameList[$id]}</span></div>
+        <div class="owm_user_list_info owm_remark">
+            <div class="owm_user_list_name"><span>{$displayNameList[$id]}</span></div>
+        </div>
         {if !empty($onlineInfo) && $onlineInfo[$id] }
             <div class="owm_profile_online">
             </div>
