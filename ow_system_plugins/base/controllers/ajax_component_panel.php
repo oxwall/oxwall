@@ -125,7 +125,7 @@ abstract class BASE_CTRL_AjaxComponentPanel extends OW_ActionController
     {
         $this->checkComponentClass($componentClassName);
 
-        return call_user_func(array($componentClassName, 'getStandardSettingValueList'), $params["componentId"]);
+        return call_user_func(array($componentClassName, 'getStandardSettingValueList'), !empty($params["componentId"]) ? $params["componentId"] : null);
     }
 
     protected function validateComponentSettingList( $componentClassName, $settingList, $place, $params = array() )

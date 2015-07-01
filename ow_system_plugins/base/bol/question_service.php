@@ -1913,26 +1913,6 @@ class BOL_QuestionService
 
     public function getQuestionDescriptionLang( $questionName )
     {
-        /* $prefix = self::QUESTION_LANG_PREFIX;
-        $key = $this->getQuestionLangKeyName(self::LANG_KEY_TYPE_QUESTION_DESCRIPTION, $questionName);
-
-        $text = null;
-        try
-        {   //TODO HARD CODE - set current language
-            $text = BOL_LanguageService::getInstance()->getValue(BOL_LanguageService::getInstance()->getCurrent()->getId(), $prefix, $key);
-        }
-        catch ( Exception $e )
-        {
-            return $prefix . '+' . $key;
-        }
-
-        if ( $text === null )
-        {
-            return "";
-        }
-
-        return $text->getValue(); */
-
         $key = $this->getQuestionLangKeyName(self::LANG_KEY_TYPE_QUESTION_DESCRIPTION, $questionName);
         $text = OW::getLanguage()->text(self::QUESTION_LANG_PREFIX,$key);
 
@@ -2341,6 +2321,11 @@ class BOL_QuestionService
     public function getEmptyRequiredQuestionsList( $userId )
     {
         $user = BOL_UserService::getInstance()->findUserById($userId);
+        
+        if ( empty($user) )
+        {
+            return array();
+        }
 
         $accountType = $this->findAccountTypeByName($user->accountType);
 
@@ -2556,5 +2541,135 @@ class BOL_QuestionService
         }
         
         $this->accountDao->addRoleByAccountType( $accountType );
+    }
+    
+    public function getQuestionValueForUserList( BOL_Question $question, $value )
+    {
+        $stringValue = "";
+        
+        switch ( $question->presentation )
+        {
+            case BOL_QuestionService::QUESTION_PRESENTATION_CHECKBOX:
+
+                if ( (int) $value === 1 )
+                {
+                    $stringValue = OW::getLanguage()->text('base', 'yes');
+                }
+
+                break;
+
+            case BOL_QuestionService::QUESTION_PRESENTATION_DATE:
+
+                $format = OW::getConfig()->getValue('base', 'date_field_format');
+
+                $value = 0;
+
+                switch ( $question->type )
+                {
+                    case BOL_QuestionService::QUESTION_VALUE_TYPE_DATETIME:
+
+                        $date = UTIL_DateTime::parseDate($value, UTIL_DateTime::MYSQL_DATETIME_DATE_FORMAT);
+
+                        if ( isset($date) )
+                        {
+                            $stringValue = mktime(0, 0, 0, $date['month'], $date['day'], $date['year']);
+                        }
+
+                        break;
+
+                    case BOL_QuestionService::QUESTION_VALUE_TYPE_SELECT:
+
+                        $stringValue = (int) $value;
+
+                        break;
+                }
+
+                if ( $format === 'dmy' )
+                {
+                    $stringValue = date("d/m/Y", $value);
+                }
+                else
+                {
+                    $stringValue = date("m/d/Y", $value);
+                }
+
+                break;
+
+            case BOL_QuestionService::QUESTION_PRESENTATION_BIRTHDATE:
+
+                $date = UTIL_DateTime::parseDate($value, UTIL_DateTime::MYSQL_DATETIME_DATE_FORMAT);
+                $stringValue = UTIL_DateTime::formatBirthdate($date['year'], $date['month'], $date['day']);
+
+                break;
+
+            case BOL_QuestionService::QUESTION_PRESENTATION_AGE:
+
+                $date = UTIL_DateTime::parseDate($alue, UTIL_DateTime::MYSQL_DATETIME_DATE_FORMAT);
+                $stringValue = UTIL_DateTime::getAge($date['year'], $date['month'], $date['day']) . " " . $language->text('base', 'questions_age_year_old');
+
+                break;
+
+            case BOL_QuestionService::QUESTION_PRESENTATION_RANGE:
+
+                $range = explode('-', $value);
+                $stringValue = $language->text('base', 'form_element_from') . " " . $range[0] . " " . $language->text('base', 'form_element_to') . " " . $range[1];
+
+                break;
+
+            case BOL_QuestionService::QUESTION_PRESENTATION_SELECT:
+            case BOL_QuestionService::QUESTION_PRESENTATION_RADIO:
+            case BOL_QuestionService::QUESTION_PRESENTATION_MULTICHECKBOX:
+                
+                $multicheckboxValue = (int) $value;
+
+                $parentName = $question->name;
+
+                if ( !empty($question->parent) )
+                {
+                    $parent = BOL_QuestionService::getInstance()->findQuestionByName($question->parent);
+
+                    if ( !empty($parent) )
+                    {
+                        $parentName = $parent->name;
+                    }
+                }
+
+                $questionValues = BOL_QuestionService::getInstance()->findQuestionValues($parentName);
+
+                foreach ( $questionValues as $val )
+                {
+                    /* @var $val BOL_QuestionValue */
+                    if ( ( (int) $val->value ) & $multicheckboxValue )
+                    {
+                        $stringValue .= BOL_QuestionService::getInstance()->getQuestionValueLang($val->questionName, $val->value) .', ';
+                    }
+                }
+                
+                if ( !empty($stringValue) )
+                {
+                    $stringValue = mb_substr($stringValue, 0, -2);
+                }
+
+                break;
+
+            case BOL_QuestionService::QUESTION_PRESENTATION_URL:
+            case BOL_QuestionService::QUESTION_PRESENTATION_TEXT:
+            case BOL_QuestionService::QUESTION_PRESENTATION_TEXTAREA:
+                if ( !is_string($value) )
+                {
+                    break;
+                }
+
+                $value = trim($value);
+
+                if ( strlen($value) > 0 )
+                {
+                    $stringValue = UTIL_HtmlTag::autoLink(nl2br($value));
+                }
+
+                break;
+        }
+        
+        return $stringValue;
     }
 }
