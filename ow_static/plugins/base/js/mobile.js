@@ -258,6 +258,15 @@ var OWMobile = function(){
         });
     };
 
+    this.authorizationLimitedFloatbox = function( message )
+    {
+        OW.ajaxFloatBox(
+            "BASE_MCMP_AuthorizationLimited",
+            {message: message},
+            {width: 500, title: this.getLanguageText('base', 'authorization_limited_permissions')}
+        );
+    };
+
     this.addCssFile = function( url )
     {
         $('head').append($('<link type="text/css" rel="stylesheet" href="'+$.trim(url)+'" />'));
