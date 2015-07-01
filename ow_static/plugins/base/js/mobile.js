@@ -260,10 +260,8 @@ var OWMobile = function(){
 
     this.authorizationLimitedFloatbox = function( message )
     {
-        OW.ajaxFloatBox(
-            "BASE_MCMP_AuthorizationLimited",
-            {message: message},
-            {width: 500, title: this.getLanguageText('base', 'authorization_limited_permissions')}
+        OWM.ajaxFloatBox("BASE_MCMP_AuthorizationLimited", [message],
+            {title: this.getLanguageText('base', 'authorization_limited_permissions')}
         );
     };
 
