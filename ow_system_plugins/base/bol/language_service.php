@@ -907,7 +907,7 @@ class BOL_LanguageService
 
         $languages = $this->getLanguages();
         
-        $activateFirstLang = !empty($languages) ? false : true;
+        $activateFirstLang = empty($languages);
         
         foreach ( $langsToImport as $langToImport )
         {
