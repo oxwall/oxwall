@@ -924,6 +924,8 @@ class BOL_LanguageService
                     $this->save($dto);
                 }
                 
+                $activateFirstLang = false;
+                
                 continue;
             }
 
