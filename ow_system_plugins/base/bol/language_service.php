@@ -920,13 +920,14 @@ class BOL_LanguageService
                     ->setTag($tag)
                     ->setStatus( ($activateFirstLang ? 'active' : 'inactive') )
                     ->setOrder($this->findMaxOrder() + 1);
-                    
                     $this->save($dto);
+                    
+                    $activateFirstLang = false;
                 }
-                
-                $activateFirstLang = false;
-                
-                continue;
+                else
+                {
+                    continue;
+                }
             }
 
             foreach ( $prefixesToImport as $prefixToImport )
