@@ -54,7 +54,10 @@ class BASE_MCMP_TopMenu extends BASE_CMP_Menu
 
         foreach ( $data as $item )
         {
-            $optionsArray[$item['prefix'].$item['key']] = array('url' => (isset($item['url']) ? trim($item['url']) : null));
+            $optionsArray[$item['prefix'].$item['key']] = array(
+                'url' => (isset($item['url']) ? trim($item['url']) : null),
+                'id' => (isset($item['id']) ? trim($item['id']) : null)
+            );
         }
         
         foreach ( $this->assignedVars['data'] as $key => $dataItem )
@@ -62,6 +65,7 @@ class BASE_MCMP_TopMenu extends BASE_CMP_Menu
             if ( !empty($optionsArray[$dataItem['prefix'].$dataItem['key']]['url']) )
             {
                 $this->assignedVars['data'][$key]['addUrl'] = $optionsArray[$dataItem['prefix'].$dataItem['key']]['url'];
+                $this->assignedVars['data'][$key]['addId'] = $optionsArray[$dataItem['prefix'].$dataItem['key']]['id'];
             }
         }
     }
