@@ -838,7 +838,7 @@ class BOL_LanguageService
         }
     }
 
-    public function importPrefixFromZip( $path, $key, $refreshCache=true )
+    public function importPrefixFromZip( $path, $key, $refreshCache=true, $addLanuage = false )
     {
         $importDir = $this->getImportDirPath() . $key . DS;
 
@@ -870,7 +870,9 @@ class BOL_LanguageService
             $l = array('label' => strval($langXmlE->attributes()->label), 'tag' => strval($langXmlE->attributes()->tag));
 
             if ( !in_array($l, $langsToImport) )
+            {
                 $langsToImport[] = $l;
+            }
 
             while ( false !== ( $file = readdir($dh) ) )
             {
@@ -903,10 +905,25 @@ class BOL_LanguageService
             }
         }
 
+        $languages = $this->getLanguages();
+        
+        $activateFirstLang = !empty($languages) ? false : true;
+        
         foreach ( $langsToImport as $langToImport )
         {
             if ( !$this->findByTag($langToImport['tag']) )
             {
+                if ( $addLanuage )
+                {                    
+                    $dto = new BOL_Language();
+                    $dto->setLabel($label)
+                    ->setTag($tag)
+                    ->setStatus( ($activateFirstLang ? 'active' : 'inactive') )
+                    ->setOrder($this->findMaxOrder() + 1);
+                    
+                    $this->save($dto);
+                }
+                
                 continue;
             }
 
