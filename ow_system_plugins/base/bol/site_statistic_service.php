@@ -22,29 +22,67 @@
  * which combines Covered Code or portions thereof with code not governed by the terms of the CPAL.
  */
 
-$db = Updater::getDbo();
-$logger = Updater::getLogger();
-$tblPrefix = OW_DB_PREFIX;
-
-
-$queryList = array();
-$queryList[] = "CREATE TABLE IF NOT EXISTS `{$tblPrefix}base_site_statistic` (
-    `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-    `entityType` varchar(50) NOT NULL,
-    `entityId` int(10) unsigned NOT NULL,
-    `timeStamp` int(10) unsigned NOT NULL,
-    PRIMARY KEY (`id`),
-    KEY `entity` (`entityType`,`timeStamp`,`entityId`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8;";
-
-foreach ( $queryList as $query )
+/**
+ * Site statistics service.
+ *
+ * @author Alex Ermashev <alexermashev@gmail.com>
+ * @package ow_system_plugins.base.bol
+ * @since 1.0
+ */
+class BOL_SiteStatisticService
 {
-    try
+    /**
+     * Site statistics dao
+     * @var BOL_SiteStatisticDao
+     */
+    private $siteStatisticsDao;
+
+    /**
+     * Singleton instance.
+     *
+     * @var BOL_SiteStatisticService
+     */
+    private static $classInstance;
+
+    /**
+     * Constructor.
+     *
+     * @return void
+     */
+    private function __construct()
     {
-        $db->query($query);
+        $this->siteStatisticsDao = BOL_SiteStatisticDao::getInstance();
     }
-    catch ( Exception $e )
+
+    /**
+     * Returns an instance of class (singleton pattern implementation).
+     *
+     * @return BOL_SearchService
+     */
+    public static function getInstance()
     {
-        $logger->addEntry(json_encode($e));
+        if ( self::$classInstance === null )
+        {
+            self::$classInstance = new self();
+        }
+
+        return self::$classInstance;
+    }
+
+    /**
+     * Add entity
+     * 
+     * @param string $entityType
+     * @param integer $entityId
+     * @return void
+     */
+    public function addEntity($entityType, $entityId)
+    {
+        $siteStatisticsDto = new BOL_SiteStatistic();
+        $siteStatisticsDto->entityId = $entityId;
+        $siteStatisticsDto->entityType = $entityType;
+        $siteStatisticsDto->timeStamp = time();
+
+        $this->siteStatisticsDao->saveDelayed($siteStatisticsDto);
     }
 }

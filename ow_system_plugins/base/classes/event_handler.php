@@ -33,6 +33,7 @@ class BASE_CLASS_EventHandler
     public function genericInit()
     {
         $eventManager = OW::getEventManager();
+        $eventManager->bind(BOL_ContentService::EVENT_AFTER_ADD, array($this, 'onAfterAdd'));
         $eventManager->bind('base.add_global_lang_keys', array($this, 'onAddGlobalLangs'));
         $eventManager->bind(OW_EventManager::ON_USER_UNREGISTER, array($this, 'onDeleteUserContent'));
         $eventManager->bind(OW_EventManager::ON_USER_LOGIN, array($this, 'onUserLogin'));
@@ -129,7 +130,13 @@ class BASE_CLASS_EventHandler
             $eventManager->bind('base.add_page_content', array($this, 'addPageBanner'));
         }
     }
-    
+
+    public function onAfterAdd( OW_Event $event )
+    {
+        $params = $event->getParams();
+        BOL_SiteStatisticService::getInstance()->addEntity($params['entityType'], $params['entityId']);
+    }
+
     public function onGetClassInstance( OW_Event $event )
     {
         $params = $event->getParams();
