@@ -494,15 +494,17 @@ html body .ow_admin_permissions.ow_superwide {
 	background-position: center center;
 	background-repeat: no-repeat;
 }
-
 .ow_admin_console_type_update .ow_admin_notification_pic {
-	background-image: url(images/admin_notification_update.png);
+	background-image: url(images/admin_console_type_update.svg);
 }
-
-.ow_admin_console_type_info .ow_admin_notification_pic,
-.ow_admin_console_type_settings .ow_admin_notification_pic,
+.ow_admin_console_type_info .ow_admin_notification_pic {
+	background-image: url(images/admin_console_type_info.svg);
+}
+.ow_admin_console_type_settings .ow_admin_notification_pic {
+	background-image: url(images/admin_console_type_settings.svg);
+}
 .ow_admin_console_type_warning .ow_admin_notification_pic {
-	background-image: url(images/admin_notification_config.png);
+	background-image: url(images/admin_console_type_warning.svg);
 }
 .ow_admin_notification_text {
 	float: left;
@@ -566,8 +568,7 @@ html body .ow_admin_permissions.ow_superwide {
 	/*background-position: -4px -56px;*/
 }
 .ow_admin_menu_item.home {
-	background-image: url(images/admin_home.png);
-	background-position: left 0;
+	background-image: url(images/admin_home.svg);
 	background-color: #2f94f2;
 	text-transform: uppercase;
 	color: #fff;
@@ -729,4 +730,15 @@ html body .ow_admin_permissions.ow_superwide {
 .ow_admin_submenu_hover li.active a {
 	color: #2f94f2;
 	text-decoration: none;
+}
+/* Plugins page style */
+.ow_active_plugins tr, 
+.ow_inactive_plugins tr {
+    border-top:1px solid #c6ced8;
+}
+.ow_plugin_update,
+.ow_active_plugins .ow_plugin_update, 
+.ow_inactive_plugins .ow_plugin_update {
+    background: #fff;
+    border: 1px solid #18d398;
 }
