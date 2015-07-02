@@ -46,3 +46,6 @@ OW::getNavigation()->addMenuItem("admin_mobile", "mobile.admin.pages.dashboard",
 OW::getNavigation()->addMenuItem("admin_mobile", "mobile.admin_settings", "mobile", "mobile_admin_settings", OW_Navigation::VISIBLE_FOR_MEMBER);
 
 OW::getNavigation()->addMenuItem("admin_dev", "admin_developer_tools_language", "admin", "sidebar_menu_item_dev_langs", OW_Navigation::VISIBLE_FOR_ALL);
+
+// Athorization
+OW::getAuthorization()->addGroup('admin'); // TODO check if the group is used somewhere

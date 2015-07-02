@@ -997,3 +997,12 @@ OW::getNavigation()->addMenuItem("bottom", "base.mobile_version", "base", "mobil
 
 // Langs
 OW::getLanguage()->importPluginLangs(dirname(__FILE__) . DS . "langs.zip", "base", false, true);
+
+// Athorization
+
+OW::getAuthorization()->addGroup('base');
+OW::getAuthorization()->addAction('base', 'add_comment');
+OW::getAuthorization()->addAction('base', 'search_users', true);
+OW::getAuthorization()->addAction('base', 'view_profile', true);
+
+OW::getAuthorization()->addGroup('rate'); // TODO check if the group is used somewhere
