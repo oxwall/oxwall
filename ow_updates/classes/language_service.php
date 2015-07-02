@@ -30,6 +30,11 @@ class UPDATE_LanguageService
         return $this->service->getCurrent();
     }
     
+    public function getLanguages()
+    {
+        return $this->service->getLanguages();
+    }
+    
     public function findKey($prefix, $key)
     {
         return $this->service->findKey($prefix, $key);
