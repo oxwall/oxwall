@@ -142,6 +142,11 @@ class UTIL_Url
                 $processedUri .= '?' . http_build_query($uriParams);
             }
 
+            if ( !empty($uriInfo['fragment']) )
+            {
+                $processedUri .= '#' . urlencode($uriInfo['fragment']);
+            }
+
             return $processedUri;
         }
     }
