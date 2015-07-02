@@ -137,8 +137,8 @@ class OW_Language
         return BOL_LanguageService::getInstance()->getCurrent()->getId();
     }
 
-    public function importPluginLangs( $path, $key, $refreshCache = false )
+    public function importPluginLangs( $path, $key, $refreshCache = false, $addLanguage = false )
     {
-        BOL_LanguageService::getInstance()->importPrefixFromZip($path, $key, $refreshCache);
+        BOL_LanguageService::getInstance()->importPrefixFromZip($path, $key, $refreshCache, $addLanguage);
     }
 }
