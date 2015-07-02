@@ -70,7 +70,7 @@ class BASE_CMP_AboutMeWidget extends BASE_CLASS_Widget
             $this->assign('ownerMode', false);
 
             $content = UTIL_HtmlTag::autoLink($content);
-            $this->assign('contentText', $content);
+            $this->assign('contentText', nl2br($content));
         }
     }
 
