@@ -923,7 +923,7 @@ OW::getConfig()->addConfig("base", "site_tagline", "ow-1.7.0", "Site tagline");
 OW::getConfig()->addConfig("base", "site_description", "Just another Oxwall site", "Site Description");
 OW::getConfig()->addConfig("base", "site_timezone", "US/Pacific", "Site Timezone");
 OW::getConfig()->addConfig("base", "site_use_relative_time", "1", "Use relative date/time");
-OW::getConfig()->addConfig("base", "display_name_question", "realname", "Question used for display name");
+OW::getConfig()->addConfig("base", "display_name_question", "username", "Question used for display name");
 OW::getConfig()->addConfig("base", "site_email", "qwe@mail.com", "Email address from which your users will receive notifications and mass mailing.");
 OW::getConfig()->addConfig("base", "google_analytics", "NULL,NULL", null);
 OW::getConfig()->addConfig("base", "mail_smtp_enabled", null, "Smtp enabled");
@@ -996,4 +996,4 @@ OW::getNavigation()->addMenuItem("bottom", "base.mobile_version", "base", "mobil
 
 
 // Langs
-OW::getLanguage()->importPluginLangs(dirname(__FILE__) . DS . "langs.zip", "base");
+OW::getLanguage()->importPluginLangs(dirname(__FILE__) . DS . "langs.zip", "base", false, true);
