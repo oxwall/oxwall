@@ -161,6 +161,7 @@ class BASE_MCLASS_EventHandler extends BASE_CLASS_EventHandler
     {
         // Langs
         OW::getLanguage()->addKeyForJs('base', 'flag_as');
+        OW::getLanguage()->addKeyForJs('base', 'authorization_limited_permissions');
         
         $scriptGen = UTIL_JsGenerator::newInstance()->setVariable(
                 array('OWM', 'ajaxComponentLoaderRsp'), OW::getRouter()->urlFor('BASE_MCTRL_AjaxLoader', 'component')
