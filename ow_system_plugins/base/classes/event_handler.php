@@ -276,6 +276,7 @@ class BASE_CLASS_EventHandler
                     OW::getRequestHandler()->addCatchAllRequestsExclude('base.suspended_user', 'BASE_CTRL_DeleteUser');
                     OW::getRequestHandler()->addCatchAllRequestsExclude('base.suspended_user', 'BASE_CTRL_Captcha');
                     OW::getRequestHandler()->addCatchAllRequestsExclude('base.suspended_user', 'BASE_CTRL_Console');
+                    OW::getRequestHandler()->addCatchAllRequestsExclude('base.suspended_user', 'BASE_CTRL_AjaxLoader');
                 }
 
                 if ( (int) $user->emailVerify === 0 && OW::getConfig()->getValue('base', 'confirm_email') )

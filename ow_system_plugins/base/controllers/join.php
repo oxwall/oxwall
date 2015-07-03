@@ -312,7 +312,7 @@ class BASE_CTRL_Join extends OW_ActionController
                 OW::getUser()->login($user->id);
 
                 // create Avatar
-                BOL_AvatarService::getInstance()->createAvatar($user->id);
+                BOL_AvatarService::getInstance()->createAvatar($user->id, false, false);
 
                 $event = new OW_Event(OW_EventManager::ON_USER_REGISTER, array('userId' => $user->id, 'method' => 'native', 'params' => $params));
                 OW::getEventManager()->trigger($event);
