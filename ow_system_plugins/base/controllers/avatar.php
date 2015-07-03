@@ -210,7 +210,7 @@ class BASE_CTRL_Avatar extends OW_ActionController
                         'case' => 6
                     );
                 }
-                
+
                 $avatar = $avatarService->findByUserId($userId, false);
 
                 $event = new OW_Event('base.after_avatar_change', array(
