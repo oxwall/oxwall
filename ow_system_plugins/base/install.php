@@ -1021,3 +1021,85 @@ OW::getAuthorization()->addAction('base', 'search_users', true);
 OW::getAuthorization()->addAction('base', 'view_profile', true);
 
 OW::getAuthorization()->addGroup('rate'); // TODO check if the group is used somewhere
+
+// Widgets
+
+BOL_ComponentAdminService::getInstance()->addPlace(BOL_ComponentService::PLACE_DASHBOARD, false);
+BOL_ComponentAdminService::getInstance()->addPlace(BOL_ComponentService::PLACE_INDEX, false);
+BOL_ComponentAdminService::getInstance()->addPlace(BOL_ComponentService::PLACE_PROFILE, false);
+BOL_ComponentAdminService::getInstance()->addPlace(BOL_MobileWidgetService::PLACE_MOBILE_INDEX, false);
+BOL_ComponentAdminService::getInstance()->addPlace(BOL_MobileWidgetService::PLACE_MOBILE_DASHBOARD, false);
+
+$widget = BOL_ComponentAdminService::getInstance()->addWidget("BASE_CMP_AboutMeWidget", false);
+$placeWidget = BOL_ComponentAdminService::getInstance()->addWidgetToPlace($widget, BOL_ComponentService::PLACE_PROFILE);
+BOL_ComponentAdminService::getInstance()->addWidgetToPosition($placeWidget, BOL_ComponentService::SECTION_LEFT, 1);
+
+$widget = BOL_ComponentAdminService::getInstance()->addWidget("BASE_CMP_RssWidget", true);
+BOL_ComponentAdminService::getInstance()->addWidgetToPlace($widget, BOL_ComponentService::PLACE_PROFILE);
+BOL_ComponentAdminService::getInstance()->addWidgetToPlace($widget, BOL_ComponentService::PLACE_INDEX);
+BOL_ComponentAdminService::getInstance()->addWidgetToPlace($widget, BOL_ComponentService::PLACE_DASHBOARD);
+
+$widget = BOL_ComponentAdminService::getInstance()->addWidget("BASE_CMP_UserViewWidget", false);
+$placeWidget = BOL_ComponentAdminService::getInstance()->addWidgetToPlace($widget, BOL_ComponentService::PLACE_PROFILE);
+BOL_ComponentAdminService::getInstance()->addWidgetToPosition($placeWidget, BOL_ComponentService::SECTION_RIGHT, 1);
+
+$widget = BOL_ComponentAdminService::getInstance()->addWidget("BASE_CMP_JoinNowWidget", false);
+BOL_ComponentAdminService::getInstance()->addWidgetToPlace($widget, BOL_ComponentService::PLACE_INDEX);
+
+$widget = BOL_ComponentAdminService::getInstance()->addWidget("BASE_CMP_ProfileWallWidget", false);
+BOL_ComponentAdminService::getInstance()->addWidgetToPlace($widget, BOL_ComponentService::PLACE_PROFILE);
+
+$widget = BOL_ComponentAdminService::getInstance()->addWidget("BASE_CMP_UserAvatarWidget", false);
+$placeWidget = BOL_ComponentAdminService::getInstance()->addWidgetToPlace($widget, BOL_ComponentService::PLACE_PROFILE);
+BOL_ComponentAdminService::getInstance()->addWidgetToPosition($placeWidget, BOL_ComponentService::SECTION_LEFT, 0);
+
+$widget = BOL_ComponentAdminService::getInstance()->addWidget("BASE_CMP_IndexWallWidget", false);
+BOL_ComponentAdminService::getInstance()->addWidgetToPlace($widget, BOL_ComponentService::PLACE_INDEX);
+
+$widget = BOL_ComponentAdminService::getInstance()->addWidget("BASE_CMP_AddNewContent", false);
+$placeWidget = BOL_ComponentAdminService::getInstance()->addWidgetToPlace($widget, BOL_ComponentService::PLACE_INDEX);
+BOL_ComponentAdminService::getInstance()->addWidgetToPosition($placeWidget, BOL_ComponentService::SECTION_SIDEBAR, 1);
+
+$widget = BOL_ComponentAdminService::getInstance()->addWidget("BASE_CMP_CustomHtmlWidget", true);
+BOL_ComponentAdminService::getInstance()->addWidgetToPlace($widget, BOL_ComponentService::PLACE_DASHBOARD);
+BOL_ComponentAdminService::getInstance()->addWidgetToPlace($widget, BOL_ComponentService::PLACE_PROFILE);
+BOL_ComponentAdminService::getInstance()->addWidgetToPlace($widget, BOL_ComponentService::PLACE_INDEX);
+$placeWidget = BOL_ComponentAdminService::getInstance()->addWidgetToPlace($widget, BOL_ComponentService::PLACE_INDEX, "admin-4b543d8cdc488", true);
+BOL_ComponentAdminService::getInstance()->addWidgetToPosition($placeWidget, BOL_ComponentService::SECTION_LEFT, 0);
+
+$widget = BOL_ComponentAdminService::getInstance()->addWidget("BASE_CMP_UserListWidget", false);
+$placeWidget = BOL_ComponentAdminService::getInstance()->addWidgetToPlace($widget, BOL_ComponentService::PLACE_INDEX);
+BOL_ComponentAdminService::getInstance()->addWidgetToPosition($placeWidget, BOL_ComponentService::SECTION_LEFT, 1);
+
+$widget = BOL_ComponentAdminService::getInstance()->addWidget("BASE_CMP_MyAvatarWidget", false);
+$placeWidget = BOL_ComponentAdminService::getInstance()->addWidgetToPlace($widget, BOL_ComponentService::PLACE_INDEX);
+BOL_ComponentAdminService::getInstance()->addWidgetToPosition($placeWidget, BOL_ComponentService::SECTION_SIDEBAR, 0);
+
+$widget = BOL_ComponentAdminService::getInstance()->addWidget("BASE_CMP_QuickLinksWidget", false);
+$placeWidget = BOL_ComponentAdminService::getInstance()->addWidgetToPlace($widget, BOL_ComponentService::PLACE_DASHBOARD);
+BOL_ComponentAdminService::getInstance()->addWidgetToPosition($placeWidget, BOL_ComponentService::SECTION_RIGHT, 2);
+
+$widget = BOL_ComponentAdminService::getInstance()->addWidget("BASE_MCMP_CustomHtmlWidget", true);
+BOL_ComponentAdminService::getInstance()->addWidgetToPlace($widget, BOL_MobileWidgetService::PLACE_MOBILE_DASHBOARD);
+BOL_ComponentAdminService::getInstance()->addWidgetToPlace($widget, BOL_MobileWidgetService::PLACE_MOBILE_INDEX);
+$placeWidget = BOL_ComponentAdminService::getInstance()->addWidgetToPlace($widget, BOL_MobileWidgetService::PLACE_MOBILE_INDEX, "admin-5295f2e03ec8a", true);
+BOL_ComponentAdminService::getInstance()->addWidgetToPosition($placeWidget, BOL_MobileWidgetService::SECTION_MOBILE_MAIN, 0);
+$placeWidget = BOL_ComponentAdminService::getInstance()->addWidgetToPlace($widget, BOL_MobileWidgetService::PLACE_MOBILE_INDEX, "admin-5295f2e40db5c", true);
+BOL_ComponentAdminService::getInstance()->addWidgetToPosition($placeWidget, BOL_MobileWidgetService::SECTION_MOBILE_MAIN, 1);
+
+$widget = BOL_ComponentAdminService::getInstance()->addWidget("BASE_MCMP_RssWidget", true);
+BOL_ComponentAdminService::getInstance()->addWidgetToPlace($widget, BOL_MobileWidgetService::PLACE_MOBILE_DASHBOARD);
+BOL_ComponentAdminService::getInstance()->addWidgetToPlace($widget, BOL_MobileWidgetService::PLACE_MOBILE_INDEX);
+
+$widget = BOL_ComponentAdminService::getInstance()->addWidget("BASE_MCMP_UserListWidget", false);
+BOL_ComponentAdminService::getInstance()->addWidgetToPlace($widget, BOL_MobileWidgetService::PLACE_MOBILE_DASHBOARD);
+$placeWidget = BOL_ComponentAdminService::getInstance()->addWidgetToPlace($widget, BOL_MobileWidgetService::PLACE_MOBILE_INDEX);
+BOL_ComponentAdminService::getInstance()->addWidgetToPosition($placeWidget, BOL_MobileWidgetService::SECTION_MOBILE_MAIN, 2);
+
+$widget = BOL_ComponentAdminService::getInstance()->addWidget("BASE_CMP_ModerationToolsWidget", false);
+$placeWidget = BOL_ComponentAdminService::getInstance()->addWidgetToPlace($widget, BOL_ComponentService::PLACE_DASHBOARD);
+BOL_ComponentAdminService::getInstance()->addWidgetToPosition($placeWidget, BOL_ComponentService::SECTION_RIGHT, 0);
+
+$widget = BOL_ComponentAdminService::getInstance()->addWidget("BASE_CMP_WelcomeWidget", false);
+$placeWidget = BOL_ComponentAdminService::getInstance()->addWidgetToPlace($widget, BOL_ComponentService::PLACE_DASHBOARD);
+BOL_ComponentAdminService::getInstance()->addWidgetToPosition($placeWidget, BOL_ComponentService::SECTION_RIGHT, 1);
