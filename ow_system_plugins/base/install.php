@@ -1000,6 +1000,21 @@ OW::getLanguage()->importPluginLangs(dirname(__FILE__) . DS . "langs.zip", "base
 
 // Athorization
 
+// Roles
+$guestRole = new BOL_AuthorizationRole();
+$guestRole->name = "guest";
+$guestRole->sortOrder = 0;
+
+BOL_AuthorizationService::getInstance()->saveRole($guestRole);
+
+$freeRole = new BOL_AuthorizationRole();
+$freeRole->name = "free";
+$freeRole->sortOrder = 1;
+
+BOL_AuthorizationService::getInstance()->saveRole($guestRole);
+
+
+// Groups
 OW::getAuthorization()->addGroup('base');
 OW::getAuthorization()->addAction('base', 'add_comment');
 OW::getAuthorization()->addAction('base', 'search_users', true);
