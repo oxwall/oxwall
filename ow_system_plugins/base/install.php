@@ -998,8 +998,6 @@ OW::getNavigation()->addMenuItem("bottom", "base.mobile_version", "base", "mobil
 // Langs
 OW::getLanguage()->importPluginLangs(dirname(__FILE__) . DS . "langs.zip", "base", false, true);
 
-// Athorization
-
 // Roles
 $guestRole = new BOL_AuthorizationRole();
 $guestRole->name = "guest";
@@ -1013,8 +1011,6 @@ $freeRole->sortOrder = 1;
 
 BOL_AuthorizationService::getInstance()->saveRole($guestRole);
 
-
-// Groups
 OW::getAuthorization()->addGroup('base');
 OW::getAuthorization()->addAction('base', 'add_comment');
 OW::getAuthorization()->addAction('base', 'search_users', true);
@@ -1022,8 +1018,8 @@ OW::getAuthorization()->addAction('base', 'view_profile', true);
 
 OW::getAuthorization()->addGroup('rate'); // TODO check if the group is used somewhere
 
-// Widgets
 
+// Widgets
 BOL_ComponentAdminService::getInstance()->addPlace(BOL_ComponentService::PLACE_DASHBOARD, false);
 BOL_ComponentAdminService::getInstance()->addPlace(BOL_ComponentService::PLACE_INDEX, false);
 BOL_ComponentAdminService::getInstance()->addPlace(BOL_ComponentService::PLACE_PROFILE, false);
