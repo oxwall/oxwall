@@ -824,7 +824,7 @@ final class BOL_AvatarService
     {
         // Newsfeed
         $event = new OW_Event('feed.action', array(
-                'pluginKey' => 'base_avatar',
+                'pluginKey' => 'base',
                 'entityType' => 'avatar-change',
                 'entityId' => $avatarId,
                 'userId' => $userId,
