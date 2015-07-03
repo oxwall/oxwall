@@ -980,7 +980,7 @@ final class BOL_AvatarService
         }
     }
 
-    public function createAvatar( $userId )
+    public function createAvatar( $userId, $isModerable = true, $trackAction = true)
     {
         $key = $this->getAvatarChangeSessionKey();
         $path = $this->getTempAvatarPath($key, 2);
@@ -1000,11 +1000,11 @@ final class BOL_AvatarService
             'avatarId' => null,
             'upload' => true,
             'crop' => false,
-            'isModerable' => false
+            'isModerable' => $isModerable
         ));
         OW::getEventManager()->trigger($event);
 
-        $avatarSet = $this->setUserAvatar($userId, $path, array('isModerable' => false, 'trackAction' => false ));
+        $avatarSet = $this->setUserAvatar($userId, $path, array('isModerable' => $isModerable, 'trackAction' => $trackAction ));
 
         if ( $avatarSet )
         {
