@@ -22,19 +22,21 @@
  * which combines Covered Code or portions thereof with code not governed by the terms of the CPAL.
  */
 
+UPDATE_LanguageService::getInstance()->importPrefixFromZip(dirname(__FILE__) . DS . 'langs.zip', 'base');
+
 $db = Updater::getDbo();
 $logger = Updater::getLogger();
 $tblPrefix = OW_DB_PREFIX;
-
 
 $queryList = array();
 $queryList[] = "CREATE TABLE IF NOT EXISTS `{$tblPrefix}base_site_statistic` (
     `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
     `entityType` varchar(50) NOT NULL,
     `entityId` int(10) unsigned NOT NULL,
+    `entityCount` int(10) unsigned NOT NULL DEFAULT '1',
     `timeStamp` int(10) unsigned NOT NULL,
     PRIMARY KEY (`id`),
-    KEY `entity` (`entityType`,`timeStamp`,`entityId`)
+    KEY `entity` (`entityType`, `timeStamp`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8;";
 
 foreach ( $queryList as $query )
@@ -48,3 +50,9 @@ foreach ( $queryList as $query )
         $logger->addEntry(json_encode($e));
     }
 }
+
+// register widgets
+$widgetService = Updater::getWidgetService();
+$widget = $widgetService->addWidget('ADMIN_CMP_ContentStatisticWidget', false);
+$widgetPlace = $widgetService->addWidgetToPlace($widget, BOL_ComponentAdminService::PLASE_ADMIN_DASHBOARD);
+$widgetService->addWidgetToPosition($widgetPlace, BOL_ComponentService::SECTION_TOP);

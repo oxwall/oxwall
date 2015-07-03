@@ -2670,6 +2670,263 @@ class DateRange extends FormElement  implements DateRangeInterface
     }
 }
 
+class DateRangePicker extends TextField
+{
+    /**
+     * Date devider
+     * @var string
+     */
+    protected $devider = ',';
+
+    /**
+     * Date format
+     * @var string
+     */
+    protected $format = 'm/d/y';
+
+    /**
+     * Min year
+     * @var integer
+     */
+    protected $minYear;
+    
+    /**
+     * Max year
+     * @var integer
+     */
+    protected $maxYear;
+
+    /**
+     * Set min year
+     * 
+     * @param integer $minYear
+     * @return DateRangePicker
+     */
+    public function setMinYear( $minYear )
+    {
+        $this->minYear = $minYear;
+
+        return $this;
+    }
+
+    /**
+     * Get min year
+     * 
+     * @return integer
+     */
+    public function getMinYear()
+    {
+        return $this->minYear;
+    }
+
+    /**
+     * Set max year
+     * 
+     * @param integer $maxYear
+     * @return DateRangePicker
+     */
+    public function setMaxYear( $maxYear )
+    {
+        $this->maxYear = $maxYear;
+
+        return $this;
+    }
+
+    /**
+     * Get max year
+     * 
+     * @return integer
+     */
+    public function getMaxYear()
+    {
+        return $this->maxYear;
+    }
+
+    /**
+     * Set date format
+     * 
+     * @param string $format
+     * @return DateRangePicker
+     */
+    public function setFormat( $format )
+    {
+        $this->format = $format;
+
+        return $this;
+    }
+
+    /**
+     * Get date format
+     * 
+     * @return string
+     */
+    public function getFormat()
+    {
+        return $this->format;
+    }
+
+    /**
+     * Set date devider
+     * 
+     * @param string $devider
+     * @return DateRangePicker
+     */
+    public function setDevider( $devider )
+    {
+        $this->devider = $devider;
+
+        return $this;
+    }
+
+    /**
+     * Get date devider
+     * 
+     * @return string
+     */
+    public function getDevider()
+    {
+        return $this->devider;
+    }
+
+    /**
+     * Sets form element values.
+     *
+     * @param integer $startDate (unixtime)
+     * @param integer $endDate (unixtime)
+     * @return FormElement
+     */
+    public function setValues( $startDate, $endDate )
+    {
+        $this->value = date($this->format, 
+                $startDate) . $this->devider . date($this->format, $endDate);
+
+        return $this;
+    }
+
+    /**
+     * @see FormElement::renderInput()
+     *
+     * @param array $params
+     * @return string
+     */
+    public function renderInput( $params = null )
+    {
+	if ( OW::getRegistry()->get('baseDateRangePickerInit') === null )
+        {
+            // register js and css
+            OW::getDocument()->addScript(OW::getPluginManager()->getPlugin('base')->getStaticJsUrl() . 'jquery.plugin.min.js');
+            OW::getDocument()->addScript(OW::getPluginManager()->getPlugin('base')->getStaticJsUrl() . 'jquery.datepick.min.js');
+            OW::getDocument()->addStyleSheet(OW::getPluginManager()->getPlugin('base')->getStaticCssUrl() . 'jquery.datepick.css');
+            OW::getRegistry()->set('baseDateRangePickerInit', true);
+        }
+
+        $extraOprions = array();
+        if ( $this->minYear && $this->maxYear )
+        {
+            $extraOprions['yearRange'] = $this->minYear . ':' . $this->maxYear;  
+        }
+
+        $language = OW::getLanguage();
+        $js = UTIL_JsGenerator::newInstance();
+        $js->addScript('$("#" + {$uniqId}).datepick({$options});', 
+            array(
+                'uniqId' => $this->getId(),
+                'options' => array_merge(array(
+                    'multiSelect' => 2,
+                    'dateFormat' => $this->format,
+                    'multiSeparator' => $this->devider,
+                    'isRTL' => BOL_LanguageService::getInstance()->getCurrent()->getRtl() ? true : false,
+                    'prevText'   => $language->text('base', 'form_date_range_picker_prev'),
+                    'nextText'   => $language->text('base', 'form_date_range_picker_next'),
+                    'closeText'  => $language->text('base', 'form_date_range_picker_close'),
+                    'clearText'  => $language->text('base', 'form_date_range_picker_clear'),
+                    'todayText'  => $language->text('base', 'form_date_range_picker_today'),
+                    'monthNames' => array(
+                        $language->text('base', 'month_1'),
+                        $language->text('base', 'month_2'),
+                        $language->text('base', 'month_3'),
+                        $language->text('base', 'month_4'),
+                        $language->text('base', 'month_5'),
+                        $language->text('base', 'month_6'),
+                        $language->text('base', 'month_7'),
+                        $language->text('base', 'month_8'),
+                        $language->text('base', 'month_9'),
+                        $language->text('base', 'month_10'),
+                        $language->text('base', 'month_11'),
+                        $language->text('base', 'month_12')
+                    ),
+                    'monthNamesShort' => array(
+                        $language->text('base', 'date_time_month_short_1'),
+                        $language->text('base', 'date_time_month_short_2'),
+                        $language->text('base', 'date_time_month_short_3'),
+                        $language->text('base', 'date_time_month_short_4'),
+                        $language->text('base', 'date_time_month_short_5'),
+                        $language->text('base', 'date_time_month_short_6'),
+                        $language->text('base', 'date_time_month_short_7'),
+                        $language->text('base', 'date_time_month_short_8'),
+                        $language->text('base', 'date_time_month_short_9'),
+                        $language->text('base', 'date_time_month_short_10'),
+                        $language->text('base', 'date_time_month_short_11'),
+                        $language->text('base', 'date_time_month_short_12')
+                    ),
+                    'dayNames' => array(
+                        $language->text('base', 'date_time_week_0'),
+                        $language->text('base', 'date_time_week_1'),
+                        $language->text('base', 'date_time_week_2'),
+                        $language->text('base', 'date_time_week_3'),
+                        $language->text('base', 'date_time_week_4'),
+                        $language->text('base', 'date_time_week_5'),
+                        $language->text('base', 'date_time_week_6')
+                    ),
+                    'dayNamesShort' => array(
+                        $language->text('base', 'date_time_week_short_0'),
+                        $language->text('base', 'date_time_week_short_1'),
+                        $language->text('base', 'date_time_week_short_2'),
+                        $language->text('base', 'date_time_week_short_3'),
+                        $language->text('base', 'date_time_week_short_4'),
+                        $language->text('base', 'date_time_week_short_5'),
+                        $language->text('base', 'date_time_week_short_6')
+                    ),
+                    'dayNamesMin' => array(
+                        $language->text('base', 'date_time_week_min_0'),
+                        $language->text('base', 'date_time_week_min_1'),
+                        $language->text('base', 'date_time_week_min_2'),
+                        $language->text('base', 'date_time_week_min_3'),
+                        $language->text('base', 'date_time_week_min_4'),
+                        $language->text('base', 'date_time_week_min_5'),
+                        $language->text('base', 'date_time_week_min_6')
+                    ),
+                    /*
+                     *
+                + monthNames: ['Januarie','Februarie','Maart','April','Mei','Junie', 'Julie','Augustus','September','Oktober','November','Desember'],
+		+ monthNamesShort: ['Jan', 'Feb', 'Mrt', 'Apr', 'Mei', 'Jun', 'Jul', 'Aug', 'Sep', 'Okt', 'Nov', 'Des'],
+		+ dayNames: ['Sondag', 'Maandag', 'Dinsdag', 'Woensdag', 'Donderdag', 'Vrydag', 'Saterdag'],
+		+ dayNamesShort: ['Son', 'Maan', 'Dins', 'Woens', 'Don', 'Vry', 'Sat'],
+		+ dayNamesMin: ['So','Ma','Di','Wo','Do','Vr','Sa'],
+		dateFormat: 'dd/mm/yyyy', firstDay: 1,
+		renderer: $.datepick.defaultRenderer,
+		prevText: 'Vorige', prevStatus: 'Vertoon vorige maand',
+		prevJumpText: '&#x3c;&#x3c;', prevJumpStatus: 'Vertoon vorige jaar',
+		nextText: 'Volgende', nextStatus: 'Vertoon volgende maand',
+		nextJumpText: '&#x3e;&#x3e;', nextJumpStatus: 'Vertoon volgende jaar',
+		currentText: 'Vandag', currentStatus: 'Vertoon huidige maand',
+		todayText: 'Vandag', todayStatus: 'Vertoon huidige maand',
+		clearText: 'Vee uit', clearStatus: 'Verwyder die huidige datum',
+		closeText: 'Klaar', closeStatus: 'Sluit sonder verandering',
+		yearStatus: 'Vertoon \'n ander jaar', monthStatus: 'Vertoon \'n ander maand',
+		weekText: 'Wk', weekStatus: 'Week van die jaar',
+		dayStatus: 'Kies DD, M d', defaultStatus: 'Kies \'n datum',
+		isRTL: false
+                     */
+                ), $extraOprions)
+        ));
+
+        OW::getDocument()->addOnloadScript($js);
+
+        return parent::renderInput($params);
+    }
+}
+
 class BillingGatewaySelectionField extends FormElement
 {
 
@@ -3011,8 +3268,8 @@ class MobileWysiwygTextarea extends Textarea
                 OW::getDocument()->addScript(OW::getPluginManager()->getPlugin('base')->getStaticJsUrl() . 'jquery.html5_upload.js');
             }
 
-            OW::getDocument()->addScript(OW::getPluginManager()->getPlugin('base')->getStaticJsUrl() . 'suitup.jquery.js?a='.time());
-            OW::getDocument()->addStyleSheet(OW::getPluginManager()->getPlugin('base')->getStaticCssUrl() . 'suitup.css?a='.time());
+            OW::getDocument()->addScript(OW::getPluginManager()->getPlugin('base')->getStaticJsUrl() . 'suitup.jquery.js');
+            OW::getDocument()->addStyleSheet(OW::getPluginManager()->getPlugin('base')->getStaticCssUrl() . 'suitup.css');
 
             // register js langs
             OW::getLanguage()->addKeyForJs('base', 'ws_button_label_link');

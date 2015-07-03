@@ -74,13 +74,15 @@ class BOL_SiteStatisticService
      * 
      * @param string $entityType
      * @param integer $entityId
+     * @param integer $entityCount
      * @return void
      */
-    public function addEntity($entityType, $entityId)
+    public function addEntity($entityType, $entityId, $entityCount = 1)
     {
         $siteStatisticsDto = new BOL_SiteStatistic();
         $siteStatisticsDto->entityId = $entityId;
         $siteStatisticsDto->entityType = $entityType;
+        $siteStatisticsDto->entityCount = $entityCount;
         $siteStatisticsDto->timeStamp = time();
 
         $this->siteStatisticsDao->saveDelayed($siteStatisticsDto);

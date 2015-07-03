@@ -21,6 +21,12 @@ class BOL_SiteStatistic extends OW_Entity
     public $entityId;
 
     /**
+     * Entity count
+     * @var integer
+     */
+    public $entityCount;
+
+    /**
      * TimeStamp
      * @var integer
      */
