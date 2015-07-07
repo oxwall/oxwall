@@ -1130,12 +1130,34 @@ input.tagsinput_wide, div.tagsinput_wide{
 
 /* tags fileds end */
 
-/* Profile action toolbar */
-body ul.ow_profile_action_toolbar li {
+/* Profile action toolbar, ow_bl */
+.ow_bl li {
     margin-bottom: 4px;
     float: left;
 }
-body ul.ow_profile_action_toolbar li:first-child {
+.ow_bl li:first-child {
+    margin-left: 0px;
+}
+.ow_bl .ow_context_action > a {
+    display: inline-block;
+    background-image: none;
+    border: none;
+    padding: 0px 6px 0px 0px;
+}
+.ow_bl .ow_context_action li {
+    float: none;
+    margin-bottom: 0;
+}
+.ow_bl .ow_context_action li a {
+    height: auto;
+    border: none;
+    line-height: normal;
+    background-image: none;
+    border-radius: 0px;
+    -moz-border-radius: 0px;
+    -webkit-border-radius: 0px;
+}
+.ow_bl .ow_context_action_block{
     margin-left: 0px;
 }
 /* Profile action toolbar end */
