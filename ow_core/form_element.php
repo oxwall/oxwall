@@ -2670,14 +2670,8 @@ class DateRange extends FormElement  implements DateRangeInterface
     }
 }
 
-class DateRangePicker extends TextField
+class DatePicker extends TextField
 {
-    /**
-     * Date devider
-     * @var string
-     */
-    protected $devider = ',';
-
     /**
      * Date format
      * @var string
@@ -2697,10 +2691,16 @@ class DateRangePicker extends TextField
     protected $maxYear;
 
     /**
+     * Extra options
+     * @var array
+     */
+    protected $extraOptions = array();
+
+    /**
      * Set min year
      * 
      * @param integer $minYear
-     * @return DateRangePicker
+     * @return DatePicker
      */
     public function setMinYear( $minYear )
     {
@@ -2723,7 +2723,7 @@ class DateRangePicker extends TextField
      * Set max year
      * 
      * @param integer $maxYear
-     * @return DateRangePicker
+     * @return DatePicker
      */
     public function setMaxYear( $maxYear )
     {
@@ -2746,7 +2746,7 @@ class DateRangePicker extends TextField
      * Set date format
      * 
      * @param string $format
-     * @return DateRangePicker
+     * @return DatePicker
      */
     public function setFormat( $format )
     {
@@ -2766,39 +2766,14 @@ class DateRangePicker extends TextField
     }
 
     /**
-     * Set date devider
-     * 
-     * @param string $devider
-     * @return DateRangePicker
-     */
-    public function setDevider( $devider )
-    {
-        $this->devider = $devider;
-
-        return $this;
-    }
-
-    /**
-     * Get date devider
-     * 
-     * @return string
-     */
-    public function getDevider()
-    {
-        return $this->devider;
-    }
-
-    /**
-     * Sets form element values.
+     * Sets form element value.
      *
-     * @param integer $startDate (unixtime)
-     * @param integer $endDate (unixtime)
+     * @param integer $value (unixtime)
      * @return FormElement
      */
-    public function setValues( $startDate, $endDate )
+    public function setValue( $value )
     {
-        $this->value = date($this->format, 
-                $startDate) . $this->devider . date($this->format, $endDate);
+        $this->value = date($this->format, $value);
 
         return $this;
     }
@@ -2810,20 +2785,22 @@ class DateRangePicker extends TextField
      * @return string
      */
     public function renderInput( $params = null )
-    {
-	if ( OW::getRegistry()->get('baseDateRangePickerInit') === null )
+    {       
+	if ( OW::getRegistry()->get('baseDatePickerInit') === null )
         {
             // register js and css
             OW::getDocument()->addScript(OW::getPluginManager()->getPlugin('base')->getStaticJsUrl() . 'jquery.plugin.min.js');
             OW::getDocument()->addScript(OW::getPluginManager()->getPlugin('base')->getStaticJsUrl() . 'jquery.datepick.min.js');
             OW::getDocument()->addStyleSheet(OW::getPluginManager()->getPlugin('base')->getStaticCssUrl() . 'jquery.datepick.css');
-            OW::getRegistry()->set('baseDateRangePickerInit', true);
+            OW::getRegistry()->set('baseDatePickerInit', true);
         }
 
-        $extraOprions = array();
+        // get extra options
+        $extraOptions = $this->extraOptions;
+
         if ( $this->minYear && $this->maxYear )
         {
-            $extraOprions['yearRange'] = $this->minYear . ':' . $this->maxYear;  
+            $extraOptions['yearRange'] = $this->minYear . ':' . $this->maxYear;  
         }
 
         $language = OW::getLanguage();
@@ -2832,15 +2809,28 @@ class DateRangePicker extends TextField
             array(
                 'uniqId' => $this->getId(),
                 'options' => array_merge(array(
-                    'multiSelect' => 2,
                     'dateFormat' => $this->format,
-                    'multiSeparator' => $this->devider,
                     'isRTL' => BOL_LanguageService::getInstance()->getCurrent()->getRtl() ? true : false,
-                    'prevText'   => $language->text('base', 'form_date_range_picker_prev'),
-                    'nextText'   => $language->text('base', 'form_date_range_picker_next'),
-                    'closeText'  => $language->text('base', 'form_date_range_picker_close'),
-                    'clearText'  => $language->text('base', 'form_date_range_picker_clear'),
-                    'todayText'  => $language->text('base', 'form_date_range_picker_today'),
+                    'prevText'   => $language->text('base', 'form_date_picker_prev'),
+                    'prevStatus' => $language->text('base', 'form_date_picker_prev_desc'),
+                    'prevJumpStatus' => $language->text('base', 'form_date_picker_prev_jump_desc'),
+                    'nextText'   => $language->text('base', 'form_date_picker_next'),
+                    'nextStatus' => $language->text('base', 'form_date_picker_next_desc'),
+                    'nextJumpStatus' => $language->text('base', 'form_date_picker_next_jump_desc'),
+                    'closeText'  => $language->text('base', 'form_date_picker_close'),
+                    'closeStatus' => $language->text('base', 'form_date_picker_close_desc'),
+                    'clearText'  => $language->text('base', 'form_date_picker_clear'),
+                    'clearStatus' => $language->text('base', 'form_date_picker_clear_desc'),
+                    'todayText'  => $language->text('base', 'form_date_picker_today'),
+                    'todayStatus' => $language->text('base', 'form_date_picker_today'),
+                    'currentText' => $language->text('base', 'form_date_picker_today'),
+                    'currentStatus' => $language->text('base', 'form_date_picker_current_status'),
+                    'yearStatus' => $language->text('base', 'form_date_picker_year_desc'),
+                    'monthStatus' => $language->text('base', 'form_date_picker_month_desc'),
+                    'weekText' => $language->text('base', 'form_date_picker_week'), 
+                    'weekStatus' => $language->text('base', 'form_date_picker_week_desc'), 
+                    'defaultStatus' => $language->text('base', 'form_date_picker_default_desc'),
+                    'dayStatus' => 'DD, M d', 
                     'monthNames' => array(
                         $language->text('base', 'month_1'),
                         $language->text('base', 'month_2'),
@@ -2895,35 +2885,53 @@ class DateRangePicker extends TextField
                         $language->text('base', 'date_time_week_min_4'),
                         $language->text('base', 'date_time_week_min_5'),
                         $language->text('base', 'date_time_week_min_6')
-                    ),
-                    /*
-                     *
-                + monthNames: ['Januarie','Februarie','Maart','April','Mei','Junie', 'Julie','Augustus','September','Oktober','November','Desember'],
-		+ monthNamesShort: ['Jan', 'Feb', 'Mrt', 'Apr', 'Mei', 'Jun', 'Jul', 'Aug', 'Sep', 'Okt', 'Nov', 'Des'],
-		+ dayNames: ['Sondag', 'Maandag', 'Dinsdag', 'Woensdag', 'Donderdag', 'Vrydag', 'Saterdag'],
-		+ dayNamesShort: ['Son', 'Maan', 'Dins', 'Woens', 'Don', 'Vry', 'Sat'],
-		+ dayNamesMin: ['So','Ma','Di','Wo','Do','Vr','Sa'],
-		dateFormat: 'dd/mm/yyyy', firstDay: 1,
-		renderer: $.datepick.defaultRenderer,
-		prevText: 'Vorige', prevStatus: 'Vertoon vorige maand',
-		prevJumpText: '&#x3c;&#x3c;', prevJumpStatus: 'Vertoon vorige jaar',
-		nextText: 'Volgende', nextStatus: 'Vertoon volgende maand',
-		nextJumpText: '&#x3e;&#x3e;', nextJumpStatus: 'Vertoon volgende jaar',
-		currentText: 'Vandag', currentStatus: 'Vertoon huidige maand',
-		todayText: 'Vandag', todayStatus: 'Vertoon huidige maand',
-		clearText: 'Vee uit', clearStatus: 'Verwyder die huidige datum',
-		closeText: 'Klaar', closeStatus: 'Sluit sonder verandering',
-		yearStatus: 'Vertoon \'n ander jaar', monthStatus: 'Vertoon \'n ander maand',
-		weekText: 'Wk', weekStatus: 'Week van die jaar',
-		dayStatus: 'Kies DD, M d', defaultStatus: 'Kies \'n datum',
-		isRTL: false
-                     */
-                ), $extraOprions)
+                    )
+                ), $extraOptions)
         ));
 
         OW::getDocument()->addOnloadScript($js);
 
         return parent::renderInput($params);
+    }
+}
+
+class DateRangePicker extends DatePicker
+{
+    /**
+     * Devider
+     * @var string
+     */
+    protected $devider;
+
+    /**
+     * Class constructor
+     * 
+     * @param string $name
+     */
+    public function __construct($name, $devider = ',') 
+    {
+        parent::__construct($name);
+
+        $this->devider = $devider;
+        $this->extraOptions = array(
+            'multiSelect' => 2,
+            'multiSeparator' => $this->devider
+        );
+    }
+
+    /**
+     * Sets form element values.
+     *
+     * @param integer $startDate (unixtime)
+     * @param integer $endDate (unixtime)
+     * @return FormElement
+     */
+    public function setValues( $startDate, $endDate )
+    {
+        $this->value = date($this->format, 
+                $startDate) . $this->devider . date($this->format, $endDate);
+
+        return $this;
     }
 }
 

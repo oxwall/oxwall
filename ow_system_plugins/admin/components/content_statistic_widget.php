@@ -76,8 +76,8 @@ class ContentStatisticForm extends Form
         parent::__construct($name);
 
         $dateRangeField = new DateRangePicker('date');
-        $dateRangeField->setMinYear(2011);
-        $dateRangeField->setMaxYear(2015);
+        $dateRangeField->setMinYear(date('Y', strtotime("-3 years")));
+        $dateRangeField->setMaxYear(date('Y'));
         $dateRangeField->setValues(strtotime("-1 day"), time());
         $this->addElement($dateRangeField);
 
