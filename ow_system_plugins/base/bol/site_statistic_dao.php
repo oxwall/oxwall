@@ -42,6 +42,11 @@ class BOL_SiteStatisticDao extends OW_BaseDao
     const ENTITY_ID = 'entityId';
 
     /**
+     * Entity count
+     */
+    const ENTITY_COUNT = 'entityCount';
+
+    /**
      * Timestamp
      */
     const TIMESTAMP = 'timeStamp';
