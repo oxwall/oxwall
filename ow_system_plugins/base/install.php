@@ -1034,6 +1034,7 @@ $accountType->roleId = 0;
 BOL_QuestionService::getInstance()->saveOrUpdateAccountType($accountType);
 
 // Widgets
+
 BOL_ComponentAdminService::getInstance()->addPlace(BOL_ComponentService::PLACE_DASHBOARD, false);
 BOL_ComponentAdminService::getInstance()->addPlace(BOL_ComponentService::PLACE_INDEX, false);
 BOL_ComponentAdminService::getInstance()->addPlace(BOL_ComponentService::PLACE_PROFILE, false);
@@ -1076,6 +1077,7 @@ BOL_ComponentAdminService::getInstance()->addWidgetToPlace($widget, BOL_Componen
 BOL_ComponentAdminService::getInstance()->addWidgetToPlace($widget, BOL_ComponentService::PLACE_INDEX);
 $placeWidget = BOL_ComponentAdminService::getInstance()->addWidgetToPlace($widget, BOL_ComponentService::PLACE_INDEX, "admin-4b543d8cdc488", true);
 BOL_ComponentAdminService::getInstance()->addWidgetToPosition($placeWidget, BOL_ComponentService::SECTION_LEFT, 0);
+BOL_ComponentAdminService::getInstance()->saveComponentSettingList($placeWidget->uniqName, array("content" => "Welcome to our new site! Feel free to participate in our community!"));
 
 $widget = BOL_ComponentAdminService::getInstance()->addWidget("BASE_CMP_UserListWidget", false);
 $placeWidget = BOL_ComponentAdminService::getInstance()->addWidgetToPlace($widget, BOL_ComponentService::PLACE_INDEX);
@@ -1094,8 +1096,10 @@ BOL_ComponentAdminService::getInstance()->addWidgetToPlace($widget, BOL_MobileWi
 BOL_ComponentAdminService::getInstance()->addWidgetToPlace($widget, BOL_MobileWidgetService::PLACE_MOBILE_INDEX);
 $placeWidget = BOL_ComponentAdminService::getInstance()->addWidgetToPlace($widget, BOL_MobileWidgetService::PLACE_MOBILE_INDEX, "admin-5295f2e03ec8a", true);
 BOL_ComponentAdminService::getInstance()->addWidgetToPosition($placeWidget, BOL_MobileWidgetService::SECTION_MOBILE_MAIN, 0);
+BOL_ComponentAdminService::getInstance()->saveComponentSettingList($placeWidget->uniqName, array("content" => "Welcome to our community! Here you\'ll find like-minded individuals who are passionate about the same things as you!"));
 $placeWidget = BOL_ComponentAdminService::getInstance()->addWidgetToPlace($widget, BOL_MobileWidgetService::PLACE_MOBILE_INDEX, "admin-5295f2e40db5c", true);
 BOL_ComponentAdminService::getInstance()->addWidgetToPosition($placeWidget, BOL_MobileWidgetService::SECTION_MOBILE_MAIN, 1);
+BOL_ComponentAdminService::getInstance()->saveComponentSettingList($placeWidget->uniqName, array("content" => "Feel free to participate! Take a look around and help yourself."));
 
 $widget = BOL_ComponentAdminService::getInstance()->addWidget("BASE_MCMP_RssWidget", true);
 BOL_ComponentAdminService::getInstance()->addWidgetToPlace($widget, BOL_MobileWidgetService::PLACE_MOBILE_DASHBOARD);
