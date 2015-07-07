@@ -980,20 +980,27 @@ OW::getConfig()->addConfig("base", "avatar_max_upload_size", "1", "Enable file a
 
 // Menus
 OW::getNavigation()->addMenuItem("main", "base_index", "base", "main_menu_index", OW_Navigation::VISIBLE_FOR_ALL);
-OW::getNavigation()->addMenuItem("bottom", "NULL", "base", "openwack", OW_Navigation::VISIBLE_FOR_ALL);
-OW::getNavigation()->addMenuItem("bottom", "NULL", "base", "page_81959573", OW_Navigation::VISIBLE_FOR_ALL);
-OW::getNavigation()->addMenuItem("bottom", "NULL", "base", "wackwall", OW_Navigation::VISIBLE_FOR_ALL);
 OW::getNavigation()->addMenuItem("hidden", "base_member_profile", "base", "main_menu_my_profile", OW_Navigation::VISIBLE_FOR_MEMBER);
 OW::getNavigation()->addMenuItem("main", "users", "base", "users_main_menu_item", OW_Navigation::VISIBLE_FOR_ALL);
 OW::getNavigation()->addMenuItem("main", "base_join", "base", "base_join_menu_item", OW_Navigation::VISIBLE_FOR_GUEST);
 OW::getNavigation()->addMenuItem("main", "base_member_dashboard", "base", "dashboard", OW_Navigation::VISIBLE_FOR_MEMBER);
-OW::getNavigation()->addMenuItem("bottom", "NULL", "base", "page-119658", OW_Navigation::VISIBLE_FOR_ALL);
 OW::getNavigation()->addMenuItem("mobile_hidden", "base_member_dashboard", "mobile", "mobile_pages_dashboard", OW_Navigation::VISIBLE_FOR_MEMBER);
 OW::getNavigation()->addMenuItem("mobile_bottom", "base.desktop_version", "base", "desktop_version_menu_item", OW_Navigation::VISIBLE_FOR_ALL);
-OW::getNavigation()->addMenuItem("mobile_bottom", "NULL", "ow_custom", "mobile_page_14788567", OW_Navigation::VISIBLE_FOR_ALL);
 OW::getNavigation()->addMenuItem("mobile_top", "base_index", "base", "index_menu_item", OW_Navigation::VISIBLE_FOR_ALL);
 OW::getNavigation()->addMenuItem("bottom", "base.mobile_version", "base", "mobile_version_menu_item", OW_Navigation::VISIBLE_FOR_ALL);
 
+/* TODO Custom pages
+
+OW::getNavigation()->addMenuItem("bottom", null, "base", "page-119658", OW_Navigation::VISIBLE_FOR_ALL);
+OW::getNavigation()->addMenuItem("bottom", null, "base", "openwack", OW_Navigation::VISIBLE_FOR_ALL);
+OW::getNavigation()->addMenuItem("bottom", null, "base", "page_81959573", OW_Navigation::VISIBLE_FOR_ALL);
+OW::getNavigation()->addMenuItem("bottom", null, "base", "wackwall", OW_Navigation::VISIBLE_FOR_ALL);
+OW::getNavigation()->addMenuItem("mobile_bottom", null, "ow_custom", "mobile_page_14788567", OW_Navigation::VISIBLE_FOR_ALL);
+
+*/
+
+// Documents
+// TODO custom documents
 
 // Langs
 OW::getLanguage()->importPluginLangs(dirname(__FILE__) . DS . "langs.zip", "base", false, true);
@@ -1018,6 +1025,13 @@ OW::getAuthorization()->addAction('base', 'view_profile', true);
 
 OW::getAuthorization()->addGroup('rate'); // TODO check if the group is used somewhere
 
+// Account types
+$accountType = new BOL_QuestionAccountType();
+$accountType->name = "290365aadde35a97f11207ca7e4279cc"; // TODO rename
+$accountType->sortOrder = 0;
+$accountType->roleId = 0;
+
+BOL_QuestionService::getInstance()->saveOrUpdateAccountType($accountType);
 
 // Widgets
 BOL_ComponentAdminService::getInstance()->addPlace(BOL_ComponentService::PLACE_DASHBOARD, false);
