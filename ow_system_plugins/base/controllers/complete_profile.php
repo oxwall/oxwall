@@ -187,6 +187,7 @@ class BASE_CTRL_CompleteProfile extends OW_ActionController
         $language->addKeyForJs('base', 'join_error_password_not_valid');
         $language->addKeyForJs('base', 'join_error_password_too_short');
         $language->addKeyForJs('base', 'join_error_password_too_long');
+        $language->addKeyForJs('base', 'join_error_password_not_matching');
 
         //include js
         $onLoadJs = " window.edit = new OW_BaseFieldValidators( " .
