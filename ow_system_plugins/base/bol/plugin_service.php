@@ -555,8 +555,8 @@ class BOL_PluginService
             chmod($userfilesDir, 0777);
         }
 
-        include_once OW_DIR_PLUGIN . $pluginDto->getModule() . DS . 'install.php';
-        include_once OW_DIR_PLUGIN . $pluginDto->getModule() . DS . 'activate.php';
+        include_once OW_DIR_PLUGIN . $pluginDto->getModule() . DS . SCRIPT_INSTALL;
+        include_once OW_DIR_PLUGIN . $pluginDto->getModule() . DS . SCRIPT_ACTIVATE;
         
         if ( $generateCache )
         {
@@ -593,10 +593,10 @@ class BOL_PluginService
         $event = new OW_Event(OW_EventManager::ON_BEFORE_PLUGIN_UNINSTALL, array('pluginKey' => $pluginDto->getKey()));
         OW::getEventManager()->trigger($event);
 
-        include OW_DIR_PLUGIN . $pluginDto->getModule() . DS . 'deactivate.php';
+        include OW_DIR_PLUGIN . $pluginDto->getModule() . DS . SCRIPT_DEACTIVATE;
 
         // include plugin custom uninstall script
-        include OW_DIR_PLUGIN . $pluginDto->getModule() . DS . 'uninstall.php';
+        include OW_DIR_PLUGIN . $pluginDto->getModule() . DS . SCRIPT_UNINSTALL;
 
         // delete plugin work dirs
         $dirsToRemove = array(
@@ -658,7 +658,7 @@ class BOL_PluginService
         $pluginDto->setIsActive(true);
         $this->pluginDao->save($pluginDto);
         OW::getPluginManager()->addPackagePointers($pluginDto);
-        include OW_DIR_PLUGIN . $pluginDto->getModule() . DS . 'activate.php';
+        include OW_DIR_PLUGIN . $pluginDto->getModule() . DS . SCRIPT_ACTIVATE;
     }
 
     public function deactivate( $key )
@@ -667,7 +667,7 @@ class BOL_PluginService
 
         $pluginDto->setIsActive(false);
         $this->pluginDao->save($pluginDto);
-        include OW::getPluginManager()->getPlugin($pluginDto->getKey())->getRootDir() . 'deactivate.php';
+        include OW::getPluginManager()->getPlugin($pluginDto->getKey())->getRootDir() . SCRIPT_DEACTIVATE;
     }
 
     public function getPluginsToUpdateCount()
