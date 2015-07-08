@@ -229,6 +229,23 @@ class BOL_ComponentAdminService extends BOL_ComponentService
 
         $this->placeSchemeDao->save($placeSchemeDto);
     }
+    
+    /**
+     * 
+     * @param string $rightCssClass
+     * @param string $leftCssClass
+     * @param string $schemeCssClass
+     * @return BOL_Scheme
+     */
+    public function addScheme( $rightCssClass, $leftCssClass, $schemeCssClass = null )
+    {
+        $scheme = new BOL_Scheme();
+        $scheme->rightCssClass = $rightCssClass;
+        $scheme->leftCssClass = $leftCssClass;
+        $scheme->cssClass = $schemeCssClass;
+        
+        return $this->schemeDao->save($scheme);
+    }
 
     /**
      *

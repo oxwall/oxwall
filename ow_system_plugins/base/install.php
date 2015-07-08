@@ -1151,6 +1151,19 @@ $widget = BOL_ComponentAdminService::getInstance()->addWidget("BASE_CMP_WelcomeW
 $placeWidget = BOL_ComponentAdminService::getInstance()->addWidgetToPlace($widget, BOL_ComponentService::PLACE_DASHBOARD);
 BOL_ComponentAdminService::getInstance()->addWidgetToPosition($placeWidget, BOL_ComponentService::SECTION_RIGHT, 1);
 
+// Schemes 
+$scheme = BOL_ComponentAdminService::getInstance()->addScheme("ow_superwide", "ow_supernarrow", "ow_scheme_enew");
+BOL_ComponentAdminService::getInstance()->savePlaceScheme(BOL_ComponentService::PLACE_PROFILE, $scheme->id);
+
+$scheme = BOL_ComponentAdminService::getInstance()->addScheme("ow_wide", "ow_narrow", "ow_scheme_nw");
+BOL_ComponentAdminService::getInstance()->savePlaceScheme(BOL_ComponentService::PLACE_INDEX, $scheme->id);
+
+BOL_ComponentAdminService::getInstance()->addScheme("ow_column", "ow_column", "ow_scheme_equal");
+
+BOL_ComponentAdminService::getInstance()->addScheme("ow_narrow", "ow_wide", "ow_scheme_wn");
+
+$scheme = BOL_ComponentAdminService::getInstance()->addScheme("ow_supernarrow", "ow_superwide", "ow_scheme_ewen");
+BOL_ComponentAdminService::getInstance()->savePlaceScheme(BOL_ComponentService::PLACE_DASHBOARD, $scheme->id);
 
 // Langs
 OW::getLanguage()->importPluginLangs(dirname(__FILE__) . DS . "langs.zip", "base", false, true);
