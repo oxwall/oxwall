@@ -258,6 +258,36 @@ final class BOL_UserService
 
         return $returnArray;
     }
+    
+        /**
+     * Returns account type for provided list of user ids.
+     *
+     * @param array $userIdList
+     * @return array
+     */
+    public function getAccountTypeForList( array $userIdList )
+    {
+        $userIdList = array_unique($userIdList);
+
+        $userList = $this->userDao->findByIdList($userIdList);
+
+        $resultArray = array();
+
+        /* @var $user BOL_User */
+        foreach ( $userList as $user )
+        {
+            $resultArray[$user->getId()] = $user->getAccountType();
+        }
+
+        $returnArray = array();
+
+        foreach ( $userIdList as $id )
+        {
+            $returnArray[$id] = isset($resultArray[$id]) ? $resultArray[$id] : null; //todo check and replace with lang value
+        }
+
+        return $returnArray;
+    }
 
     public function getUserUrl( $id )
     {
