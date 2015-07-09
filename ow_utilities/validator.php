@@ -31,7 +31,7 @@ class UTIL_Validator
 {
     const PASSWORD_MIN_LENGTH = 4;
 
-    const PASSWORD_MAX_LENGTH = 15;
+    const PASSWORD_MAX_LENGTH = 128;
 
     const USER_NAME_PATTERN = '/^[\w]{1,32}$/';
 
