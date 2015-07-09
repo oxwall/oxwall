@@ -22,12 +22,22 @@
  * which combines Covered Code or portions thereof with code not governed by the terms of the CPAL.
  */
 
-require_once __DIR__ . DS . "install" . DS . "tables.php";
-require_once __DIR__ . DS . "install" . DS . "configs.php";
-require_once __DIR__ . DS . "install" . DS . "navigation.php";
-require_once __DIR__ . DS . "install" . DS . "authorization.php";
-require_once __DIR__ . DS . "install" . DS . "widgets.php";
-require_once __DIR__ . DS . "install" . DS . "questions.php";
+// Roles
+$guestRole = new BOL_AuthorizationRole();
+$guestRole->name = "guest";
+$guestRole->sortOrder = 0;
 
-// Langs
-OW::getLanguage()->importPluginLangs(dirname(__FILE__) . DS . "langs.zip", "base", false, true);
+BOL_AuthorizationService::getInstance()->saveRole($guestRole);
+
+$freeRole = new BOL_AuthorizationRole();
+$freeRole->name = "free";
+$freeRole->sortOrder = 1;
+
+BOL_AuthorizationService::getInstance()->saveRole($guestRole);
+
+OW::getAuthorization()->addGroup('base');
+OW::getAuthorization()->addAction('base', 'add_comment');
+OW::getAuthorization()->addAction('base', 'search_users', true);
+OW::getAuthorization()->addAction('base', 'view_profile', true);
+
+OW::getAuthorization()->addGroup('rate'); // TODO check if the group is used somewhere
