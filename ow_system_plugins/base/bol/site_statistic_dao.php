@@ -57,11 +57,6 @@ class BOL_SiteStatisticDao extends OW_BaseDao
     const REPORT_TYPE_HOUR = 'hour';
 
     /**
-     * Report week
-     */
-    const REPORT_TYPE_WEEK = 'week';
-
-    /**
      * Report day
      */
     const REPORT_TYPE_DAY = 'day';
@@ -120,6 +115,204 @@ class BOL_SiteStatisticDao extends OW_BaseDao
     }
 
     /**
+     * Get last year statistics
+     *
+     * @param array $entityTypes
+     * @return array
+     */
+    public function getLastYearStatistics(array $entityTypes)
+    {
+        $timeStart = strtotime('today -11 months');
+        $timeEnd   = strtotime('today 23:59:59');
+
+        return $this->getStatistics($this->
+                getMonths(12), $entityTypes, $timeStart, $timeEnd, self::REPORT_TYPE_MONTH);
+    }
+
+    /**
+     * Get last 30 days statistics
+     *
+     * @param array $entityTypes
+     * @return array
+     */
+    public function getLast30DaysStatistics(array $entityTypes)
+    {
+        $timeStart = strtotime('today -30 days');
+        $timeEnd   = strtotime('today 23:59:59');
+
+        return $this->getStatistics($this->
+                getDays(30), $entityTypes, $timeStart, $timeEnd, self::REPORT_TYPE_DAY);
+    }
+
+    /**
+     * Get last 7 days statistics
+     *
+     * @param array $entityTypes
+     * @return array
+     */
+    public function getLast7DaysStatistics(array $entityTypes)
+    {
+        $timeStart = strtotime('today -6 days');
+        $timeEnd   = strtotime('today 23:59:59');
+
+        return $this->getStatistics($this->
+                getDays(7), $entityTypes, $timeStart, $timeEnd, self::REPORT_TYPE_DAY);
+    }
+
+    /**
+     * Get today statistics
+     *
+     * @param array $entityTypes
+     * @return array
+     */
+    public function getTodayStatistics(array $entityTypes)
+    {
+        $timeStart  = strtotime('today');
+        $timeEnd    = strtotime('today 23:59:59');
+
+        return $this->getStatistics($this->
+                getHours(), $entityTypes, $timeStart, $timeEnd, self::REPORT_TYPE_HOUR);
+    }
+
+    /**
+     * Get yesterday statistics
+     *
+     * @param array $entityTypes
+     * @return array
+     */
+    public function getYesterdayStatistics(array $entityTypes)
+    {
+        $timeStart = strtotime('yesterday');
+        $timeEnd   = strtotime('yesterday 23:59:59');
+
+        return $this->getStatistics($this->
+                getHours(), $entityTypes, $timeStart, $timeEnd, self::REPORT_TYPE_HOUR);
+    }
+
+    /**
+     * Get months
+     *
+     * @apram integer $count
+     * @return array
+     */
+    protected function getMonths($count)
+    {
+        $categories = array();
+
+        for ($i = $count - 1; $i > 0; $i--)
+        {
+            $categories[date('n' , strtotime('today -' . $i . ' months'))] = 0;
+        }
+
+        $categories[date('n' , strtotime('today'))] = 0;
+
+        return $categories;
+    }
+
+    /**
+     * Get days
+     *
+     * @apram integer $count
+     * @return array
+     */
+    protected function getDays($count)
+    {
+        $categories = array();
+
+        for ($i = $count - 1; $i > 0; $i--)
+        {
+            $categories[date('j' , strtotime('today -' . $i . ' days'))] = 0;
+        }
+
+        $categories[date('j' , strtotime('today'))] = 0;
+
+        return $categories;
+    }
+
+    /**
+     * Get hours
+     *
+     * @return array
+     */
+    protected function getHours()
+    {
+        return array_pad(array(), 24, 0);
+    }
+
+    /**
+     * Get statistics
+     *
+     * @apram array $categories
+     * @param array $entityTypes
+     * @param integer $timeStart
+     * @param integer $timeEnd
+     * @param string $reportType
+     * @return array
+     */
+    protected function getStatistics(array $categories, array $entityTypes, $timeStart, $timeEnd, $reportType)
+    {
+        $report = array();
+        foreach ($entityTypes as $type)
+        {
+            $report[$type] = $categories;
+        }
+
+        $query = '
+            SELECT
+                `' . self::ENTITY_TYPE . '`,
+                DATE_FORMAT(FROM_UNIXTIME(`' . self::TIMESTAMP . '`), "' . $this->getReportDateFormat($reportType) . '") AS `category`,
+                SUM(`' . self::ENTITY_COUNT . '`) as `count`
+            FROM
+                `' . $this->getTableName() . '`
+            WHERE
+                `' . self::ENTITY_TYPE . '` IN (' . $this->dbo->mergeInClause($entityTypes) . ')
+                    AND
+                `' . self::TIMESTAMP . '` >= ' . (int) $timeStart . '
+                    AND
+                `' . self::TIMESTAMP . '` <= ' . (int) $timeEnd   . '
+            GROUP BY
+                `' . self::ENTITY_TYPE . '`,
+                `category`';
+
+        $values =  $this->dbo->queryForList($query);
+
+        if ( $values )
+        {
+            // fill report array with values
+            foreach ($values as $value)
+            {
+                $report[$value['entityType']][$value['category']] = $value['count'];
+            }
+        }
+
+        return $report;
+    }
+
+    /**
+     * Get report date format
+     *
+     * @param string $reportType
+     * @return string
+     */
+    protected function getReportDateFormat($reportType)
+    {
+        switch ( $reportType )
+        {
+            case self::REPORT_TYPE_MONTH :
+                return '%c';
+                break;
+
+            case self::REPORT_TYPE_DAY :
+                return '%e';
+                break;
+
+            case self::REPORT_TYPE_HOUR :
+            default :
+                return '%k';
+        }
+    }
+
+    /**
      * Get statistics
      * 
      * @param array $entityTypes
@@ -128,7 +321,7 @@ class BOL_SiteStatisticDao extends OW_BaseDao
      * @param string $reportType
      * @return array
      */
-    public function getStatistics(array $entityTypes, $startDate, $endDate, $reportType)
+    /*public function getStatistics(array $entityTypes, $startDate, $endDate, $reportType)
     {
         $startDate = strtotime($startDate);
         $endDate   = strtotime($endDate . ' 23:59:59');
@@ -167,7 +360,7 @@ class BOL_SiteStatisticDao extends OW_BaseDao
 
         return $report;
     }
-
+*/
     /**
      * Get report array
      * 
@@ -175,7 +368,7 @@ class BOL_SiteStatisticDao extends OW_BaseDao
      * @param string $reportType
      * @return array
      */
-    protected function getReportArray(array $entityTypes, $reportType)
+   /* protected function getReportArray(array $entityTypes, $reportType)
     {
         switch ( $reportType ) 
         {
@@ -204,13 +397,13 @@ class BOL_SiteStatisticDao extends OW_BaseDao
 
         return $reportArray;
     }
-
+*/
     /**
      * Get months array
      * 
      * @return array
      */
-    protected function getMonthsArray()
+   /* protected function getMonthsArray()
     {
         return array(
             'January'   => 0,
@@ -227,13 +420,13 @@ class BOL_SiteStatisticDao extends OW_BaseDao
             'December'  => 0
         );
     }
-
+*/
     /**
      * Get days array
      * 
      * @return array
      */
-    public function getDaysArray()
+  /*  public function getDaysArray()
     {
         $days = array();
 
@@ -245,13 +438,13 @@ class BOL_SiteStatisticDao extends OW_BaseDao
 
         return $days;
     }
-
+*/
     /**
      * Get weeks array
      * 
      * @return array
      */
-    protected function getWeeksArray()
+   /* protected function getWeeksArray()
     {
         return array(
             'Monday'    => 0,
@@ -262,14 +455,14 @@ class BOL_SiteStatisticDao extends OW_BaseDao
             'Saturday'  => 0,
             'Sunday'    => 0
         );
-    }
+    }*/
 
     /**
      * Get hours array
      * 
      * @return array
      */
-    public function getHoursArray()
+    /*public function getHoursArray()
     {
         $hours = array();
 
@@ -280,14 +473,14 @@ class BOL_SiteStatisticDao extends OW_BaseDao
         }
 
         return $hours;
-    }
+    }*/
 
     /**
      * Get report date format
      * 
      * @param string $reportType
      */
-    protected function getReportDateFormat($reportType)
+    /*protected function getReportDateFormat($reportType)
     {
         switch($reportType) {
             case self::REPORT_TYPE_MONTH :
@@ -303,5 +496,5 @@ class BOL_SiteStatisticDao extends OW_BaseDao
             default :
                 return '%H';
         }
-    }
+    }*/
 }

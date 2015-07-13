@@ -67,6 +67,14 @@ class ADMIN_CMP_ContentStatisticWidget extends BASE_CLASS_Widget
     {
         parent::__construct();
 
+        $this->registerJsCssFiles();
+        $service = BOL_SiteStatisticService::getInstance();
+
+        $service->getContentStatistics('forum');
+
+        /*
+        parent::__construct();
+
         //--  register js and css files --//
         OW::getDocument()->addScript(OW::getPluginManager()->getPlugin('base')->getStaticJsUrl() . 'chart.js');
 
@@ -94,7 +102,17 @@ class ADMIN_CMP_ContentStatisticWidget extends BASE_CLASS_Widget
         $this->assign('categories', 
                 json_encode($service->getCategoriesLabel($defaultReportType)));
 
-        $this->assign('data', json_encode($data, JSON_NUMERIC_CHECK));
+        $this->assign('data', json_encode($data, JSON_NUMERIC_CHECK));*/
+    }
+
+    /**
+     * Register js and css files
+     *
+     * @return void
+     */
+    protected function registerJsCssFiles()
+    {
+        OW::getDocument()->addScript(OW::getPluginManager()->getPlugin('base')->getStaticJsUrl() . 'chart.js');
     }
 
     public static function getAccess()
@@ -107,7 +125,7 @@ class ADMIN_CMP_ContentStatisticWidget extends BASE_CLASS_Widget
      * 
      * @return array
      */
-    public static function getSettingList()
+    /*public static function getSettingList()
     {
         $settingList = array();
 
@@ -126,7 +144,7 @@ class ADMIN_CMP_ContentStatisticWidget extends BASE_CLASS_Widget
 
         return $settingList;
     }
-
+*/
     /**
      * Get standart setting values list
      * 
@@ -142,6 +160,7 @@ class ADMIN_CMP_ContentStatisticWidget extends BASE_CLASS_Widget
     }
 }
 
+/*
 class ContentStatisticForm extends Form
 {
     /**
@@ -152,7 +171,7 @@ class ContentStatisticForm extends Form
      * @param integer $endDate
      * @param integer $startYear
      */
-    public function __construct($name, $startDate, $endDate, $startYear) 
+    /*public function __construct($name, $startDate, $endDate, $startYear)
     {
         parent::__construct($name);
 
@@ -186,4 +205,4 @@ class ContentStatisticForm extends Form
         $groupField->setValue($selectedGroup);
         $this->addElement($groupField);
     }
-}
+}*/

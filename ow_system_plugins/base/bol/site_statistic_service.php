@@ -45,6 +45,31 @@ class BOL_SiteStatisticService
     private static $classInstance;
 
     /**
+     * Period type last year
+     */
+    CONST PERIOD_TYPE_LAST_YEAR = 'last_year';
+
+    /**
+     * Period type last 30 days
+     */
+    CONST PERIOD_TYPE_LAST_30_DAYS = 'last_30_days';
+
+    /**
+     * Period type last 7 days
+     */
+    CONST PERIOD_TYPE_LAST_7_DAYS = 'last_7_days';
+
+    /**
+     * Period type yesterday
+     */
+    CONST PERIOD_TYPE_YESTERDAY = 'yesterday';
+
+    /**
+     * Period type today
+     */
+    CONST PERIOD_TYPE_TODAY = 'today';
+
+    /**
      * Constructor.
      *
      * @return void
@@ -93,7 +118,7 @@ class BOL_SiteStatisticService
      * 
      * @return array
      */
-    public function getCategoriesLabel($reportType = BOL_SiteStatisticDao::REPORT_TYPE_HOUR)
+    /*public function getCategoriesLabel($reportType = BOL_SiteStatisticDao::REPORT_TYPE_HOUR)
     {
         $language = OW::getLanguage();
 
@@ -134,16 +159,14 @@ class BOL_SiteStatisticService
                 return array_keys($this->siteStatisticsDao->getHoursArray());
         }
     }
-
+*/
     /**
      * Get content statistics
      * 
      * @param string $contentGroup
-     * @param string $startDate
-     * @param string $endDate
      * @return array|boolean
      */
-    public function getContentStatistics($contentGroup, $startDate, $endDate, $reportType = BOL_SiteStatisticDao::REPORT_TYPE_HOUR)
+    public function getContentStatistics($contentGroup, $period = self::PERIOD_TYPE_LAST_YEAR)
     {
         // get all registered content groups
         $contentGroups = BOL_ContentService::getInstance()->getContentGroups();
@@ -158,13 +181,39 @@ class BOL_SiteStatisticService
         // e.g. forum-topic, forum-post, etc
         $entityTypes = $contentGroups[$contentGroup]['entityTypes'];
 
+        switch ($period)
+        {
+            case self::PERIOD_TYPE_LAST_YEAR :
+                $statistics =  $this->siteStatisticsDao->getLastYearStatistics($entityTypes);
+                break;
+
+            case self::PERIOD_TYPE_LAST_30_DAYS :
+                $statistics =  $this->siteStatisticsDao->getLast30DaysStatistics($entityTypes);
+                break;
+
+            case self::PERIOD_TYPE_LAST_7_DAYS :
+                $statistics =  $this->siteStatisticsDao->getLast7DaysStatistics($entityTypes);
+                break;
+
+            case self::PERIOD_TYPE_YESTERDAY :
+                $statistics =  $this->siteStatisticsDao->getYesterdayStatistics($entityTypes);
+                break;
+
+            case self::PERIOD_TYPE_TODAY :
+            default :
+                $statistics =  $this->siteStatisticsDao->getTodayStatistics($entityTypes);
+        }
+
+        printVar($statistics);
+        exit;
         // get statistics from db for certain period
-        $statistics =  $this->siteStatisticsDao->
-                getStatistics($entityTypes, $startDate, $endDate, $reportType);
+        //$statistics =  $this->siteStatisticsDao->getStatistics($entityTypes);
 
         // get detailed content types info
-        $contentTypes = BOL_ContentService::getInstance()->getContentTypes();
+       /* $contentTypes = BOL_ContentService::getInstance()->getContentTypes();
 
+        printVar($statistics);
+        exit;
         // translate and proccess the entities
         $data = array();
         foreach ($statistics as $entity => $values) 
@@ -175,6 +224,6 @@ class BOL_SiteStatisticService
             ); 
         }
 
-        return $data;
+        return $data;*/
     }
 }

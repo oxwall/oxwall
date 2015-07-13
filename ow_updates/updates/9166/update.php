@@ -22,7 +22,7 @@
  * which combines Covered Code or portions thereof with code not governed by the terms of the CPAL.
  */
 
-UPDATE_LanguageService::getInstance()->importPrefixFromZip(dirname(__FILE__) . DS . 'langs.zip', 'base');
+UPDATE_LanguageService::getInstance()->importPrefixFromZip(dirname(__FILE__) . DS . 'langs.zip', 'admin');
 
 $db = Updater::getDbo();
 $logger = Updater::getLogger();
