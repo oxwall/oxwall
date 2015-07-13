@@ -1,8 +1,95 @@
-{form name="content_statistics_form"}
-    <div style="float:left;width:50%">
-        {input name="date"}
-    </div>
-    <div style="float:right;width:50%">
-        {input name="group"}
-    </div>
-{/form}
+{style}
+    .admin-content-statistics-filter {
+        margin-bottom:20px;
+    }
+
+    .admin-content-statistics-filter .content-statistics-date {
+        float:left;
+        width:200px;
+    }
+ 
+    .admin-content-statistics-filter .content-statistics-type {
+        float:right;
+        width:200px;
+    }
+    
+    .admin-content-statistics-filter .content-statistics-type select {
+        width:100%;
+    }
+
+    #admin-content-statistics-container {
+        width:100%;
+        height:300px;
+    }    
+{/style}
+
+<div class="admin-content-statistics-filter">
+    {form name="content_statistics_form"}
+        <div class="content-statistics-date">
+            {input name="date"}
+        </div>
+        <div class="content-statistics-type">
+            {input name="group"}
+        </div>
+    {/form}
+    <div class="clearfix"></div>
+</div>
+
+<div id="admin-content-statistics-container">
+    <canvas id="myChart" style="width:100%;height: 100%"></canvas>
+</div>
+
+
+
+{script}
+
+var ctx = $("#myChart").get(0).getContext("2d");
+// This will get the first returned node in the jQuery collection.
+var data = {
+    labels: ["January", "February", "March", "April", "May", "June", "July"],
+    datasets: [
+        {
+            label: "My First dataset",
+            fillColor: "rgba(220,220,220,0.2)",
+            strokeColor: "rgba(220,220,220,1)",
+            pointColor: "rgba(220,220,220,1)",
+            pointStrokeColor: "#fff",
+            pointHighlightFill: "#fff",
+            pointHighlightStroke: "rgba(220,220,220,1)",
+            data: [65, 59, 80, 81, 56, 55, 40]
+        },
+        {
+            label: "My Second dataset",
+            fillColor: "rgba(151,187,205,0.2)",
+            strokeColor: "rgba(151,187,205,1)",
+            pointColor: "rgba(151,187,205,1)",
+            pointStrokeColor: "#fff",
+            pointHighlightFill: "#fff",
+            pointHighlightStroke: "rgba(151,187,205,1)",
+            data: [28, 48, 40, 19, 86, 27, 90]
+        }
+    ]
+};
+
+var myLineChart = new Chart(ctx).Line(data);
+
+
+
+{/script}    
+
+$(function () {
+        $("#admin-content-statistics-container").highcharts({
+            title: {
+                text: null
+            },
+            xAxis: { // label on the bottom
+                categories: {$categories}
+            },
+            yAxis: {
+                title: {
+                    text: null
+                }
+            },
+            series: {$data}
+        });
+    });

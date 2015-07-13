@@ -2670,6 +2670,9 @@ class DateRange extends FormElement  implements DateRangeInterface
     }
 }
 
+/**
+ * Date picker
+ */
 class DatePicker extends TextField
 {
     /**
@@ -2798,6 +2801,7 @@ class DatePicker extends TextField
         // get extra options
         $extraOptions = $this->extraOptions;
 
+        // merge extra options
         if ( $this->minYear && $this->maxYear )
         {
             $extraOptions['yearRange'] = $this->minYear . ':' . $this->maxYear;  
@@ -2895,28 +2899,66 @@ class DatePicker extends TextField
     }
 }
 
+/**
+ * Date range picker
+ */
 class DateRangePicker extends DatePicker
 {
     /**
      * Devider
      * @var string
      */
-    protected $devider;
+    protected $devider = ',';
+
+    /**
+     * Months to show
+     * @var integer
+     */
+    protected $monthsToShow = 3;
 
     /**
      * Class constructor
      * 
      * @param string $name
      */
-    public function __construct($name, $devider = ',') 
+    public function __construct($name) 
     {
         parent::__construct($name);
 
-        $this->devider = $devider;
+        // set default extra options
         $this->extraOptions = array(
-            'multiSelect' => 2,
-            'multiSeparator' => $this->devider
+            'rangeSelect' => true,
+            'monthsToShow' => $this->monthsToShow,
+            'rangeSeparator' => $this->devider
         );
+    }
+
+    /**
+     * Set devider
+     * 
+     * @param string $devider
+     * @return DateRangePicker
+     */
+    public function setDevider( $devider )
+    {
+        $this->devider = $devider;
+        $this->extraOptions['rangeSeparator'] = $devider;
+
+        return $this;
+    }
+
+    /**
+     * Set months to show
+     * 
+     * @param string $monthsCount
+     * @return DateRangePicker
+     */
+    public function setMonthsToShow( $monthsCount )
+    {
+        $monthsCount = abs($monthsCount);
+        $this->extraOptions['monthsToShow'] = $monthsCount ? $monthsCount : 1;
+
+        return $this;
     }
 
     /**

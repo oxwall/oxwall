@@ -52,6 +52,26 @@ class BOL_SiteStatisticDao extends OW_BaseDao
     const TIMESTAMP = 'timeStamp';
 
     /**
+     * Report hour
+     */
+    const REPORT_TYPE_HOUR = 'hour';
+
+    /**
+     * Report week
+     */
+    const REPORT_TYPE_WEEK = 'week';
+
+    /**
+     * Report day
+     */
+    const REPORT_TYPE_DAY = 'day';
+
+    /**
+     * Report month
+     */
+    const REPORT_TYPE_MONTH = 'month';
+
+    /**
      * Singleton instance.
      *
      * @var BOL_SiteStatisticDao
@@ -97,5 +117,191 @@ class BOL_SiteStatisticDao extends OW_BaseDao
     public function getTableName()
     {
         return OW_DB_PREFIX . 'base_site_statistic';
+    }
+
+    /**
+     * Get statistics
+     * 
+     * @param array $entityTypes
+     * @param string $startDate
+     * @param string $endDate
+     * @param string $reportType
+     * @return array
+     */
+    public function getStatistics(array $entityTypes, $startDate, $endDate, $reportType)
+    {
+        $startDate = strtotime($startDate);
+        $endDate   = strtotime($endDate . ' 23:59:59');
+
+        // get an report array
+        $report = $this->getReportArray($entityTypes, $reportType);
+
+        // create an empty values array
+        $query = '
+            SELECT 
+                `' . self::ENTITY_TYPE . '`,
+                DATE_FORMAT(FROM_UNIXTIME(`' . self::TIMESTAMP . '`), "' . $this->getReportDateFormat($reportType) . '") AS `category`,
+                SUM(`' . self::ENTITY_COUNT . '`) as `count` 
+            FROM 
+                `' . $this->getTableName() . '`
+            WHERE
+                `' . self::ENTITY_TYPE . '` IN (' . $this->dbo->mergeInClause($entityTypes) . ')
+                    AND
+                `' . self::TIMESTAMP . '` >= ' . $startDate . '
+                    AND
+                `' . self::TIMESTAMP . '` <= ' . $endDate   . '
+            GROUP BY 
+                `' . self::ENTITY_TYPE . '`, 
+                `category`';
+
+        $values = $this->dbo->queryForList($query);
+
+        if ( $values )
+        {
+            // fill report array with values
+            foreach ($values as $value)
+            {
+                $report[$value['entityType']][$value['category']] = $value['count'];
+            }
+        }
+
+        return $report;
+    }
+
+    /**
+     * Get report array
+     * 
+     * @param array $entityTypes
+     * @param string $reportType
+     * @return array
+     */
+    protected function getReportArray(array $entityTypes, $reportType)
+    {
+        switch ( $reportType ) 
+        {
+            case self::REPORT_TYPE_MONTH :
+                $values = $this->getMonthsArray();
+                break;
+
+            case self::REPORT_TYPE_DAY :
+                $values = $this->getDaysArray();
+                break;
+
+            case self::REPORT_TYPE_WEEK :
+                $values = $this->getWeeksArray();
+                break;
+
+            case self::REPORT_TYPE_HOUR :
+            default :
+                $values = $this->getHoursArray();
+        }
+
+        // fill entities array with values
+        foreach ($entityTypes as $entityType)
+        {
+            $reportArray[$entityType] = $values;
+        }
+
+        return $reportArray;
+    }
+
+    /**
+     * Get months array
+     * 
+     * @return array
+     */
+    protected function getMonthsArray()
+    {
+        return array(
+            'January'   => 0,
+            'February'  => 0,
+            'March'     => 0,
+            'April'     => 0,
+            'May'       => 0,
+            'June'      => 0,
+            'July'      => 0,
+            'August'    => 0,
+            'September' => 0,
+            'October'   => 0,
+            'November'  => 0,
+            'December'  => 0
+        );
+    }
+
+    /**
+     * Get days array
+     * 
+     * @return array
+     */
+    public function getDaysArray()
+    {
+        $days = array();
+
+        for ($i = 1; $i <= 31; $i++) 
+        {
+            $index = $i <= 9 ? '0' . $i : $i;
+            $days[$index] = 0;
+        }
+
+        return $days;
+    }
+
+    /**
+     * Get weeks array
+     * 
+     * @return array
+     */
+    protected function getWeeksArray()
+    {
+        return array(
+            'Monday'    => 0,
+            'Tuesday'   => 0,
+            'Wednesday' => 0,
+            'Thursday'  => 0,
+            'Friday'    => 0,
+            'Saturday'  => 0,
+            'Sunday'    => 0
+        );
+    }
+
+    /**
+     * Get hours array
+     * 
+     * @return array
+     */
+    public function getHoursArray()
+    {
+        $hours = array();
+
+        for ($i = 0; $i <= 23; $i++) 
+        {
+            $index = $i <= 9 ? '0' . $i : $i;
+            $hours[$index] = 0;
+        }
+
+        return $hours;
+    }
+
+    /**
+     * Get report date format
+     * 
+     * @param string $reportType
+     */
+    protected function getReportDateFormat($reportType)
+    {
+        switch($reportType) {
+            case self::REPORT_TYPE_MONTH :
+                return '%M';
+
+            case self::REPORT_TYPE_DAY :
+                return '%d';
+
+            case self::REPORT_TYPE_WEEK :
+                return '%W';
+
+            case self::REPORT_TYPE_HOUR :
+            default :
+                return '%H';
+        }
     }
 }

@@ -39,14 +39,62 @@
 class ADMIN_CMP_ContentStatisticWidget extends BASE_CLASS_Widget
 {
     /**
+     * Default range days
+     */
+    const DEFAULT_RANGE_DAYS = 6; // a one week
+
+    /**
+     * Max range days
+     */
+    const MAX_RANGE_DAYS = 30;
+
+    /**
+     * Default start date
+     * @var integer
+     */
+    protected $defaultStartDate;
+
+    /**
+     * Default end date
+     * @var integer
+     */
+    protected $defaultEndDate;
+
+    /**
      * Class constructor
      */
     public function __construct( BASE_CLASS_WidgetParameter $paramObj )
     {
         parent::__construct();
 
+        //--  register js and css files --//
+        OW::getDocument()->addScript(OW::getPluginManager()->getPlugin('base')->getStaticJsUrl() . 'chart.js');
+
+        $service = BOL_SiteStatisticService::getInstance();
+
+        
+        // get widget settings
+        $defaultDays = (int) $paramObj->customParamList['defaultRangeDays'] + 1;
+        $startYear   = (int) $paramObj->customParamList['startYear'];
+        $defaultReportType  = empty($_GET['type']) ?  BOL_SiteStatisticDao::REPORT_TYPE_WEEK : $_GET['type'];
+
+        // init both default start and end date
+        $this->defaultStartDate = strtotime('-' . $defaultDays . ' day', time());
+        $this->defaultEndDate   = time();
+
         // add a filter form
-        $this->addForm(new ContentStatisticForm('content_statistics_form'));
+        $this->addForm(new ContentStatisticForm('content_statistics_form', $this->
+                defaultStartDate, $this->defaultEndDate, $startYear));
+
+        // get statistic data
+        $data = $service->getContentStatistics('comments', date('Y-m-d', 
+                $this->defaultStartDate), date('Y-m-d', $this->defaultEndDate), $defaultReportType);
+
+        // assign view variables
+        $this->assign('categories', 
+                json_encode($service->getCategoriesLabel($defaultReportType)));
+
+        $this->assign('data', json_encode($data, JSON_NUMERIC_CHECK));
     }
 
     public static function getAccess()
@@ -54,10 +102,40 @@ class ADMIN_CMP_ContentStatisticWidget extends BASE_CLASS_Widget
         return self::ACCESS_ALL;
     }
 
+    /**
+     * Get custom settings list
+     * 
+     * @return array
+     */
+    public static function getSettingList()
+    {
+        $settingList = array();
+
+        $settingList['defaultRangeDays'] = array(
+            'presentation' => self::PRESENTATION_SELECT, 
+            'label' => OW::getLanguage()->text('admin', 'widget_content_statistics_default_range_days_setting'),
+            'value' => self::DEFAULT_RANGE_DAYS - 1,
+            'optionList' => range(1, self::MAX_RANGE_DAYS)
+        );
+
+        $settingList['startYear'] = array(
+            'presentation' => self::PRESENTATION_TEXT, 
+            'label' => OW::getLanguage()->text('admin', 'widget_content_statistics_start_year_setting'),
+            'value' => date('Y')
+        );
+
+        return $settingList;
+    }
+
+    /**
+     * Get standart setting values list
+     * 
+     * @return array
+     */
     public static function getStandardSettingValueList()
     {
         return array(
-            self::SETTING_TITLE => OW::getLanguage()->text('admin', 'content_statistic_widget'),
+            self::SETTING_TITLE => OW::getLanguage()->text('admin', 'widget_content_statistics'),
             self::SETTING_ICON => self::ICON_FILES,
             self::SETTING_SHOW_TITLE => true
         );
@@ -70,15 +148,23 @@ class ContentStatisticForm extends Form
      * Class constructor
      * 
      * @param string $name
+     * @param integer $startDate
+     * @param integer $endDate
+     * @param integer $startYear
      */
-    public function __construct($name) 
+    public function __construct($name, $startDate, $endDate, $startYear) 
     {
         parent::__construct($name);
 
+        $year = date('Y');
         $dateRangeField = new DateRangePicker('date');
-        $dateRangeField->setMinYear(date('Y', strtotime("-3 years")));
-        $dateRangeField->setMaxYear(date('Y'));
-        $dateRangeField->setValues(strtotime("-1 day"), time());
+        $dateRangeField->setFormat('y-m-d');
+        $dateRangeField->setDevider(' - ');
+        $dateRangeField->setMinYear(date('Y', strtotime('-' . ($year - $startYear) . ' years')));
+        $dateRangeField->setMaxYear($year);
+        $dateRangeField->setValues($startDate, $endDate);
+
+
         $this->addElement($dateRangeField);
 
         $contentGroups = BOL_ContentService::getInstance()->getContentGroups();

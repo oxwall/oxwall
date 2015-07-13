@@ -87,4 +87,94 @@ class BOL_SiteStatisticService
 
         $this->siteStatisticsDao->saveDelayed($siteStatisticsDto);
     }
+
+    /**
+     * Get categories label
+     * 
+     * @return array
+     */
+    public function getCategoriesLabel($reportType = BOL_SiteStatisticDao::REPORT_TYPE_HOUR)
+    {
+        $language = OW::getLanguage();
+
+        switch ($reportType) 
+        {
+            case BOL_SiteStatisticDao::REPORT_TYPE_MONTH :
+                return array(
+                    $language->text('base', 'month_1'),
+                    $language->text('base', 'month_2'),
+                    $language->text('base', 'month_3'),
+                    $language->text('base', 'month_4'),
+                    $language->text('base', 'month_5'),
+                    $language->text('base', 'month_6'),
+                    $language->text('base', 'month_7'),
+                    $language->text('base', 'month_8'),
+                    $language->text('base', 'month_9'),
+                    $language->text('base', 'month_10'),
+                    $language->text('base', 'month_11'),
+                    $language->text('base', 'month_12')
+                );
+
+            case BOL_SiteStatisticDao::REPORT_TYPE_WEEK :
+                return array(
+                    $language->text('base', 'date_time_week_1'),
+                    $language->text('base', 'date_time_week_2'),
+                    $language->text('base', 'date_time_week_3'),
+                    $language->text('base', 'date_time_week_4'),
+                    $language->text('base', 'date_time_week_5'),
+                    $language->text('base', 'date_time_week_6'),
+                    $language->text('base', 'date_time_week_0')
+                );
+
+            case BOL_SiteStatisticDao::REPORT_TYPE_DAY :
+                return array_keys($this->siteStatisticsDao->getDaysArray());
+
+            case BOL_SiteStatisticDao::REPORT_TYPE_HOUR :
+            default :
+                return array_keys($this->siteStatisticsDao->getHoursArray());
+        }
+    }
+
+    /**
+     * Get content statistics
+     * 
+     * @param string $contentGroup
+     * @param string $startDate
+     * @param string $endDate
+     * @return array|boolean
+     */
+    public function getContentStatistics($contentGroup, $startDate, $endDate, $reportType = BOL_SiteStatisticDao::REPORT_TYPE_HOUR)
+    {
+        // get all registered content groups
+        $contentGroups = BOL_ContentService::getInstance()->getContentGroups();
+
+        // check the received group
+        if (!array_key_exists($contentGroup, $contentGroups) ) 
+        {
+            return false;
+        }
+
+        // get all group's entity types
+        // e.g. forum-topic, forum-post, etc
+        $entityTypes = $contentGroups[$contentGroup]['entityTypes'];
+
+        // get statistics from db for certain period
+        $statistics =  $this->siteStatisticsDao->
+                getStatistics($entityTypes, $startDate, $endDate, $reportType);
+
+        // get detailed content types info
+        $contentTypes = BOL_ContentService::getInstance()->getContentTypes();
+
+        // translate and proccess the entities
+        $data = array();
+        foreach ($statistics as $entity => $values) 
+        {
+            $data[] = array(
+                'name' => $contentTypes[$entity]['entityLabel'],
+                'data' => array_values($values)
+            ); 
+        }
+
+        return $data;
+    }
 }
