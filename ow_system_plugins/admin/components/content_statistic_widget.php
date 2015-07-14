@@ -39,26 +39,16 @@
 class ADMIN_CMP_ContentStatisticWidget extends BASE_CLASS_Widget
 {
     /**
-     * Default range days
+     * Default content group
+     * @var string
      */
-    const DEFAULT_RANGE_DAYS = 6; // a one week
+    protected $defaultContentGroup;
 
     /**
-     * Max range days
+     * Default period
+     * @var string
      */
-    const MAX_RANGE_DAYS = 30;
-
-    /**
-     * Default start date
-     * @var integer
-     */
-    protected $defaultStartDate;
-
-    /**
-     * Default end date
-     * @var integer
-     */
-    protected $defaultEndDate;
+    protected $defaultPeriod;
 
     /**
      * Class constructor
@@ -67,54 +57,74 @@ class ADMIN_CMP_ContentStatisticWidget extends BASE_CLASS_Widget
     {
         parent::__construct();
 
-        $this->registerJsCssFiles();
-        $service = BOL_SiteStatisticService::getInstance();
-
-        $service->getContentStatistics('forum');
-
-        /*
-        parent::__construct();
-
-        //--  register js and css files --//
-        OW::getDocument()->addScript(OW::getPluginManager()->getPlugin('base')->getStaticJsUrl() . 'chart.js');
-
-        $service = BOL_SiteStatisticService::getInstance();
-
-        
-        // get widget settings
-        $defaultDays = (int) $paramObj->customParamList['defaultRangeDays'] + 1;
-        $startYear   = (int) $paramObj->customParamList['startYear'];
-        $defaultReportType  = empty($_GET['type']) ?  BOL_SiteStatisticDao::REPORT_TYPE_WEEK : $_GET['type'];
-
-        // init both default start and end date
-        $this->defaultStartDate = strtotime('-' . $defaultDays . ' day', time());
-        $this->defaultEndDate   = time();
-
-        // add a filter form
-        $this->addForm(new ContentStatisticForm('content_statistics_form', $this->
-                defaultStartDate, $this->defaultEndDate, $startYear));
-
-        // get statistic data
-        $data = $service->getContentStatistics('comments', date('Y-m-d', 
-                $this->defaultStartDate), date('Y-m-d', $this->defaultEndDate), $defaultReportType);
-
-        // assign view variables
-        $this->assign('categories', 
-                json_encode($service->getCategoriesLabel($defaultReportType)));
-
-        $this->assign('data', json_encode($data, JSON_NUMERIC_CHECK));*/
+        $this->defaultContentGroup = $paramObj->customParamList['defaultContentGroup'];
+        $this->defaultPeriod = $paramObj->customParamList['defaultPeriod'];
     }
 
     /**
-     * Register js and css files
+     * On before render
      *
      * @return void
      */
-    protected function registerJsCssFiles()
+    public function onBeforeRender()
     {
-        OW::getDocument()->addScript(OW::getPluginManager()->getPlugin('base')->getStaticJsUrl() . 'chart.js');
+        // register forms
+        $this->addForm(new ContentStatisticForm('content_statistics_form', $this->defaultContentGroup));
+
+        // register components
+        $this->addComponent('statistics', new ADMIN_CMP_ContentStatistic(array(
+            'defaultContentGroup' => $this->defaultContentGroup,
+            'defaultPeriod' => $this->defaultPeriod
+        )));
+
+        $this->addMenu();
+
+        // assign view variables
+        $this->assign('defaultContentGroup', $this->defaultContentGroup);
+        $this->assign('defaultPeriod', $this->defaultPeriod);
     }
 
+    /**
+     * Add menu
+     *
+     * @return void
+     */
+    protected function addMenu()
+    {
+        $this->addComponent('menu', new BASE_CMP_WidgetMenu(array(
+            'today' => array(
+                'label' => OW::getLanguage()->text('admin', 'site_statistics_today_period'),
+                'id' => 'content-statistics-' . BOL_SiteStatisticService::PERIOD_TYPE_TODAY,
+                'active' => $this->defaultPeriod == BOL_SiteStatisticService::PERIOD_TYPE_TODAY
+            ),
+            'yesterday' => array(
+                'label' => OW::getLanguage()->text('admin', 'site_statistics_yesterday_period'),
+                'id' => 'content-statistics-' . BOL_SiteStatisticService::PERIOD_TYPE_YESTERDAY,
+                'active' => $this->defaultPeriod == BOL_SiteStatisticService::PERIOD_TYPE_YESTERDAY
+            ),
+            'last_7_days' => array(
+                'label' => OW::getLanguage()->text('admin', 'site_statistics_last_7_days_period'),
+                'id' => 'content-statistics-' . BOL_SiteStatisticService::PERIOD_TYPE_LAST_7_DAYS,
+                'active' => $this->defaultPeriod == BOL_SiteStatisticService::PERIOD_TYPE_LAST_7_DAYS
+            ),
+            'last_30_days' => array(
+                'label' => OW::getLanguage()->text('admin', 'site_statistics_last_30_days_period'),
+                'id' => 'content-statistics-' . BOL_SiteStatisticService::PERIOD_TYPE_LAST_30_DAYS,
+                'active' => $this->defaultPeriod == BOL_SiteStatisticService::PERIOD_TYPE_LAST_30_DAYS
+            ),
+            'last_year' => array(
+                'label' => OW::getLanguage()->text('admin', 'site_statistics_last_year_period'),
+                'id' => 'content-statistics-' . BOL_SiteStatisticService::PERIOD_TYPE_LAST_YEAR,
+                'active' => $this->defaultPeriod == BOL_SiteStatisticService::PERIOD_TYPE_LAST_YEAR
+            )
+        )));
+    }
+
+    /**
+     * Get widget access
+     *
+     * @return string
+     */
     public static function getAccess()
     {
         return self::ACCESS_ALL;
@@ -122,32 +132,49 @@ class ADMIN_CMP_ContentStatisticWidget extends BASE_CLASS_Widget
 
     /**
      * Get custom settings list
-     * 
+     *
      * @return array
      */
-    /*public static function getSettingList()
+    public static function getSettingList()
     {
         $settingList = array();
 
-        $settingList['defaultRangeDays'] = array(
-            'presentation' => self::PRESENTATION_SELECT, 
-            'label' => OW::getLanguage()->text('admin', 'widget_content_statistics_default_range_days_setting'),
-            'value' => self::DEFAULT_RANGE_DAYS - 1,
-            'optionList' => range(1, self::MAX_RANGE_DAYS)
+        // get all registered content groups
+        $contentGroups = BOL_ContentService::getInstance()->getContentGroups();
+        $groupsValues = array();
+
+        foreach($contentGroups as $group)
+        {
+            $groupsValues[$group['name']] = $group['label'];
+        }
+
+        $defaultGroup = $contentGroups ? array_shift($contentGroups) : array();
+        $settingList['defaultContentGroup'] = array(
+            'presentation' => self::PRESENTATION_SELECT,
+            'label' => OW::getLanguage()->text('admin', 'widget_content_statistics_default_content_group'),
+            'value' => !empty($defaultGroup) ? $defaultGroup['name'] : null,
+            'optionList' => $groupsValues
         );
 
-        $settingList['startYear'] = array(
-            'presentation' => self::PRESENTATION_TEXT, 
-            'label' => OW::getLanguage()->text('admin', 'widget_content_statistics_start_year_setting'),
-            'value' => date('Y')
+        $settingList['defaultPeriod'] = array(
+            'presentation' => self::PRESENTATION_SELECT,
+            'label' => OW::getLanguage()->text('admin', 'site_statistics_default_period'),
+            'value' => BOL_SiteStatisticService::PERIOD_TYPE_LAST_7_DAYS,
+            'optionList' => array(
+                BOL_SiteStatisticService::PERIOD_TYPE_TODAY => OW::getLanguage()->text('admin', 'site_statistics_today_period'),
+                BOL_SiteStatisticService::PERIOD_TYPE_YESTERDAY => OW::getLanguage()->text('admin', 'site_statistics_yesterday_period'),
+                BOL_SiteStatisticService::PERIOD_TYPE_LAST_7_DAYS => OW::getLanguage()->text('admin', 'site_statistics_last_7_days_period'),
+                BOL_SiteStatisticService::PERIOD_TYPE_LAST_30_DAYS => OW::getLanguage()->text('admin', 'site_statistics_last_30_days_period'),
+                BOL_SiteStatisticService::PERIOD_TYPE_LAST_YEAR => OW::getLanguage()->text('admin', 'site_statistics_last_year_period')
+            )
         );
 
         return $settingList;
     }
-*/
+
     /**
      * Get standart setting values list
-     * 
+     *
      * @return array
      */
     public static function getStandardSettingValueList()
@@ -160,37 +187,26 @@ class ADMIN_CMP_ContentStatisticWidget extends BASE_CLASS_Widget
     }
 }
 
-/*
+/**
+ * Class ContentStatisticForm
+ */
 class ContentStatisticForm extends Form
 {
     /**
      * Class constructor
-     * 
+     *
      * @param string $name
-     * @param integer $startDate
-     * @param integer $endDate
-     * @param integer $startYear
+     * @apram string $defaultGroup
      */
-    /*public function __construct($name, $startDate, $endDate, $startYear)
+    public function __construct($name, $defaultGroup)
     {
         parent::__construct($name);
-
-        $year = date('Y');
-        $dateRangeField = new DateRangePicker('date');
-        $dateRangeField->setFormat('y-m-d');
-        $dateRangeField->setDevider(' - ');
-        $dateRangeField->setMinYear(date('Y', strtotime('-' . ($year - $startYear) . ' years')));
-        $dateRangeField->setMaxYear($year);
-        $dateRangeField->setValues($startDate, $endDate);
-
-
-        $this->addElement($dateRangeField);
 
         $contentGroups = BOL_ContentService::getInstance()->getContentGroups();
         $processedGroups = array();
         $selectedGroup   = null;
 
-        foreach ($contentGroups as $group => $data) 
+        foreach ($contentGroups as $group => $data)
         {
             if ( !$selectedGroup )
             {
@@ -202,7 +218,7 @@ class ContentStatisticForm extends Form
 
         $groupField = new Selectbox('group');
         $groupField->setOptions($processedGroups);
-        $groupField->setValue($selectedGroup);
+        $groupField->setValue($defaultGroup);
         $this->addElement($groupField);
     }
-}*/
+}
