@@ -1,0 +1,20 @@
+<canvas id="{$chartId}"></canvas>
+{script}
+    $( document ).ready(function()
+    {
+        var ctx = $("#{$chartId}").get(0).getContext("2d");
+
+        var data = {
+            labels: {$categories},
+            datasets: {$data}
+        };
+
+        {literal}
+            var lineChart = new Chart(ctx).Line(data, {
+                animation: false,
+                responsive : true,
+                multiTooltipTemplate: "<%= datasetLabel %> - <%= value %>"
+            });
+        {/literal}
+    });
+{/script}

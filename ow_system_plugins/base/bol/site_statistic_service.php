@@ -27,7 +27,7 @@
  *
  * @author Alex Ermashev <alexermashev@gmail.com>
  * @package ow_system_plugins.base.bol
- * @since 1.0
+ * @since 1.7.6
  */
 class BOL_SiteStatisticService
 {
@@ -45,9 +45,32 @@ class BOL_SiteStatisticService
     private static $classInstance;
 
     /**
+     * Period type last year
+     */
+    CONST PERIOD_TYPE_LAST_YEAR = 'last_year';
+
+    /**
+     * Period type last 30 days
+     */
+    CONST PERIOD_TYPE_LAST_30_DAYS = 'last_30_days';
+
+    /**
+     * Period type last 7 days
+     */
+    CONST PERIOD_TYPE_LAST_7_DAYS = 'last_7_days';
+
+    /**
+     * Period type yesterday
+     */
+    CONST PERIOD_TYPE_YESTERDAY = 'yesterday';
+
+    /**
+     * Period type today
+     */
+    CONST PERIOD_TYPE_TODAY = 'today';
+
+    /**
      * Constructor.
-     *
-     * @return void
      */
     private function __construct()
     {
@@ -57,7 +80,7 @@ class BOL_SiteStatisticService
     /**
      * Returns an instance of class (singleton pattern implementation).
      *
-     * @return BOL_SearchService
+     * @return BOL_SiteStatisticService
      */
     public static function getInstance()
     {
@@ -86,5 +109,40 @@ class BOL_SiteStatisticService
         $siteStatisticsDto->timeStamp = time();
 
         $this->siteStatisticsDao->saveDelayed($siteStatisticsDto);
+    }
+
+    /**
+     * Get statistics
+     *
+     * @param array $entities
+     * @param string $period
+     * @return array
+     */
+    public function getStatistics(array $entities, $period = self::PERIOD_TYPE_TODAY)
+    {
+        switch ($period)
+        {
+            case self::PERIOD_TYPE_LAST_YEAR :
+                $statistics =  $this->siteStatisticsDao->getLastYearStatistics($entities);
+                break;
+
+            case self::PERIOD_TYPE_LAST_30_DAYS :
+                $statistics =  $this->siteStatisticsDao->getLast30DaysStatistics($entities);
+                break;
+
+            case self::PERIOD_TYPE_LAST_7_DAYS :
+                $statistics =  $this->siteStatisticsDao->getLast7DaysStatistics($entities);
+                break;
+
+            case self::PERIOD_TYPE_YESTERDAY :
+                $statistics =  $this->siteStatisticsDao->getYesterdayStatistics($entities);
+                break;
+
+            case self::PERIOD_TYPE_TODAY :
+            default :
+                $statistics =  $this->siteStatisticsDao->getTodayStatistics($entities);
+        }
+
+        return $statistics;
     }
 }
