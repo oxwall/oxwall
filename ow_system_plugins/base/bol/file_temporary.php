@@ -23,42 +23,28 @@
  */
 
 /**
- * Data Transfer Object for `base_theme_image` table.
+ * Data Transfer Object for `base_file_temporary` table.
  *
- * @author Sardar Madumarov <madumarov@gmail.com>
+ * @authors Sergei Kiselev <arrserg@gmail.com>
  * @package ow_system_plugins.base.bol
- * @since 1.0
+ * @since 1.7.5
  */
-class BOL_ThemeImage extends OW_Entity
+class BOL_FileTemporary extends OW_Entity
 {
     /**
      * @var string
      */
     public $filename;
-
     /**
-     * @var integer
+     * @var int
+     */
+    public $userId;
+    /**
+     * @var int
      */
     public $addDatetime;
-
     /**
-     * @var string
+     * @var int
      */
-    public $description;
-
-    public function getFilename()
-    {
-        return $this->filename;
-    }
-
-    /**
-     *
-     * @param string $filename
-     * @return BOL_ThemeImage
-     */
-    public function setFilename( $filename )
-    {
-        $this->filename = $filename;
-        return $this;
-    }
+    public $order;
 }
