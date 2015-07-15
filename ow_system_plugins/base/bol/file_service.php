@@ -22,12 +22,17 @@ class BOL_FileService
     private static $classInstance;
 
     /**
-     * Constructor.
+     * @var BOL_FileDao
+     */
+    private $fileDao;
+
+    /**
+     * Class constructor
      *
      */
     private function __construct()
     {
-
+        $this->fileDao = BOL_FileDao::getInstance();
     }
 
     /**
@@ -98,6 +103,35 @@ class BOL_FileService
         
         return $maxUploadMaxFilesize;
     }
+
+    public function getUploadMaxFilesizeBytes( $convert = true )
+    {
+        $postMaxSize = trim(ini_get('post_max_size'));
+        $uploadMaxSize = trim(ini_get('upload_max_filesize'));
+
+        $lastPost = strtolower($postMaxSize[strlen($postMaxSize) - 1]);
+        $lastUpload = strtolower($uploadMaxSize[strlen($uploadMaxSize) - 1]);
+
+        $intPostMaxSize = (int)$postMaxSize;
+        $intUploadMaxSize = (int)$uploadMaxSize;
+
+        switch ( $lastPost )
+        {
+            case 'g': $intPostMaxSize *= 1024;
+            case 'm': $intPostMaxSize *= 1024;
+            case 'k': $intPostMaxSize *= 1024;
+        }
+
+        switch ( $lastUpload )
+        {
+            case 'g': $intUploadMaxSize *= 1024;
+            case 'm': $intUploadMaxSize *= 1024;
+            case 'k': $intUploadMaxSize *= 1024;
+        }
+
+        $possibleSize = array($postMaxSize => $intPostMaxSize, $uploadMaxSize => $intUploadMaxSize);
+        return min($possibleSize);
+    }
     
     /**
      *
@@ -118,4 +152,57 @@ class BOL_FileService
 
         return $val;
     }
+
+    /**
+     * Counts all user uploaded files
+     *
+     * @param int $userId
+     * @return int
+     */
+    public function countUserFiles( $userId )
+    {
+        return $this->fileDao->countUserFiles($userId);
+    }
+
+    /**
+     * Adds file
+     *
+     * @param BOL_File $file
+     * @return int
+     */
+    public function addPhoto( BOL_File $file )
+    {
+        $this->fileDao->save($file);
+
+        return $file->id;
+    }
+
+    /**
+     * Get file URL
+     *
+     * @param int $id
+     *
+     * @return string
+     */
+    public function getFileUrl( $id )
+    {
+        $userfilesUrl = OW::getPluginManager()->getPlugin('base')->getUserFilesUrl();
+        $file = $this->fileDao->findById($id);
+        return $userfilesUrl . $id . $file->filename;
+    }
+
+    /**
+     * Get path to file in file system
+     *
+     * @param int $id
+     *
+     * @return string
+     */
+    public function getFilePath( $id )
+    {
+        $userfilesDir = OW::getPluginManager()->getPlugin('base')->getUserFilesDir();
+        $file = $this->fileDao->findById($id);
+        return $userfilesDir . $id . $file->filename;
+    }
+
 }

@@ -1,0 +1,48 @@
+<div class="ow_hidden">
+    <div id="ow-photo-view" class="ow_photoview_wrap clearfix ow_bg_color">
+        {if !empty($authError)}
+        <div id="ow-photo-view-error" style="padding: 45px 10px 65px">
+            <div class="ow_anno ow_nocontent">{$authError}</div>
+        </div>
+        {else}
+        <div class="ow_photoview_stage_wrap{if $layout == 'page'} ow_smallmargin{/if}">
+            <img src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs%3D" class="ow_photo_img ow_photo_view" />
+            <div class="ow_photo_context_action" style="display: none"></div>
+            <a class="ow_photoview_arrow_left" href="javascript://"><i></i></a>
+            <a class="ow_photoview_arrow_right" href="javascript://"><i></i></a>
+        </div>
+        <div class="ow_photoview_info_wrap">
+            <div class="ow_photoview_info{$class}">
+                <div class="ow_photo_scroll_cont">
+                    <div class="ow_photoview_title ow_small">
+                        Title:
+                        <input type="text" name="title" />
+                    </div>
+
+                    <div class="ow_photoview_alt ow_small">
+                        Alt attribute:
+                        <input type="text" name="alt" />
+                    </div>
+
+                    <div class="ow_photoview_url ow_small">
+                        URL:
+                        <input type="text" name="alt" disabled="disabled" />
+                    </div>
+
+                    <div class="ow_photoview_date ow_small">
+                        Date: <span id="photo-date"></span>
+                    </div>
+                    <div class="ow_photoview_size ow_small">
+                        Size: <span id="photo-size"></span>
+                    </div>
+                    <div class="ow_photoview_filesize ow_small">
+                        Filesize: <span id="photo-filesize"></span>
+                    </div>
+
+                </div>
+            </div>
+            <div class="ow_feed_comments_input_sticky"></div>
+        </div>
+        {/if}
+    </div>
+</div>
