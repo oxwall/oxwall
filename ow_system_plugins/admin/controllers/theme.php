@@ -152,6 +152,20 @@ class ADMIN_CTRL_Theme extends ADMIN_CTRL_Abstract
         $this->addForm(new AddCssForm());
     }
 
+    private function imageObjToArray(BOL_ThemeImage $image)
+    {
+        return array(
+            'url' => OW::getStorage()->getFileUrl($this->themeService->getUserfileImagesDir() . $image->getFilename()),
+            'delUrl' => OW::getRouter()->urlFor(__CLASS__, 'deleteImage', array('image-id' => $image->getId())),
+            'cssUrl' => $this->themeService->getUserfileImagesUrl() . $image->getFilename(),
+            'id' => $image->getId(),
+            'dimensions' => getimagesize($this->themeService->getUserfileImagesDir() . $image->getFilename()),
+            'filesize' => filesize($this->themeService->getUserfileImagesDir() . $image->getFilename()),
+            'title' => $image->description,
+            'uploaddate' => UTIL_DateTime::formatSimpleDate($image->addDatetime, true)
+        );
+    }
+
     public function graphics()
     {
         if ( !OW::getRequest()->isAjax() )
@@ -162,14 +176,10 @@ class ADMIN_CTRL_Theme extends ADMIN_CTRL_Abstract
         $images = $this->themeService->findAllCssImages();
         $assignArray = array();
 
-        /* @var $value BOL_ThemeImage */
-        foreach ( $images as $value )
+        /* @var $image BOL_ThemeImage */
+        foreach ( $images as $image )
         {
-            $assignArray[] = array(
-                'url' => OW::getStorage()->getFileUrl($this->themeService->getUserfileImagesDir() . $value->getFilename()),
-                'delUrl' => OW::getRouter()->urlFor(__CLASS__, 'deleteImage', array('image-id' => $value->getId())),
-                'cssUrl' => $this->themeService->getUserfileImagesUrl() . $value->getFilename()
-            );
+            $assignArray[] = $this->imageObjToArray($image);
         }
 
         $this->assign('images', $assignArray);
@@ -197,6 +207,340 @@ class ADMIN_CTRL_Theme extends ADMIN_CTRL_Abstract
         }
     }
 
+    public function filter()
+    {
+        $start = null;
+        $end = null;
+        try
+        {
+            $date = $_REQUEST['date'];
+            if ( !empty($date) )
+            {
+                $end = strtotime($date . ' 23:59:59');
+                $start = strtotime(date('Y-m-01 00:00:00', $end));
+            }
+        }
+        catch (Exception $e)
+        {
+            throw new Redirect404Exception();
+        }
+        try
+        {
+            $result = BOL_ThemeService::getInstance()->filterCssImages(array(
+                'start' => $start,
+                'end' => $end,
+                'page' => null,
+                'limit' => null,
+            ));
+        }
+        catch (Exception $e)
+        {
+            throw new Redirect404Exception();
+        }
+
+        $images = '';
+        foreach ($result as $imageObj)
+        {
+            $image = $this->imageObjToArray($imageObj);
+            $cmp = new BASE_CMP_UploadedItem(array('file' => $image, 'itemMenu' => 'BASE_CMP_UploadedItemMenu'));
+            $images .= $cmp->render();
+        }
+
+        echo json_encode(array('html' => $images));
+        exit();
+    }
+
+    public function bulkOptions()
+    {
+        $action = isset($_REQUEST['action']) ? $_REQUEST['action'] : null;
+        switch ($action)
+        {
+            case 'delete':
+                $items = isset($_REQUEST['delete']) ? $_REQUEST['delete'] : null;
+                if (is_null($items))
+                {
+                    $result = json_encode(array('error' => 'TODO: Not enough params'));
+                }
+                else
+                {
+                    foreach ($items as $item)
+                    {
+                        $this->themeService->deleteImage((int) $item);
+                        OW::getFeedback()->info(OW::getLanguage()->text('admin', 'theme_graphics_delete_success_message'));
+                    }
+                    $result = json_encode(array(
+                        'success' => OW::getLanguage()->text('admin', 'theme_graphics_delete_multiple_success_message'),
+                        'reload' => true
+                    ));
+                }
+                break;
+            default:
+                $result = json_encode(array('error' => 'TODO: Undefined action'));
+                break;
+        }
+        echo $result;
+        exit();
+    }
+
+    public function ajaxResponder()
+    {
+        if ( isset($_POST['ajaxFunc']) )
+        {
+            $callFunc = (string)$_POST['ajaxFunc'];
+
+            $result = call_user_func(array($this, $callFunc), $_POST);
+        }
+        else
+        {
+            throw new Redirect404Exception();
+        }
+
+        header('Content-Type: application/json');
+        exit(json_encode($result));
+    }
+
+    public function getFloatbox( $params )
+    {
+        if ( empty($params['photoId']) || !$params['photoId'] )
+        {
+            throw new Redirect404Exception();
+        }
+
+        $photoId = (int)$params['photoId'];
+        if ( ($photo = $this->themeService->findImageById($photoId)) === NULL )
+        {
+            return array('result' => 'error');
+        }
+
+        $data = array();
+        if ( isset($_REQUEST['date']) && !empty($_REQUEST['date']) )
+        {
+            $data['end'] = strtotime($_REQUEST['date'] . ' 23:59:59');
+            $data['start'] = strtotime(date('Y-m-01 00:00:00', $data['end']));
+        }
+
+        $resp = array('result' => TRUE);
+
+        if ( !empty($params['photos']) )
+        {
+            foreach ( array_unique($params['photos']) as $photoId )
+            {
+                $p = $this->themeService->findImageById($photoId);
+                $resp['photos'][$photoId] = $this->prepareMarkup($p, $params['layout']);
+            }
+        }
+
+        if ( !empty($params['loadPrevList']) || !empty($params['loadPrevPhoto']) )
+        {
+            $resp['prevList'] = $prevIdList = BOL_ThemeService::getInstance()->getPrevImageIdList($photo->id, $data);
+
+            if ( !empty($params['loadPrevPhoto']) )
+            {
+                $prevId = !empty($prevIdList) ? min($prevIdList) : (!empty($firstIdList) ? min($firstIdList) : null);
+
+                if ( $prevId && !isset($resp['photos'][$prevId]) )
+                {
+                    $prevImage = $this->themeService->findImageById($prevId);
+                    $resp['photos'][$prevId] = $this->prepareMarkup($prevImage, $params['layout']);
+                }
+            }
+        }
+
+        if ( !empty($params['loadNextList']) || !empty($params['loadNextPhoto']) )
+        {
+            $resp['nextList'] = $prevIdList = BOL_ThemeService::getInstance()->getNextImageIdList($photo->id, $data);
+
+            if ( !empty($params['loadNextPhoto']) )
+            {
+                $nextId = !empty($nextIdList) ? max($nextIdList) : (!empty($lastIdList) ? max($lastIdList) : null);
+
+                if ( $nextId && !isset($resp['photos'][$nextId]) )
+                {
+                    $nextImage = $this->themeService->findImageById($nextId);
+                    $resp['photos'][$nextId] = $this->prepareMarkup($nextImage, $params['layout']);
+                }
+            }
+        }
+
+        return $resp;
+    }
+
+    private function prepareMarkup( $photo, $layout = NULL )
+    {
+        $markup = array();
+
+        $photo->description = UTIL_HtmlTag::autoLink($photo->description);
+        $photo->url = OW::getStorage()->getFileUrl($this->themeService->getUserfileImagesDir() . $photo->getFilename());
+
+        $dimensions = getimagesize($this->themeService->getUserfileImagesDir() . $photo->getFilename());
+        $photo->dimensions = "{$dimensions[0]}x{$dimensions[1]}";
+        $photo->filesize = UTIL_File::getFileSize($this->themeService->getUserfileImagesDir() . $photo->getFilename());
+        $photo->addDatetime = UTIL_DateTime::formatSimpleDate($photo->addDatetime, true);
+
+        $markup['photo'] = $photo;
+
+        $action = new BASE_ContextAction();
+        $action->setKey('photo-moderate');
+
+        $context = new BASE_CMP_ContextAction();
+        $context->addAction($action);
+
+        $contextEvent = new BASE_CLASS_EventCollector('photo.collect_photo_context_actions', array(
+            'photoId' => $photo->id,
+            'photoDto' => $photo
+        ));
+
+        OW::getEventManager()->trigger($contextEvent);
+
+        foreach ( $contextEvent->getData() as $contextAction )
+        {
+            $action = new BASE_ContextAction();
+            $action->setKey(empty($contextAction['key']) ? uniqid() : $contextAction['key']);
+            $action->setParentKey('photo-moderate');
+            $action->setLabel($contextAction['label']);
+
+            if ( !empty($contextAction['id']) )
+            {
+                $action->setId($contextAction['id']);
+            }
+
+            if ( !empty($contextAction['order']) )
+            {
+                $action->setOrder($contextAction['order']);
+            }
+
+            if ( !empty($contextAction['class']) )
+            {
+                $action->setClass($contextAction['class']);
+            }
+
+            if ( !empty($contextAction['url']) )
+            {
+                $action->setUrl($contextAction['url']);
+            }
+
+            $attributes = empty($contextAction['attributes']) ? array() : $contextAction['attributes'];
+            foreach ( $attributes as $key => $value )
+            {
+                $action->addAttribute($key, $value);
+            }
+
+            $context->addAction($action);
+        }
+
+        $lang = OW::getLanguage();
+
+        $action = new BASE_ContextAction();
+        $action->setKey('edit');
+        $action->setParentKey('photo-moderate');
+        $action->setLabel($lang->text('base', 'edit'));
+        $action->setId('btn-photo-edit');
+        $action->addAttribute('rel', $photo->id);
+        $context->addAction($action);
+
+        $action = new BASE_ContextAction();
+        $action->setKey('delete');
+        $action->setParentKey('photo-moderate');
+        $action->setLabel($lang->text('base', 'delete'));
+        $action->setId('photo-delete');
+        $action->addAttribute('rel', $photo->id);
+        $context->addAction($action);
+
+        $markup['contextAction'] = $context->render();
+
+        $document = OW::getDocument();
+
+        $onloadScript = $document->getOnloadScript();
+
+        if ( !empty($onloadScript) )
+        {
+            $markup['onloadScript'] = $onloadScript;
+        }
+
+        $scriptFiles = $document->getScripts();
+
+        if ( !empty($scriptFiles) )
+        {
+            $markup['scriptFiles'] = $scriptFiles;
+        }
+
+        $css = $document->getStyleDeclarations();
+
+        if ( !empty($css) )
+        {
+            $markup['css'] = $css;
+        }
+
+        $cssFiles = $document->getStyleSheets();
+
+        if ( !empty($cssFiles) )
+        {
+            $markup['cssFiles'] = $cssFiles;
+        }
+
+        $meta = $document->getMeta();
+
+        if ( !empty($meta) )
+        {
+            $markup['meta'] = $meta;
+        }
+
+        return $markup;
+    }
+
+    public function getPhotoList( $params )
+    {
+        $page = !empty($params['offset']) ? abs((int)$params['offset']) : 1;
+//        TODO: create settings
+        $imagesLimit = 20;
+
+
+        if ( isset($_REQUEST['date']) && !empty($_REQUEST['date']) )
+        {
+            $date = $_REQUEST['date'];
+            $end = strtotime($date . ' 23:59:59');
+            $start = strtotime(date('Y-m-01 00:00:00', $end));
+        }
+        else
+        {
+            $start = null;
+            $end = null;
+        }
+
+        $result = BOL_ThemeService::getInstance()->filterCssImages(array(
+            'start' => $start,
+            'end' => $end,
+            'page' => $page,
+            'limit' => $imagesLimit,
+        ));
+
+        return $this->generatePhotoList($result);
+    }
+
+    public function generatePhotoList( $photos )
+    {
+        $unique = uniqid(time(), true);
+
+        if ( $photos )
+        {
+            foreach ( $photos as $key => $photo )
+            {
+                $entityIdList[] = $photo->id;
+                $dimensions = getimagesize($this->themeService->getUserfileImagesDir() . $photos[$key]->getFilename());
+                $photos[$key]->title = UTIL_HtmlTag::autoLink($photos[$key]->description);
+                $photos[$key]->unique = $unique;
+                $photos[$key]->dimensions = "{$dimensions[0]}x{$dimensions[1]}";
+                $photos[$key]->filesize = UTIL_File::getFileSize($this->themeService->getUserfileImagesDir() . $photos[$key]->getFilename());
+                $photos[$key]->addDatetime = UTIL_DateTime::formatSimpleDate($photos[$key]->addDatetime, true);
+            }
+        }
+
+        return array('status' => 'success', 'data' => array(
+            'photoList' => $photos,
+            'unique' => $unique
+        ));
+    }
+
     public function resetGraphics()
     {
         $this->themeService->resetImageControl(OW::getThemeManager()->getSelectedTheme()->getDto()->getId(), trim($_GET['name']));
@@ -215,6 +559,17 @@ class ADMIN_CTRL_Theme extends ADMIN_CTRL_Abstract
         $this->themeService->deleteImage((int) $params['image-id']);
         OW::getFeedback()->info(OW::getLanguage()->text('admin', 'theme_graphics_delete_success_message'));
         $this->redirect(OW::getRouter()->urlForRoute('admin_theme_graphics'));
+    }
+
+    public function ajaxDeleteImage( $params )
+    {
+        $imageId = (int) $params['entityId'];
+        $this->themeService->deleteImage($imageId);
+        return array(
+            'result' => TRUE,
+            'msg' => OW::getLanguage()->text('admin', 'theme_graphics_delete_success_message'),
+            'imageId' => $imageId
+        );
     }
 }
 
