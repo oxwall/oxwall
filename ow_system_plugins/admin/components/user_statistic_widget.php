@@ -30,20 +30,14 @@
  */
 
 /**
- * Admin content statistics widget component
+ * Admin user statistics widget component
  *
  * @author Alex Ermashev <alexermashev@gmail.com>
  * @package ow_system_plugins.base.components
  * @since 1.7.6
  */
-class ADMIN_CMP_ContentStatisticWidget extends ADMIN_CMP_AbstractStatisticWidget
+class ADMIN_CMP_UserStatisticWidget extends ADMIN_CMP_AbstractStatisticWidget
 {
-    /**
-     * Default content group
-     * @var string
-     */
-    protected $defaultContentGroup;
-
     /**
      * Default period
      * @var string
@@ -57,7 +51,6 @@ class ADMIN_CMP_ContentStatisticWidget extends ADMIN_CMP_AbstractStatisticWidget
     {
         parent::__construct();
 
-        $this->defaultContentGroup = $paramObj->customParamList['defaultContentGroup'];
         $this->defaultPeriod = $paramObj->customParamList['defaultPeriod'];
     }
 
@@ -68,19 +61,14 @@ class ADMIN_CMP_ContentStatisticWidget extends ADMIN_CMP_AbstractStatisticWidget
      */
     public function onBeforeRender()
     {
-        // register forms
-        $this->addForm(new ContentStatisticForm('content_statistics_form', $this->defaultContentGroup));
-
         // register components
-        $this->addComponent('statistics', new ADMIN_CMP_ContentStatistic(array(
-            'defaultContentGroup' => $this->defaultContentGroup,
+        $this->addComponent('statistics', new ADMIN_CMP_UserStatistic(array(
             'defaultPeriod' => $this->defaultPeriod
         )));
 
-        $this->addMenu('content');
+        $this->addMenu('user');
 
         // assign view variables
-        $this->assign('defaultContentGroup', $this->defaultContentGroup);
         $this->assign('defaultPeriod', $this->defaultPeriod);
     }
 
@@ -91,25 +79,6 @@ class ADMIN_CMP_ContentStatisticWidget extends ADMIN_CMP_AbstractStatisticWidget
      */
     public static function getSettingList()
     {
-        $settingList = array();
-
-        // get all registered content groups
-        $contentGroups = BOL_ContentService::getInstance()->getContentGroups();
-        $groupsValues = array();
-
-        foreach($contentGroups as $group)
-        {
-            $groupsValues[$group['name']] = $group['label'];
-        }
-
-        $defaultGroup = $contentGroups ? array_shift($contentGroups) : array();
-        $settingList['defaultContentGroup'] = array(
-            'presentation' => self::PRESENTATION_SELECT,
-            'label' => OW::getLanguage()->text('admin', 'widget_content_statistics_default_content_group'),
-            'value' => !empty($defaultGroup) ? $defaultGroup['name'] : null,
-            'optionList' => $groupsValues
-        );
-
         $settingList['defaultPeriod'] = array(
             'presentation' => self::PRESENTATION_SELECT,
             'label' => OW::getLanguage()->text('admin', 'site_statistics_default_period'),
@@ -134,45 +103,9 @@ class ADMIN_CMP_ContentStatisticWidget extends ADMIN_CMP_AbstractStatisticWidget
     public static function getStandardSettingValueList()
     {
         return array(
-            self::SETTING_TITLE => OW::getLanguage()->text('admin', 'widget_content_statistics'),
-            self::SETTING_ICON => self::ICON_FILES,
+            self::SETTING_TITLE => OW::getLanguage()->text('admin', 'widget_user_statistics'),
+            self::SETTING_ICON => self::ICON_USER,
             self::SETTING_SHOW_TITLE => true
         );
-    }
-}
-
-/**
- * Class ContentStatisticForm
- */
-class ContentStatisticForm extends Form
-{
-    /**
-     * Class constructor
-     *
-     * @param string $name
-     * @apram string $defaultGroup
-     */
-    public function __construct($name, $defaultGroup)
-    {
-        parent::__construct($name);
-
-        $contentGroups = BOL_ContentService::getInstance()->getContentGroups();
-        $processedGroups = array();
-        $selectedGroup   = null;
-
-        foreach ($contentGroups as $group => $data)
-        {
-            if ( !$selectedGroup )
-            {
-                $selectedGroup = $group;
-            }
-
-            $processedGroups[$group] = $data['label'];
-        }
-
-        $groupField = new Selectbox('group');
-        $groupField->setOptions($processedGroups);
-        $groupField->setValue($defaultGroup);
-        $this->addElement($groupField);
     }
 }

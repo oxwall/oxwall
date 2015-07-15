@@ -47,27 +47,27 @@ class BOL_SiteStatisticService
     /**
      * Period type last year
      */
-    CONST PERIOD_TYPE_LAST_YEAR = 'last_year';
+    const PERIOD_TYPE_LAST_YEAR = 'last_year';
 
     /**
      * Period type last 30 days
      */
-    CONST PERIOD_TYPE_LAST_30_DAYS = 'last_30_days';
+    const PERIOD_TYPE_LAST_30_DAYS = 'last_30_days';
 
     /**
      * Period type last 7 days
      */
-    CONST PERIOD_TYPE_LAST_7_DAYS = 'last_7_days';
+    const PERIOD_TYPE_LAST_7_DAYS = 'last_7_days';
 
     /**
      * Period type yesterday
      */
-    CONST PERIOD_TYPE_YESTERDAY = 'yesterday';
+    const PERIOD_TYPE_YESTERDAY = 'yesterday';
 
     /**
      * Period type today
      */
-    CONST PERIOD_TYPE_TODAY = 'today';
+    const PERIOD_TYPE_TODAY = 'today';
 
     /**
      * Constructor.

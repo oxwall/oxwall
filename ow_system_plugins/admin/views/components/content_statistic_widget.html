@@ -49,7 +49,7 @@
 
         $("#content-statistics-menu a").on("click", function(){
             defaultPeriod = $(this).attr("id");
-            defaultPeriod = defaultPeriod.replace(/content-statistics-/, "");
+            defaultPeriod = defaultPeriod.replace(/content_menu_statistics_/, "");
 
             reloadChart();
         });

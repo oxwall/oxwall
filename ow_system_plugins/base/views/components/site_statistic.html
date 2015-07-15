@@ -13,6 +13,7 @@
             var lineChart = new Chart(ctx).Line(data, {
                 animation: false,
                 responsive : true,
+                tooltipTemplate: "<%= datasetLabel %> - <%= value %>",
                 multiTooltipTemplate: "<%= datasetLabel %> - <%= value %>"
             });
         {/literal}
