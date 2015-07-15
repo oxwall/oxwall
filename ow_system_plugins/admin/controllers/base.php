@@ -43,7 +43,7 @@ class ADMIN_CTRL_Base extends ADMIN_CTRL_Abstract
     {
         $this->setPageHeading(OW::getLanguage()->text('admin', 'admin_dashboard'));
         $this->setPageHeadingIconClass('ow_ic_dashboard');
-        
+
         $place = BOL_ComponentAdminService::PLASE_ADMIN_DASHBOARD;
         $customize = !empty($paramList['mode']) && $paramList['mode'] == 'customize';
         

@@ -33,6 +33,7 @@ class BASE_CLASS_EventHandler
     public function genericInit()
     {
         $eventManager = OW::getEventManager();
+        $eventManager->bind(OW_EventManager::ON_USER_LOGIN, array($this, 'onUserLoginSaveStatistics'));
         $eventManager->bind(BOL_ContentService::EVENT_AFTER_ADD, array($this, 'onAfterAdd'));
         $eventManager->bind('base.add_global_lang_keys', array($this, 'onAddGlobalLangs'));
         $eventManager->bind(OW_EventManager::ON_USER_UNREGISTER, array($this, 'onDeleteUserContent'));
@@ -215,6 +216,12 @@ class BASE_CLASS_EventHandler
         {
             OW::getSession()->set('errorData', serialize($e->getParams()));
         }
+    }
+
+    public function onUserLoginSaveStatistics( OW_Event $event )
+    {
+        $params = $event->getParams();
+        BOL_SiteStatisticService::getInstance()->addEntity('user_login', $params['userId']);
     }
 
     public function onUserLoginSetAdminCookie( OW_Event $event )
