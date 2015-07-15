@@ -91,6 +91,14 @@ $router->addRoute(new OW_Route('admin_theme_settings', 'admin/theme/settings', '
 $router->addRoute(new OW_Route('admin_theme_graphics', 'admin/theme/graphics', 'ADMIN_CTRL_Theme', 'graphics'));
 $router->addRoute(new OW_Route('admin_core_update_request', 'admin/update-core', 'ADMIN_CTRL_Plugins', 'coreUpdateRequest'));
 
+$router->addRoute(new OW_Route('admin_theme_graphics_filter', 'admin/theme/graphics/filter', 'ADMIN_CTRL_Theme', 'filter'));
+$router->addRoute(new OW_Route('admin_theme_graphics_bulk_options', 'admin/theme/graphics/bulk-options', 'ADMIN_CTRL_Theme', 'bulkOptions'));
+
+$router->addRoute(new OW_Route('admin.ajax_upload', 'admin/ajax-upload', 'ADMIN_CTRL_AjaxUpload', 'upload'));
+$router->addRoute(new OW_Route('admin.ajax_upload_delete', 'admin/ajax-upload-delete', 'ADMIN_CTRL_AjaxUpload', 'delete'));
+$router->addRoute(new OW_Route('admin.ajax_upload_submit', 'admin/ajax-upload-submit', 'ADMIN_CTRL_AjaxUpload', 'ajaxSubmitPhotos'));
+$router->addRoute(new OW_Route('admin.ajax_responder', 'admin/ajax-responder/', 'ADMIN_CTRL_Theme', 'ajaxResponder'));
+
 // Mobile
 $router->addRoute(new OW_Route('mobile.admin.navigation', 'admin/mobile/navigation', 'ADMIN_CTRL_MobileNavigation', 'index'));
 
