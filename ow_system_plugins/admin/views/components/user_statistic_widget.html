@@ -3,18 +3,12 @@
         float:right;
     }
 
-    #admin-user-statistics-container {
-        width:100%;
-        height:300px;
-    }
-
-    #admin-user-statistics-container #user-statistics-chart {
-        width:100%;
-        height: 100%;
-    }
-
     #admin-user-statistics-container .ow_ajaxloader_preloader {
         min-height:300px;
+    }
+
+    #admin-user-browse {
+        float:right;
     }
 {/style}
 
@@ -29,6 +23,10 @@
     {$statistics}
 </div>
 
+<div id="admin-user-browse">
+    {decorator name="button_list_item" langLabel="admin+statistics_browse_users" onclick="location.href='{url_for_route for='admin_users_browse'}'"}
+</div>
+<div class="clearfix"></div>
 
 {script}
     $(document).ready(function() {
@@ -36,7 +34,7 @@
 
         $("#user-statistics-menu a").on("click", function(){
             defaultPeriod = $(this).attr("id");
-            defaultPeriod = defaultPeriod.replace(/user_menu_statistics_/, "");
+            defaultPeriod = defaultPeriod.replace("user_menu_statistics_", "");
 
             reloadChart();
         });

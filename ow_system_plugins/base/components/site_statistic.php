@@ -88,15 +88,23 @@ class BASE_CMP_SiteStatistic  extends OW_Component
         $entities = $service->getStatistics($this->entityTypes, $this->period);
 
         // translate and process the data entities
-        $data = array();
+        $data  = array();
+        $total = array();
         $index = 0;
 
         foreach ($entities as $entity => $values)
         {
+            $list = array_values($values);
+
             $data[] = array_merge(array(
                 'label' => $this->entityLabels[$entity],
-                'data' => array_values($values)
+                'data' => $list
             ), $this->getChartColor($index));
+
+            $total[] = array(
+                'label' => $this->entityLabels[$entity],
+                'count' => array_sum($list)
+            );
 
             $index++;
         }
@@ -105,6 +113,7 @@ class BASE_CMP_SiteStatistic  extends OW_Component
         $this->assign('chartId', $this->chartId);
         $this->assign('categories', json_encode($this->entityCategories()));
         $this->assign('data', json_encode($data, JSON_NUMERIC_CHECK));
+        $this->assign('total', $total);
 
         // include js and css files
         OW::getDocument()->addScript(OW::getPluginManager()->getPlugin('base')->getStaticJsUrl() . 'chart.js');

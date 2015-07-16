@@ -30,13 +30,13 @@
  */
 
 /**
- * Admin user statistics widget component
+ * Admin finance statistics widget component
  *
  * @author Alex Ermashev <alexermashev@gmail.com>
  * @package ow_system_plugins.base.components
  * @since 1.7.6
  */
-class ADMIN_CMP_UserStatisticWidget extends ADMIN_CMP_AbstractStatisticWidget
+class ADMIN_CMP_FinanceStatisticWidget extends ADMIN_CMP_AbstractStatisticWidget
 {
     /**
      * Class constructor
@@ -56,11 +56,11 @@ class ADMIN_CMP_UserStatisticWidget extends ADMIN_CMP_AbstractStatisticWidget
     public function onBeforeRender()
     {
         // register components
-        $this->addComponent('statistics', new ADMIN_CMP_UserStatistic(array(
+        $this->addComponent('statistics', new ADMIN_CMP_FinanceStatistic(array(
             'defaultPeriod' => $this->defaultPeriod
         )));
 
-        $this->addMenu('user');
+        $this->addMenu('finance');
 
         // assign view variables
         $this->assign('defaultPeriod', $this->defaultPeriod);
@@ -74,8 +74,8 @@ class ADMIN_CMP_UserStatisticWidget extends ADMIN_CMP_AbstractStatisticWidget
     public static function getStandardSettingValueList()
     {
         return array(
-            self::SETTING_TITLE => OW::getLanguage()->text('admin', 'widget_user_statistics'),
-            self::SETTING_ICON => self::ICON_USER,
+            self::SETTING_TITLE => OW::getLanguage()->text('admin', 'widget_finance_statistics'),
+            self::SETTING_ICON => self::ICON_INFO,
             self::SETTING_SHOW_TITLE => true
         );
     }

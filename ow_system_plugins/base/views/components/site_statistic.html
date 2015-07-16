@@ -1,8 +1,32 @@
-<canvas id="{$chartId}"></canvas>
+{style}
+    .statistic_amount {
+        margin-top:10px;
+    }
+
+    .statistic_amount h3 {
+        margin-bottom: 10px;
+    }
+{/style}
+
+<div class="statistic_chart_wrapper">
+    <canvas id="{$chartId}"></canvas>
+</div>
+<div class="statistic_amount">
+    <h3>{text key='admin+statistics_amount_for_period'} :</h3>
+    <ul>
+        {foreach from=$total item=info}
+            <li>
+                {$info['label']}: <b>{$info['count']}</b>
+            </li>
+        {/foreach}
+    </ul>
+</div>
+
 {script}
     $( document ).ready(function()
     {
         var ctx = $("#{$chartId}").get(0).getContext("2d");
+        ctx.canvas.height = 100;
 
         var data = {
             labels: {$categories},
@@ -19,3 +43,4 @@
         {/literal}
     });
 {/script}
+
