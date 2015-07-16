@@ -33,6 +33,7 @@ class BASE_CLASS_EventHandler
     public function genericInit()
     {
         $eventManager = OW::getEventManager();
+        $eventManager->bind(BOL_BillingService::EVENT_ON_AFTER_DELIVER_SALE, array($this, 'onAfterBillingDeliverSale'));
         $eventManager->bind(OW_EventManager::ON_USER_LOGIN, array($this, 'onUserLoginSaveStatistics'));
         $eventManager->bind(BOL_ContentService::EVENT_AFTER_ADD, array($this, 'onAfterAdd'));
         $eventManager->bind('base.add_global_lang_keys', array($this, 'onAddGlobalLangs'));
@@ -216,6 +217,15 @@ class BASE_CLASS_EventHandler
         {
             OW::getSession()->set('errorData', serialize($e->getParams()));
         }
+    }
+
+    public function onAfterBillingDeliverSale( OW_Event $event )
+    {
+        $params  = $event->getParams();
+        $service = BOL_SiteStatisticService::getInstance();
+
+        $service->addEntity('billing_transaction', $params['saleDbo']->id);
+        $service->addEntity('billing_transaction_amount', $params['saleDbo']->id, $params['saleDbo']->totalAmount);
     }
 
     public function onUserLoginSaveStatistics( OW_Event $event )

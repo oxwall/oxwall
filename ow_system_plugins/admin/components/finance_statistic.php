@@ -30,22 +30,32 @@
  */
 
 /**
- * Admin user statistics widget component
+ * Finance statistics component
  *
  * @author Alex Ermashev <alexermashev@gmail.com>
  * @package ow_system_plugins.base.components
  * @since 1.7.6
  */
-class ADMIN_CMP_UserStatisticWidget extends ADMIN_CMP_AbstractStatisticWidget
+class ADMIN_CMP_FinanceStatistic extends OW_Component
 {
     /**
-     * Class constructor
+     * Default period
+     * @var string
      */
-    public function __construct( BASE_CLASS_WidgetParameter $paramObj )
+    protected $defaultPeriod;
+
+    /**
+     * Class constructor
+     *
+     * @param array $params
+     */
+    public function __construct( $params )
     {
         parent::__construct();
 
-        $this->defaultPeriod = $paramObj->customParamList['defaultPeriod'];
+        $this->defaultPeriod = !empty($params['defaultPeriod'])
+            ? $params['defaultPeriod']
+            : BOL_SiteStatisticService::PERIOD_TYPE_TODAY;
     }
 
     /**
@@ -55,28 +65,19 @@ class ADMIN_CMP_UserStatisticWidget extends ADMIN_CMP_AbstractStatisticWidget
      */
     public function onBeforeRender()
     {
-        // register components
-        $this->addComponent('statistics', new ADMIN_CMP_UserStatistic(array(
-            'defaultPeriod' => $this->defaultPeriod
-        )));
-
-        $this->addMenu('user');
-
-        // assign view variables
-        $this->assign('defaultPeriod', $this->defaultPeriod);
-    }
-
-    /**
-     * Get standart setting values list
-     *
-     * @return array
-     */
-    public static function getStandardSettingValueList()
-    {
-        return array(
-            self::SETTING_TITLE => OW::getLanguage()->text('admin', 'widget_user_statistics'),
-            self::SETTING_ICON => self::ICON_USER,
-            self::SETTING_SHOW_TITLE => true
+        $entityTypes = array(
+            'billing_transaction',
+            'billing_transaction_amount'
         );
+
+        $entityLabels = array(
+            'billing_transaction' => OW::getLanguage()->text('admin', 'site_statistics_finance_transactions'),
+            'billing_transaction_amount' => OW::getLanguage()->text('admin', 'site_statistics_finance_transactions_amount')
+        );
+
+        // register components
+        $this->addComponent('statistics',
+                new BASE_CMP_SiteStatistic('finance-statistics-chart', $entityTypes, $entityLabels, $this->defaultPeriod));
     }
 }
+

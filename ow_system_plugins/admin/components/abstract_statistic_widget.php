@@ -39,6 +39,12 @@
 abstract class ADMIN_CMP_AbstractStatisticWidget extends BASE_CLASS_Widget
 {
     /**
+     * Default period
+     * @var string
+     */
+    protected $defaultPeriod;
+
+    /**
      * Add menu
      *
      * @param string $prefix
@@ -83,5 +89,28 @@ abstract class ADMIN_CMP_AbstractStatisticWidget extends BASE_CLASS_Widget
     public static function getAccess()
     {
         return self::ACCESS_ALL;
+    }
+
+    /**
+     * Get custom settings list
+     *
+     * @return array
+     */
+    public static function getSettingList()
+    {
+        $settingList['defaultPeriod'] = array(
+            'presentation' => self::PRESENTATION_SELECT,
+            'label' => OW::getLanguage()->text('admin', 'site_statistics_default_period'),
+            'value' => BOL_SiteStatisticService::PERIOD_TYPE_LAST_7_DAYS,
+            'optionList' => array(
+                BOL_SiteStatisticService::PERIOD_TYPE_TODAY => OW::getLanguage()->text('admin', 'site_statistics_today_period'),
+                BOL_SiteStatisticService::PERIOD_TYPE_YESTERDAY => OW::getLanguage()->text('admin', 'site_statistics_yesterday_period'),
+                BOL_SiteStatisticService::PERIOD_TYPE_LAST_7_DAYS => OW::getLanguage()->text('admin', 'site_statistics_last_7_days_period'),
+                BOL_SiteStatisticService::PERIOD_TYPE_LAST_30_DAYS => OW::getLanguage()->text('admin', 'site_statistics_last_30_days_period'),
+                BOL_SiteStatisticService::PERIOD_TYPE_LAST_YEAR => OW::getLanguage()->text('admin', 'site_statistics_last_year_period')
+            )
+        );
+
+        return $settingList;
     }
 }

@@ -55,6 +55,11 @@ foreach ( $queryList as $query )
 
 // register widgets
 $widgetService = Updater::getWidgetService();
+$widget = $widgetService->addWidget('ADMIN_CMP_FinanceStatisticWidget', false);
+$widgetPlace = $widgetService->addWidgetToPlace($widget, BOL_ComponentAdminService::PLASE_ADMIN_DASHBOARD);
+$widgetService->addWidgetToPosition($widgetPlace, BOL_ComponentService::SECTION_TOP);
+
+$widgetService = Updater::getWidgetService();
 $widget = $widgetService->addWidget('ADMIN_CMP_UserStatisticWidget', false);
 $widgetPlace = $widgetService->addWidgetToPlace($widget, BOL_ComponentAdminService::PLASE_ADMIN_DASHBOARD);
 $widgetService->addWidgetToPosition($widgetPlace, BOL_ComponentService::SECTION_TOP);
