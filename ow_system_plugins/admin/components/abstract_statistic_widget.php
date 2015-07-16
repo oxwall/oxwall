@@ -98,6 +98,7 @@ abstract class ADMIN_CMP_AbstractStatisticWidget extends BASE_CLASS_Widget
      */
     public static function getSettingList()
     {
+        $settingList = array();
         $settingList['defaultPeriod'] = array(
             'presentation' => self::PRESENTATION_SELECT,
             'label' => OW::getLanguage()->text('admin', 'site_statistics_default_period'),
