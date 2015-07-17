@@ -91,7 +91,7 @@ class ADMIN_CTRL_Settings extends ADMIN_CTRL_Abstract
         }
 
         $configSaveForm->getElement('tagline')->setValue($configs['site_tagline']);
-        $configSaveForm->getElement('description')->setValue($configs['site_description']);
+        $configSaveForm->getElement('description')->setValue($language->text('nav', 'page_default_description'));
         $configSaveForm->getElement('timezone')->setValue($configs['site_timezone']);
         $configSaveForm->getElement('relativeTime')->setValue($configs['site_use_relative_time'] === '1' ? true : false);
         $configSaveForm->getElement('militaryTime')->setValue($configs['military_time'] === '1' ? true : false);
@@ -672,6 +672,7 @@ class ConfigSaveForm extends Form
     {
         $values = $this->getValues();
         $config = OW::getConfig();
+        $languageService = BOL_LanguageService::getInstance();
 
         //begin update lang cache
         $siteName = $config->getValue('base', 'site_name');
@@ -704,7 +705,7 @@ class ConfigSaveForm extends Form
 //        join_display_terms_of_use
 
         $config->saveConfig('base', 'site_tagline', $values['tagline']);
-        $config->saveConfig('base', 'site_description', $values['description']);
+        $languageService->addOrUpdateValue($languageService->getCurrent->getId(), 'nav', 'page_default_description', $values['description']);
         $config->saveConfig('base', 'site_timezone', $values['timezone']);
         $config->saveConfig('base', 'site_use_relative_time', $values['relativeTime'] ? '1' : '0');
         $config->saveConfig('base', 'military_time', $values['militaryTime'] ? '1' : '0');
