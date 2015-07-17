@@ -317,57 +317,103 @@ class UTIL_File
 
         return $fileName;
     }
-    
+
     /**
-     *
-     * @param int $uploadErrorCode
-     * @return string
+     * Checks if uploaded file is valid, if not returns localized error string.
+     * 
+     * @param int $errorCode
+     * @return array
      */
-    public static function getErrorMessage( $uploadErrorCode )
+    public static function checkUploadedFile( array $filesItem, $fileSizeLimit = null )
     {
-        if ( !isset($uploadErrorCode) )
+        $language = OW::getLanguage();
+
+        if ( empty($filesItem) || array_key_exists("tmp_name", $filesItem) || array_key_exists("size", $filesItem) )
         {
-            return false;
+            return array("result" => false, "message" => $language->text('base', 'upload_file_fail'));
         }
 
-        $message = '';
-        
-        if ( $uploadErrorCode != UPLOAD_ERR_OK )
+        if ( $fileSizeLimit == null )
         {
-            switch ( $uploadErrorCode )
+            $fileSizeLimit = self::getFileUploadServerLimitInBytes();
+        }
+
+        if ( $filesItem["error"] != UPLOAD_ERR_OK )
+        {
+            switch ( $filesItem["error"] )
             {
                 case UPLOAD_ERR_INI_SIZE:
-                    $error = $language->text('base', 'upload_file_max_upload_filesize_error');
+                    $errorString = $language->text('base', 'upload_file_max_upload_filesize_error', array("limit" => ($fileSizeLimit / 1024 / 1024) . "MB"));
                     break;
 
                 case UPLOAD_ERR_PARTIAL:
-                    $error = $language->text('base', 'upload_file_file_partially_uploaded_error');
+                    $errorString = $language->text('base', 'upload_file_file_partially_uploaded_error');
                     break;
 
                 case UPLOAD_ERR_NO_FILE:
-                    $error = $language->text('base', 'upload_file_no_file_error');
+                    $errorString = $language->text('base', 'upload_file_no_file_error');
                     break;
 
                 case UPLOAD_ERR_NO_TMP_DIR:
-                    $error = $language->text('base', 'upload_file_no_tmp_dir_error');
+                    $errorString = $language->text('base', 'upload_file_no_tmp_dir_error');
                     break;
 
                 case UPLOAD_ERR_CANT_WRITE:
-                    $error = $language->text('base', 'upload_file_cant_write_file_error');
+                    $errorString = $language->text('base', 'upload_file_cant_write_file_error');
                     break;
 
                 case UPLOAD_ERR_EXTENSION:
-                    $error = $language->text('base', 'upload_file_invalid_extention_error');
+                    $errorString = $language->text('base', 'upload_file_invalid_extention_error');
                     break;
 
                 default:
-                    $error = $language->text('base', 'upload_file_fail');
+                    $errorString = $language->text('base', 'upload_file_fail');
             }
 
-            OW::getFeedback()->error($error);
-            $this->redirect();
+            return array("result" => false, "message" => $errorString);
         }
 
-        return $fileName;
+        if ( $filesItem['size'] > $fileSizeLimit )
+        {
+            return array("result" => false, "message" => $language->text('base', 'upload_file_max_upload_filesize_error', array("limit" => ($fileSizeLimit / 1024 / 1024) . "MB")));
+        }
+
+        if ( !is_uploaded_file($filesItem['tmp_name']) )
+        {
+            return array("result" => false, "message" => $language->text('base', 'upload_file_fail'));
+        }
+
+        return array("result" => true);
+    }
+
+    /**
+     * Returns server file upload limit in bytes
+     * 
+     * @return int
+     */
+    public static function getFileUploadServerLimitInBytes()
+    {
+        $uploadMaxFilesize = self::convertToBytes(ini_get("upload_max_filesize"));
+        $postMaxSize = self::convertToBytes(ini_get("post_max_size"));
+        return $uploadMaxFilesize < $postMaxSize ? $uploadMaxFilesize : $postMaxSize;
+    }
+
+    private static function convertToBytes( $value )
+    {
+        $value = trim($value);
+        $lastChar = strtolower($value[strlen($value) - 1]);
+        $value = floatval($value);
+
+        switch ( $lastChar )
+        {
+            case 'g':
+                $value *= 1024;
+            case 'm':
+                $value *= 1024;
+            case 'k':
+                $value *= 1024;
+        }
+
+        return intval($value);
     }
 }

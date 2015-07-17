@@ -61,7 +61,18 @@ class ADMIN_CTRL_Plugins extends ADMIN_CTRL_Abstract
         // get plugins in DB
         $plugins = $this->pluginService->findRegularPlugins();
 
-        usort($plugins, array(__CLASS__, 'sortPlugins'));
+        usort($plugins, function( BOL_Plugin $a, BOL_Plugin $b )
+        {
+            $aChar = substr($a->getTitle(), 0, 1);
+            $bChar = substr($b->getTitle(), 0, 1);
+
+            if ( $aChar == $bChar )
+            {
+                return 0;
+            }
+
+            return $aChar > $bChar;
+        });
 
         $arrayToAssign['active'] = array();
         $arrayToAssign['inactive'] = array();
@@ -119,26 +130,11 @@ class ADMIN_CTRL_Plugins extends ADMIN_CTRL_Abstract
         $this->assign('plugins', $arrayToAssign);
     }
 
-    public static function sortPlugins( BOL_Plugin $a, BOL_Plugin $b )
-    {
-        $aChar = substr($a->getTitle(), 0, 1);
-        $bChar = substr($b->getTitle(), 0, 1);
-
-        if ( $aChar == $bChar )
-        {
-            return 0;
-        }
-
-        return $aChar > $bChar;
-    }
-
     /**
      * Upload and add new plugins.
      */
     public function add()
     {
-        $this->checkXP();
-
         OW::getNavigation()->activateMenuItem(OW_Navigation::ADMIN_PLUGINS, 'admin', 'sidebar_menu_plugins_add');
 
         $language = OW::getLanguage();
@@ -159,66 +155,18 @@ class ADMIN_CTRL_Plugins extends ADMIN_CTRL_Abstract
             if ( $form->isValid($_POST) )
             {
                 $data = $form->getValues();
+                $result = UTIL_File::checkUploadedFile($_FILES['file']);
 
-                // check server file upload limits
-                $uploadMaxFilesize = (float) ini_get("upload_max_filesize");
-                $postMaxSize = (float) ini_get("post_max_size");
-
-                $serverLimit = $uploadMaxFilesize < $postMaxSize ? $uploadMaxFilesize : $postMaxSize;
-
-                if ( ($_FILES['file']['error'] != UPLOAD_ERR_OK && $_FILES['file']['error'] == UPLOAD_ERR_INI_SIZE ) || ( empty($_FILES['file']) || $_FILES['file']['size'] > $serverLimit * 1024 * 1024 ) )
+                if ( !$result["result"] )
                 {
-                    OW::getFeedback()->error($language->text('admin', 'manage_plugins_add_size_error_message', array('limit' => $serverLimit)));
-                    $this->redirect();
-                }
-
-                if ( $_FILES['file']['error'] != UPLOAD_ERR_OK )
-                {
-                    switch ( $_FILES['file']['error'] )
-                    {
-                        case UPLOAD_ERR_INI_SIZE:
-                            $error = $language->text('base', 'upload_file_max_upload_filesize_error');
-                            break;
-
-                        case UPLOAD_ERR_PARTIAL:
-                            $error = $language->text('base', 'upload_file_file_partially_uploaded_error');
-                            break;
-
-                        case UPLOAD_ERR_NO_FILE:
-                            $error = $language->text('base', 'upload_file_no_file_error');
-                            break;
-
-                        case UPLOAD_ERR_NO_TMP_DIR:
-                            $error = $language->text('base', 'upload_file_no_tmp_dir_error');
-                            break;
-
-                        case UPLOAD_ERR_CANT_WRITE:
-                            $error = $language->text('base', 'upload_file_cant_write_file_error');
-                            break;
-
-                        case UPLOAD_ERR_EXTENSION:
-                            $error = $language->text('base', 'upload_file_invalid_extention_error');
-                            break;
-
-                        default:
-                            $error = $language->text('base', 'upload_file_fail');
-                    }
-
-                    OW::getFeedback()->error($error);
-                    $this->redirect();
-                }
-
-                if ( !is_uploaded_file($_FILES['file']['tmp_name']) )
-                {
-                    OW::getFeedback()->error($language->text('admin', 'manage_plugins_add_empty_field_error_message'));
+                    OW::getFeedback()->error($result["message"]);
                     $this->redirect();
                 }
 
                 $tempFile = OW_DIR_PLUGINFILES . 'ow' . DS . uniqid('plugin_add') . '.zip';
                 $tempDir = OW_DIR_PLUGINFILES . 'ow' . DS . uniqid('plugin_add') . DS;
 
-                copy($_FILES['file']['tmp_name'], $tempFile);
-
+                move_uploaded_file($_FILES['file']['tmp_name'], $tempFile);
 
                 $zip = new ZipArchive();
 
@@ -242,8 +190,6 @@ class ADMIN_CTRL_Plugins extends ADMIN_CTRL_Abstract
 
     public function processAdd()
     {
-        $this->checkXP();
-
         $language = OW::getLanguage();
 
         if ( empty($_GET['dir']) || !file_exists(urldecode($_GET['dir'])) )
@@ -363,10 +309,11 @@ class ADMIN_CTRL_Plugins extends ADMIN_CTRL_Abstract
         OW::getFeedback()->info(OW::getLanguage()->text('admin', 'manage_plugins_activate_success_message', array('plugin' => $pluginDto->getTitle())));
         $this->redirectToAction('index');
     }
-
+    
+    /* --------------------------- */
+    
     public function updateRequest( array $params )
     {
-        $this->checkXP();
         $pluginDto = $this->getPluginDtoByKey($params);
         $language = OW::getLanguage();
 
@@ -447,7 +394,6 @@ class ADMIN_CTRL_Plugins extends ADMIN_CTRL_Abstract
 
     public function update( array $params )
     {
-        $this->checkXP();
         $pluginDto = $this->getPluginDtoByKey($params);
 
         if ( !empty($_GET['mode']) )
@@ -577,7 +523,6 @@ class ADMIN_CTRL_Plugins extends ADMIN_CTRL_Abstract
 
     public function manualUpdateRequest( array $params )
     {
-        $this->checkXP();
         $pluginDto = $this->getPluginDtoByKey($params);
 
         if ( !empty($_GET['mode']) )
@@ -618,7 +563,6 @@ class ADMIN_CTRL_Plugins extends ADMIN_CTRL_Abstract
 
     public function coreUpdateRequest()
     {
-        $this->checkXP();
         if ( !(bool) OW::getConfig()->getValue('base', 'update_soft') )
         {
             throw new Redirect404Exception();
@@ -632,7 +576,6 @@ class ADMIN_CTRL_Plugins extends ADMIN_CTRL_Abstract
 
     public function coreUpdate()
     {
-        $this->checkXP();
         if ( !(bool) OW::getConfig()->getValue('base', 'update_soft') )
         {
             throw new Redirect404Exception();
@@ -797,8 +740,6 @@ class ADMIN_CTRL_Plugins extends ADMIN_CTRL_Abstract
      */
     public function delete( array $params )
     {
-        $this->checkXP();
-
         $ftp = $this->getFtpConnection();
 
         $key = trim($params['key']);
@@ -818,8 +759,6 @@ class ADMIN_CTRL_Plugins extends ADMIN_CTRL_Abstract
 
     public function ftpAttrs()
     {
-        $this->checkXP();
-
         $language = OW::getLanguage();
 
         $this->setPageHeading($language->text('admin', 'page_title_manage_plugins_ftp_info'));
@@ -911,13 +850,5 @@ class ADMIN_CTRL_Plugins extends ADMIN_CTRL_Abstract
 
         OW::getFeedback()->error(OW::getLanguage()->text('admin', 'manage_plugins_plugin_not_found'));
         $this->redirectToAction('index');
-    }
-
-    private function checkXP()
-    {
-        if ( defined('OW_PLUGIN_XP') )
-        {
-            throw new Redirect404Exception();
-        }
     }
 }

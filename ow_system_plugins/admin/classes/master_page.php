@@ -161,7 +161,13 @@ class ADMIN_CLASS_MasterPage extends OW_MasterPage
         /* @var $value ADMIN_CMP_AdminMenu */
         foreach ( $this->menuCmps as $key => $value )
         {
-            $id = 'mi' . rand(1, 10000);
+            //check if there are any items in the menu
+            if( $value->getElementsCount() <= 0 )
+            {
+                continue;
+            }
+            
+            $id = UTIL_HtmlTag::generateAutoId("mi");
 
             $value->onBeforeRender();
 
