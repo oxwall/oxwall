@@ -34,17 +34,23 @@ class BASE_CMP_DragAndDropFrontendPanel extends BASE_CMP_DragAndDropPanel
 {
     protected $customizeMode = false;
     protected $allowCustomize = false;
-    protected $responderController;
+    protected $responderController = "BASE_CTRL_AjaxComponentAdminPanel";
 
-    public function __construct( $placeName, array $componentList, $customizeMode, $componentTemplate, $responderController = "BASE_CTRL_AjaxComponentAdminPanel" )
+    public function __construct( $placeName, array $componentList, $customizeMode, $componentTemplate, $responderController = null )
     {
         parent::__construct($placeName, $componentList, $componentTemplate);
 
-        $this->responderController = $responderController;
+        if ( !empty($responderController) )
+        {
+            $this->responderController = $responderController;
+        }
+        
         $this->customizeMode = (bool) $customizeMode;
         
         $this->assign('customizeMode', $this->customizeMode);
         $this->assign('allowCustomize', $this->allowCustomize);
+        
+        $this->setSettingsClassName("BASE_CMP_ComponentFrontendSettings");
     }
 
     public function onBeforeRender()

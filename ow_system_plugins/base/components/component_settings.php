@@ -62,6 +62,9 @@ class BASE_CMP_ComponentSettings extends OW_Component
         $this->defaultSettingList = $defaultSettings;
         $this->uniqName = $uniqName;
         $this->access = $access;
+        
+        $tpl = OW::getPluginManager()->getPlugin("base")->getCmpViewDir() . "component_settings.html";
+        $this->setTemplate($tpl);
     }
 
     public function setStandardSettingValueList( $valueList )

@@ -136,8 +136,6 @@ class BASE_CTRL_AjaxComponentEntityPanel extends BASE_CTRL_AjaxComponentPanel
 
         $cmpClass = empty($data["settingsCmpClass"]) ? "BASE_CMP_ComponentSettings" : $data["settingsCmpClass"];
         $cmp = OW::getClassInstance($cmpClass, $componentPlaceUniqName, $componentSettingList, array_merge($defaultSettingList, $entitySettingList), $componentAccess);
-        
-        $cmp->markAsHidden('freeze');
         $cmp->setStandardSettingValueList($componentStandardSettingValueList);
 
         return $this->getSettingFormMarkup($cmp);

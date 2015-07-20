@@ -41,11 +41,15 @@ class BASE_CMP_DragAndDropEntityPanel extends BASE_CMP_DragAndDropFrontendPanel
 
     public function __construct( $placeName, $entityId, array $componentList, $customizeMode, $componentTemplate, $responderController = 'BASE_CTRL_AjaxComponentEntityPanel' )
     {
+        $responderController = empty($responderController) ? "BASE_CTRL_AjaxComponentEntityPanel" : $responderController;
+        
         parent::__construct($placeName, $componentList, $customizeMode, $componentTemplate, $responderController);
 
         $this->entityId = (int) $entityId;
         $this->assign('entityId', $this->entityId);
         $this->sharedData['entity'] = $this->entityId;
+        
+        $this->setSettingsClassName("BASE_CMP_ComponentEntitySettings");
     }
 
     public function setEntityScheme( $scheme )
