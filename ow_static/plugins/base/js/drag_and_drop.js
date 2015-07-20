@@ -66,12 +66,13 @@ OW_Components_DragAndDrop.prototype = new componentDragAndDrop ({
         return $destItem;
     },
 
-	handleStop: function(sortable, e, ui) {
+    handleStop: function(sortable, e, ui) {
     	if ( ! this.transfered ) {
-    		this.parent_handleStop( sortable, e, ui );
-    		return;
+            this.parent_handleStop( sortable, e, ui );
+            return;
     	}
-		var self = this;
+        
+        var self = this;
     	var $item = $(ui.item);
     	var cloning = ui.item.cloning;
     	var $preloader = $('<div class="ow_dnd_preloader ow_preloader_content ow_stdmargin"></div>');
@@ -79,12 +80,12 @@ OW_Components_DragAndDrop.prototype = new componentDragAndDrop ({
 
     	if ( $view.length ) {
     		$view.show();
-			$item.find('.schem_component').hide();
+                $item.find('.schem_component').hide();
 
-			DND_InterfaceFix.fix($item);
+                DND_InterfaceFix.fix($item);
+                this.parent_handleStop(sortable, e, ui);
 
-			this.parent_handleStop(sortable, e, ui);
-			return;
+                return;
     	}
 
     	var reloadFnc = function( Id ) {
@@ -128,7 +129,7 @@ OW_Components_DragAndDrop.prototype = new componentDragAndDrop ({
     drawComponent: function(cmpId, markup) {
     	this.parent_drawComponent(cmpId, markup);
 
-    	DND_InterfaceFix.fix('#' + cmpId);
+    	DND_InterfaceFix.fix($(document.getElementById(cmpId)));
     },
 
     applyComponentSettings: function(id, settings) {
