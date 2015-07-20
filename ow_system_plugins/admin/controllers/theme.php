@@ -197,56 +197,13 @@ class ADMIN_CTRL_Theme extends ADMIN_CTRL_Abstract
         }
     }
 
-    public function filter()
-    {
-        $start = null;
-        $end = null;
-        try
-        {
-            $date = $_REQUEST['date'];
-            if ( !empty($date) )
-            {
-                $end = strtotime($date . ' 23:59:59');
-                $start = strtotime(date('Y-m-01 00:00:00', $end));
-            }
-        }
-        catch (Exception $e)
-        {
-            throw new Redirect404Exception();
-        }
-        try
-        {
-            $result = BOL_ThemeService::getInstance()->filterCssImages(array(
-                'start' => $start,
-                'end' => $end,
-                'page' => null,
-                'limit' => null,
-            ));
-        }
-        catch (Exception $e)
-        {
-            throw new Redirect404Exception();
-        }
-
-        $images = '';
-        foreach ($result as $imageObj)
-        {
-            $image = $this->imageObjToArray($imageObj);
-            $cmp = new BASE_CMP_UploadedItem(array('file' => $image, 'itemMenu' => 'BASE_CMP_UploadedItemMenu'));
-            $images .= $cmp->render();
-        }
-
-        echo json_encode(array('html' => $images));
-        exit();
-    }
-
     public function bulkOptions()
     {
-        $action = isset($_REQUEST['action']) ? $_REQUEST['action'] : null;
+        $action = isset($_POST['action']) ? $_POST['action'] : null;
         switch ($action)
         {
             case 'delete':
-                $items = isset($_REQUEST['delete']) ? $_REQUEST['delete'] : null;
+                $items = isset($_POST['delete']) ? $_POST['delete'] : null;
                 if (is_null($items))
                 {
                     $result = json_encode(array('error' => 'TODO: Not enough params'));
@@ -297,19 +254,19 @@ class ADMIN_CTRL_Theme extends ADMIN_CTRL_Abstract
         }
 
         $photoId = (int)$params['photoId'];
-        if ( ($photo = $this->themeService->findImageById($photoId)) === NULL )
+        if ( ($photo = $this->themeService->findImageById($photoId)) === null )
         {
             return array('result' => 'error');
         }
 
         $data = array();
-        if ( isset($_REQUEST['date']) && !empty($_REQUEST['date']) )
+        if ( isset($_POST['date']) && !empty($_POST['date']) )
         {
-            $data['end'] = strtotime($_REQUEST['date'] . ' 23:59:59');
+            $data['end'] = strtotime($_POST['date'] . ' 23:59:59');
             $data['start'] = strtotime(date('Y-m-01 00:00:00', $data['end']));
         }
 
-        $resp = array('result' => TRUE);
+        $resp = array('result' => true);
 
         if ( !empty($params['photos']) )
         {
@@ -355,7 +312,7 @@ class ADMIN_CTRL_Theme extends ADMIN_CTRL_Abstract
         return $resp;
     }
 
-    private function prepareMarkup( $photo, $layout = NULL )
+    private function prepareMarkup( $photo, $layout = null )
     {
         $markup = array();
 
@@ -485,9 +442,9 @@ class ADMIN_CTRL_Theme extends ADMIN_CTRL_Abstract
         $imagesLimit = 20;
 
 
-        if ( isset($_REQUEST['date']) && !empty($_REQUEST['date']) )
+        if ( isset($_POST['date']) && !empty($_POST['date']) )
         {
-            $date = $_REQUEST['date'];
+            $date = $_POST['date'];
             $end = strtotime($date . ' 23:59:59');
             $start = strtotime(date('Y-m-01 00:00:00', $end));
         }
@@ -556,7 +513,7 @@ class ADMIN_CTRL_Theme extends ADMIN_CTRL_Abstract
         $imageId = (int) $params['entityId'];
         $this->themeService->deleteImage($imageId);
         return array(
-            'result' => TRUE,
+            'result' => true,
             'msg' => OW::getLanguage()->text('admin', 'theme_graphics_delete_success_message'),
             'imageId' => $imageId
         );

@@ -29,7 +29,7 @@
  */
 class BASE_CMP_AjaxFileUpload extends OW_Component
 {
-    public function __construct( $url = NULL )
+    public function __construct( $url = null )
     {
         $userId = OW::getUser()->getId();
 

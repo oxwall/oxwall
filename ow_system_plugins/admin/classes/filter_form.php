@@ -36,10 +36,8 @@ class ADMIN_CLASS_FilterForm extends Form
     {
         parent::__construct('filter-form');
 
-        $this->attributes['style'] = 'float: left;';
-
-        $this->setAjax(TRUE);
-        $this->setAjaxResetOnSuccess(FALSE);
+        $this->setAjax(true);
+        $this->setAjaxResetOnSuccess(false);
 
         $date = new Selectbox('date');
         $date->setInvitation('TODO: All files');

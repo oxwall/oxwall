@@ -29,98 +29,9 @@
  */
 class ADMIN_CMP_UploadedFileList extends OW_Component
 {
-    /**
-     * @var string
-     */
-    protected $item = "";
-    /**
-     * @var string
-     */
-    protected $itemMenu = "";
-    /**
-     * @var string
-     */
-    protected $bulkOptions = "";
-    /**
-     * @var string
-     */
-    protected $filter = "";
-    /**
-     * @var string
-     */
-    protected $uploadButton = "";
-    /**
-     * @var array
-     */
-    protected $items = array();
-
-    /**
-     * @param string $item
-     */
-    public function setItem($item)
-    {
-        $this->item = $item;
-    }
-
-    /**
-     * @param string $itemMenu
-     */
-    public function setItemMenu($itemMenu)
-    {
-        $this->itemMenu = $itemMenu;
-    }
-
-    /**
-     * @param string $bulkOptions
-     */
-    public function setBulkOptions($bulkOptions)
-    {
-        $this->bulkOptions = $bulkOptions;
-    }
-
-    /**
-     * @param string $filter
-     */
-    public function setFilter($filter)
-    {
-        $this->filter = $filter;
-    }
-
-    /**
-     * @param string $uploadButton
-     */
-    public function setUploadButton($uploadButton)
-    {
-        $this->uploadButton = $uploadButton;
-    }
-
-    /**
-     * @param array $items
-     */
-    public function setItems($items)
-    {
-        $this->items = $items;
-    }
-
-    public function __construct()
-    {
-        parent::__construct();
-        $this->setItem("ADMIN_CMP_UploadedItem");
-        $this->setItemMenu("ADMIN_CMP_UploadedItemMenu");
-        $this->setBulkOptions("ADMIN_CMP_UploadedFilesBulkOptions");
-        $this->setFilter("ADMIN_CMP_UploadedFilesFilter");
-        $this->setUploadButton("BASE_CMP_AjaxFileUploadButton");
-    }
-
     public function onBeforeRender()
     {
         parent::onBeforeRender();
-        $this->assign('items', $this->items);
-        $this->assign('item', $this->item);
-        $this->assign('itemMenu', $this->itemMenu);
-        $this->assign('filter', $this->filter);
-        $this->assign('bulkOptions', $this->bulkOptions);
-        $this->assign('uploadButton', $this->uploadButton);
 
         $hasSideBar = OW::getThemeManager()->getCurrentTheme()->getDto()->getSidebarPosition() != 'none';
         $photoParams = array(

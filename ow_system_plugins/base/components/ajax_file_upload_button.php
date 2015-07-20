@@ -51,7 +51,7 @@ class BASE_CMP_AjaxFileUploadButton extends OW_Component
                     {
                         var ajaxUploadPhotoFB = OW.ajaxFloatBox("BASE_CMP_AjaxFileUpload", [], {
                             $title: {$title},
-                            width: "746px"
+                            addClass: "ow_admin_ajax_file_upload_form"
                         });
                     };', array(
                 'addNewFile' => $id,

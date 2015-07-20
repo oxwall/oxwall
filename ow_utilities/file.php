@@ -206,7 +206,11 @@ class UTIL_File
         }
         $size = array('B','kB','MB','GB','TB','PB','EB','ZB','YB');
         $factor = (int) floor((strlen($bytes) - 1) / 3);
-        return sprintf("%.{$decimals}f ", $bytes / pow(1024, $factor)) . @$size[$factor];
+        if ( isset($size[$factor]) )
+        {
+            return sprintf("%.{$decimals}f ", $bytes / pow(1024, $factor)) . $size[$factor];
+        }
+        return $bytes;
     }
 
     /**

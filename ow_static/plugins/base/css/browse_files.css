@@ -398,3 +398,20 @@ body .ow_photo_album_info_wrap .ow_photo_album_info .ow_photo_album_description 
     margin-left: 4px;
     margin-top: -2px;
 }
+.ow_admin_date_filter,
+.ow_admin_bulk_options
+{
+    float: left;
+}
+.ow_admin_upload_button
+{
+    float: right;
+}
+.ow_admin_bulk_options
+{
+    margin-left: 10px;
+}
+.ow_admin_ajax_file_upload_form .floatbox_container
+{
+    width: 746px !important;
+}
