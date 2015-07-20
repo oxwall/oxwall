@@ -51,7 +51,7 @@ class ADMIN_CTRL_AjaxUpload extends OW_ActionController
         
         if ( !OW::getUser()->isAuthorized('photo', 'upload') )
         {
-            $this->returnResponse(array('status' => self::STATUS_ERROR, 'result' => FALSE, 'msg' => OW::getLanguage()->text('photo', 'auth_upload_permissions')));
+            $this->returnResponse(array('status' => self::STATUS_ERROR, 'result' => false, 'msg' => OW::getLanguage()->text('photo', 'auth_upload_permissions')));
         }
     }
     
@@ -79,7 +79,7 @@ class ADMIN_CTRL_AjaxUpload extends OW_ActionController
     {
         if ( $this->isAvailableFile($file) )
         {
-            return NULL;
+            return null;
         }
         
         if ( !empty($file['file']['error']) )
@@ -118,7 +118,7 @@ class ADMIN_CTRL_AjaxUpload extends OW_ActionController
         
         if ( count($tmpList = $fileTmpService->findUserTemporaryFiles($userId, 'order')) === 0 )
         {
-            $resp = array('result' => FALSE, 'msg' => OW::getLanguage()->text('photo', 'photo_upload_error'));
+            $resp = array('result' => false, 'msg' => OW::getLanguage()->text('photo', 'photo_upload_error'));
             
             $this->returnResponse($resp);
         }
@@ -127,7 +127,7 @@ class ADMIN_CTRL_AjaxUpload extends OW_ActionController
         
         if ( !$form->isValid($_POST) )
         {
-            $resp = array('result' => FALSE);
+            $resp = array('result' => false);
             $resp['msg'] = OW::getLanguage()->text('photo', 'photo_upload_error');
             $this->returnResponse($resp);
         }
@@ -141,7 +141,6 @@ class ADMIN_CTRL_AjaxUpload extends OW_ActionController
         {
             $tmpId = $tmpFile['dto']->id;
 
-//            $file = $fileTmpService->moveTemporaryFile($tmpId, !empty($_POST['desc'][$tmpId]) ? $_POST['desc'][$tmpId] : '', NULL);
             $file = $themeService->moveTemporaryFile($tmpId, !empty($_POST['desc'][$tmpId]) ? $_POST['desc'][$tmpId] : '');
 
             $fileTmpService->deleteTemporaryFile($tmpId);
@@ -159,7 +158,7 @@ class ADMIN_CTRL_AjaxUpload extends OW_ActionController
 
     protected function onSubmitComplete( $entityType, $entityId, $files )
     {
-        $result = array('result' => TRUE);
+        $result = array('result' => true);
         
         if ( empty($files) )
         {

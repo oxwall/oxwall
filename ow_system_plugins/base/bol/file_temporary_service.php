@@ -73,7 +73,7 @@ final class BOL_FileTemporaryService
     {
         if ( !file_exists($source) || !$userId )
         {
-            return FALSE;
+            return false;
         }
         
         $tmpFile = new BOL_FileTemporary();
@@ -152,7 +152,7 @@ final class BOL_FileTemporaryService
 
         if ( !$tmp )
         {
-            return FALSE;
+            return false;
         }
 
         $tmpFilePath = $this->fileTemporaryDao->getTemporaryFilePath($tmp->id);
@@ -173,7 +173,7 @@ final class BOL_FileTemporaryService
         }
         catch ( Exception $e )
         {
-            $photo = NULL;
+            $photo = null;
         }
 
         return $file;

@@ -96,7 +96,7 @@ class BOL_ThemeImageDao extends OW_BaseDao
      * @param OW_Example$example
      * @param array $params
      */
-    private function applyDatesBetweenFilter(OW_Example &$example, $params)
+    private function applyDatesBetweenFilter(OW_Example $example, $params)
     {
         if ( isset($params['start'], $params['end']) )
         {
@@ -113,7 +113,7 @@ class BOL_ThemeImageDao extends OW_BaseDao
      * @param OW_Example $example
      * @param array $params
      */
-    private function applyLimitClause(OW_Example &$example, $params)
+    private function applyLimitClause(OW_Example $example, $params)
     {
         if ( isset($params['page'], $params['limit']) && !is_null($params['page']) && !is_null($params['limit']) )
         {

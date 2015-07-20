@@ -31,12 +31,12 @@
  */
 class BASE_CLASS_AjaxUploadForm extends Form
 {
-    public function __construct( $entityType, $entityId, $albumId = NULL, $albumName = NULL, $albumDescription = NULL, $url = NULL )
+    public function __construct( $entityType, $entityId, $albumId = null, $albumName = null, $albumDescription = null, $url = null )
     {
         parent::__construct('ajax-upload');
         
-        $this->setAjax(TRUE);
-        $this->setAjaxResetOnSuccess(FALSE);
+        $this->setAjax(true);
+        $this->setAjaxResetOnSuccess(false);
         $this->setAction(OW::getRouter()->urlForRoute('admin.ajax_upload_submit'));
         $this->bindJsFunction('success', 
             UTIL_JsGenerator::composeJsString('function( data )

@@ -229,7 +229,7 @@ class ADMIN_CLASS_EventHandler
 
     public function initFloatbox( OW_Event $event )
     {
-        static $isInitialized = FALSE;
+        static $isInitialized = false;
 
         if ( $isInitialized )
         {
@@ -291,46 +291,14 @@ class ADMIN_CLASS_EventHandler
         $cmp = new ADMIN_CMP_UploadedFilesFloatbox($layout);
         $document->appendBody($cmp->render());
 
-        $isInitialized = TRUE;
+        $isInitialized = true;
     }
 
     public function uploadedFileList( OW_Event $e )
     {
-        $params = $e->getParams();
-
-        $item = !empty($params['item']) ? $params['item'] : null;
-        $itemMenu = !empty($params['itemMenu']) ? $params['itemMenu'] : null;
-        $bulkOptions = !empty($params['bulkOptions']) ? $params['bulkOptions'] : null;
-        $filter = !empty($params['filter']) ? $params['filter'] : null;
-        $slideshow = !empty($params['slideshow']) ? $params['slideshow'] : null;
-        $items = !empty($params['items']) ? $params['items'] : null;
-
         $cmp = OW::getClassInstance('ADMIN_CMP_UploadedFileList');
-        if ( !is_null($item) )
-        {
-            $cmp->setItem($item);
-        }
-        if ( !is_null($itemMenu) )
-        {
-            $cmp->setItemMenu($itemMenu);
-        }
-        if ( !is_null($bulkOptions) )
-        {
-            $cmp->setBulkOptions($bulkOptions);
-        }
-        if ( !is_null($filter) )
-        {
-            $cmp->setFilter($filter);
-        }
-        if ( !is_null($slideshow) )
-        {
-            $cmp->setSlideshow($slideshow);
-        }
-        $cmp->setItems($items);
-
         $event = new OW_Event('admin.init_floatbox', array('layout' => 'floatbox'));
         OW::getEventManager()->trigger($event);
-
         $e->add($cmp->render());
     }
 }

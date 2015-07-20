@@ -90,7 +90,6 @@ $router->addRoute(new OW_Route('admin_theme_settings', 'admin/appearance/customi
 $router->addRoute(new OW_Route('admin_theme_graphics', 'admin/appearance/customize/graphics', 'ADMIN_CTRL_Theme', 'graphics'));
 $router->addRoute(new OW_Route('admin_core_update_request', 'admin/update-core', 'ADMIN_CTRL_Plugins', 'coreUpdateRequest'));
 
-$router->addRoute(new OW_Route('admin_theme_graphics_filter', 'admin/theme/graphics/filter', 'ADMIN_CTRL_Theme', 'filter'));
 $router->addRoute(new OW_Route('admin_theme_graphics_bulk_options', 'admin/theme/graphics/bulk-options', 'ADMIN_CTRL_Theme', 'bulkOptions'));
 
 $router->addRoute(new OW_Route('admin.ajax_upload', 'admin/ajax-upload', 'ADMIN_CTRL_AjaxUpload', 'upload'));
