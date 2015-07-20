@@ -57,7 +57,6 @@ class ADMIN_CMP_UploadedFilesFilter extends OW_Component
         $images = BOL_ThemeService::getInstance()->findAllCssImages();
         $dates = $this->getDates($images);
         $form = new ADMIN_CLASS_FilterForm($dates);
-        $form->setAction(OW::getRouter()->urlForRoute('admin_theme_graphics_filter'));
         $this->addForm($form);
     }
 }
