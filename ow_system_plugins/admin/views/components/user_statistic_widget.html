@@ -12,6 +12,33 @@
     }
 {/style}
 
+{script}
+    var defaultPeriod = "{$defaultPeriod}";
+
+    $("#user-statistics-menu a").on("click", function(){
+        defaultPeriod = $(this).attr("id");
+        defaultPeriod = defaultPeriod.replace("user_menu_statistics_", "");
+
+        reloadChart();
+    });
+
+    /**
+     * Reload chart
+     *
+     * @return void
+     */
+    function reloadChart()
+    {
+        if (!defaultPeriod)
+        {
+            return;
+        }
+
+        OW.loadComponent("ADMIN_CMP_UserStatistic",
+                [{ "defaultPeriod" : defaultPeriod }], "#admin-user-statistics-container");
+    }
+{/script}
+
 <div id="admin-user-statistics-header">
     <div id="user-statistics-menu">
         {$menu}
@@ -27,32 +54,3 @@
     {decorator name="button_list_item" langLabel="admin+statistics_browse_users" onclick="location.href='{url_for_route for='admin_users_browse'}'"}
 </div>
 <div class="clearfix"></div>
-
-{script}
-    $(document).ready(function() {
-        var defaultPeriod = "{$defaultPeriod}";
-
-        $("#user-statistics-menu a").on("click", function(){
-            defaultPeriod = $(this).attr("id");
-            defaultPeriod = defaultPeriod.replace("user_menu_statistics_", "");
-
-            reloadChart();
-        });
-
-        /**
-         * Reload chart
-         *
-         * @return void
-         */
-        function reloadChart()
-        {
-            if (!defaultPeriod)
-            {
-                return;
-            }
-
-            OW.loadComponent("ADMIN_CMP_UserStatistic",
-                    [{ "defaultPeriod" : defaultPeriod }], "#admin-user-statistics-container");
-        }
-    });
-{/script}

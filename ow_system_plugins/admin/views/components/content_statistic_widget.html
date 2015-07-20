@@ -16,11 +16,46 @@
     }
 {/style}
 
+{script}
+    var defaultPeriod = "{$defaultPeriod}";
+    var defaultContentGroup = "{$defaultContentGroup}";
+
+    $("#content-statistics-menu a").on("click", function(){
+        defaultPeriod = $(this).attr("id");
+        defaultPeriod = defaultPeriod.replace("content_menu_statistics_", "");
+
+        reloadChart();
+    });
+
+    $("#content-statistics-form select").on("change", function(){
+        defaultContentGroup = $(this).val();
+        reloadChart();
+    });
+
+    /**
+     * Reload chart
+     *
+     * @return void
+     */
+    function reloadChart()
+    {
+        if (!defaultContentGroup || !defaultPeriod)
+        {
+            return;
+        }
+
+        OW.loadComponent("ADMIN_CMP_ContentStatistic", [{
+            "defaultContentGroup" : defaultContentGroup,
+            "defaultPeriod" : defaultPeriod
+        }], "#admin-content-statistics-container");
+    }
+{/script}
+
 <div id="admin-content-statistics-header">
     {form name="content_statistics_form"}
-        <div id="content-statistics-form">
-            {input name="group"}
-        </div>
+    <div id="content-statistics-form">
+        {input name="group"}
+    </div>
     {/form}
     <div id="content-statistics-menu">
         {$menu}
@@ -31,40 +66,3 @@
 <div id="admin-content-statistics-container">
     {$statistics}
 </div>
-
-{script}
-    $(document).ready(function() {
-        var defaultPeriod = "{$defaultPeriod}";
-        var defaultContentGroup = "{$defaultContentGroup}";
-
-        $("#content-statistics-menu a").on("click", function(){
-            defaultPeriod = $(this).attr("id");
-            defaultPeriod = defaultPeriod.replace("content_menu_statistics_", "");
-
-            reloadChart();
-        });
-
-        $("#content-statistics-form select").on("change", function(){
-            defaultContentGroup = $(this).val();
-            reloadChart();
-        });
-
-        /**
-         * Reload chart
-         *
-         * @return void
-         */
-        function reloadChart()
-        {
-            if (!defaultContentGroup || !defaultPeriod)
-            {
-                return;
-            }
-
-            OW.loadComponent("ADMIN_CMP_ContentStatistic", [{
-                "defaultContentGroup" : defaultContentGroup,
-                "defaultPeriod" : defaultPeriod
-            }], "#admin-content-statistics-container");
-        }
-    });
-{/script}

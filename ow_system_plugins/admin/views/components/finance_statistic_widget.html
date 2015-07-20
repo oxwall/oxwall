@@ -12,6 +12,32 @@
     }
 {/style}
 
+{script}
+    var defaultPeriod = "{$defaultPeriod}";
+
+    $("#finance-statistics-menu a").on("click", function(){
+        defaultPeriod = $(this).attr("id");
+        defaultPeriod = defaultPeriod.replace("finance_menu_statistics_", "");
+
+        reloadChart();
+    });
+
+    /**
+     * Reload chart
+     *
+     * @return void
+     */
+    function reloadChart()
+    {
+        if (!defaultPeriod)
+        {
+            return;
+        }
+
+        OW.loadComponent("ADMIN_CMP_FinanceStatistic", [{ "defaultPeriod" : defaultPeriod }], "#admin-finance-statistics-container");
+    }
+{/script}
+
 <div id="admin-finance-statistics-header">
     <div id="finance-statistics-menu">
         {$menu}
@@ -27,31 +53,3 @@
     {decorator name="button_list_item" langLabel="admin+statistics_history" onclick="location.href='{url_for_route for='admin_finance'}'"}
 </div>
 <div class="clearfix"></div>
-
-{script}
-    $(document).ready(function() {
-        var defaultPeriod = "{$defaultPeriod}";
-
-        $("#finance-statistics-menu a").on("click", function(){
-            defaultPeriod = $(this).attr("id");
-            defaultPeriod = defaultPeriod.replace("finance_menu_statistics_", "");
-
-            reloadChart();
-        });
-
-        /**
-         * Reload chart
-         *
-         * @return void
-         */
-        function reloadChart()
-        {
-            if (!defaultPeriod)
-            {
-                return;
-            }
-
-            OW.loadComponent("ADMIN_CMP_FinanceStatistic", [{ "defaultPeriod" : defaultPeriod }], "#admin-finance-statistics-container");
-        }
-    });
-{/script}

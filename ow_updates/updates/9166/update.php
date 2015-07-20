@@ -53,7 +53,6 @@ foreach ( $queryList as $query )
 
 //TODO: Add this in install
 
-// register widgets
 $widgetService = Updater::getWidgetService();
 $widget = $widgetService->addWidget('ADMIN_CMP_FinanceStatisticWidget', false);
 $widgetPlace = $widgetService->addWidgetToPlace($widget, BOL_ComponentAdminService::PLASE_ADMIN_DASHBOARD);
