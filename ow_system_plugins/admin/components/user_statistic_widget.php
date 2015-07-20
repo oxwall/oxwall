@@ -76,7 +76,8 @@ class ADMIN_CMP_UserStatisticWidget extends ADMIN_CMP_AbstractStatisticWidget
         return array(
             self::SETTING_TITLE => OW::getLanguage()->text('admin', 'widget_user_statistics'),
             self::SETTING_ICON => self::ICON_USER,
-            self::SETTING_SHOW_TITLE => true
+            self::SETTING_SHOW_TITLE => true,
+            self::SETTING_WRAP_IN_BOX => true
         );
     }
 }

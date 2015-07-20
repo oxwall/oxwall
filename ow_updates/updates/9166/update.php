@@ -51,9 +51,14 @@ foreach ( $queryList as $query )
     }
 }
 
-//TODO: Add this in install
+$widgetService = Updater::getWidgetService();
+$widget = $widgetService->addWidget('BASE_CMP_CustomHtmlWidget', true);
+$widgetPlace = $widgetService->addWidgetToPlace($widget, BOL_ComponentAdminService::PLASE_ADMIN_DASHBOARD);
 
-// register widgets
+$widgetService = Updater::getWidgetService();
+$widget = $widgetService->addWidget('BASE_CMP_RssWidget', true);
+$widgetPlace = $widgetService->addWidgetToPlace($widget, BOL_ComponentAdminService::PLASE_ADMIN_DASHBOARD);
+
 $widgetService = Updater::getWidgetService();
 $widget = $widgetService->addWidget('ADMIN_CMP_FinanceStatisticWidget', false);
 $widgetPlace = $widgetService->addWidgetToPlace($widget, BOL_ComponentAdminService::PLASE_ADMIN_DASHBOARD);
