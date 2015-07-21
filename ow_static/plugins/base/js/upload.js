@@ -60,7 +60,7 @@
                 delete _elements.relations[slotId];
             });
         },
-        updateSlot: function( slotId, fileUrl, id )
+        updateSlot: function( slotId, fileUrl, id, filename )
         {
             if ( !slotId || !fileUrl || !id || !_methods.isSlotExist(slotId) )
             {
@@ -76,11 +76,13 @@
             
             var descId = 'desc[' + id + ']';
             slot.find('textarea').attr({id: descId, name: descId});
-            
+
             _elements.relations[slotId] = id;
-            
+
             owForms['ajax-upload'].addElement(new OwFormElement(rotateId, rotateId));
-            owForms['ajax-upload'].addElement(new OwFormElement(descId, descId));
+            var descriptionElement = new OwFormElement(descId, descId);
+            descriptionElement.setValue(filename);
+            owForms['ajax-upload'].addElement(descriptionElement);
 
             slot.find('.ow_photo_preview_x').on('click', function()
             {
@@ -292,7 +294,7 @@
                         beforeSend: function( jqXHR, settings )
                         {
                             slotId = _methods.createSlot();
-                            _methods.initHashtagEditor(slotId);
+                            //_methods.initHashtagEditor(slotId);
                         },
                         success: function( response, textStatus, jqXHR )
                         {
@@ -380,7 +382,7 @@
                 switch ( data.status )
                 {
                     case 'success':
-                        _methods.updateSlot(slotId, data.fileUrl, data.id);
+                        _methods.updateSlot(slotId, data.fileUrl, data.id, data.filename);
                         break;
                     case 'error':
                     default:
@@ -555,46 +557,6 @@
                 }
             });
             
-            //owForms['ajax-upload'].elements['album-name'].getValue = function()
-            //{
-            //    var value = this.input.value.trim();
-            //
-            //    if ( value.length === 0 || value === OW.getLanguageText('photo', 'album_name') )
-            //    {
-            //        return  '';
-            //    }
-            //
-            //    return value;
-            //};
-
-            owForms['ajax-upload'].bind('submit', function( data )
-            {
-                var invitation = OW.getLanguageText('photo', 'describe_photo');
-                
-                $.each(_elements.relations, function( index )
-                {
-                    var value;
-
-                    if ( _elements.descCache.hasOwnProperty(index) )
-                    {
-                        value = _elements.descCache[index].trim();
-                    }
-                    else
-                    {
-                        value = _elements.descEditors[index].getValue().trim();
-                    }
-                    
-                    if ( value.length === 0 || value === invitation )
-                    {
-                        data['desc[' + +this + ']'] = '';
-                    }
-                    else
-                    {
-                        data['desc[' + +this + ']'] = value;
-                    }
-                });
-            });
-
             OW.bind('photo.onCloseUploaderFloatBox', function()
             {
                 _vars.files.length = 0;

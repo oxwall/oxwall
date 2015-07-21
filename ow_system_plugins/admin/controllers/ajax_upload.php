@@ -207,7 +207,12 @@ class ADMIN_CTRL_AjaxUpload extends OW_ActionController
             {
                 $fileUrl = BOL_FileTemporaryDao::getInstance()->getTemporaryFileUrl($id);
                 
-                $this->returnResponse(array('status' => self::STATUS_SUCCESS, 'fileUrl' => $fileUrl, 'id' => $id));
+                $this->returnResponse(array(
+                    'status' => self::STATUS_SUCCESS,
+                    'fileUrl' => $fileUrl,
+                    'id' => $id,
+                    'filename' => $_FILES['file']['name'])
+                );
             }
             else
             {
