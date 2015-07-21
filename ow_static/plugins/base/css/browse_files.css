@@ -415,3 +415,7 @@ body .ow_photo_album_info_wrap .ow_photo_album_info .ow_photo_album_description 
 {
     width: 746px !important;
 }
+.ow_photo_preview_edit textarea
+{
+    height: 50px;
+}

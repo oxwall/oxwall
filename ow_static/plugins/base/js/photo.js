@@ -802,6 +802,8 @@
                 _elements.content.find('.ow_photoview_fullscreen').attr({target: '_blank', href: cmp.photo.url});
             }
 
+            $('.ow_photoview_title input', content).val(cmp.photo.description);
+            $('.ow_photoview_url input', content).val(cmp.photo.url);
             $('.ow_photoview_date span', content).html(cmp.photo.addDatetime);
             $('.ow_photoview_size span', content).html(cmp.photo.dimensions);
             $('.ow_photoview_filesize span', content).html(cmp.photo.filesize);
@@ -1531,12 +1533,7 @@
                 {
                     url += '?' + search;
                 }
-                
-                if ( !_methods.fullscreen.isFullscreen() )
-                {
-                    window.history.replaceState(state, null, url);
-                }
-                
+
                 $(window).triggerHandler('popstate.photo', {photoId: photoId, listType: listType, data: data});
             },
             popstate: function( event, data )
@@ -1549,8 +1546,16 @@
             goInitState: function()
             {
                 var state = window.history.state;
-                var url = (state.initPath ? state.initPath : _methods.locationUtils.parseUrl(_vars.urlHome, ['pathname'])['pathname'] + 'photo/viewlist/' + _vars.DEFAULT_LIST) + state.initSearch;
-                
+                if (state != null)
+                {
+                    var url = (state.initPath ? state.initPath : _methods.locationUtils.parseUrl(_vars.urlHome, ['pathname'])['pathname'] + 'photo/viewlist/' + _vars.DEFAULT_LIST) + state.initSearch;
+                }
+                else
+                {
+                    var url = '';
+                }
+
+
                 window.history.replaceState(null, null, url);
             }
         },
