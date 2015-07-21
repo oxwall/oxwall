@@ -52,6 +52,11 @@ foreach ( $queryList as $query )
 }
 
 $widgetService = Updater::getWidgetService();
+$widget = $widgetService->addWidget('BASE_CMP_ModerationToolsWidget', false);
+$widgetPlace = $widgetService->addWidgetToPlace($widget, BOL_ComponentAdminService::PLASE_ADMIN_DASHBOARD);
+$widgetService->addWidgetToPosition($widgetPlace, BOL_ComponentService::SECTION_TOP);
+
+$widgetService = Updater::getWidgetService();
 $widget = $widgetService->addWidget('BASE_CMP_CustomHtmlWidget', true);
 $widgetPlace = $widgetService->addWidgetToPlace($widget, BOL_ComponentAdminService::PLASE_ADMIN_DASHBOARD);
 
