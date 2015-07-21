@@ -226,7 +226,7 @@ class BASE_CMP_SiteStatistic  extends OW_Component
      */
     protected function getChartColor($num)
     {
-        $hash = md5('color' . $num);
+        $hash = md5('chart' . $num);
 
         $r = hexdec(substr($hash, 0, 2));
         $g = hexdec(substr($hash, 2, 2));
