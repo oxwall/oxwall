@@ -366,9 +366,10 @@ class OW_Application
     public function onBeforeDocumentRender()
     {
         $document = OW::getDocument();
+        $config = OW::getConfig();
 
-        $document->addStyleSheet(OW::getPluginManager()->getPlugin('base')->getStaticCssUrl() . 'ow.css' . '?' . OW::getConfig()->getValue('base', 'cachedEntitiesPostfix'), 'all', -100);
-        $document->addStyleSheet(OW::getThemeManager()->getCssFileUrl() . '?' . OW::getConfig()->getValue('base', 'cachedEntitiesPostfix'), 'all', (-90));
+        $document->addStyleSheet(OW::getPluginManager()->getPlugin('base')->getStaticCssUrl() . 'ow.css' . '?' . $config->getValue('base', 'cachedEntitiesPostfix'), 'all', -100);
+        $document->addStyleSheet(OW::getThemeManager()->getCssFileUrl() . '?' . $config->getValue('base', 'cachedEntitiesPostfix'), 'all', (-90));
 
         // add custom css if page is not admin TODO replace with another condition
         if ( !OW::getDocument()->getMasterPage() instanceof ADMIN_CLASS_MasterPage )
@@ -380,8 +381,8 @@ class OW_Application
 
             if ( $this->getDocumentKey() !== 'base.sign_in' )
             {
-                $customHeadCode = OW::getConfig()->getValue('base', 'html_head_code');
-                $customAppendCode = OW::getConfig()->getValue('base', 'html_prebody_code');
+                $customHeadCode = $config->getValue('base', 'html_head_code');
+                $customAppendCode = $config->getValue('base', 'html_prebody_code');
 
                 if ( !empty($customHeadCode) )
                 {
@@ -396,7 +397,7 @@ class OW_Application
         }
         else
         {
-            $document->addStyleSheet(OW::getPluginManager()->getPlugin('admin')->getStaticCssUrl() . 'admin.css' . '?' . OW::getConfig()->getValue('base', 'cachedEntitiesPostfix'), 'all', -50);
+            $document->addStyleSheet(OW::getPluginManager()->getPlugin('admin')->getStaticCssUrl() . 'admin.css' . '?' . $config->getValue('base', 'cachedEntitiesPostfix'), 'all', -50);
         }
 
         $language = OW::getLanguage();
@@ -408,7 +409,7 @@ class OW_Application
 
         if ( $document->getDescription() === null )
         {
-            $document->setDescription($language->text('nav', 'page_default_description'));
+            $document->setDescription($config->getValue('base', 'site_description'));
         }
 
         /* if ( $document->getKeywords() === null )
