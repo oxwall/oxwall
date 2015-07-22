@@ -136,6 +136,8 @@ final class BOL_UserService
      */
     private function __construct()
     {
+        require_once OW_DIR_LIB . 'password_compat' . DS . 'password.php';
+        
         $this->userDao = BOL_UserDao::getInstance();
         $this->loginCookieDao = BOL_LoginCookieDao::getInstance();
         $this->userFeaturedDao = BOL_UserFeaturedDao::getInstance();
@@ -558,9 +560,7 @@ final class BOL_UserService
             return false;
         }
 
-        $password = $this->hashPassword($value);
-
-        if ( $user->password === $password )
+        if ( password_verify($value.OW_PASSWORD_SALT, $user->password) )
         {
             return true;
         }
@@ -881,7 +881,7 @@ final class BOL_UserService
 
     public function hashPassword( $password )
     {
-        return hash('sha256', OW_PASSWORD_SALT . $password);
+        return password_hash($password.OW_PASSWORD_SALT, PASSWORD_DEFAULT);
     }
 
     public function findListByRoleId( $roleId, $first, $count )
