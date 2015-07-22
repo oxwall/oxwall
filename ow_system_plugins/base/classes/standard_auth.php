@@ -50,6 +50,8 @@ class BASE_CLASS_StandardAuth extends OW_AuthAdapter
      */
     public function __construct( $identity, $password )
     {
+        require_once OW_DIR_LIB . 'password_compat' . DS . 'password.php';
+        
         $this->identity = trim($identity);
         $this->password = trim($password);
 
@@ -72,7 +74,7 @@ class BASE_CLASS_StandardAuth extends OW_AuthAdapter
             return new OW_AuthResult(OW_AuthResult::FAILURE_IDENTITY_NOT_FOUND, null, array($language->text('base', 'auth_identity_not_found_error_message')));
         }
         
-        if ( $user->getPassword() !== BOL_UserService::getInstance()->hashPassword($this->password) )
+        if ( !password_verify($this->password.OW_PASSWORD_SALT, $user->getPassword()) )
         {
             return new OW_AuthResult(OW_AuthResult::FAILURE_PASSWORD_INVALID, null, array($language->text('base', 'auth_invlid_password_error_message')));
         }
