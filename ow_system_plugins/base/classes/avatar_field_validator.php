@@ -63,7 +63,7 @@ class BASE_CLASS_AvatarFieldValidator extends OW_Validator
         $key = $avatarService->getAvatarChangeSessionKey();
         $path = $avatarService->getTempAvatarPath($key, 3);
 
-        if ( !file_exists($path) )
+        if ( !file_exists($path) && !BOL_AvatarService::getInstance()->getAvatarUrl(OW::getUser()->getId(), 1) )
         {
             return false;
         }
