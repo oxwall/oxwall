@@ -72,14 +72,14 @@ class BASE_CMP_AjaxFileUpload extends OW_Component
         $this->addForm($form);
 
         $language = OW::getLanguage();
-        $language->addKeyForJs('photo', 'not_all_photos_uploaded');
-        $language->addKeyForJs('photo', 'size_limit');
-        $language->addKeyForJs('photo', 'type_error');
-        $language->addKeyForJs('photo', 'dnd_support');
-        $language->addKeyForJs('photo', 'dnd_not_support');
-        $language->addKeyForJs('photo', 'drop_here');
-        $language->addKeyForJs('photo', 'please_wait');
-        $language->addKeyForJs('photo', 'describe_photo');
-        $language->addKeyForJs('photo', 'photo_upload_error');
+        $language->addKeyForJs('admin', 'not_all_photos_uploaded');
+        $language->addKeyForJs('admin', 'size_limit');
+        $language->addKeyForJs('admin', 'type_error');
+        $language->addKeyForJs('admin', 'dnd_support');
+        $language->addKeyForJs('admin', 'dnd_not_support');
+        $language->addKeyForJs('admin', 'drop_here');
+        $language->addKeyForJs('admin', 'please_wait');
+        $language->addKeyForJs('admin', 'describe_photo');
+        $language->addKeyForJs('admin', 'photo_upload_error');
     }
 }

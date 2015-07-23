@@ -87,26 +87,26 @@ class ADMIN_CTRL_AjaxUpload extends OW_ActionController
             switch ( $file['file']['error'] )
             {
                 case UPLOAD_ERR_INI_SIZE:
-                    return OW::getLanguage()->text('photo', 'error_ini_size');
+                    return OW::getLanguage()->text('admin', 'error_ini_size');
                 case UPLOAD_ERR_FORM_SIZE:
-                    return OW::getLanguage()->text('photo', 'error_form_size');
+                    return OW::getLanguage()->text('admin', 'error_form_size');
                 case UPLOAD_ERR_PARTIAL:
-                    return OW::getLanguage()->text('photo', 'error_partial');
+                    return OW::getLanguage()->text('admin', 'error_partial');
                 case UPLOAD_ERR_NO_FILE:
-                    return OW::getLanguage()->text('photo', 'error_no_file');
+                    return OW::getLanguage()->text('admin', 'error_no_file');
                 case UPLOAD_ERR_NO_TMP_DIR:
-                    return OW::getLanguage()->text('photo', 'error_no_tmp_dir');
+                    return OW::getLanguage()->text('admin', 'error_no_tmp_dir');
                 case UPLOAD_ERR_CANT_WRITE:
-                    return OW::getLanguage()->text('photo', 'error_cant_write');
+                    return OW::getLanguage()->text('admin', 'error_cant_write');
                 case UPLOAD_ERR_EXTENSION:
-                    return OW::getLanguage()->text('photo', 'error_extension');
+                    return OW::getLanguage()->text('admin', 'error_extension');
                 default:
-                    return OW::getLanguage()->text('photo', 'no_photo_uploaded');                        
+                    return OW::getLanguage()->text('admin', 'no_photo_uploaded');
             }
         }
         else
         {
-            return OW::getLanguage()->text('photo', 'no_photo_uploaded');
+            return OW::getLanguage()->text('admin', 'no_photo_uploaded');
         }
     }
     
@@ -118,7 +118,7 @@ class ADMIN_CTRL_AjaxUpload extends OW_ActionController
         
         if ( count($tmpList = $fileTmpService->findUserTemporaryFiles($userId, 'order')) === 0 )
         {
-            $resp = array('result' => false, 'msg' => OW::getLanguage()->text('photo', 'photo_upload_error'));
+            $resp = array('result' => false, 'msg' => OW::getLanguage()->text('admin', 'photo_upload_error'));
             
             $this->returnResponse($resp);
         }
@@ -128,7 +128,7 @@ class ADMIN_CTRL_AjaxUpload extends OW_ActionController
         if ( !$form->isValid($_POST) )
         {
             $resp = array('result' => false);
-            $resp['msg'] = OW::getLanguage()->text('photo', 'photo_upload_error');
+            $resp['msg'] = OW::getLanguage()->text('admin', 'photo_upload_error');
             $this->returnResponse($resp);
         }
         
@@ -191,7 +191,7 @@ class ADMIN_CTRL_AjaxUpload extends OW_ActionController
         };
 
         $result['url'] = OW::getRouter()->urlForRoute('admin_theme_graphics');
-        OW::getFeedback()->info(OW::getLanguage()->text('photo', 'photos_uploaded', array('count' => $fileCount)));
+        OW::getFeedback()->info(OW::getLanguage()->text('admin', 'photos_uploaded', array('count' => $fileCount)));
         
         return $result;
     }
@@ -216,7 +216,7 @@ class ADMIN_CTRL_AjaxUpload extends OW_ActionController
             }
             else
             {
-                $this->returnResponse(array('status' => self::STATUS_ERROR, 'msg' => OW::getLanguage()->text('photo', 'no_photo_uploaded')));
+                $this->returnResponse(array('status' => self::STATUS_ERROR, 'msg' => OW::getLanguage()->text('admin', 'no_photo_uploaded')));
             }
         }
         else
