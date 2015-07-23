@@ -40,7 +40,7 @@ class ADMIN_CLASS_FilterForm extends Form
         $this->setAjaxResetOnSuccess(false);
 
         $date = new Selectbox('date');
-        $date->setInvitation('TODO: All files');
+        $date->setInvitation(OW::getLanguage()->text('admin', 'all_files'));
         $date->setOptions($dates);
         $this->addElement($date);
         $jsString = ";$('#{$date->getId()}').change(function(){

@@ -51,7 +51,7 @@ class BASE_CLASS_AjaxUploadForm extends Form
                         }
                         else
                         {
-                            OW.getLanguageText("photo", "photo_upload_error");
+                            OW.getLanguageText("admin", "photo_upload_error");
                         }
                     }
                     else
@@ -76,22 +76,6 @@ class BASE_CLASS_AjaxUploadForm extends Form
                 'url' => $url
             ))
         );
-        
-        $language = OW::getLanguage();
-
-//        $desc = new Textarea('description');
-//        $desc->addAttribute('class', 'invitation');
-//
-//        if ( !empty($albumDescription) )
-//        {
-//            $desc->setValue($albumDescription);
-//        }
-//        else
-//        {
-//            $desc->setValue($language->text('photo', 'album_desc'));
-//        }
-//
-//        $this->addElement($desc);
 
         $submit = new Submit('submit');
         $submit->addAttribute('class', 'ow_ic_submit ow_positive');
