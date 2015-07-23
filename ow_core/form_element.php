@@ -2957,6 +2957,12 @@ class MobileWysiwygTextarea extends Textarea
     protected $pluginKey;
 
     /**
+     * Text format service 
+     * @var BOL_TextFormatService
+     */
+    protected $textFormatService;
+
+    /**
      * Buttons list
      * 
      * @var array
@@ -2982,11 +2988,30 @@ class MobileWysiwygTextarea extends Textarea
         parent::__construct($name);
 
         $this->pluginKey = $pluginKey;
+        $this->textFormatService = BOL_TextFormatService::getInstance();
 
         // init list of buttons
         if ( !empty($buttons) )
         {
             $this->buttons = $buttons;
+        }
+
+        // remove image and video buttons
+        if ( !$this->textFormatService->isRichMediaAllowed() )
+        {
+            $imageIndex = array_search(BOL_TextFormatService::WS_BTN_IMAGE, $this->buttons);
+
+            if ( $imageIndex !== false)
+            {
+                unset($this->buttons[$imageIndex]);
+            }
+
+            $videoIndex = array_search(BOL_TextFormatService::WS_BTN_VIDEO, $this->buttons);
+
+            if ( $videoIndex !== false)
+            {
+                unset($this->buttons[$videoIndex]);
+            }
         }
 
         $stringValidator = new StringValidator(0, 50000);

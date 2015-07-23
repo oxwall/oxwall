@@ -1,3 +1,41 @@
+Oxwall 1.7.5, July 14, 2015
+====================================
+
+Platform:
+- update server SSL connection fixed;
+- floatbox language editing in the admin panel is now scrollable;
+- links processing within content now recognizes periods and other full-stop symbols in sentences; 
+- suspended users can now edit their avatars;
+- mobile version: when users have no avatar selected, their Profile View page displays the default “No Avatar” image;
+- generation of user hash salt passwords now employs the following method: UTIL_String::getRandomString
+- if the service “add to friends” is not available, users can now delete other profiles from their friend lists;
+- added mobile version of the WYSIWYG editor;
+- fixed SMTP connection settings test in the admin panel;
+- special symbols are no longer encoded in the Profile View page in the About Me widget; 
+
+User Privacy:
+- fixed the bug allowing one user accessing private photos of another user;
+
+Messages:
+- unused attachments are now deleted by cron;
+- mobile version: fixed the markup for conversations/user list;
+
+Newsfeed:
+- unused attachments are now deleted from the file system;
+- when user changes the avatar, it also updates in the 'birthday' item;
+
+Forum:
+- added mobile version;
+
+Social Sharing:
+- adapted for the site's mobile version;
+- fixed the error 'Request-URI Too Large', which appeared when sharing content with extra volume of text/description;
+
+Contacts Importer:
+- Facebook API updated;
+- added SSL support;
+
+
 Oxwall 1.7.4, 2015-06-02
 ====================================
 

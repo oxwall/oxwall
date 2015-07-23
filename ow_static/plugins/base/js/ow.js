@@ -1681,11 +1681,13 @@ var OwAvatarField = function( id, name, params ){
     var $preview = $(formElement.input).closest(".ow_avatar_field").find(".ow_avatar_field_preview");
     var $img = $preview.find("img");
 
-    $img.click(function(){
+    $preview.click(function(){
         $(formElement.input).trigger('click');
     });
 
-    $preview.find("span").click(function(){
+    $preview.find("span").click(function(e){
+        e.stopPropagation();
+ 
         $img.attr("src", "");
         formElement.resetValue();
         $preview.hide();
