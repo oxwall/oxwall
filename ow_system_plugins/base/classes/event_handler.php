@@ -67,6 +67,8 @@ class BASE_CLASS_EventHandler
         $eventManager->bind('base.maintenance_mode_exceptions', array($this, 'onAddMaintenanceModeExceptions'));
         $eventManager->bind(OW_EventManager::ON_USER_LOGIN, array($this, 'onUserLoginSetAdminCookie'));
         $eventManager->bind('core.emergency_exit', array($this, 'onEmergencyExit'));
+        
+        $eventManager->bind('admin.add_auth_labels', array($this, 'onAddAuthLabels'));
 
         $eventManager->bind(OW_EventManager::ON_USER_UNREGISTER, array($this, 'onUserUnregisterClearMailQueue'));
 
@@ -112,7 +114,7 @@ class BASE_CLASS_EventHandler
         $eventManager->bind('admin.add_admin_notification', array($this, 'addAdminNotification'));
         $eventManager->bind('ads.enabled_plugins', array($this, 'onAddAdsEnabled'));
         $eventManager->bind(OW_EventManager::ON_BEFORE_PLUGIN_UNINSTALL, array($this, 'onPluginUninstallDeleteComments'));
-        $eventManager->bind('admin.add_auth_labels', array($this, 'onAddAuthLabels'));
+        
         $eventManager->bind(BOL_PreferenceService::PREFERENCE_ADD_FORM_ELEMENT_EVENT, array($this, 'onPreferenceAddFormElement'));
         $eventManager->bind(BOL_PreferenceService::PREFERENCE_SECTION_LABEL_EVENT, array($this, 'onAddPreferenceSectionLabels'));
         $eventManager->bind('feed.collect_configurable_activity', array($this, 'onFeedCollectConfigurableActivity'));
