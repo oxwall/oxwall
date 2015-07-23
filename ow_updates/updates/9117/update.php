@@ -64,7 +64,6 @@ if ( !is_null($langId) )
     $languageService->addOrUpdateValue($langId, 'admin', 'delete_image', 'Delete');
     $languageService->addOrUpdateValue($langId, 'admin', 'undefined_action', 'Undefined action');
     $languageService->addOrUpdateValue($langId, 'admin', 'not_enough_params', 'Not enough params');
-    $languageService->addOrUpdateValue($langId, 'admin', '', '');
 }
 
 $keys = array(
@@ -78,6 +77,10 @@ $keys = array(
 foreach ($keys as $key)
 {
     $photoKey = $languageService->findKey('photo', $key);
+    if ( is_null($photoKey) )
+    {
+        continue;
+    }
     $photoValue = $languageService->findValue($langId, $photoKey->id);
     $languageService->addOrUpdateValue($langId, 'admin', $key, $photoValue->value);
 }
