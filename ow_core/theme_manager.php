@@ -151,10 +151,10 @@ final class OW_ThemeManager
 
     /**
      * Adds new decorator.
-     * throws InvalidArgumentException
      *
      * @param string $decoratorName
-     * @param string $decoratorDir
+     * @param string $pluginKey
+     * @throws LogicException if decorator already exists
      */
     public function addDecorator( $decoratorName, $pluginKey )
     {
@@ -191,7 +191,7 @@ final class OW_ThemeManager
 
         if ( !array_key_exists($decoratorName, $this->decorators) )
         {
-            throw new InvalidArgumentException(" Can't find decorator `'.$decoratorName.'` !");
+            throw new InvalidArgumentException("Can't find decorator `".$decoratorName."` !");
         }
 
         if ( $this->themeObjects[self::CURRENT_THEME]->hasDecorator($decoratorName) )
@@ -220,8 +220,9 @@ final class OW_ThemeManager
     /**
      * Returns master page template path.
      *
-     * @param string $templateName
+     * @param string $masterPage
      * @return string
+     * @throws ImvalidArgumentException if the specified page was not found
      */
     public function getMasterPageTemplate( $masterPage )
     {
@@ -237,7 +238,7 @@ final class OW_ThemeManager
             return $this->themeObjects[self::DEFAULT_THEME]->getMasterPage($masterPage);
         }
 
-        throw new InvalidArgumentException("Can't find master page `'.$masterPage.'` !");
+        throw new InvalidArgumentException("Can't find master page `".$masterPage."` !");
     }
 
     /**
