@@ -216,7 +216,7 @@ class ADMIN_CTRL_Theme extends ADMIN_CTRL_Abstract
                 $items = isset($_POST['delete']) ? $_POST['delete'] : null;
                 if (is_null($items))
                 {
-                    $result = json_encode(array('error' => 'TODO: Not enough params'));
+                    $result = json_encode(array('error' => OW::getLanguage()->text('admin', 'not_enough_params')));
                 }
                 else
                 {
@@ -232,7 +232,7 @@ class ADMIN_CTRL_Theme extends ADMIN_CTRL_Abstract
                 }
                 break;
             default:
-                $result = json_encode(array('error' => 'TODO: Undefined action'));
+                $result = json_encode(array('error' => OW::getLanguage()->text('admin', 'undefined_action')));
                 break;
         }
         echo $result;
@@ -448,7 +448,6 @@ class ADMIN_CTRL_Theme extends ADMIN_CTRL_Abstract
     public function getPhotoList( $params )
     {
         $page = !empty($params['offset']) ? abs((int)$params['offset']) : 1;
-//        TODO: create settings
         $imagesLimit = 20;
 
 

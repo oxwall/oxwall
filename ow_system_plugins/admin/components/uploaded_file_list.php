@@ -90,8 +90,8 @@ class ADMIN_CMP_UploadedFileList extends OW_Component
             'downloadUrl' => OW_URL_HOME . 'photo/download-photo/:id',
             'actionUrl' => $photoDefault['getPhotoURL'],
             'contextOptions' => array(
-                array('action' => null, 'name' => 'TODO: Copy Url', 'liClass' => 'menuItem', 'aClass' => 'zero-clipboard-button'),
-                array('action' => 'deleteImage', 'name' => 'TODO: Delete Image'),
+                array('action' => null, 'name' => OW::getLanguage()->text('admin', 'copy_url'), 'liClass' => 'menuItem', 'aClass' => 'zero-clipboard-button'),
+                array('action' => 'deleteImage', 'name' => OW::getLanguage()->text('admin', 'delete_image')),
             )
         );
 

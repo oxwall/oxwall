@@ -250,18 +250,18 @@ class ADMIN_CLASS_EventHandler
 
         $language = OW::getLanguage();
 
-        $language->addKeyForJs('photo', 'tb_edit_photo');
-        $language->addKeyForJs('photo', 'confirm_delete');
-        $language->addKeyForJs('photo', 'mark_featured');
-        $language->addKeyForJs('photo', 'remove_from_featured');
-        $language->addKeyForJs('photo', 'rating_total');
-        $language->addKeyForJs('photo', 'rating_your');
-        $language->addKeyForJs('photo', 'of');
-        $language->addKeyForJs('photo', 'album');
+        $language->addKeyForJs('admin', 'tb_edit_photo');
+        $language->addKeyForJs('admin', 'confirm_delete');
+        $language->addKeyForJs('admin', 'mark_featured');
+        $language->addKeyForJs('admin', 'remove_from_featured');
+        $language->addKeyForJs('admin', 'rating_total');
+        $language->addKeyForJs('admin', 'rating_your');
+        $language->addKeyForJs('admin', 'of');
+        $language->addKeyForJs('admin', 'album');
         $language->addKeyForJs('base', 'rate_cmp_owner_cant_rate_error_message');
         $language->addKeyForJs('base', 'rate_cmp_auth_error_message');
-        $language->addKeyForJs('photo', 'slideshow_interval');
-        $language->addKeyForJs('photo', 'pending_approval');
+        $language->addKeyForJs('admin', 'slideshow_interval');
+        $language->addKeyForJs('admin', 'pending_approval');
 
         $document->addScriptDeclarationBeforeIncludes(
             UTIL_JsGenerator::composeJsString('
