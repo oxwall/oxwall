@@ -1,0 +1,35 @@
+<div class="ow_box_menu ow_fw_menu" style="overflow: hidden;">
+    <div class="ow_admin_date_filter">{component class="ADMIN_CMP_UploadedFilesFilter"}</div>
+    <div class="ow_admin_bulk_options">{component class="ADMIN_CMP_UploadedFilesBulkOptions"}</div>
+    <div class="ow_admin_upload_button">{component class="BASE_CMP_AjaxFileUploadButton"}</div>
+</div>
+
+<div class="ow_photo_list_wrap ow_photo_no_sidebar">
+    <div id="browse-photo" class="ow_photo_list ow_photo_pint_mode clearfix"></div>
+    <div id="browse-photo-preloader" class="ow_fw_menu ow_preloader"></div>
+</div>
+
+<div id="browse-photo-item-prototype" class="ow_photo_item_wrap" style="display: none">
+    <div class="ow_photo_item">
+        <div class="ow_photo_pint_album">
+            <img src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs%3D" width="0" height="0" alt="" />
+            <input type="checkbox" style="display: none; position: absolute; top: 5px; left: 5px;" />
+        </div>
+        <div class="ow_photo_item_info ow_small">
+            <div class="ow_photo_item_info_title">Title: <span></span></div>
+            <div class="ow_photo_item_info_dimensions">Size: <span></span></div>
+            <div class="ow_photo_item_info_fileszie">Filesize: <span></span></div>
+            <div class="ow_photo_item_info_uploaddate">Upload date: <span></span></div>
+        </div>
+    </div>
+</div>
+
+<div class="ow_hidden">
+    <div id="context-action-prototype" class="ow_context_action">
+        <div class="ow_tooltip ow_small ow_tooltip_top_right" style="opacity: 1; top: 19px;">
+            <div class="ow_tooltip_tail"><span></span></div>
+            <div class="ow_tooltip_body"></div>
+        </div>
+    </div>
+    <iframe name="photo-downloader"  style="display:none;"></iframe>
+</div>

@@ -23,42 +23,30 @@
  */
 
 /**
- * Data Transfer Object for `base_theme_image` table.
+ * 
  *
- * @author Sardar Madumarov <madumarov@gmail.com>
- * @package ow_system_plugins.base.bol
- * @since 1.0
+ * @author Sergei Kiselev <arrserg@gmail.com>
+ * @package ow_system_plugins.base.classes
+ * @since 1.7.5
  */
-class BOL_ThemeImage extends OW_Entity
+class ADMIN_CLASS_FilterForm extends Form
 {
-    /**
-     * @var string
-     */
-    public $filename;
 
-    /**
-     * @var integer
-     */
-    public $addDatetime;
-
-    /**
-     * @var string
-     */
-    public $description;
-
-    public function getFilename()
+    public function __construct( $dates = array() )
     {
-        return $this->filename;
-    }
+        parent::__construct('filter-form');
 
-    /**
-     *
-     * @param string $filename
-     * @return BOL_ThemeImage
-     */
-    public function setFilename( $filename )
-    {
-        $this->filename = $filename;
-        return $this;
+        $this->setAjax(true);
+        $this->setAjaxResetOnSuccess(false);
+
+        $date = new Selectbox('date');
+        $date->setInvitation(OW::getLanguage()->text('admin', 'all_files'));
+        $date->setOptions($dates);
+        $this->addElement($date);
+        $jsString = ";$('#{$date->getId()}').change(function(){
+            window.browsePhoto.filter({'date': $(this).val()});
+        });
+        ";
+        OW::getDocument()->addOnloadScript($jsString);
     }
 }

@@ -1,34 +1,87 @@
 <?php
 
-/**
- * EXHIBIT A. Common Public Attribution License Version 1.0
- * The contents of this file are subject to the Common Public Attribution License Version 1.0 (the “License”);
- * you may not use this file except in compliance with the License. You may obtain a copy of the License at
- * http://www.oxwall.org/license. The License is based on the Mozilla Public License Version 1.1
- * but Sections 14 and 15 have been added to cover use of software over a computer network and provide for
- * limited attribution for the Original Developer. In addition, Exhibit A has been modified to be consistent
- * with Exhibit B. Software distributed under the License is distributed on an “AS IS” basis,
- * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for the specific language
- * governing rights and limitations under the License. The Original Code is Oxwall software.
- * The Initial Developer of the Original Code is Oxwall Foundation (http://www.oxwall.org/foundation).
- * All portions of the code written by Oxwall Foundation are Copyright (c) 2011. All Rights Reserved.
+$languageService = Updater::getLanguageService();
 
- * EXHIBIT B. Attribution Information
- * Attribution Copyright Notice: Copyright 2011 Oxwall Foundation. All rights reserved.
- * Attribution Phrase (not exceeding 10 words): Powered by Oxwall community software
- * Attribution URL: http://www.oxwall.org/
- * Graphic Image as provided in the Covered Code.
- * Display of Attribution Information is required in Larger Works which are defined in the CPAL as a work
- * which combines Covered Code or portions thereof with code not governed by the terms of the CPAL.
- */
+$db = Updater::getDbo();
+$logger = Updater::getLogger();
+$tblPrefix = OW_DB_PREFIX;
 
-$languages = Updater::getLanguageService()->getLanguages();
+$queryList = array();
+
+$queryList[] = "CREATE TABLE IF NOT EXISTS `{$tblPrefix}file_temporary` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `filename` varchar(255) NOT NULL,
+  `userId` int(11) NOT NULL,
+  `addDatetime` int(11) NOT NULL,
+  `order` int(11) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  KEY `userId` (`userId`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8";
+
+$queryList[] = "CREATE TABLE IF NOT EXISTS `{$tblPrefix}base_file` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `filename` varchar(255) NOT NULL,
+  `description` varchar(255) NOT NULL,
+  `addDatetime` int(11) NOT NULL,
+  `userId` int(11) NOT NULL,
+  `order` int(11) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  KEY `userId` (`userId`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8";
+
+$queryList[] = "ALTER TABLE `{$tblPrefix}base_theme_image`
+  ADD `addDatetime` INT NULL ,
+  ADD `description` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL ;";
+
+foreach ( $queryList as $query )
+{
+    try
+    {
+        $db->query($query);
+    }
+    catch ( Exception $e )
+    {
+        $logger->addEntry(json_encode($e));
+    }
+}
+
+
+$languages = $languageService->getLanguages();
+$langId = null;
 foreach ($languages as $lang)
 {
     if ($lang->tag == 'en')
     {
+        $langId = $lang->id;
         break;
     }
 }
 
-Updater::getLanguageService()->addOrUpdateValue($lang->id, 'admin', 'invite_members_textarea_invitation_text', 'Enter list of emails (max {$limit}, one email per line)');
+if ( !is_null($langId) )
+{
+    $languageService->addOrUpdateValue($langId, 'admin', 'all_files', 'All files');
+    $languageService->addOrUpdateValue($langId, 'admin', 'copy_url', 'Copy Url');
+    $languageService->addOrUpdateValue($langId, 'admin', 'delete_image', 'Delete');
+    $languageService->addOrUpdateValue($langId, 'admin', 'undefined_action', 'Undefined action');
+    $languageService->addOrUpdateValue($langId, 'admin', 'not_enough_params', 'Not enough params');
+}
+
+$keys = array(
+    'tb_edit_photo', 'confirm_delete', 'mark_featured', 'remove_from_featured', 'rating_total', 'rating_your', 'of',
+    'album', 'slideshow_interval', 'pending_approval', 'not_all_photos_uploaded', 'size_limit', 'type_error',
+    'dnd_support', 'dnd_not_support', 'drop_here', 'please_wait', 'describe_photo', 'photo_upload_error',
+    'error_ini_size', 'error_form_size', 'error_partial', 'error_no_file', 'error_no_tmp_dir', 'error_cant_write',
+    'error_extension', 'no_photo_uploaded', 'photos_uploaded'
+);
+
+foreach ($keys as $key)
+{
+    $photoKey = $languageService->findKey('photo', $key);
+    if ( is_null($photoKey) )
+    {
+        continue;
+    }
+    $photoValue = $languageService->findValue($langId, $photoKey->id);
+    $languageService->addOrUpdateValue($langId, 'admin', $key, $photoValue->value);
+}
+

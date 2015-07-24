@@ -23,42 +23,17 @@
  */
 
 /**
- * Data Transfer Object for `base_theme_image` table.
- *
- * @author Sardar Madumarov <madumarov@gmail.com>
- * @package ow_system_plugins.base.bol
- * @since 1.0
+ * @author Sergei Kiselev <arrserg@gmail.com>
+ * @package ow_system_plugins.admin.components
+ * @since 1.7.5
  */
-class BOL_ThemeImage extends OW_Entity
+class ADMIN_CMP_UploadedFilesFloatbox extends OW_Component
 {
-    /**
-     * @var string
-     */
-    public $filename;
-
-    /**
-     * @var integer
-     */
-    public $addDatetime;
-
-    /**
-     * @var string
-     */
-    public $description;
-
-    public function getFilename()
+    public function __construct( $layout )
     {
-        return $this->filename;
-    }
+        parent::__construct();
 
-    /**
-     *
-     * @param string $filename
-     * @return BOL_ThemeImage
-     */
-    public function setFilename( $filename )
-    {
-        $this->filename = $filename;
-        return $this;
+        $this->assign('class', '');
+        $this->assign('layout', $layout);
     }
 }
