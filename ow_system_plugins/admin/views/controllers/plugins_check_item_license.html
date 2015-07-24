@@ -1,0 +1,19 @@
+<div class="ow_wide ow_automargin">
+{block_decorator name='box'  addClass='ow_stdmargin' iconClass='ow_ic_plugin' langLabel='admin+manage_plugins_update_request_box_cap_label'}
+<div style="text-align:center;">
+{if !empty($mode) && $mode == 'error'}
+{$text}<br /><br />
+{decorator name='button' langLabel='admin+license_form_leave_label' onclick="window.location='`$returnUrl`'"}
+{elseif !empty($mode) && $mode == 'free'}
+{$text}<br /><br />
+{decorator name='button' langLabel='admin+plugin_update_yes_button_label' onclick="window.location='`$redirectUrl`'"}
+{else}
+{$text}
+<br /><br />
+{form name='license-key'}{label name='key'}&nbsp;&nbsp;{input name='key' style='width:160px;'}<br /><br />
+{submit name='submit'}&nbsp;&nbsp;&nbsp;{submit name='button'}
+{/form}
+{/if}
+</div>
+{/block_decorator}
+</div>

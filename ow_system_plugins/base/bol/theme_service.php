@@ -1143,17 +1143,17 @@ class BOL_ThemeService
 
     public function downloadTheme( $key, $devKey, $licenseKey = null )
     {
-        return BOL_PluginService::getInstance()->downloadItem($key, $devKey, $licenseKey);
+        return BOL_StorageService::getInstance()->downloadItem($key, $devKey, $licenseKey);
     }
 
     public function getThemeInfoForUpdate( $key, $devKey )
     {
-        return BOL_PluginService::getInstance()->getItemInfoForUpdate($key, $devKey);
+        return BOL_StorageService::getInstance()->getItemInfoForUpdate($key, $devKey);
     }
 
     public function checkLicenseKey( $key, $developerKey, $licenseKey )
     {
-        return BOL_PluginService::getInstance()->checkLicenseKey($key, $developerKey, $licenseKey);
+        return BOL_StorageService::getInstance()->checkLicenseKey($key, $developerKey, $licenseKey);
     }
 
     /**

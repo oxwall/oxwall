@@ -313,7 +313,7 @@ class ADMIN_CTRL_Themes extends ADMIN_CTRL_Abstract
     {
         try
         {
-            $ftp = BOL_PluginService::getInstance()->getFtpConnection();
+            $ftp = BOL_StorageService::getInstance()->getFtpConnection();
         }
         catch ( LogicException $e )
         {

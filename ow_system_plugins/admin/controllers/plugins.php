@@ -37,12 +37,19 @@ class ADMIN_CTRL_Plugins extends ADMIN_CTRL_Abstract
     private $pluginService;
 
     /**
+     * @var BOL_StorageService
+     */
+    private $storageService;
+
+
+    /**
      * Constructor.
      */
     public function __construct()
     {
         parent::__construct();
         $this->pluginService = BOL_PluginService::getInstance();
+        $this->storageService = BOL_StorageService::getInstance();
     }
 
     /**
@@ -309,15 +316,86 @@ class ADMIN_CTRL_Plugins extends ADMIN_CTRL_Abstract
         OW::getFeedback()->info(OW::getLanguage()->text('admin', 'manage_plugins_activate_success_message', array('plugin' => $pluginDto->getTitle())));
         $this->redirectToAction('index');
     }
-    
     /* --------------------------- */
-    
+
+    public function checkItemLicense( array $params )
+    {
+        if( empty($params["key"]) || empty($params["type"]) || empty($params["developerKey"]) )
+        {
+            throw new Redirect404Exception();
+        }
+        
+        $key = trim($params["key"]);
+        $devKey = trim($params["developerKey"]);
+        $type = trim($params["type"]);
+        
+        $this->storageService->getItemInfoForUpdate($key, $devKey);
+        
+        
+        
+        
+        if( $params["type"] == "plugin" )
+        {
+            
+        }
+        
+        
+//        if( !empty($_GET["back-uri"]) )
+//        {
+//
+//        }
+        
+        
+        $form = new Form('item-license-check');
+
+        $licenseKey = new TextField('key');
+        $licenseKey->setValue($pluginDto->getLicenseKey());
+        $licenseKey->setRequired();
+        $licenseKey->setLabel($language->text('admin', 'com_plugin_request_key_label'));
+        $form->addElement($licenseKey);
+
+        $submit = new Submit('submit');
+        $submit->setValue($language->text('admin', 'license_form_submit_label'));
+        $form->addElement($submit);
+
+        $button = new Button('button');
+        $button->setValue($language->text('admin', 'license_form_leave_label'));
+        $button->addAttribute('onclick', "window.location='" . OW::getRouter()->urlFor('ADMIN_CTRL_Plugins', 'index') . "'");
+        $form->addElement($button);
+
+        $this->addForm($form);
+
+        if ( OW::getRequest()->isPost() )
+        {
+            if ( $form->isValid($_POST) )
+            {
+                $data = $form->getValues();
+                $params['licenseKey'] = $data['key'];
+
+                $result = $this->storageService->checkLicenseKey($pluginDto->getKey(), $pluginDto->getDeveloperKey(), $data['key']);
+
+                if ( $result === true )
+                {
+                    $pluginDto->setLicenseKey($data['key']);
+                    BOL_PluginService::getInstance()->savePlugin($pluginDto);
+
+                    $this->redirect(OW::getRouter()->urlFor('ADMIN_CTRL_Plugins', 'update', $params));
+                }
+                else
+                {
+                    OW::getFeedback()->error($language->text('admin', 'plugins_manage_invalid_license_key_error_message'));
+                    $this->redirect();
+                }
+            }
+        }
+    }
+
     public function updateRequest( array $params )
     {
         $pluginDto = $this->getPluginDtoByKey($params);
         $language = OW::getLanguage();
 
-        $remotePluginInfo = (array) $this->pluginService->getItemInfoForUpdate($pluginDto->getKey(), $pluginDto->getDeveloperKey());
+        $remotePluginInfo = (array) $this->storageService->getItemInfoForUpdate($pluginDto->getKey(), $pluginDto->getDeveloperKey());
 
         if ( empty($remotePluginInfo) || !empty($remotePluginInfo['error']) )
         {
@@ -336,7 +414,7 @@ class ADMIN_CTRL_Plugins extends ADMIN_CTRL_Abstract
         {
             if ( $pluginDto->getLicenseKey() != null )
             {
-                $result = $this->pluginService->checkLicenseKey($pluginDto->getKey(), $pluginDto->getDeveloperKey(), $pluginDto->getLicenseKey());
+                $result = $this->storageService->checkLicenseKey($pluginDto->getKey(), $pluginDto->getDeveloperKey(), $pluginDto->getLicenseKey());
                 if ( $result === true )
                 {
                     $params['licenseKey'] = $pluginDto->getLicenseKey();
@@ -373,7 +451,7 @@ class ADMIN_CTRL_Plugins extends ADMIN_CTRL_Abstract
                     $data = $form->getValues();
                     $params['licenseKey'] = $data['key'];
 
-                    $result = $this->pluginService->checkLicenseKey($pluginDto->getKey(), $pluginDto->getDeveloperKey(), $data['key']);
+                    $result = $this->storageService->checkLicenseKey($pluginDto->getKey(), $pluginDto->getDeveloperKey(), $data['key']);
 
                     if ( $result === true )
                     {
@@ -426,7 +504,7 @@ class ADMIN_CTRL_Plugins extends ADMIN_CTRL_Abstract
 
         try
         {
-            $archivePath = $this->pluginService->downloadItem($pluginDto->getKey(), $pluginDto->getDeveloperKey(), (!empty($params['licenseKey']) ? $params['licenseKey'] : null));
+            $archivePath = $this->storageService->downloadItem($pluginDto->getKey(), $pluginDto->getDeveloperKey(), (!empty($params['licenseKey']) ? $params['licenseKey'] : null));
         }
         catch ( Exception $e )
         {
@@ -568,7 +646,7 @@ class ADMIN_CTRL_Plugins extends ADMIN_CTRL_Abstract
             throw new Redirect404Exception();
         }
 
-        $newCoreInfo = $this->pluginService->getCoreInfoForUpdate();
+        $newCoreInfo = $this->storageService->getCoreInfoForUpdate();
         $this->assign('text', OW::getLanguage()->text('admin', 'manage_plugins_core_update_request_text', array('oldVersion' => OW::getConfig()->getValue('base', 'soft_version'), 'newVersion' => $newCoreInfo['version'], 'info' => $newCoreInfo['info'])));
         $this->assign('redirectUrl', OW::getRouter()->urlFor('ADMIN_CTRL_Plugins', 'coreUpdate'));
         $this->assign('returnUrl', OW::getRouter()->urlForRoute('admin_default'));
@@ -592,7 +670,7 @@ class ADMIN_CTRL_Plugins extends ADMIN_CTRL_Abstract
         $errorMessage = false;
 
         OW::getApplication()->setMaintenanceMode(true);
-        $this->pluginService->downloadCore($archivePath);
+        $this->storageService->downloadCore($archivePath);
 
         if ( !file_exists($archivePath) )
         {
@@ -825,7 +903,7 @@ class ADMIN_CTRL_Plugins extends ADMIN_CTRL_Abstract
     {
         try
         {
-            $ftp = $this->pluginService->getFtpConnection();
+            $ftp = $this->storageService->getFtpConnection();
         }
         catch ( LogicException $e )
         {
