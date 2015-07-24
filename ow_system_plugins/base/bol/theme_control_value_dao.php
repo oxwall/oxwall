@@ -91,6 +91,11 @@ class BOL_ThemeControlValueDao extends OW_BaseDao
         $this->deleteByExample($example);
     }
 
+    /**
+     * @param string $key
+     * @param int $themeId
+     * @return BOL_ThemeControlValue
+     */
     public function findByTcNameAndThemeId( $key, $themeId )
     {
         $example = new OW_Example();
