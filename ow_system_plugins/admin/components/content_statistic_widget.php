@@ -93,21 +93,12 @@ class ADMIN_CMP_ContentStatisticWidget extends ADMIN_CMP_AbstractStatisticWidget
     {
         $settingList = array();
 
-        // get all registered content groups
-        $contentGroups = BOL_ContentService::getInstance()->getContentGroups();
-        $groupsValues = array();
-
-        foreach($contentGroups as $group)
-        {
-            $groupsValues[$group['name']] = $group['label'];
-        }
-
-        $defaultGroup = $contentGroups ? array_shift($contentGroups) : array();
+        $contentGroups = self::getContentTypes();;
         $settingList['defaultContentGroup'] = array(
             'presentation' => self::PRESENTATION_SELECT,
             'label' => OW::getLanguage()->text('admin', 'widget_content_statistics_default_content_group'),
-            'value' => !empty($defaultGroup) ? $defaultGroup['name'] : null,
-            'optionList' => $groupsValues
+            'value' => !empty($contentGroups) ? key($contentGroups) : null,
+            'optionList' => $contentGroups
         );
 
         $settingList['defaultPeriod'] = array(
@@ -140,6 +131,43 @@ class ADMIN_CMP_ContentStatisticWidget extends ADMIN_CMP_AbstractStatisticWidget
             self::SETTING_WRAP_IN_BOX => true
         );
     }
+
+    /**
+     * Get content types
+     *
+     * @return array
+     */
+    public static function getContentTypes()
+    {
+        $contentGroups = BOL_ContentService::getInstance()->getContentGroups();
+        $processedGroups = array();
+
+        $disallowedEntityTypes = explode(',',
+                OW::getConfig()->getValue('base', 'site_statistics_disallowed_entity_types'));
+
+        foreach ($contentGroups as $group => $data)
+        {
+            $skip = false;
+
+            foreach($data['entityTypes'] as $entityType)
+            {
+                if ( in_array($entityType, $disallowedEntityTypes) )
+                {
+                    $skip = true;
+                    break;
+                }
+            }
+
+            if ( $skip )
+            {
+                continue;
+            }
+
+            $processedGroups[$group] = $data['label'];
+        }
+
+        return $processedGroups;
+    }
 }
 
 /**
@@ -157,19 +185,7 @@ class ContentStatisticForm extends Form
     {
         parent::__construct($name);
 
-        $contentGroups = BOL_ContentService::getInstance()->getContentGroups();
-        $processedGroups = array();
-        $selectedGroup   = null;
-
-        foreach ($contentGroups as $group => $data)
-        {
-            if ( !$selectedGroup )
-            {
-                $selectedGroup = $group;
-            }
-
-            $processedGroups[$group] = $data['label'];
-        }
+        $processedGroups = ADMIN_CMP_ContentStatisticWidget::getContentTypes();
 
         $groupField = new Selectbox('group');
         $groupField->setOptions($processedGroups);

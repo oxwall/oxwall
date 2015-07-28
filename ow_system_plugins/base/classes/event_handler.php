@@ -136,7 +136,13 @@ class BASE_CLASS_EventHandler
     public function onAfterAdd( OW_Event $event )
     {
         $params = $event->getParams();
-        BOL_SiteStatisticService::getInstance()->addEntity($params['entityType'], $params['entityId']);
+        $entityTypes = explode(',',
+                OW::getConfig()->getValue('base', 'site_statistics_disallowed_entity_types'));
+
+        if ( !in_array($params['entityType'], $entityTypes) )
+        {
+            BOL_SiteStatisticService::getInstance()->addEntity($params['entityType'], $params['entityId']);
+        }
     }
 
     public function onGetClassInstance( OW_Event $event )
