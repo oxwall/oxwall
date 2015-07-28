@@ -72,7 +72,7 @@ class ADMIN_CMP_UserStatistic extends OW_Component
 
         $entityLabels = array(
             'user_join' => OW::getLanguage()->text('admin', 'site_statistics_user_registrations'),
-            'user_login' => OW::getLanguage()->text('admin', 'site_statistics_user_online')
+            'user_login' => OW::getLanguage()->text('admin', 'site_statistics_user_logins')
         );
 
         // register components

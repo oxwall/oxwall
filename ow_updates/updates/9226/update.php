@@ -51,6 +51,8 @@ foreach ( $queryList as $query )
     }
 }
 
+Updater::getConfigService()->addConfig('base', 'site_statistics_disallowed_entity_types', 'user-status,avatar-change');
+
 $widgetService = Updater::getWidgetService();
 $widget = $widgetService->addWidget('BASE_CMP_CustomHtmlWidget', true);
 $widgetPlace = $widgetService->addWidgetToPlace($widget, BOL_ComponentAdminService::PLASE_ADMIN_DASHBOARD);
