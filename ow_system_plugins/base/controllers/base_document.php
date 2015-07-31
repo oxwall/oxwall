@@ -29,6 +29,13 @@
  */
 class BASE_CTRL_BaseDocument extends OW_ActionController
 {
+    
+    public function __construct()
+    {
+        parent::__construct();
+        
+        require_once OW_DIR_LIB . 'password_compat' . DS . 'password.php';
+    }
 
     public function index()
     {
@@ -132,9 +139,8 @@ class BASE_CTRL_BaseDocument extends OW_ActionController
         {
             $data = $form->getValues();
             $password = OW::getConfig()->getValue('base', 'guests_can_view_password');
-            $data['password'] = crypt($data['password'], OW_PASSWORD_SALT);
 
-            if ( !empty($data['password']) && $data['password'] === $password )
+            if ( !empty($data['password']) && password_verify($data['password'].OW_PASSWORD_SALT, $password) )
             {
                 setcookie('base_password_protection', UTIL_String::getRandomString(), (time() + 86400 * 30), '/');
                 echo "OW.info('" . OW::getLanguage()->text('base', 'password_protection_success_message') . "');window.location.reload();";
