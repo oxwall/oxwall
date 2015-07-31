@@ -41,7 +41,6 @@ class ADMIN_CTRL_Plugins extends ADMIN_CTRL_Abstract
      */
     private $storageService;
 
-
     /**
      * Constructor.
      */
@@ -320,46 +319,35 @@ class ADMIN_CTRL_Plugins extends ADMIN_CTRL_Abstract
 
     public function checkItemLicense( array $params )
     {
-        if( empty($params["key"]) || empty($params["type"]) || empty($params["developerKey"]) )
+        if ( empty($params["key"]) || empty($params["type"]) || empty($params["developerKey"]) )
         {
             throw new Redirect404Exception();
         }
-        
+
+        $language = OW::getLanguage();
         $key = trim($params["key"]);
         $devKey = trim($params["developerKey"]);
         $type = trim($params["type"]);
+
+        $data = $this->storageService->getItemInfoForUpdate($key, $devKey);
         
-        $this->storageService->getItemInfoForUpdate($key, $devKey);
+        printVar($data);
         
-        
-        
-        
-        if( $params["type"] == "plugin" )
-        {
-            
-        }
-        
-        
-//        if( !empty($_GET["back-uri"]) )
-//        {
-//
-//        }
-        
-        
-        $form = new Form('item-license-check');
+        $this->assign("text", "aaa");
+
+        $form = new Form('license-key');
 
         $licenseKey = new TextField('key');
-        $licenseKey->setValue($pluginDto->getLicenseKey());
         $licenseKey->setRequired();
         $licenseKey->setLabel($language->text('admin', 'com_plugin_request_key_label'));
         $form->addElement($licenseKey);
 
         $submit = new Submit('submit');
-        $submit->setValue($language->text('admin', 'license_form_submit_label'));
+        $submit->setValue($language->text('admin', 'license_form_button_label'));
         $form->addElement($submit);
 
         $button = new Button('button');
-        $button->setValue($language->text('admin', 'license_form_leave_label'));
+        $button->setValue($language->text('admin', 'license_form_back_label'));
         $button->addAttribute('onclick', "window.location='" . OW::getRouter()->urlFor('ADMIN_CTRL_Plugins', 'index') . "'");
         $form->addElement($button);
 
@@ -388,6 +376,12 @@ class ADMIN_CTRL_Plugins extends ADMIN_CTRL_Abstract
                 }
             }
         }
+
+
+//        if( !empty($_GET["back-uri"]) )
+//        {
+//
+//        }
     }
 
     public function updateRequest( array $params )

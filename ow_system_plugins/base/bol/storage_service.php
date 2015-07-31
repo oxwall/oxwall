@@ -43,6 +43,10 @@ class BOL_StorageService
     const URI_VAR_BUILD = "build";
     const URI_VAR_LICENSE_KEY = "licenseKey";
     /* --------------------------------------------- */
+    const STORE_ITEM_PROP_BUILD = "build";
+    const STORE_ITEM_PROP_FREEWARE = "freeware";
+    
+    /* --------------------------------------------- */
     const EVENT_ON_STORAGE_INTERECT = "base.on_plugin_info_update";
 
     /**
