@@ -29,7 +29,7 @@
  * @package ow_system_plugins.base.components
  * @since 1.0
  */
-class BASE_CMP_MainMenu extends BASE_CMP_Menu
+class BASE_CMP_MainMenu extends BASE_CMP_ResponsiveMenu
 {
 
     /**
