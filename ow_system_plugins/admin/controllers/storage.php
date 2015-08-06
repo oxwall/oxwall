@@ -57,52 +57,77 @@ class ADMIN_CTRL_Storage extends ADMIN_CTRL_Abstract
         $this->themeService = BOL_ThemeService::getInstance();
     }
 
-    private function redirectToBackUri( $result )
+    private function redirectToBackUri( $getParams )
     {
-        
-    }
-
-    public function checkItemLicense( array $params )
-    {
-        $language = OW::getLanguage();
-        $backUri = isset($_GET["back-uri"]) ? urldecode($_GET["back-uri"]) : null;
-        $resultCode = false;
-
-        if ( empty($params["key"]) || empty($params["type"]) || empty($params["developerKey"]) )
+        if ( !isset($getParams[BOL_StorageService::URI_VAR_BACK_URI]) )
         {
-            $this->assign("message", $language->text("admin", "check_license_invalid_params_err_msg"));
             return;
         }
 
-        $key = trim($params["key"]);
-        $devKey = trim($params["developerKey"]);
-        $type = trim($params["type"]);
+        $this->redirect(OW::getRequest()->buildUrlQueryString(OW_URL_HOME . urldecode($getParams[BOL_StorageService::URI_VAR_BACK_URI]), $getParams));
+    }
+
+    public function checkItemLicense()
+    {
+        $params = $_GET;
+        $language = OW::getLanguage();
+        $params[BOL_StorageService::URI_VAR_LICENSE_CHECK_COMPLETE] = 0;
+        $params[BOL_StorageService::URI_VAR_LICENSE_CHECK_RESULT] = 0;
+
+        if ( empty($params[BOL_StorageService::URI_VAR_KEY]) || empty($params[BOL_StorageService::URI_VAR_ITEM_TYPE]) || empty($params[BOL_StorageService::URI_VAR_DEV_KEY]) )
+        {
+            $errMsg = $language->text("admin", "check_license_invalid_params_err_msg");
+            OW::getFeedback()->error($errMsg);
+            $this->redirectToBackUri($params);
+            $this->assign("message", $errMsg);
+            return;
+        }
+
+        $key = trim($params[BOL_StorageService::URI_VAR_KEY]);
+        $devKey = trim($params[BOL_StorageService::URI_VAR_DEV_KEY]);
+        $type = trim($params[BOL_StorageService::URI_VAR_ITEM_TYPE]);
 
         $data = $this->storageService->getItemInfoForUpdate($key, $devKey);
 
+        if ( !$data )
+        {
+            $this->assign("backButton", true);
+            $errMsg = $language->text("admin", "check_license_invalid_servr_responce_err_msg");
+            OW::getFeedback()->error($errMsg);
+            $this->redirectToBackUri($params);
+            $this->assign("message", $errMsg);
+            return;
+        }
+
         if ( (bool) $data[BOL_StorageService::STORE_ITEM_PROP_FREEWARE] )
         {
+            $params[BOL_StorageService::URI_VAR_LICENSE_CHECK_RESULT] = 1;
+            $params[BOL_StorageService::URI_VAR_FREEWARE] = 1;
+            $this->redirectToBackUri($params);
             $this->assign("message", $language->text("admin", "check_license_item_is_free_msg"));
             return;
         }
 
         $this->assign("text", $language->text("admin", "license_request_text", array("type" => $type, "title" => $data["title"])));
 
-        $form = new Form('license-key');
-
-        $licenseKey = new TextField('key');
+        $form = new Form("license-key");
+        $licenseKey = new TextField("key");
         $licenseKey->setRequired();
-        $licenseKey->setLabel($language->text('admin', 'com_plugin_request_key_label'));
+        $licenseKey->setLabel($language->text("admin", "com_plugin_request_key_label"));
         $form->addElement($licenseKey);
 
-        $submit = new Submit('submit');
-        $submit->setValue($language->text('admin', 'license_form_button_label'));
+        $submit = new Submit("submit");
+        $submit->setValue($language->text("admin", "license_form_button_label"));
         $form->addElement($submit);
 
-        $button = new Button('button');
-        $button->setValue($language->text('admin', 'license_form_back_label'));
-        $button->addAttribute('onclick', "window.location='" . OW::getRouter()->urlFor('ADMIN_CTRL_Plugins', 'index') . "'");
-        $form->addElement($button);
+        if ( isset($params[BOL_StorageService::URI_VAR_BACK_URI]) )
+        {
+            $button = new Button("button");
+            $button->setValue($language->text("admin", "license_form_back_label"));
+            $button->addAttribute("onclick", "window.location='" . OW_URL_HOME . urldecode($params[BOL_StorageService::URI_VAR_BACK_URI]) . "'");
+            $form->addElement($button);
+            $this->assign("backButton", true);
+        }
 
         $this->addForm($form);
 
@@ -111,16 +136,24 @@ class ADMIN_CTRL_Storage extends ADMIN_CTRL_Abstract
             if ( $form->isValid($_POST) )
             {
                 $data = $form->getValues();
-                $params['licenseKey'] = $data['key'];
-
-                $result = $this->storageService->checkLicenseKey($pluginDto->getKey(), $pluginDto->getDeveloperKey(), $data['key']);
-
-                if ( $result === true )
+                $licenseKey = $data["key"];
+                $result = $this->storageService->checkLicenseKey($key, $devKey, $licenseKey);
+                $params[BOL_StorageService::URI_VAR_LICENSE_CHECK_COMPLETE] = 1;
+                if ( $result )
                 {
-                    $pluginDto->setLicenseKey($data['key']);
-                    BOL_PluginService::getInstance()->savePlugin($pluginDto);
+                    $params[BOL_StorageService::URI_VAR_LICENSE_CHECK_RESULT] = 1;
+                    $params[BOL_StorageService::URI_VAR_LICENSE_KEY] = urlencode($licenseKey);
+                    $pluginDto = $this->pluginService->findPluginByKey($key, $devKey);
 
-                    $this->redirect(OW::getRouter()->urlFor('ADMIN_CTRL_Plugins', 'update', $params));
+                    if ( $pluginDto != null )
+                    {
+                        $pluginDto->setLicenseKey($licenseKey);
+                        $this->pluginService->savePlugin($pluginDto);
+                    }
+
+                    $this->redirectToBackUri($params);
+                    OW::getFeedback()->info($language->text("admin", "plugins_manage_license_key_check_success"));
+                    $this->redirect();
                 }
                 else
                 {

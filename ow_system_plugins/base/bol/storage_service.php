@@ -42,10 +42,15 @@ class BOL_StorageService
     const URI_VAR_DEV_KEY = "developerKey";
     const URI_VAR_BUILD = "build";
     const URI_VAR_LICENSE_KEY = "licenseKey";
+    const URI_VAR_ITEM_TYPE = "item-type";
+    const URI_VAR_BACK_URI = "back-uri";
+    const URI_VAR_LICENSE_CHECK_COMPLETE = "license-check-complete";
+    const URI_VAR_LICENSE_CHECK_RESULT = "license-check-result";
+    const URI_VAR_FREEWARE = "freeware";
     /* --------------------------------------------- */
     const STORE_ITEM_PROP_BUILD = "build";
     const STORE_ITEM_PROP_FREEWARE = "freeware";
-    
+
     /* --------------------------------------------- */
     const EVENT_ON_STORAGE_INTERECT = "base.on_plugin_info_update";
 
@@ -347,7 +352,7 @@ class BOL_StorageService
 
     private function getStorageUrl( $uri )
     {
-        return UTIL_String::removeFirstAndLastSlashes(self::UPDATE_SERVER) . "/" . UTIL_String::removeFirstAndLastSlashes($uri)."/";
+        return UTIL_String::removeFirstAndLastSlashes(self::UPDATE_SERVER) . "/" . UTIL_String::removeFirstAndLastSlashes($uri) . "/";
     }
 
     private function triggerEventBeforeRequest( $params = array() )

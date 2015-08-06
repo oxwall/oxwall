@@ -12,7 +12,7 @@
 {$text}
 <br /><br />
 {form name='license-key'}{label name='key'}&nbsp;&nbsp;{input name='key' style='width:160px;'}<br /><br />
-{submit name='submit'}&nbsp;&nbsp;&nbsp;{submit name='button'}
+{submit name='submit'}&nbsp;&nbsp;&nbsp;{if !empty($backButton)}{submit name='button'}{/if}
 {/form}
 {/if}
 </div>

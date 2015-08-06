@@ -118,7 +118,7 @@ class ADMIN_CTRL_Plugins extends ADMIN_CTRL_Abstract
      */
     public function available()
     {
-        OW::getNavigation()->activateMenuItem(OW_Navigation::ADMIN_PLUGINS, 'admin', 'sidebar_menu_plugins_available');
+        OW::getNavigation()->activateMenuItem(OW_Navigation::ADMIN_PLUGINS, "admin", "sidebar_menu_plugins_available");
 
         // read plugins dir and find available plugins
         $arrayToAssign = $this->pluginService->getAvailablePluginsList();
@@ -126,14 +126,18 @@ class ADMIN_CTRL_Plugins extends ADMIN_CTRL_Abstract
         /* @var $plugin BOL_Plugin */
         foreach ( $arrayToAssign as $key => $plugin )
         {
-            $arrayToAssign[$key]['inst_url'] = OW::getRouter()->urlFor(__CLASS__, 'install', array('key' => $plugin['key']));
-            $arrayToAssign[$key]['del_url'] = OW::getRouter()->urlFor(__CLASS__, 'delete', array('key' => $plugin['key']));
+            $params = array(
+                BOL_StorageService::URI_VAR_KEY => $plugin["key"],
+                BOL_StorageService::URI_VAR_DEV_KEY => $plugin["developerKey"],
+                BOL_StorageService::URI_VAR_ITEM_TYPE => "plugin");
+            $arrayToAssign[$key]["inst_url"] = OW::getRequest()->buildUrlQueryString(OW::getRouter()->urlFor(__CLASS__, "install"), $params);
+            $arrayToAssign[$key]["del_url"] = OW::getRouter()->urlFor(__CLASS__, "delete", array("key" => $plugin['key']));
         }
 
-        $event = new OW_Event('admin.plugins_list_view', array('ctrl' => $this, 'type' => 'available'), $arrayToAssign);
+        $event = new OW_Event("admin.plugins_list_view", array("ctrl" => $this, "type" => "available"), $arrayToAssign);
         OW::getEventManager()->trigger($event);
         $arrayToAssign = $event->getData();
-        $this->assign('plugins', $arrayToAssign);
+        $this->assign("plugins", $arrayToAssign);
     }
 
     /**
@@ -330,9 +334,9 @@ class ADMIN_CTRL_Plugins extends ADMIN_CTRL_Abstract
         $type = trim($params["type"]);
 
         $data = $this->storageService->getItemInfoForUpdate($key, $devKey);
-        
+
         printVar($data);
-        
+
         $this->assign("text", "aaa");
 
         $form = new Form('license-key');
@@ -714,33 +718,62 @@ class ADMIN_CTRL_Plugins extends ADMIN_CTRL_Abstract
 
     /**
      * Installs plugin.
-     *
-     * @param array $params
      */
-    public function install( array $params )
+    public function install()
     {
-        if ( empty($params['key']) )
-        {
-            OW::getFeedback()->error(OW::getLanguage()->text('admin', 'manage_plugins_install_empty_key_error_message'));
-            $this->redirectToAction('available');
-        }
+        $params = $_GET;
 
-        try
+        $language = OW::getLanguage();
+
+        if ( empty($params[BOL_StorageService::URI_VAR_KEY]) || empty($params[BOL_StorageService::URI_VAR_DEV_KEY]) )
         {
-            $pluginDto = $this->pluginService->install(trim($params['key']));
-            OW::getFeedback()->info(OW::getLanguage()->text('admin', 'manage_plugins_install_success_message', array('plugin' => $pluginDto->getTitle())));
-        }
-        catch ( LogicException $e )
-        {
-            if ( OW_DEBUG_MODE )
+            if ( !empty($params) )
             {
-                throw $e;
+                OW::getFeedback()->error($language->text("admin", "manage_plugins_install_empty_key_error_message"));
             }
 
-            OW::getFeedback()->error(OW::getLanguage()->text('admin', 'manage_plugins_install_error_message', array('key' => ( empty($pluginDto) ? '_INVALID_' : $pluginDto->getKey()))));
+            $this->redirectToAction("available");
         }
 
-        $this->redirectToAction('index');
+        if ( !isset($params[BOL_StorageService::URI_VAR_LICENSE_CHECK_COMPLETE]) )
+        {
+            $params[BOL_StorageService::URI_VAR_BACK_URI] = OW::getRouter()->uriFor(__CLASS__, "install");
+            $this->redirect(OW::getRequest()->buildUrlQueryString(OW::getRouter()->urlFor("ADMIN_CTRL_Storage", "checkItemLicense"), $params));
+        }
+        else
+        {
+            if ( isset($params[BOL_StorageService::URI_VAR_LICENSE_CHECK_RESULT]) && (bool) $params[BOL_StorageService::URI_VAR_LICENSE_CHECK_RESULT] && isset($params[BOL_StorageService::URI_VAR_LICENSE_KEY]) )
+            {
+             
+                
+                if ( $this->storageService->checkLicenseKey($params[BOL_StorageService::URI_VAR_KEY], $params[BOL_StorageService::URI_VAR_DEV_KEY], $params[BOL_StorageService::URI_VAR_LICENSE_KEY]) )
+                {   
+                    try
+                    {
+                        $pluginDto = $this->pluginService->install(trim($params[BOL_StorageService::URI_VAR_KEY]));
+                        $pluginDto->setLicenseKey(urldecode($params[BOL_StorageService::URI_VAR_LICENSE_KEY]));
+                        OW::getFeedback()->info($language->text("admin", "manage_plugins_install_success_message", array("plugin" => $pluginDto->getTitle())));
+                    }
+                    catch ( LogicException $e )
+                    {                        
+                        OW::getLogger()->addEntry($e->getTraceAsString());
+
+                        if ( OW_DEBUG_MODE )
+                        {
+                            throw $e;
+                        }
+
+                        OW::getFeedback()->error($language->text("admin", "manage_plugins_install_error_message", array("key" => ( empty($pluginDto) ? "_INVALID_" : $pluginDto->getKey()))));
+                    }
+                }
+                else
+                {
+                    OW::getFeedback()->error($language->text("admin", "manage_plugins_install_invalid_license_key"));
+                }
+            }
+        }
+
+        $this->redirectToAction("index");
     }
 
     /**
