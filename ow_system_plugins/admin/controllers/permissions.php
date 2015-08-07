@@ -118,9 +118,18 @@ class ADMIN_CTRL_Permissions extends ADMIN_CTRL_Abstract
                     $mail->addRecipientEmail($adminEmail);
                     $mail->setSender($senderMail);
                     $mail->setSenderSuffix(false);
-                    $mail->setSubject('Site password');
-                    $mail->setTextContent("Your password: " . $data['password']);
-                    OW::getMailer()->send($mail);
+                    $mail->setSubject(OW::getLanguages()->text( 'admin', 'site_password'));
+                    $mail->setTextContent( OW::getLanguages()->text( 'admin', 'admin_password', array('password' => $data['password'])));
+                    try
+                    {
+                        OW::getMailer()->send($mail);
+                    }
+                    catch (Exception $e)
+                    {
+                        $logger = OW::getLogger('admin.send_password_message');
+                        $logger->addEntry($e->getMessage());
+                        $logger->writeLog();
+                    }
                     
                     $data['password'] = crypt($data['password'], OW_PASSWORD_SALT);
                     $config->saveConfig('base', 'guests_can_view', (int) $data['guests_can_view']);
