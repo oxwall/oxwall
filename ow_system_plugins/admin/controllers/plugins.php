@@ -29,17 +29,8 @@
  * @package ow_system_plugins.admin.controllers
  * @since 1.0
  */
-class ADMIN_CTRL_Plugins extends ADMIN_CTRL_Abstract
+class ADMIN_CTRL_Plugins extends ADMIN_CTRL_StorageAbstract
 {
-    /**
-     * @var BOL_PluginService
-     */
-    private $pluginService;
-
-    /**
-     * @var BOL_StorageService
-     */
-    private $storageService;
 
     /**
      * Constructor.
@@ -47,21 +38,21 @@ class ADMIN_CTRL_Plugins extends ADMIN_CTRL_Abstract
     public function __construct()
     {
         parent::__construct();
-        $this->pluginService = BOL_PluginService::getInstance();
-        $this->storageService = BOL_StorageService::getInstance();
     }
 
     /**
-     * Default action. Shows the list of all installed plugins.
+     * Default action. Shows the list of installed plugins.
      */
     public function index()
     {
-        OW::getNavigation()->activateMenuItem(OW_Navigation::ADMIN_PLUGINS, 'admin', 'sidebar_menu_plugins_installed');
+        OW::getNavigation()->activateMenuItem(OW_Navigation::ADMIN_PLUGINS, "admin", "sidebar_menu_plugins_installed");
 
         $language = OW::getLanguage();
-        $this->setPageTitle($language->text('admin', 'page_title_manage_plugins'));
-        $this->setPageHeading($language->text('admin', 'page_title_manage_plugins'));
-        $this->setPageHeadingIconClass('ow_ic_gear_wheel');
+        $router = OW::getRouter();
+
+        $this->setPageTitle($language->text("admin", "page_title_manage_plugins"));
+        $this->setPageHeading($language->text("admin", "page_title_manage_plugins"));
+        $this->setPageHeadingIconClass("ow_ic_gear_wheel");
 
         $this->pluginService->updatePluginsXmlInfo();
         // get plugins in DB
@@ -80,41 +71,47 @@ class ADMIN_CTRL_Plugins extends ADMIN_CTRL_Abstract
             return $aChar > $bChar;
         });
 
-        $arrayToAssign['active'] = array();
-        $arrayToAssign['inactive'] = array();
+        $arrayToAssign["active"] = array();
+        $arrayToAssign["inactive"] = array();
 
         /* @var $plugin BOL_Plugin */
         foreach ( $plugins as $plugin )
         {
             $array = array(
-                'title' => $plugin->getTitle(),
-                'description' => $plugin->getDescription(),
-                'set_url' => ( $plugin->isActive && $plugin->getAdminSettingsRoute() !== null) ? OW::getRouter()->urlForRoute($plugin->adminSettingsRoute) : false,
-                'update_url' => ( ((int) $plugin->getUpdate() === 1) && !defined('OW_PLUGIN_XP') ) ? OW::getRouter()->urlFor('ADMIN_CTRL_Plugins', 'updateRequest', array('key' => $plugin->getKey())) : false
+                "title" => $plugin->getTitle(),
+                "description" => $plugin->getDescription(),
+                "set_url" => ( $plugin->isActive && $plugin->getAdminSettingsRoute() !== null) ? $router->urlForRoute($plugin->adminSettingsRoute) : false,
+                "update_url" => ((int) $plugin->getUpdate() == 1) ? $router->urlFor(__CLASS__, "updateRequest", array("key" => $plugin->getKey())) : false
             );
 
             if ( $plugin->isActive() )
             {
-                $array['deact_url'] = OW::getRouter()->urlFor(__CLASS__, 'deactivate', array('key' => $plugin->getKey()));
-                $array['un_url'] = ( $plugin->getUninstallRoute() === null ? OW::getRouter()->urlFor(__CLASS__, 'uninstallRequest', array('key' => $plugin->getKey())) : OW::getRouter()->urlForRoute($plugin->getUninstallRoute()) );
-                $arrayToAssign['active'][$plugin->getKey()] = $array;
+                $array["deact_url"] = $router->urlFor(__CLASS__, "deactivate", array("key" => $plugin->getKey()));
+                $array["un_url"] = $router->urlFor(__CLASS__, "uninstallRequest", array("key" => $plugin->getKey()));
+
+                if ( $plugin->getUninstallRoute() !== null )
+                {
+                    $array["un_url"] = $router->urlForRoute($plugin->getUninstallRoute());
+                }
+
+                $arrayToAssign["active"][$plugin->getKey()] = $array;
             }
             else
             {
-                $array['active_url'] = OW::getRouter()->urlFor(__CLASS__, 'activate', array('key' => $plugin->getKey()));
-                $arrayToAssign['inactive'][$plugin->getKey()] = $array;
+                $array["active_url"] = $router->urlFor(__CLASS__, "activate", array("key" => $plugin->getKey()));
+                $arrayToAssign["inactive"][$plugin->getKey()] = $array;
             }
         }
 
-        $event = new OW_Event('admin.plugins_list_view', array('ctrl' => $this, 'type' => 'index'), $arrayToAssign);
+        $event = new OW_Event("admin.plugins_list_view", array("ctrl" => $this, "type" => "index"), $arrayToAssign);
         OW::getEventManager()->trigger($event);
         $arrayToAssign = $event->getData();
 
-        $this->assign('plugins', $arrayToAssign);
+        $this->assign("plugins", $arrayToAssign);
     }
 
     /**
-     * Action shows the list of plugins available for installation.
+     * Shows the list of plugins available for installation.
      */
     public function available()
     {
@@ -141,21 +138,21 @@ class ADMIN_CTRL_Plugins extends ADMIN_CTRL_Abstract
     }
 
     /**
-     * Upload and add new plugins.
+     * Uploads new plugin and extracts archive contecnts.
      */
     public function add()
     {
-        OW::getNavigation()->activateMenuItem(OW_Navigation::ADMIN_PLUGINS, 'admin', 'sidebar_menu_plugins_add');
+        OW::getNavigation()->activateMenuItem(OW_Navigation::ADMIN_PLUGINS, "admin", "sidebar_menu_plugins_add");
 
         $language = OW::getLanguage();
 
-        $form = new Form('plugin-add');
+        $form = new Form("plugin-add");
         $form->setEnctype(Form::ENCTYPE_MULTYPART_FORMDATA);
-        $file = new FileField('file');
+        $file = new FileField("file");
         $form->addElement($file);
 
-        $submit = new Submit('submit');
-        $submit->setValue($language->text('admin', 'plugins_manage_add_submit_label'));
+        $submit = new Submit("submit");
+        $submit->setValue($language->text("admin", "plugins_manage_add_submit_label"));
         $form->addElement($submit);
 
         $this->addForm($form);
@@ -165,7 +162,7 @@ class ADMIN_CTRL_Plugins extends ADMIN_CTRL_Abstract
             if ( $form->isValid($_POST) )
             {
                 $data = $form->getValues();
-                $result = UTIL_File::checkUploadedFile($_FILES['file']);
+                $result = UTIL_File::checkUploadedFile($_FILES["file"]);
 
                 if ( !$result["result"] )
                 {
@@ -173,10 +170,10 @@ class ADMIN_CTRL_Plugins extends ADMIN_CTRL_Abstract
                     $this->redirect();
                 }
 
-                $tempFile = OW_DIR_PLUGINFILES . 'ow' . DS . uniqid('plugin_add') . '.zip';
-                $tempDir = OW_DIR_PLUGINFILES . 'ow' . DS . uniqid('plugin_add') . DS;
+                $tempFile = OW_DIR_PLUGINFILES . 'ow' . DS . UTIL_HtmlTag::generateAutoId("plugin_add") . '.zip';
+                $tempDir = OW_DIR_PLUGINFILES . 'ow' . DS . UTIL_HtmlTag::generateAutoId("plugin_add") . DS;
 
-                move_uploaded_file($_FILES['file']['tmp_name'], $tempFile);
+                move_uploaded_file($_FILES["file"]["tmp_name"], $tempFile);
 
                 $zip = new ZipArchive();
 
@@ -187,28 +184,34 @@ class ADMIN_CTRL_Plugins extends ADMIN_CTRL_Abstract
                 }
                 else
                 {
-                    OW::getFeedback()->error(OW::getLanguage()->text('admin', 'manage_plugin_add_extract_error'));
-                    $this->redirectToAction('index');
+                    OW::getFeedback()->error(OW::getLanguage()->text("admin", "manage_plugin_add_extract_error"));
+                    $this->redirectToAction("index");
                 }
 
                 unlink($tempFile);
 
-                $this->redirect(OW::getRequest()->buildUrlQueryString(OW::getRouter()->urlFor(__CLASS__, 'processAdd'), array('dir' => urlencode($tempDir))));
+                $this->redirect(OW::getRequest()->buildUrlQueryString(OW::getRouter()->urlFor(__CLASS__, "processAdd"), array("dir" => urlencode($tempDir))));
             }
         }
     }
 
+    /**
+     * Uploads plugin contents to plugins dir via FTP.
+     */
     public function processAdd()
     {
         $language = OW::getLanguage();
 
-        if ( empty($_GET['dir']) || !file_exists(urldecode($_GET['dir'])) )
+        if ( empty($_GET["dir"]) || !file_exists(urldecode($_GET["dir"])) )
         {
-            OW::getFeedback()->error($language->text('admin', 'manage_plugins_add_ftp_move_error'));
+            OW::getFeedback()->error($language->text("admin", "manage_plugins_add_ftp_move_error"));
             $this->redirectToAction('add');
         }
 
-        $tempDir = urldecode($_GET['dir']);
+        $tempDir = urldecode($_GET["dir"]);
+
+
+        //TODO check if temp dir exists and use util_file::find instead of handle
         $handle = opendir($tempDir);
 
         if ( $handle !== false )
@@ -226,20 +229,20 @@ class ADMIN_CTRL_Plugins extends ADMIN_CTRL_Abstract
             closedir($handle);
         }
 
-        if ( !empty($innerDir) && file_exists($tempDir . $innerDir . DS . 'plugin.xml') )
+        if ( !empty($innerDir) && file_exists($tempDir . $innerDir . DS . "plugin.xml") )
         {
             $localDir = $tempDir . $innerDir . DS;
         }
         else
         {
-            OW::getFeedback()->error(OW::getLanguage()->text('admin', 'manage_plugin_add_extract_error'));
+            OW::getFeedback()->error(OW::getLanguage()->text("admin", "manage_plugin_add_extract_error"));
             $this->redirectToAction('index');
         }
 
         //get plugin.xml info
-        $pluginXmlInfo = $this->pluginService->readPluginXmlInfo($tempDir . $innerDir . DS . 'plugin.xml');
-        $plugin = $this->pluginService->findPluginByKey($pluginXmlInfo['key']);
-        $pluginWithDevKey = $this->pluginService->findPluginByKey($pluginXmlInfo['key'], $pluginXmlInfo['developerKey']);
+        $pluginXmlInfo = $this->pluginService->readPluginXmlInfo($tempDir . $innerDir . DS . "plugin.xml");
+        $plugin = $this->pluginService->findPluginByKey($pluginXmlInfo["key"]);
+        $pluginWithDevKey = $this->pluginService->findPluginByKey($pluginXmlInfo["key"], $pluginXmlInfo["developerKey"]);
 
         if ( $plugin !== null )
         {
@@ -249,8 +252,8 @@ class ADMIN_CTRL_Plugins extends ADMIN_CTRL_Abstract
             }
             else
             {
-                OW::getFeedback()->error(OW::getLanguage()->text('admin', 'manage_plugin_cant_add_duplicate_key_error'));
-                $this->redirectToAction('index');
+                OW::getFeedback()->error(OW::getLanguage()->text("admin", "manage_plugin_cant_add_duplicate_key_error"));
+                $this->redirectToAction("index");
             }
         }
         else
@@ -260,7 +263,7 @@ class ADMIN_CTRL_Plugins extends ADMIN_CTRL_Abstract
 
             foreach ( $itemsXmlList as $xmlItem )
             {
-                if ( $xmlItem["key"] == $pluginXmlInfo["key"] && $xmlItem["developerKey"] == $pluginXmlInfo['developerKey'] )
+                if ( $xmlItem["key"] == $pluginXmlInfo["key"] && $xmlItem["developerKey"] == $pluginXmlInfo["developerKey"] )
                 {
                     $pluginDir = $xmlItem["path"];
                 }
@@ -280,8 +283,9 @@ class ADMIN_CTRL_Plugins extends ADMIN_CTRL_Abstract
         $ftp = $this->getFtpConnection();
         $ftp->uploadDir($localDir, $pluginDir);
         UTIL_File::removeDir($tempDir);
-        OW::getFeedback()->info($language->text('base', 'manage_plugins_add_success_message'));
-        $this->redirectToAction('available');
+
+        OW::getFeedback()->info($language->text("base", "manage_plugins_add_success_message"));
+        $this->redirectToAction("available");
     }
 
     /**
@@ -293,12 +297,14 @@ class ADMIN_CTRL_Plugins extends ADMIN_CTRL_Abstract
     {
         $pluginDto = $this->getPluginDtoByKey($params);
         $language = OW::getLanguage();
+
         // trigger event
         $event = new OW_Event(OW_EventManager::ON_BEFORE_PLUGIN_DEACTIVATE, array('pluginKey' => $pluginDto->getKey()));
         OW::getEventManager()->trigger($event);
+
         $this->pluginService->deactivate($pluginDto->getKey());
-        OW::getFeedback()->info($language->text('admin', 'manage_plugins_deactivate_success_message', array('plugin' => $pluginDto->getTitle())));
-        $this->redirectToAction('index');
+        OW::getFeedback()->info($language->text("admin", "manage_plugins_deactivate_success_message", array("plugin" => $pluginDto->getTitle())));
+        $this->redirectToAction("index");
     }
 
     /**
@@ -313,80 +319,13 @@ class ADMIN_CTRL_Plugins extends ADMIN_CTRL_Abstract
         $this->pluginService->activate($pluginDto->getKey());
 
         // trigger event
-        $event = new OW_Event(OW_EventManager::ON_AFTER_PLUGIN_ACTIVATE, array('pluginKey' => $pluginDto->getKey()));
+        $event = new OW_Event(OW_EventManager::ON_AFTER_PLUGIN_ACTIVATE, array("pluginKey" => $pluginDto->getKey()));
         OW::getEventManager()->trigger($event);
 
-        OW::getFeedback()->info(OW::getLanguage()->text('admin', 'manage_plugins_activate_success_message', array('plugin' => $pluginDto->getTitle())));
-        $this->redirectToAction('index');
+        OW::getFeedback()->info(OW::getLanguage()->text("admin", "manage_plugins_activate_success_message", array("plugin" => $pluginDto->getTitle())));
+        $this->redirectToAction("index");
     }
     /* --------------------------- */
-
-    public function checkItemLicense( array $params )
-    {
-        if ( empty($params["key"]) || empty($params["type"]) || empty($params["developerKey"]) )
-        {
-            throw new Redirect404Exception();
-        }
-
-        $language = OW::getLanguage();
-        $key = trim($params["key"]);
-        $devKey = trim($params["developerKey"]);
-        $type = trim($params["type"]);
-
-        $data = $this->storageService->getItemInfoForUpdate($key, $devKey);
-
-        printVar($data);
-
-        $this->assign("text", "aaa");
-
-        $form = new Form('license-key');
-
-        $licenseKey = new TextField('key');
-        $licenseKey->setRequired();
-        $licenseKey->setLabel($language->text('admin', 'com_plugin_request_key_label'));
-        $form->addElement($licenseKey);
-
-        $submit = new Submit('submit');
-        $submit->setValue($language->text('admin', 'license_form_button_label'));
-        $form->addElement($submit);
-
-        $button = new Button('button');
-        $button->setValue($language->text('admin', 'license_form_back_label'));
-        $button->addAttribute('onclick', "window.location='" . OW::getRouter()->urlFor('ADMIN_CTRL_Plugins', 'index') . "'");
-        $form->addElement($button);
-
-        $this->addForm($form);
-
-        if ( OW::getRequest()->isPost() )
-        {
-            if ( $form->isValid($_POST) )
-            {
-                $data = $form->getValues();
-                $params['licenseKey'] = $data['key'];
-
-                $result = $this->storageService->checkLicenseKey($pluginDto->getKey(), $pluginDto->getDeveloperKey(), $data['key']);
-
-                if ( $result === true )
-                {
-                    $pluginDto->setLicenseKey($data['key']);
-                    BOL_PluginService::getInstance()->savePlugin($pluginDto);
-
-                    $this->redirect(OW::getRouter()->urlFor('ADMIN_CTRL_Plugins', 'update', $params));
-                }
-                else
-                {
-                    OW::getFeedback()->error($language->text('admin', 'plugins_manage_invalid_license_key_error_message'));
-                    $this->redirect();
-                }
-            }
-        }
-
-
-//        if( !empty($_GET["back-uri"]) )
-//        {
-//
-//        }
-    }
 
     public function updateRequest( array $params )
     {
@@ -537,6 +476,8 @@ class ADMIN_CTRL_Plugins extends ADMIN_CTRL_Abstract
         }
         else
         {
+            //TODO refactor using util_files::find
+
             $handle = opendir($tempDir);
 
             while ( ($item = readdir($handle)) !== false )
@@ -637,85 +578,6 @@ class ADMIN_CTRL_Plugins extends ADMIN_CTRL_Abstract
         $this->assign('redirectUrl', OW::getRequest()->buildUrlQueryString(OW_URL_HOME . 'ow_updates/index.php', array('plugin' => $pluginDto->getKey(), 'back-uri' => urlencode(OW::getRequest()->getRequestUri()))));
     }
 
-    public function coreUpdateRequest()
-    {
-        if ( !(bool) OW::getConfig()->getValue('base', 'update_soft') )
-        {
-            throw new Redirect404Exception();
-        }
-
-        $newCoreInfo = $this->storageService->getCoreInfoForUpdate();
-        $this->assign('text', OW::getLanguage()->text('admin', 'manage_plugins_core_update_request_text', array('oldVersion' => OW::getConfig()->getValue('base', 'soft_version'), 'newVersion' => $newCoreInfo['version'], 'info' => $newCoreInfo['info'])));
-        $this->assign('redirectUrl', OW::getRouter()->urlFor('ADMIN_CTRL_Plugins', 'coreUpdate'));
-        $this->assign('returnUrl', OW::getRouter()->urlForRoute('admin_default'));
-    }
-
-    public function coreUpdate()
-    {
-        if ( !(bool) OW::getConfig()->getValue('base', 'update_soft') )
-        {
-            throw new Redirect404Exception();
-        }
-
-        $language = OW::getLanguage();
-
-        $archivePath = OW_DIR_PLUGINFILES . 'ow' . DS . 'core.zip';
-
-        $tempDir = OW_DIR_PLUGINFILES . 'ow' . DS . 'core' . DS;
-
-        $ftp = $this->getFtpConnection();
-
-        $errorMessage = false;
-
-        OW::getApplication()->setMaintenanceMode(true);
-        $this->storageService->downloadCore($archivePath);
-
-        if ( !file_exists($archivePath) )
-        {
-            $errorMessage = $language->text('admin', 'core_update_download_error');
-        }
-        else
-        {
-            mkdir($tempDir);
-
-            $zip = new ZipArchive();
-
-            $zopen = $zip->open($archivePath);
-
-            if ( $zopen === true )
-            {
-                $zip->extractTo($tempDir);
-                $zip->close();
-                $ftp->uploadDir($tempDir, OW_DIR_ROOT);
-                $ftp->chmod(0777, OW_DIR_STATIC);
-                $ftp->chmod(0777, OW_DIR_STATIC_PLUGIN);
-            }
-            else
-            {
-                $errorMessage = $language->text('admin', 'core_update_unzip_error');
-            }
-        }
-
-        if ( file_exists($tempDir) )
-        {
-            UTIL_File::removeDir($tempDir);
-        }
-
-        if ( file_exists($archivePath) )
-        {
-            unlink($archivePath);
-        }
-
-        if ( $errorMessage !== false )
-        {
-            OW::getApplication()->setMaintenanceMode(false);
-            OW::getFeedback()->error($errorMessage);
-            $this->redirect(OW::getRouter()->urlFor('ADMIN_CTRL_Index', 'index'));
-        }
-
-        $this->redirect(OW_URL_HOME . 'ow_updates/index.php');
-    }
-
     /**
      * Installs plugin.
      */
@@ -725,6 +587,7 @@ class ADMIN_CTRL_Plugins extends ADMIN_CTRL_Abstract
 
         $language = OW::getLanguage();
 
+        //check if key and dev_key are provided
         if ( empty($params[BOL_StorageService::URI_VAR_KEY]) || empty($params[BOL_StorageService::URI_VAR_DEV_KEY]) )
         {
             if ( !empty($params) )
@@ -735,42 +598,62 @@ class ADMIN_CTRL_Plugins extends ADMIN_CTRL_Abstract
             $this->redirectToAction("available");
         }
 
-        if ( !isset($params[BOL_StorageService::URI_VAR_LICENSE_CHECK_COMPLETE]) )
+        $installPlugin = false;
+
+        // get remote info about the plugin
+        $itemData = $this->storageService->getItemInfoForUpdate($params[BOL_StorageService::URI_VAR_KEY], $params[BOL_StorageService::URI_VAR_DEV_KEY]);
+
+        // check if it's free
+        if ( isset($itemData[BOL_StorageService::STORE_ITEM_PROP_FREEWARE]) && (bool) $itemData[BOL_StorageService::STORE_ITEM_PROP_FREEWARE] )
         {
-            $params[BOL_StorageService::URI_VAR_BACK_URI] = OW::getRouter()->uriFor(__CLASS__, "install");
-            $this->redirect(OW::getRequest()->buildUrlQueryString(OW::getRouter()->urlFor("ADMIN_CTRL_Storage", "checkItemLicense"), $params));
+            $installPlugin = true;
         }
         else
         {
+            if ( !isset($params[BOL_StorageService::URI_VAR_LICENSE_CHECK_COMPLETE]) )
+            {
+                $params[BOL_StorageService::URI_VAR_BACK_URI] = OW::getRouter()->uriFor(__CLASS__, "install");
+                $this->redirect(OW::getRequest()->buildUrlQueryString(OW::getRouter()->urlFor("ADMIN_CTRL_Storage", "checkItemLicense"), $params));
+            }
+
             if ( isset($params[BOL_StorageService::URI_VAR_LICENSE_CHECK_RESULT]) && (bool) $params[BOL_StorageService::URI_VAR_LICENSE_CHECK_RESULT] && isset($params[BOL_StorageService::URI_VAR_LICENSE_KEY]) )
             {
-             
-                
                 if ( $this->storageService->checkLicenseKey($params[BOL_StorageService::URI_VAR_KEY], $params[BOL_StorageService::URI_VAR_DEV_KEY], $params[BOL_StorageService::URI_VAR_LICENSE_KEY]) )
-                {   
-                    try
-                    {
-                        $pluginDto = $this->pluginService->install(trim($params[BOL_StorageService::URI_VAR_KEY]));
-                        $pluginDto->setLicenseKey(urldecode($params[BOL_StorageService::URI_VAR_LICENSE_KEY]));
-                        OW::getFeedback()->info($language->text("admin", "manage_plugins_install_success_message", array("plugin" => $pluginDto->getTitle())));
-                    }
-                    catch ( LogicException $e )
-                    {                        
-                        OW::getLogger()->addEntry($e->getTraceAsString());
-
-                        if ( OW_DEBUG_MODE )
-                        {
-                            throw $e;
-                        }
-
-                        OW::getFeedback()->error($language->text("admin", "manage_plugins_install_error_message", array("key" => ( empty($pluginDto) ? "_INVALID_" : $pluginDto->getKey()))));
-                    }
-                }
-                else
                 {
-                    OW::getFeedback()->error($language->text("admin", "manage_plugins_install_invalid_license_key"));
+                    $installPlugin = true;
                 }
             }
+        }
+
+        if ( $installPlugin )
+        {
+            try
+            {
+                $pluginDto = $this->pluginService->install(trim($params[BOL_StorageService::URI_VAR_KEY]));
+
+                if ( $pluginDto != null )
+                {
+                    $pluginDto->setLicenseKey(urldecode($params[BOL_StorageService::URI_VAR_LICENSE_KEY]));
+                    $this->pluginService->savePlugin($pluginDto);
+                }
+
+                OW::getFeedback()->info($language->text("admin", "manage_plugins_install_success_message", array("plugin" => $pluginDto->getTitle())));
+            }
+            catch ( LogicException $e )
+            {
+                OW::getLogger()->addEntry($e->getTraceAsString());
+
+                if ( OW_DEBUG_MODE )
+                {
+                    throw $e;
+                }
+
+                OW::getFeedback()->error($language->text("admin", "manage_plugins_install_error_message", array("key" => ( empty($pluginDto) ? "_INVALID_" : $pluginDto->getKey()))));
+            }
+        }
+        else
+        {
+            OW::getFeedback()->error($language->text("admin", "manage_plugins_install_invalid_license_key"));
         }
 
         $this->redirectToAction("index");
@@ -862,86 +745,7 @@ class ADMIN_CTRL_Plugins extends ADMIN_CTRL_Abstract
         $this->redirectToAction('available');
     }
 
-    public function ftpAttrs()
-    {
-        $language = OW::getLanguage();
-
-        $this->setPageHeading($language->text('admin', 'page_title_manage_plugins_ftp_info'));
-        $this->setPageHeadingIconClass('ow_ic_gear_wheel');
-
-        $form = new Form('ftp');
-
-        $login = new TextField('host');
-        $login->setValue('localhost');
-        $login->setRequired(true);
-        $login->setLabel($language->text('admin', 'plugins_manage_ftp_form_host_label'));
-        $form->addElement($login);
-
-        $login = new TextField('login');
-        $login->setHasInvitation(true);
-        $login->setInvitation('login');
-        $login->setRequired(true);
-        $login->setLabel($language->text('admin', 'plugins_manage_ftp_form_login_label'));
-        $form->addElement($login);
-
-        $password = new PasswordField('password');
-        $password->setHasInvitation(true);
-        $password->setInvitation('password');
-        $password->setRequired(true);
-        $password->setLabel($language->text('admin', 'plugins_manage_ftp_form_password_label'));
-        $form->addElement($password);
-
-        $port = new TextField('port');
-        $port->setValue(21);
-        $port->addValidator(new IntValidator());
-        $port->setLabel($language->text('admin', 'plugins_manage_ftp_form_port_label'));
-        $form->addElement($port);
-
-        $submit = new Submit('submit');
-        $submit->setValue($language->text('admin', 'plugins_manage_ftp_form_submit_label'));
-        $form->addElement($submit);
-
-        $this->addForm($form);
-
-        if ( OW::getRequest()->isPost() )
-        {
-            if ( $form->isValid($_POST) )
-            {
-                $data = $form->getValues();
-                OW::getSession()->set('ftpAttrs', array('host' => trim($data['host']), 'login' => trim($data['login']), 'password' => trim($data['password']), 'port' => (int) $data['port']));
-                if ( !empty($_GET['back_uri']) )
-                {
-                    $this->redirect(OW_URL_HOME . urldecode($_GET['back_uri']));
-                }
-                else
-                {
-                    $this->redirectToAction('index');
-                }
-            }
-        }
-    }
-
-    /**
-     * Returns ftp connection.
-     *
-     * @return UTIL_Ftp
-     */
-    private function getFtpConnection()
-    {
-        try
-        {
-            $ftp = $this->storageService->getFtpConnection();
-        }
-        catch ( LogicException $e )
-        {
-            OW::getFeedback()->error($e->getMessage());
-            $this->redirect(OW::getRequest()->buildUrlQueryString(OW::getRouter()->urlFor(__CLASS__, 'ftpAttrs'), array('back_uri' => urlencode(OW::getRequest()->getRequestUri()))));
-        }
-
-        return $ftp;
-    }
-
-    private function getPluginDtoByKey( $params )
+    protected function getPluginDtoByKey( $params )
     {
         if ( !empty($params['key']) )
         {

@@ -79,7 +79,7 @@ class BOL_PluginService
     }
 
     public function readPluginsList()
-    {        
+    {
         $this->pluginDaoCache = $this->pluginDao->findAll();
     }
 
@@ -356,12 +356,12 @@ class BOL_PluginService
 
         include_once OW_DIR_PLUGIN . $pluginDto->getModule() . DS . 'install.php';
         include_once OW_DIR_PLUGIN . $pluginDto->getModule() . DS . 'activate.php';
-        
+
         if ( $generateCache )
         {
             BOL_LanguageService::getInstance()->generateCacheForAllActiveLanguages();
         }
-        
+
         // trigger event
         $event = new OW_Event(OW_EventManager::ON_AFTER_PLUGIN_INSTALL, array('pluginKey' => $pluginDto->getKey()));
         OW::getEventManager()->trigger($event);
@@ -476,11 +476,6 @@ class BOL_PluginService
 
     public function checkManualUpdates()
     {
-        if ( defined('OW_PLUGIN_XP') )
-        {
-            return;
-        }
-
         $timestamp = OW::getConfig()->getValue('base', 'check_mupdates_ts');
 
         if ( ( time() - (int) $timestamp ) < 30 )
@@ -512,9 +507,15 @@ class BOL_PluginService
         return $this->pluginDao->findPluginForManualUpdate();
     }
 
-    public function getCoreXmlInfo()
+    /**
+     * Returns a list of plugins with unverified 
+     * 
+     * @return array<BOL_Plugin>
+     */
+    public function getListOfUnverifiedPlugins()
     {
-        return (array) simplexml_load_file(OW_DIR_ROOT . 'ow_version.xml');
+        //TODO implement
+        return array();
     }
 
     /**

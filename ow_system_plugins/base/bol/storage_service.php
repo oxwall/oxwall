@@ -115,7 +115,9 @@ class BOL_StorageService
             $pluginsRequestArray[] = array(
                 self::URI_VAR_KEY => $plugin->getKey(),
                 self::URI_VAR_DEV_KEY => $plugin->getDeveloperKey(),
-                self::URI_VAR_BUILD => $plugin->getBuild());
+                self::URI_VAR_BUILD => $plugin->getBuild(),
+                self::URI_VAR_LICENSE_KEY => $plugin->getLicenseKey()
+            );
         }
 
         $themesRequestArray = array();
@@ -130,7 +132,9 @@ class BOL_StorageService
             $themesRequestArray[] = array(
                 self::URI_VAR_KEY => $theme->getName(),
                 self::URI_VAR_DEV_KEY => $theme->getDeveloperKey(),
-                self::URI_VAR_BUILD => $theme->getBuild());
+                self::URI_VAR_BUILD => $theme->getBuild(),
+                self::URI_VAR_LICENSE_KEY => $theme->getLicenseKey()
+            );
         }
 
         $data = $this->triggerEventBeforeRequest();
@@ -156,6 +160,7 @@ class BOL_StorageService
 
         if ( empty($resultArray) || !is_array($resultArray) )
         {
+            OW::getLogger()->addEntry(__CLASS__ . "::" . __METHOD__ . " remote request returned empty result", "core.update");
             return;
         }
 
@@ -214,7 +219,7 @@ class BOL_StorageService
      * 
      * @return array
      */
-    public function getCoreInfoForUpdate()
+    public function getPlatformInfoForUpdate()
     {
         $data = $this->triggerEventBeforeRequest();
         $requestUrl = OW::getRequest()->buildUrlQueryString($this->getStorageUrl(self::URI_GET_PLATFORM_INFO), $data);
@@ -224,22 +229,31 @@ class BOL_StorageService
     /**
      * Downloads platform update archive and puts it to the provided path.
      * 
-     * @param type $archivePath
+     * @return string 
+     * @throws LogicException
      */
-    public function downloadCore( $archivePath )
+    public function downloadPlatform()
     {
-        //TODO replace path in params with return value like in items
-        //TODO rename to downloadPlatformUpdate
         $params = array(
-            'platform-version' => OW::getConfig()->getValue('base', 'soft_version'),
-            'platform-build' => OW::getConfig()->getValue('base', 'soft_build')
+            "platform-version" => OW::getConfig()->getValue("base", "soft_version"),
+            "platform-build" => OW::getConfig()->getValue("base", "soft_build")
         );
 
         $data = array_merge($params, $this->triggerEventBeforeRequest($params));
         $requestUrl = OW::getRequest()->buildUrlQueryString($this->getStorageUrl(self::URI_DOWNLOAD_PLATFORM_ARCHIVE), $data);
 
         $fileContents = file_get_contents($requestUrl);
+
+        if ( empty($fileContents) )
+        {
+            throw new LogicException("Can't download file. Server returned empty file.");
+        }
+
+        $fileName = "new-platform-" . UTIL_String::getRandomString(8, UTIL_String::RND_STR_NUMERIC) . ".zip";
+        $archivePath = OW_DIR_PLUGINFILES . "ow" . DS . $fileName;
         file_put_contents($archivePath, $fileContents);
+
+        return $archivePath;
     }
 
     /**
@@ -256,7 +270,7 @@ class BOL_StorageService
         $params = array(
             self::URI_VAR_KEY => trim($key),
             self::URI_VAR_DEV_KEY => trim($devKey),
-            self::URI_VAR_LICENSE_KEY => trim($licenseKey)
+            self::URI_VAR_LICENSE_KEY => $licenseKey != null ? trim($licenseKey) : null
         );
 
         $data = array_merge($params, $this->triggerEventBeforeRequest($params));
@@ -267,8 +281,8 @@ class BOL_StorageService
         {
             throw new LogicException("Can't download file. Server returned empty file.");
         }
-        //TODO replace kolhoz with util tand generator
-        $filePath = OW_DIR_PLUGINFILES . 'ow' . DS . 'temp' . rand(1, 1000000) . '.zip';
+        $fileName = "temp" . UTIL_String::getRandomString(8, UTIL_String::RND_STR_NUMERIC) . ".zip";
+        $filePath = OW_DIR_PLUGINFILES . "ow" . DS . $fileName;
         file_put_contents($filePath, $fileContents);
         return $filePath;
     }
@@ -296,6 +310,23 @@ class BOL_StorageService
     }
 
     /**
+     * Returns platform xml info.
+     * 
+     * @return array
+     */
+    public function getPlatformXmlInfo()
+    {
+        $filePath = OW_DIR_ROOT . "ow_version.xml";
+
+        if ( !file_exists($filePath) )
+        {
+            return null;
+        }
+
+        return (array) simplexml_load_file($filePath);
+    }
+
+    /**
      * Returns inited and checked ftp connection.
      *
      * @throws LogicException
@@ -307,9 +338,9 @@ class BOL_StorageService
         $errorMessageKey = null;
         $ftp = null;
 
-        if ( !OW::getSession()->isKeySet('ftpAttrs') || !is_array(OW::getSession()->get('ftpAttrs')) )
+        if ( !OW::getSession()->isKeySet("ftpAttrs") || !is_array(OW::getSession()->get("ftpAttrs")) )
         {
-            $errorMessageKey = 'plugins_manage_need_ftp_attrs_message';
+            $errorMessageKey = "plugins_manage_need_ftp_attrs_message";
         }
         else
         {
@@ -317,7 +348,7 @@ class BOL_StorageService
 
             try
             {
-                $ftp = UTIL_Ftp::getConnection(OW::getSession()->get('ftpAttrs'));
+                $ftp = UTIL_Ftp::getConnection(OW::getSession()->get("ftpAttrs"));
             }
             catch ( Exception $ex )
             {
@@ -326,7 +357,7 @@ class BOL_StorageService
 
             if ( $ftp !== null )
             {
-                $testDir = OW_DIR_CORE . 'test';
+                $testDir = OW_DIR_CORE . "test";
 
                 $ftp->mkDir($testDir);
 
@@ -336,26 +367,26 @@ class BOL_StorageService
                 }
                 else
                 {
-                    $errorMessageKey = 'plugins_manage_ftp_attrs_invalid_user';
+                    $errorMessageKey = "plugins_manage_ftp_attrs_invalid_user";
                 }
             }
         }
 
         if ( $errorMessageKey !== null )
         {
-            throw new LogicException($language->text('admin', $errorMessageKey));
+            throw new LogicException($language->text("admin", $errorMessageKey));
         }
 
         return $ftp;
     }
     /* -------------------------------------------------------------------------------------- */
 
-    private function getStorageUrl( $uri )
+    protected function getStorageUrl( $uri )
     {
         return UTIL_String::removeFirstAndLastSlashes(self::UPDATE_SERVER) . "/" . UTIL_String::removeFirstAndLastSlashes($uri) . "/";
     }
 
-    private function triggerEventBeforeRequest( $params = array() )
+    protected function triggerEventBeforeRequest( $params = array() )
     {
         $event = OW::getEventManager()->trigger(new OW_Event('base.on_plugin_info_update', $params));
         $data = $event->getData();

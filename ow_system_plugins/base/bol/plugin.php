@@ -35,50 +35,66 @@ class BOL_Plugin extends OW_Entity
      * @var string
      */
     public $title;
+
     /**
      * @var string
      */
     public $description;
+
     /**
      * @var string
      */
     public $module;
+
     /**
      * @var string
      */
     public $key;
+
     /**
      * @var string
      */
     public $developerKey;
+
     /**
      * @var boolean
      */
     public $isSystem;
+
     /**
      * @var boolean
      */
     public $isActive;
+
     /**
      * @var string
      */
     public $adminSettingsRoute;
+
     /**
      * @var string
      */
     public $uninstallRoute;
+
     /**
      * @var integer
      */
     public $build = 0;
+
     /**
      * @var boolean
      */
     public $update = 0;
+
     /**
      * @var string
      */
     public $licenseKey;
+
+    /**
+     * @var int
+     */
+    public $licenseCheckTimestamp;
 
     /**
      * @return string
@@ -259,5 +275,15 @@ class BOL_Plugin extends OW_Entity
     public function setUninstallRoute( $uninstallRoute )
     {
         $this->uninstallRoute = $uninstallRoute;
+    }
+
+    public function getLicenseCheckTimestamp()
+    {
+        return $this->licenseCheckTimestamp;
+    }
+
+    public function setLicenseCheckTimestamp( $licenseCheckTimestamp )
+    {
+        $this->licenseCheckTimestamp = $licenseCheckTimestamp;
     }
 }

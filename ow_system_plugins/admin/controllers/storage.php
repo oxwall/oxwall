@@ -29,44 +29,19 @@
  * @package ow_system_plugins.admin.controllers
  * @since 1.7.7
  */
-class ADMIN_CTRL_Storage extends ADMIN_CTRL_Abstract
+class ADMIN_CTRL_Storage extends ADMIN_CTRL_StorageAbstract
 {
-    /**
-     * @var BOL_PluginService
-     */
-    private $pluginService;
-
-    /**
-     * @var BOL_StorageService
-     */
-    private $storageService;
-
-    /**
-     * @var BOL_ThemeService
-     */
-    private $themeService;
-
     /**
      * Constructor.
      */
     public function __construct()
     {
         parent::__construct();
-        $this->pluginService = BOL_PluginService::getInstance();
-        $this->storageService = BOL_StorageService::getInstance();
-        $this->themeService = BOL_ThemeService::getInstance();
     }
 
-    private function redirectToBackUri( $getParams )
-    {
-        if ( !isset($getParams[BOL_StorageService::URI_VAR_BACK_URI]) )
-        {
-            return;
-        }
-
-        $this->redirect(OW::getRequest()->buildUrlQueryString(OW_URL_HOME . urldecode($getParams[BOL_StorageService::URI_VAR_BACK_URI]), $getParams));
-    }
-
+    /**
+     * Generic action to get the license key for items.
+     */
     public function checkItemLicense()
     {
         $params = $_GET;
@@ -101,6 +76,7 @@ class ADMIN_CTRL_Storage extends ADMIN_CTRL_Abstract
 
         if ( (bool) $data[BOL_StorageService::STORE_ITEM_PROP_FREEWARE] )
         {
+            $params[BOL_StorageService::URI_VAR_LICENSE_CHECK_COMPLETE] = 1;
             $params[BOL_StorageService::URI_VAR_LICENSE_CHECK_RESULT] = 1;
             $params[BOL_StorageService::URI_VAR_FREEWARE] = 1;
             $this->redirectToBackUri($params);
@@ -164,52 +140,59 @@ class ADMIN_CTRL_Storage extends ADMIN_CTRL_Abstract
         }
     }
 
-    public function coreUpdateRequest()
+    /**
+     * Confirm action before platform update.
+     */
+    public function platformUpdateRequest()
     {
-        if ( !(bool) OW::getConfig()->getValue('base', 'update_soft') )
+        if ( !(bool) OW::getConfig()->getValue("base", "update_soft") )
         {
+            //TODO replace 404 redirect with message saying that update is not available.
             throw new Redirect404Exception();
         }
 
-        $newCoreInfo = $this->storageService->getCoreInfoForUpdate();
-        $this->assign('text', OW::getLanguage()->text('admin', 'manage_plugins_core_update_request_text', array('oldVersion' => OW::getConfig()->getValue('base', 'soft_version'), 'newVersion' => $newCoreInfo['version'], 'info' => $newCoreInfo['info'])));
-        $this->assign('redirectUrl', OW::getRouter()->urlFor('ADMIN_CTRL_Plugins', 'coreUpdate'));
-        $this->assign('returnUrl', OW::getRouter()->urlForRoute('admin_default'));
+        $newPlatformInfo = $this->storageService->getPlatformInfoForUpdate();
+        $params = array(
+            "oldVersion" => OW::getConfig()->getValue("base", "soft_version"),
+            "newVersion" => $newPlatformInfo["version"],
+            "info" => $newPlatformInfo["info"]
+        );
+        $this->assign("text", OW::getLanguage()->text("admin", "manage_plugins_core_update_request_text", $params));
+        $this->assign("redirectUrl", OW::getRouter()->urlFor(__CLASS__, "platformUpdate"));
+        $this->assign("returnUrl", OW::getRouter()->urlForRoute("admin_default"));
     }
 
-    public function coreUpdate()
+    /**
+     * Updates platform.
+     */
+    public function platformUpdate()
     {
-        if ( !(bool) OW::getConfig()->getValue('base', 'update_soft') )
+        if ( !(bool) OW::getConfig()->getValue("base", "update_soft") )
         {
             throw new Redirect404Exception();
         }
 
         $language = OW::getLanguage();
-
-        $archivePath = OW_DIR_PLUGINFILES . 'ow' . DS . 'core.zip';
-
-        $tempDir = OW_DIR_PLUGINFILES . 'ow' . DS . 'core' . DS;
+        $tempDir = OW_DIR_PLUGINFILES . "ow" . DS . "core" . DS;
 
         $ftp = $this->getFtpConnection();
 
         $errorMessage = false;
 
         OW::getApplication()->setMaintenanceMode(true);
-        $this->storageService->downloadCore($archivePath);
+        $archivePath = $this->storageService->downloadPlatform();
 
         if ( !file_exists($archivePath) )
         {
-            $errorMessage = $language->text('admin', 'core_update_download_error');
+            $errorMessage = $language->text("admin", "core_update_download_error");
         }
         else
         {
             mkdir($tempDir);
-
             $zip = new ZipArchive();
-
             $zopen = $zip->open($archivePath);
 
-            if ( $zopen === true )
+            if ( $zopen === true && file_exists($tempDir) )
             {
                 $zip->extractTo($tempDir);
                 $zip->close();
@@ -219,7 +202,7 @@ class ADMIN_CTRL_Storage extends ADMIN_CTRL_Abstract
             }
             else
             {
-                $errorMessage = $language->text('admin', 'core_update_unzip_error');
+                $errorMessage = $language->text("admin", "core_update_unzip_error");
             }
         }
 
@@ -243,23 +226,65 @@ class ADMIN_CTRL_Storage extends ADMIN_CTRL_Abstract
         $this->redirect(OW_URL_HOME . 'ow_updates/index.php');
     }
 
-    /**
-     * Returns ftp connection.
-     *
-     * @return UTIL_Ftp
-     */
-    private function getFtpConnection()
+    //TODO refactor
+    public function ftpAttrs()
     {
-        try
-        {
-            $ftp = $this->storageService->getFtpConnection();
-        }
-        catch ( LogicException $e )
-        {
-            OW::getFeedback()->error($e->getMessage());
-            $this->redirect(OW::getRequest()->buildUrlQueryString(OW::getRouter()->urlFor(__CLASS__, 'ftpAttrs'), array('back_uri' => urlencode(OW::getRequest()->getRequestUri()))));
-        }
+        $this->checkXP();
 
-        return $ftp;
+        $language = OW::getLanguage();
+
+        $this->setPageHeading($language->text('admin', 'page_title_manage_plugins_ftp_info'));
+        $this->setPageHeadingIconClass('ow_ic_gear_wheel');
+
+        $form = new Form('ftp');
+
+        $login = new TextField('host');
+        $login->setValue('localhost');
+        $login->setRequired(true);
+        $login->setLabel($language->text('admin', 'plugins_manage_ftp_form_host_label'));
+        $form->addElement($login);
+
+        $login = new TextField('login');
+        $login->setHasInvitation(true);
+        $login->setInvitation('login');
+        $login->setRequired(true);
+        $login->setLabel($language->text('admin', 'plugins_manage_ftp_form_login_label'));
+        $form->addElement($login);
+
+        $password = new PasswordField('password');
+        $password->setHasInvitation(true);
+        $password->setInvitation('password');
+        $password->setRequired(true);
+        $password->setLabel($language->text('admin', 'plugins_manage_ftp_form_password_label'));
+        $form->addElement($password);
+
+        $port = new TextField('port');
+        $port->setValue(21);
+        $port->addValidator(new IntValidator());
+        $port->setLabel($language->text('admin', 'plugins_manage_ftp_form_port_label'));
+        $form->addElement($port);
+
+        $submit = new Submit('submit');
+        $submit->setValue($language->text('admin', 'plugins_manage_ftp_form_submit_label'));
+        $form->addElement($submit);
+
+        $this->addForm($form);
+
+        if ( OW::getRequest()->isPost() )
+        {
+            if ( $form->isValid($_POST) )
+            {
+                $data = $form->getValues();
+                OW::getSession()->set('ftpAttrs', array('host' => trim($data['host']), 'login' => trim($data['login']), 'password' => trim($data['password']), 'port' => (int) $data['port']));
+                if ( !empty($_GET['back_uri']) )
+                {
+                    $this->redirect(OW_URL_HOME . urldecode($_GET['back_uri']));
+                }
+                else
+                {
+                    $this->redirectToAction('index');
+                }
+            }
+        }
     }
 }

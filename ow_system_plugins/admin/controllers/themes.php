@@ -29,17 +29,12 @@
  * @package ow_system_plugins.admin.controllers
  * @since 1.0
  */
-class ADMIN_CTRL_Themes extends ADMIN_CTRL_Abstract
+class ADMIN_CTRL_Themes extends ADMIN_CTRL_StorageAbstract
 {
-    /**
-     * @var BOL_ThemeService
-     */
-    private $themeService;
-
     /**
      * @var BASE_CMP_ContentMenu
      */
-    private $menu;
+    protected $menu;
 
     /**
      * Constructor.
@@ -47,36 +42,30 @@ class ADMIN_CTRL_Themes extends ADMIN_CTRL_Abstract
     public function __construct()
     {
         parent::__construct();
-
-        $this->themeService = BOL_ThemeService::getInstance();
-        $this->setDefaultAction('chooseTheme');
+        $this->setDefaultAction("chooseTheme");
     }
 
     public function init()
     {
-        $router = OW_Router::getInstance();
-
-        $pageActions = array('choose_theme', 'add_theme');
-
+        $pageActions = array("choose_theme", "add_theme");
         $menuItems = array();
 
         foreach ( $pageActions as $key => $item )
         {
             $menuItem = new BASE_MenuItem();
-            $menuItem->setKey($item)->setLabel(OW::getLanguage()->text('admin', 'themes_menu_item_' . $item))->setOrder($key)->setUrl($router->urlFor(__CLASS__, $item));
+            $menuItem->setKey($item)->setLabel(OW::getLanguage()->text('admin', 'themes_menu_item_' . $item))->setOrder($key)->setUrl(OW::getRouter()->urlFor(__CLASS__, $item));
             $menuItems[] = $menuItem;
         }
 
         $this->menu = new BASE_CMP_ContentMenu($menuItems);
-
-        $this->addComponent('contentMenu', $this->menu);
-
-        $this->setPageHeading(OW::getLanguage()->text('admin', 'themes_choose_page_title'));
+        $this->addComponent("contentMenu", $this->menu);
+        $this->setPageHeading(OW::getLanguage()->text("admin", "themes_choose_page_title"));
     }
 
     public function chooseTheme()
     {
         $language = OW::getLanguage();
+        $router = OW::getRouter();
 
         $this->themeService->updateThemeList();
         $this->themeService->updateThemesInfo();
@@ -88,54 +77,55 @@ class ADMIN_CTRL_Themes extends ADMIN_CTRL_Abstract
         /* @var $theme BOL_Theme */
         foreach ( $themes as $theme )
         {
-            $themesInfo[$theme->getName()] = (array) json_decode($theme->getDescription());
-            $themesInfo[$theme->getName()]['key'] = $theme->getName();
-            $themesInfo[$theme->getName()]['title'] = $theme->getTitle();
-            $themesInfo[$theme->getName()]['iconUrl'] = $this->themeService->getStaticUrl($theme->getName()) . BOL_ThemeService::ICON_FILE;
-            $themesInfo[$theme->getName()]['previewUrl'] = $this->themeService->getStaticUrl($theme->getName()) . BOL_ThemeService::PREVIEW_FILE;
-            $themesInfo[$theme->getName()]['active'] = ( $theme->getName() === $activeTheme );
-            $themesInfo[$theme->getName()]['changeUrl'] = OW::getRouter()->urlFor(__CLASS__, 'changeTheme', array('theme' => $theme->getName()));
-            $themesInfo[$theme->getName()]['update_url'] = ( ((int) $theme->getUpdate() === 1) && !defined('OW_PLUGIN_XP') ) ? OW::getRouter()->urlFor('ADMIN_CTRL_Themes', 'updateRequest', array('name' => $theme->getName())) : false;
+            $themeArr = array(
+                "key" => $theme->getName(),
+                "title" => $theme->getTitle(),
+                "iconUrl" => $this->themeService->getStaticUrl($theme->getName()) . BOL_ThemeService::ICON_FILE,
+                "previewUrl" => $this->themeService->getStaticUrl($theme->getName()) . BOL_ThemeService::PREVIEW_FILE,
+                "active" => ( $theme->getName() == $activeTheme ),
+                "changeUrl" => OW::getRequest()->buildUrlQueryString($router->urlFor(__CLASS__, "changeTheme"), array("name" => $theme->getName(), "devKey" => $theme->getDeveloperKey())),
+                "update_url" => ( ((int) $theme->getUpdate() == 1) ) ? $router->urlFor("ADMIN_CTRL_Themes", "updateRequest", array("name" => $theme->getName())) : false
+            );
 
             if ( !in_array($theme->getName(), array(BOL_ThemeService::DEFAULT_THEME, $activeTheme)) )
             {
-                $themesInfo[$theme->getName()]['delete_url'] = OW::getRouter()->urlFor(__CLASS__, 'deleteTheme', array('name' => $theme->getName()));
+                $themeArr["delete_url"] = $router->urlFor(__CLASS__, "deleteTheme", array("name" => $theme->getName()));
             }
+
+            $themesInfo[$theme->getName()] = array_merge(json_decode($theme->getDescription(), true), $themeArr);
         }
 
-        OW::getDocument()->addScript(OW::getPluginManager()->getPlugin('admin')->getStaticJsUrl() . 'theme_select.js');
-        OW::getDocument()->addScript(OW::getPluginManager()->getPlugin('base')->getStaticJsUrl() . 'jquery.sticky.js');
+        OW::getDocument()->addScript(OW::getPluginManager()->getPlugin("admin")->getStaticJsUrl() . "theme_select.js");
+        OW::getDocument()->addScript(OW::getPluginManager()->getPlugin("base")->getStaticJsUrl() . "jquery.sticky.js");
 
         $addData = array(
-            'deleteConfirmMsg' => $language->text('admin', 'themes_choose_delete_confirm_msg'),
-            'deleteActiveThemeMsg' => $language->text('admin', 'themes_cant_delete_active_theme')
+            "deleteConfirmMsg" => $language->text("admin", "themes_choose_delete_confirm_msg"),
+            "deleteActiveThemeMsg" => $language->text("admin", "themes_cant_delete_active_theme")
         );
 
         OW::getDocument()->addOnloadScript(
             "window.owThemes = new ThemesSelect(" . json_encode($themesInfo) . ", " . json_encode($addData) . ");
         	$('.selected_theme_info input.theme_select_submit').click(function(){
-    			window.location.href = '" . $themesInfo[$activeTheme]['changeUrl'] . "';
+    			window.location.href = '{$themesInfo[$activeTheme]['changeUrl']}';
     		});
             $('.selected_theme_info_stick').sticky({topSpacing:60});
             $('.admin_themes_select a.theme_icon').click( function(){ $('.theme_info .theme_control_button').hide(); });"
         );
 
         $adminTheme = OW::getThemeManager()->getThemeService()->getThemeObjectByName(BOL_ThemeService::DEFAULT_THEME);
-        $defaultThemeImgUrl = $adminTheme === null ? "" : $adminTheme->getStaticImagesUrl();
+        $defaultThemeImgUrl = ($adminTheme === null) ? "" : $adminTheme->getStaticImagesUrl();
 
 
         $this->assign("adminThemes", array(BOL_ThemeService::DEFAULT_THEME => $themesInfo[BOL_ThemeService::DEFAULT_THEME]));
-        $this->assign('themeInfo', $themesInfo[$activeTheme]);
+        $this->assign("themeInfo", $themesInfo[$activeTheme]);
         $event = new OW_Event("admin.filter_themes_to_choose", array(), $themesInfo);
         OW::getEventManager()->trigger($event);
-        $this->assign('themes', $event->getData());
-        $this->assign('defaultThemeImgDir', $defaultThemeImgUrl);
+        $this->assign("themes", $event->getData());
+        $this->assign("defaultThemeImgDir", $defaultThemeImgUrl);
     }
 
     public function addTheme()
     {
-        $this->checkXP();
-
         OW::getNavigation()->activateMenuItem(OW_Navigation::ADMIN_PLUGINS, 'admin', 'sidebar_menu_themes_add');
         $this->setPageHeading(OW::getLanguage()->text('admin', 'themes_add_theme_page_heading'));
         $this->setPageHeadingIconClass('ow_ic_monitor');
@@ -238,7 +228,6 @@ class ADMIN_CTRL_Themes extends ADMIN_CTRL_Abstract
 
     public function processAdd()
     {
-        $this->checkXP();
         $language = OW::getLanguage();
 
         if ( empty($_GET['dir']) || !file_exists(urldecode($_GET['dir'])) )
@@ -290,18 +279,59 @@ class ADMIN_CTRL_Themes extends ADMIN_CTRL_Abstract
 
     public function changeTheme( $params )
     {
-        OW::getConfig()->saveConfig('base', 'selectedTheme', trim($params['theme']));
-        OW::getEventManager()->trigger(new OW_Event('base.change_theme', array('name' => $params['theme'])));
-        OW::getFeedback()->info(OW::getLanguage()->text('admin', 'theme_change_success_message'));
-        $this->redirect(OW::getRouter()->uriForRoute('admin_themes_choose'));
-    }
+        $backUrl = OW::getRouter()->urlForRoute('admin_themes_choose');
+        $language = OW::getLanguage();
 
-    private function checkXP()
-    {
-        if ( defined('OW_PLUGIN_XP') )
+        if ( empty($params["name"]) || empty($params["devKey"]) )
         {
-            throw new Redirect404Exception();
+            OW::getFeedback()->error($language->text("admin", "theme_manage_empty_key_error_msg"));
+            $this->redirect($backUrl);
         }
+
+        $params = array(
+            BOL_StorageService::URI_VAR_KEY => trim($params["name"]),
+            BOL_StorageService::URI_VAR_DEV_KEY => trim($params["devKey"])
+        );
+
+        $activateTheme = false;
+
+        // get remote info about the plugin
+        $itemData = $this->storageService->getItemInfoForUpdate($params[BOL_StorageService::URI_VAR_KEY], $params[BOL_StorageService::URI_VAR_DEV_KEY]);
+
+        // check if it's free
+        if ( isset($itemData[BOL_StorageService::STORE_ITEM_PROP_FREEWARE]) && (bool) $itemData[BOL_StorageService::STORE_ITEM_PROP_FREEWARE] )
+        {
+            $activateTheme = true;
+        }
+        else
+        {
+            if ( !isset($params[BOL_StorageService::URI_VAR_LICENSE_CHECK_COMPLETE]) )
+            {
+                $params[BOL_StorageService::URI_VAR_BACK_URI] = OW::getRouter()->uriFor(__CLASS__, "changeTheme");
+                $this->redirect(OW::getRequest()->buildUrlQueryString(OW::getRouter()->urlFor("ADMIN_CTRL_Storage", "checkItemLicense"), $params));
+            }
+
+            if ( isset($params[BOL_StorageService::URI_VAR_LICENSE_CHECK_RESULT]) && (bool) $params[BOL_StorageService::URI_VAR_LICENSE_CHECK_RESULT] && isset($params[BOL_StorageService::URI_VAR_LICENSE_KEY]) )
+            {
+                if ( $this->storageService->checkLicenseKey($params[BOL_StorageService::URI_VAR_KEY], $params[BOL_StorageService::URI_VAR_DEV_KEY], $params[BOL_StorageService::URI_VAR_LICENSE_KEY]) )
+                {
+                    $activateTheme = true;
+                }
+            }
+        }
+
+        if ( $activateTheme )
+        {
+            OW::getConfig()->saveConfig("base", "selectedTheme", $params[BOL_StorageService::URI_VAR_KEY]);
+            OW::getEventManager()->trigger(new OW_Event("base.change_theme", array("name" => $params[BOL_StorageService::URI_VAR_KEY])));
+            OW::getFeedback()->info(OW::getLanguage()->text("admin", "theme_change_success_message"));
+        }
+        else
+        {
+            OW::getFeedback()->error($language->text("admin", "manage_theme_activate_invalid_license_key"));
+        }
+
+        $this->redirect($backUrl);
     }
 
     /**
@@ -327,7 +357,6 @@ class ADMIN_CTRL_Themes extends ADMIN_CTRL_Abstract
 
     public function updateRequest( array $params )
     {
-        $this->checkXP();
         $themeDto = $this->getThemeDtoByName($params);
         $language = OW::getLanguage();
 
@@ -403,8 +432,6 @@ class ADMIN_CTRL_Themes extends ADMIN_CTRL_Abstract
 
     public function update( array $params )
     {
-        $this->checkXP();
-
         if ( !empty($_GET['mode']) )
         {
             switch ( trim($_GET['mode']) )

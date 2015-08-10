@@ -89,7 +89,7 @@ $router->addRoute(new OW_Route('admin_languages_index', 'admin/languages', 'ADMI
 $router->addRoute(new OW_Route('admin_theme_css', 'admin/theme/css', 'ADMIN_CTRL_Theme', 'css'));
 $router->addRoute(new OW_Route('admin_theme_settings', 'admin/theme/settings', 'ADMIN_CTRL_Theme', 'settings'));
 $router->addRoute(new OW_Route('admin_theme_graphics', 'admin/theme/graphics', 'ADMIN_CTRL_Theme', 'graphics'));
-$router->addRoute(new OW_Route('admin_core_update_request', 'admin/update-core', 'ADMIN_CTRL_Plugins', 'coreUpdateRequest'));
+$router->addRoute(new OW_Route('admin_core_update_request', 'admin/platform-update', 'ADMIN_CTRL_Storage', 'platformUpdateRequest'));
 
 // Mobile
 $router->addRoute(new OW_Route('mobile.admin.navigation', 'admin/mobile/navigation', 'ADMIN_CTRL_MobileNavigation', 'index'));
