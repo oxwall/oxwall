@@ -29,17 +29,33 @@
  * @package ow_system_plugins.base.components
  * @since 1.0
  */
-class BASE_CMP_MainMenu extends BASE_CMP_ResponsiveMenu
+class BASE_CMP_MainMenu extends BASE_CMP_Menu
 {
-
+    /**
+     *
+     * @var BASE_CMP_Menu 
+     */
+    protected $menu;
+    
     /**
      * Constructor.
      */
-    public function __construct()
+    public function __construct( array $params = array() )
     {
         parent::__construct();
-        $this->name = BOL_NavigationService::MENU_TYPE_MAIN;
-        $menuItems = BOL_NavigationService::getInstance()->findMenuItems(BOL_NavigationService::MENU_TYPE_MAIN);
-        $this->setMenuItems(BOL_NavigationService::getInstance()->getMenuItems($menuItems));
+        
+        $responsive = isset($params["responsive"]) && $params["responsive"];
+        
+        $this->menu = $responsive ? new BASE_CMP_ResponsiveMenu() : new BASE_CMP_Menu();
+    }
+    
+    public function render()
+    {
+        $menuItems = OW::getDocument()->getMasterPage()
+                ->getMenu(BOL_NavigationService::MENU_TYPE_MAIN)->getMenuItems();
+        
+        $this->menu->setMenuItems($menuItems);
+        
+        return $this->menu->render();
     }
 }
