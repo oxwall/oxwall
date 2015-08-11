@@ -379,6 +379,18 @@ class BOL_StorageService
 
         return $ftp;
     }
+    
+    /**
+     * Returns URL of local generic update script.
+     * 
+     * @return string
+     */
+    public function getUpdaterUrl()
+    {
+        return OW_URL_HOME . "ow_updates/index.php";
+    }
+
+
     /* -------------------------------------------------------------------------------------- */
 
     protected function getStorageUrl( $uri )

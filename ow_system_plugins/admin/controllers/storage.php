@@ -31,6 +31,7 @@
  */
 class ADMIN_CTRL_Storage extends ADMIN_CTRL_StorageAbstract
 {
+
     /**
      * Constructor.
      */
@@ -220,52 +221,52 @@ class ADMIN_CTRL_Storage extends ADMIN_CTRL_StorageAbstract
         {
             OW::getApplication()->setMaintenanceMode(false);
             OW::getFeedback()->error($errorMessage);
-            $this->redirect(OW::getRouter()->urlFor('ADMIN_CTRL_Index', 'index'));
+            $this->redirect(OW::getRouter()->urlFor("ADMIN_CTRL_Index", "index"));
         }
 
-        $this->redirect(OW_URL_HOME . 'ow_updates/index.php');
+        $this->redirect($this->storageService->getUpdaterUrl());
     }
 
-    //TODO refactor
+    /**
+     * Requests local FTP attributes to update items/platform source code.
+     */
     public function ftpAttrs()
     {
-        $this->checkXP();
-
         $language = OW::getLanguage();
 
-        $this->setPageHeading($language->text('admin', 'page_title_manage_plugins_ftp_info'));
-        $this->setPageHeadingIconClass('ow_ic_gear_wheel');
+        $this->setPageHeading($language->text("admin", "page_title_manage_plugins_ftp_info"));
+        $this->setPageHeadingIconClass("ow_ic_gear_wheel");
 
-        $form = new Form('ftp');
+        $form = new Form("ftp");
 
-        $login = new TextField('host');
-        $login->setValue('localhost');
+        $login = new TextField("host");
+        $login->setValue("localhost");
         $login->setRequired(true);
-        $login->setLabel($language->text('admin', 'plugins_manage_ftp_form_host_label'));
+        $login->setLabel($language->text("admin", "plugins_manage_ftp_form_host_label"));
         $form->addElement($login);
 
-        $login = new TextField('login');
+        $login = new TextField("login");
         $login->setHasInvitation(true);
-        $login->setInvitation('login');
+        $login->setInvitation("login");
         $login->setRequired(true);
-        $login->setLabel($language->text('admin', 'plugins_manage_ftp_form_login_label'));
+        $login->setLabel($language->text("admin", "plugins_manage_ftp_form_login_label"));
         $form->addElement($login);
 
-        $password = new PasswordField('password');
+        $password = new PasswordField("password");
         $password->setHasInvitation(true);
-        $password->setInvitation('password');
+        $password->setInvitation("password");
         $password->setRequired(true);
-        $password->setLabel($language->text('admin', 'plugins_manage_ftp_form_password_label'));
+        $password->setLabel($language->text("admin", "plugins_manage_ftp_form_password_label"));
         $form->addElement($password);
 
-        $port = new TextField('port');
+        $port = new TextField("port");
         $port->setValue(21);
         $port->addValidator(new IntValidator());
-        $port->setLabel($language->text('admin', 'plugins_manage_ftp_form_port_label'));
+        $port->setLabel($language->text("admin", "plugins_manage_ftp_form_port_label"));
         $form->addElement($port);
 
-        $submit = new Submit('submit');
-        $submit->setValue($language->text('admin', 'plugins_manage_ftp_form_submit_label'));
+        $submit = new Submit("submit");
+        $submit->setValue($language->text("admin", "plugins_manage_ftp_form_submit_label"));
         $form->addElement($submit);
 
         $this->addForm($form);
@@ -275,15 +276,16 @@ class ADMIN_CTRL_Storage extends ADMIN_CTRL_StorageAbstract
             if ( $form->isValid($_POST) )
             {
                 $data = $form->getValues();
-                OW::getSession()->set('ftpAttrs', array('host' => trim($data['host']), 'login' => trim($data['login']), 'password' => trim($data['password']), 'port' => (int) $data['port']));
-                if ( !empty($_GET['back_uri']) )
-                {
-                    $this->redirect(OW_URL_HOME . urldecode($_GET['back_uri']));
-                }
-                else
-                {
-                    $this->redirectToAction('index');
-                }
+
+                $ftpAttrs = array(
+                    "host" => trim($data["host"]),
+                    "login" => trim($data["login"]),
+                    "password" => trim($data["password"]),
+                    "port" => (int) $data["port"]);
+
+                OW::getSession()->set("ftpAttrs", $ftpAttrs);
+                $this->redirectToBackUri($_GET);
+                $this->redirectToAction('index');
             }
         }
     }

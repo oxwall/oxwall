@@ -35,7 +35,7 @@ class BOL_PluginService
     const SCRIPT_UNINSTALL = 'uninstall.php';
     const SCRIPT_ACTIVATE = 'activate.php';
     const SCRIPT_DEACTIVATE = 'deactivate.php';
-    const UPDATE_SERVER = 'https://storage.oxwall.org/';
+    const PLUGIN_INFO_XML = "plugin.xml";
 
     /**
      * @var BOL_PluginDao

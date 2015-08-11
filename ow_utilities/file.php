@@ -324,18 +324,18 @@ class UTIL_File
      * @param int $errorCode
      * @return array
      */
-    public static function checkUploadedFile( array $filesItem, $fileSizeLimit = null )
+    public static function checkUploadedFile( array $filesItem, $fileSizeLimitInBytes = null )
     {
         $language = OW::getLanguage();
 
-        if ( empty($filesItem) || array_key_exists("tmp_name", $filesItem) || array_key_exists("size", $filesItem) )
+        if ( empty($filesItem) || !array_key_exists("tmp_name", $filesItem) || !array_key_exists("size", $filesItem) )
         {
             return array("result" => false, "message" => $language->text('base', 'upload_file_fail'));
         }
 
-        if ( $fileSizeLimit == null )
+        if ( $fileSizeLimitInBytes == null )
         {
-            $fileSizeLimit = self::getFileUploadServerLimitInBytes();
+            $fileSizeLimitInBytes = self::getFileUploadServerLimitInBytes();
         }
 
         if ( $filesItem["error"] != UPLOAD_ERR_OK )
@@ -343,7 +343,7 @@ class UTIL_File
             switch ( $filesItem["error"] )
             {
                 case UPLOAD_ERR_INI_SIZE:
-                    $errorString = $language->text('base', 'upload_file_max_upload_filesize_error', array("limit" => ($fileSizeLimit / 1024 / 1024) . "MB"));
+                    $errorString = $language->text('base', 'upload_file_max_upload_filesize_error', array("limit" => ($fileSizeLimitInBytes / 1024 / 1024) . "MB"));
                     break;
 
                 case UPLOAD_ERR_PARTIAL:
@@ -373,9 +373,9 @@ class UTIL_File
             return array("result" => false, "message" => $errorString);
         }
 
-        if ( $filesItem['size'] > $fileSizeLimit )
+        if ( $filesItem['size'] > $fileSizeLimitInBytes )
         {
-            return array("result" => false, "message" => $language->text('base', 'upload_file_max_upload_filesize_error', array("limit" => ($fileSizeLimit / 1024 / 1024) . "MB")));
+            return array("result" => false, "message" => $language->text('base', 'upload_file_max_upload_filesize_error', array("limit" => ($fileSizeLimitInBytes / 1024 / 1024) . "MB")));
         }
 
         if ( !is_uploaded_file($filesItem['tmp_name']) )
