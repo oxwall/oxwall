@@ -211,7 +211,7 @@ class BOL_StorageService
         $data = array_merge($params, $this->triggerEventBeforeRequest($params));
         $requestUrl = OW::getRequest()->buildUrlQueryString($this->getStorageUrl(self::URI_GET_ITEM_INFO), $data);
 
-        return (array) json_decode((file_get_contents($requestUrl)));
+        return json_decode(file_get_contents($requestUrl), true);
     }
 
     /**
@@ -223,7 +223,7 @@ class BOL_StorageService
     {
         $data = $this->triggerEventBeforeRequest();
         $requestUrl = OW::getRequest()->buildUrlQueryString($this->getStorageUrl(self::URI_GET_PLATFORM_INFO), $data);
-        return (array) json_decode((file_get_contents($requestUrl)));
+        return json_decode(file_get_contents($requestUrl), true);
     }
 
     /**
@@ -379,7 +379,7 @@ class BOL_StorageService
 
         return $ftp;
     }
-    
+
     /**
      * Returns URL of local generic update script.
      * 
@@ -389,8 +389,6 @@ class BOL_StorageService
     {
         return OW_URL_HOME . "ow_updates/index.php";
     }
-
-
     /* -------------------------------------------------------------------------------------- */
 
     protected function getStorageUrl( $uri )

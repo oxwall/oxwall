@@ -429,143 +429,113 @@ class ADMIN_CTRL_Plugins extends ADMIN_CTRL_StorageAbstract
         catch ( Exception $e )
         {
             $feedback->error($e->getMessage());
-            $this->redirectToAction('index');
+            $this->redirectToAction("index");
         }
 
         if ( !file_exists($archivePath) )
         {
-            $feedback->error(OW::getLanguage()->text('admin', 'plugin_update_download_error'));
-            $this->redirectToAction('index');
+            $feedback->error(OW::getLanguage()->text("admin", "plugin_update_download_error"));
+            $this->redirectToAction("index");
         }
 
         $zip = new ZipArchive();
-        $tempDir = OW::getPluginManager()->getPlugin("base")->getPluginFilesDir() . "plugin_update" . UTIL_String::getRandomString(5, UTIL_String::RND_STR_ALPHA_NUMERIC) . DS;
+        $tempDirPath = OW::getPluginManager()->getPlugin("base")->getPluginFilesDir() . "plugin_update" . UTIL_String::getRandomString(5, UTIL_String::RND_STR_ALPHA_NUMERIC) . DS;
 
-        
-        
-        
-        
-        
-        
-        
-        
+        mkdir($tempDirPath);
+
         if ( $zip->open($archivePath) === true )
         {
-            $zip->extractTo($tempDir);
+            $zip->extractTo($tempDirPath);
             $zip->close();
         }
         else
         {
-            OW::getFeedback()->error(OW::getLanguage()->text('admin', 'plugin_update_download_error'));
-            $this->redirectToAction('index');
+            $feedback->error(OW::getLanguage()->text("admin", "plugin_update_download_error"));
+            $this->redirectToAction("index");
         }
 
-        if ( file_exists($tempDir . 'plugin.xml') )
+        // locate plugin.xml file to find plugin source root dir
+        $result = UTIL_File::findFiles($tempDirPath, array("xml"));
+        $localPluginRootPath = null;
+
+        foreach ( $result as $item )
         {
-            $localDir = $tempDir;
-        }
-        else
-        {
-            //TODO refactor using util_files::find
-
-            $handle = opendir($tempDir);
-
-            while ( ($item = readdir($handle)) !== false )
+            if ( basename($item) == BOL_PluginService::PLUGIN_INFO_XML )
             {
-                if ( $item === '.' || $item === '..' )
-                {
-                    continue;
-                }
-
-                $innerDir = $item;
-            }
-
-            closedir($handle);
-
-            if ( !empty($innerDir) && file_exists($tempDir . $innerDir . DS . 'plugin.xml') )
-            {
-                $localDir = $tempDir . $innerDir;
-            }
-            else
-            {
-                OW::getFeedback()->error(OW::getLanguage()->text('admin', 'plugin_update_download_error'));
-                $this->redirectToAction('index');
+                $localPluginRootPath = dirname($item) . DS;
             }
         }
 
-
-        if ( substr($name, -1) === DS )
+        if ( $localPluginRootPath == null )
         {
-            $name = substr($name, 0, (strlen($name) - 1));
+            $feedback->error($language->text("admin", "manage_plugin_add_extract_error"));
+            $this->redirectToAction("index");
         }
 
-        $remoteDir = OW_DIR_PLUGIN . $pluginDto->getModule();
-
-        if ( !file_exists($remoteDir) )
+        try
         {
-            $ftp->mkDir($remoteDir);
+            $plugin = OW::getPluginManager()->getPlugin($pluginDto->getKey());
+        }
+        catch ( InvalidArgumentException $ex )
+        {
+            $feedback->error($language->text("admin", "manage_plugin_update_plugin_not_active_error"));
+            $this->redirectToAction("index");
         }
 
-        $ftp->uploadDir($localDir, $remoteDir);
-        UTIL_File::removeDir($localDir);
+        $remoteDirPath = $plugin->getRootDir();
+        $ftp->uploadDir($localPluginRootPath, $remoteDirPath);
+        UTIL_File::removeDir($localPluginRootPath);
 
-        // copy static dir
-        $pluginStaticDir = OW_DIR_PLUGIN . $pluginDto->getModule() . DS . 'static' . DS;
-
-        if ( !defined('OW_PLUGIN_XP') && file_exists($pluginStaticDir) )
-        {
-            $staticDir = OW_DIR_STATIC_PLUGIN . $pluginDto->getModule() . DS;
-
-            if ( !file_exists($staticDir) )
-            {
-                mkdir($staticDir);
-                chmod($staticDir, 0777);
-            }
-
-            UTIL_File::copyDir($pluginStaticDir, $staticDir);
-        }
-
-        $this->redirect(OW::getRequest()->buildUrlQueryString(OW_URL_HOME . 'ow_updates/index.php', array('plugin' => $pluginDto->getKey(), 'back-uri' => urlencode(OW::getRequest()->getRequestUri()))));
+        $this->pluginService->addPluginDirs($pluginDto);
+        $params = array("plugin" => $pluginDto->getKey(), "back-uri" => urlencode(OW::getRequest()->getRequestUri()));
+        $this->redirect(OW::getRequest()->buildUrlQueryString($this->storageService->getUpdaterUrl(), $params));
     }
 
+    /**
+     * Updates plugin DB after manual source upload
+     * 
+     * @param array $params
+     */
     public function manualUpdateRequest( array $params )
     {
         $pluginDto = $this->getPluginDtoByKey($params);
+        $language = OW::getLanguage();
+        $feedback = OW::getFeedback();
 
-        if ( !empty($_GET['mode']) )
+        if ( !empty($_GET["mode"]) )
         {
-            switch ( trim($_GET['mode']) )
+            switch ( trim($_GET["mode"]) )
             {
-                case 'plugin_up_to_date':
-                    OW::getFeedback()->warning(OW::getLanguage()->text('admin', 'manage_plugins_up_to_date_message'));
+                case "plugin_up_to_date":
+                    $feedback->warning($language->text("admin", "manage_plugins_up_to_date_message"));
                     break;
 
-                case 'plugin_update_success':
+                case "plugin_update_success":
 
                     if ( $pluginDto !== null )
                     {
-                        $event = new OW_Event(OW_EventManager::ON_AFTER_PLUGIN_UPDATE, array('pluginKey' => $pluginDto->getKey()));
-                        OW::getEventManager()->trigger($event);
+                        OW::getEventManager()->trigger(new OW_Event(OW_EventManager::ON_AFTER_PLUGIN_UPDATE, array("pluginKey" => $pluginDto->getKey())));
                     }
 
-                    OW::getFeedback()->info(OW::getLanguage()->text('admin', 'manage_plugins_update_success_message'));
+                    $feedback->info($language->text("admin", "manage_plugins_update_success_message"));
                     break;
 
                 default :
-                    OW::getFeedback()->error(OW::getLanguage()->text('admin', 'manage_plugins_update_process_error'));
+                    $feedback->error($language->text("admin", "manage_plugins_update_process_error"));
                     break;
             }
 
-            $this->redirectToAction('index');
+            $this->redirectToAction("index");
         }
 
-        if ( (int) $pluginDto->getUpdate() !== 2 )
+        if ( (int) $pluginDto->getUpdate() != BOL_PluginService::PLUGIN_STATUS_MANUAL_UPDATE )
         {
-            $this->redirectToAction('index');
+            $this->redirectToAction("index");
         }
 
-        $this->assign('text', OW::getLanguage()->text('admin', 'manage_plugins_manual_update_request', array('name' => $pluginDto->getTitle())));
-        $this->assign('redirectUrl', OW::getRequest()->buildUrlQueryString(OW_URL_HOME . 'ow_updates/index.php', array('plugin' => $pluginDto->getKey(), 'back-uri' => urlencode(OW::getRequest()->getRequestUri()))));
+        $this->assign("text", $language->text("admin", "manage_plugins_manual_update_request", array("name" => $pluginDto->getTitle())));
+        $params = array("plugin" => $pluginDto->getKey(), "back-uri" => urlencode(OW::getRequest()->getRequestUri()));
+        $this->assign("redirectUrl", OW::getRequest()->buildUrlQueryString($this->storageService->getUpdaterUrl(), $params));
     }
 
     /**
@@ -720,19 +690,19 @@ class ADMIN_CTRL_Plugins extends ADMIN_CTRL_StorageAbstract
     {
         $ftp = $this->getFtpConnection();
 
-        $key = trim($params['key']);
+        $key = trim($params["key"]);
         $availablePlugins = $this->pluginService->getAvailablePluginsList();
 
         if ( !isset($availablePlugins[$key]) )
         {
-            OW::getFeedback()->error(OW::getLanguage()->text('admin', 'manage_plugins_plugin_not_found'));
+            OW::getFeedback()->error(OW::getLanguage()->text("admin", "manage_plugins_plugin_not_found"));
             $this->redirectToAction('available');
         }
 
-        $ftp->rmDir($availablePlugins[$key]['path']);
+        $ftp->rmDir($availablePlugins[$key]["path"]);
 
-        OW::getFeedback()->info(OW::getLanguage()->text('admin', 'manage_plugins_delete_success_message', array('plugin' => $availablePlugins[$key]['title'])));
-        $this->redirectToAction('available');
+        OW::getFeedback()->info(OW::getLanguage()->text("admin", "manage_plugins_delete_success_message", array("plugin" => $availablePlugins[$key]["title"])));
+        $this->redirectToAction("available");
     }
     /* ---------------------------------------------------------------------- */
 
