@@ -27,3 +27,13 @@ BOL_MobileWidgetService::getInstance()->deleteWidget('BASE_MCMP_JoinNowWidget');
 $widget = BOL_MobileWidgetService::getInstance()->addWidget('BASE_MCMP_JoinNowWidget', false);
 $placeWidget = BOL_MobileWidgetService::getInstance()->addWidgetToPlace($widget, BOL_MobileWidgetService::PLACE_MOBILE_INDEX);
 BOL_MobileWidgetService::getInstance()->addWidgetToPosition($placeWidget, BOL_MobileWidgetService::SECTION_MOBILE_MAIN );
+
+try
+{
+    Updater::getDbo()->query( " ALTER TABLE `".OW_DB_PREFIX."base_user` ADD KEY `activityStamp` (`activityStamp`); " );
+}
+catch ( Exception $e )
+{
+    Updater::getLogger()->addEntry(json_encode($e));
+}
+
