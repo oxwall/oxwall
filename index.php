@@ -81,6 +81,8 @@ $event = new OW_Event(OW_EventManager::ON_AFTER_REQUEST_HANDLE);
 
 OW::getEventManager()->trigger($event);
 
+BOL_StorageService::getInstance()->checkUpdates();
+
 $application->finalize();
 
 if ( OW_PROFILER_ENABLE || OW_DEV_MODE )
