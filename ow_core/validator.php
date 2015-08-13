@@ -1316,7 +1316,7 @@ class RangeValidator extends OW_Validator
     {
         $value = (int) $max;
 
-        if ( empty($value) )
+        if ( !isset($value) )
         {
             throw new InvalidArgumentException('Empty max value!');
         }
@@ -1328,7 +1328,7 @@ class RangeValidator extends OW_Validator
     {
         $value = (int) $min;
 
-        if ( empty($value) )
+        if ( !isset($value) )
         {
             throw new InvalidArgumentException('Empty min value!');
         }
@@ -1392,7 +1392,7 @@ class RangeValidator extends OW_Validator
         {
             return false;
         }
-
+        
         return true;
     }
 

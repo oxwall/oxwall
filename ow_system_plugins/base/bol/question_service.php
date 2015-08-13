@@ -313,6 +313,8 @@ class BOL_QuestionService
                 case self::QUESTION_PRESENTATION_RANGE :
                     $class = new Range($fieldName);
 
+                    $rangeValidator = new RangeValidator();
+                    
                     if ( empty($this->birthdayConfig) )
                     {
                         $birthday = $this->findQuestionByName("birthdate");
@@ -329,13 +331,15 @@ class BOL_QuestionService
                         {
                             if ( $name = 'year_range' && isset($value['from']) && isset($value['to']) )
                             {
+                                $rangeValidator->setMinValue(date("Y") - $value['to']);
+                                $rangeValidator->setMaxValue(date("Y") - $value['from']);
                                 $class->setMinValue(date("Y") - $value['to']);
                                 $class->setMaxValue(date("Y") - $value['from']);
                             }
                         }
                     }
-
-                    $class->addValidator(new RangeValidator());
+                    
+                    $class->addValidator($rangeValidator);
                 break;
 
                 case self::QUESTION_PRESENTATION_URL :
@@ -440,6 +444,8 @@ class BOL_QuestionService
                         }
                     }
                     
+                    $rangeValidator = new RangeValidator();
+                    
                     if ( !empty($this->birthdayConfig) && mb_strlen( trim($this->birthdayConfig) ) > 0 )
                     {
                         $configsList = json_decode($this->birthdayConfig, true);
@@ -449,11 +455,14 @@ class BOL_QuestionService
                             {
                                 $class->setMinValue(date("Y") - $value['to']);
                                 $class->setMaxValue(date("Y") - $value['from']);
+                                
+                                $rangeValidator->setMinValue(date("Y") - $value['to']);
+                                $rangeValidator->setMaxValue(date("Y") - $value['from']);
                             }
                         }
                     }
 
-                    $class->addValidator(new RangeValidator());
+                    $class->addValidator($rangeValidator);
                     
                     break;
 
