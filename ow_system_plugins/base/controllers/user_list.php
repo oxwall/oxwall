@@ -279,6 +279,14 @@ class BASE_Members extends BASE_CMP_Users
                 }
             }
         }
+        
+        $event = new OW_Event('base.get_user_list_fields', array('userIdList'=>$userIdList), $fields);
+        OW::getEventManager()->trigger($event);
+        
+        if(is_array($event->getData()))
+        {
+            $fields = $event->getData();
+        }
 
         return $fields;
     }
