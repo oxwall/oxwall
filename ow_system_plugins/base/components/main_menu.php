@@ -33,9 +33,9 @@ class BASE_CMP_MainMenu extends BASE_CMP_Menu
 {
     /**
      *
-     * @var BASE_CMP_Menu 
+     * @var boolean 
      */
-    protected $menu;
+    protected $responsive;
     
     /**
      * Constructor.
@@ -44,9 +44,7 @@ class BASE_CMP_MainMenu extends BASE_CMP_Menu
     {
         parent::__construct();
         
-        $responsive = isset($params["responsive"]) && $params["responsive"];
-        
-        $this->menu = $responsive ? new BASE_CMP_ResponsiveMenu() : new BASE_CMP_Menu();
+        $this->responsive = isset($params["responsive"]) && $params["responsive"];
     }
     
     public function render()
@@ -54,8 +52,16 @@ class BASE_CMP_MainMenu extends BASE_CMP_Menu
         $menuItems = OW::getDocument()->getMasterPage()
                 ->getMenu(BOL_NavigationService::MENU_TYPE_MAIN)->getMenuItems();
         
-        $this->menu->setMenuItems($menuItems);
+        if ( !$this->responsive )
+        {
+            $this->setMenuItems($menuItems);
+            
+            return parent::render();
+        }
         
-        return $this->menu->render();
+        $responsiveMenu = new BASE_CMP_ResponsiveMenu();
+        $responsiveMenu->setMenuItems($menuItems);
+        
+        return $responsiveMenu->render();
     }
 }
