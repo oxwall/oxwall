@@ -31,7 +31,7 @@ $queryList[] = "CREATE TABLE IF NOT EXISTS `{$tblPrefix}base_file` (
 
 $queryList[] = "ALTER TABLE `{$tblPrefix}base_theme_image`
   ADD `addDatetime` INT NULL ,
-  ADD `description` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL ;";
+  ADD `title` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL;";
 
 foreach ( $queryList as $query )
 {
@@ -64,6 +64,7 @@ if ( !is_null($langId) )
     $languageService->addOrUpdateValue($langId, 'admin', 'delete_image', 'Delete');
     $languageService->addOrUpdateValue($langId, 'admin', 'undefined_action', 'Undefined action');
     $languageService->addOrUpdateValue($langId, 'admin', 'not_enough_params', 'Not enough params');
+    $languageService->addOrUpdateValue($langId, 'admin', 'no_photo_selected', 'No photo selected');
 }
 
 $keys = array(

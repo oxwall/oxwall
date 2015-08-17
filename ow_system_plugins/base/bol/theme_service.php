@@ -788,7 +788,7 @@ class BOL_ThemeService
         return $image;
     }
 
-    public function moveTemporaryFile( $tmpId, $description = '' )
+    public function moveTemporaryFile( $tmpId, $title = '' )
     {
         $tmp = BOL_FileTemporaryDao::getInstance()->findById($tmpId);
         $tmpPath = BOL_FileTemporaryDao::getInstance()->getTemporaryFilePath($tmpId);
@@ -805,7 +805,7 @@ class BOL_ThemeService
 
         $image = new BOL_ThemeImage();
         $image->addDatetime = time();
-        $image->description = $description;
+        $image->title = $title;
         $this->themeImageDao->save($image);
 
         $ext = UTIL_File::getExtension($tmp->filename);

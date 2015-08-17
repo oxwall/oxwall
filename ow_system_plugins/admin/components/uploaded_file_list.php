@@ -54,29 +54,13 @@ class ADMIN_CMP_UploadedFileList extends OW_Component
         $swfPath = OW::getPluginManager()->getPlugin('base')->getStaticJsUrl() . 'ZeroClipboard.swf';
         OW::getDocument()->addOnloadScript("
         ;ZeroClipboard.config( { swfPath: '{$swfPath}' } );
-        window.zeroClipboardFixCss = function(id){
-            var \$element = $('#' + id);
-            \$element.off('mouseenter').mouseenter(function(e){
-                var target = $(e.currentTarget);
-                target.css('background-color', 'rgb(142, 142, 142)');
-                target.parents('.ow_tooltip').css('display', 'block');
-                target.parents('.ow_photo_context_action').css('opacity', '1');
-            }).off('mouseleave').mouseleave(function(e){
-                var target = $(e.currentTarget);
-                target.css('background-color', '');
-                target.parents('.ow_tooltip').css('display', '');
-                target.parents('.ow_photo_context_action').css('opacity', '');
-            });
-        };
         OW.bind('photo.photoItemRendered', function(item){
-            var src = $(item).find('img').attr('src');
-            $(item).find('.zero-clipboard-button').attr('data-clipboard-text', src);
-
             var elementId = 'zero_' + $(item).attr('id');
             $(item).find('.zero-clipboard-button').attr('id', elementId);
-
-            zeroClipboardFixCss(elementId);
             var client = new ZeroClipboard(document.getElementById(elementId));
+            client.on('copy', function(){
+                OW.info('Url copied to clipboard');
+            });
         });
         ");
 
@@ -90,7 +74,6 @@ class ADMIN_CMP_UploadedFileList extends OW_Component
             'downloadUrl' => OW_URL_HOME . 'photo/download-photo/:id',
             'actionUrl' => $photoDefault['getPhotoURL'],
             'contextOptions' => array(
-                array('action' => null, 'name' => OW::getLanguage()->text('admin', 'copy_url'), 'liClass' => 'menuItem', 'aClass' => 'zero-clipboard-button'),
                 array('action' => 'deleteImage', 'name' => OW::getLanguage()->text('admin', 'delete_image')),
             )
         );
