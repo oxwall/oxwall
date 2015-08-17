@@ -1,3 +1,364 @@
+/*Account types. Admin dashboard*/
+
+.ow_admin_profile_questions_list_div .ow_lables_table th.ow_tr_top {
+    background: none;
+    border: none;
+    padding: 0;
+}
+.ow_admin_profile_questions_list_div .ow_lables_table th.ow_tr_top_empty {
+    background: none;
+    border: none;
+    color: #868686;
+    font-weight: normal;
+    line-height: 14px;
+    padding: 0 0 0 8px;
+    text-align: left;
+    vertical-align: top;
+}
+/*.ow_admin_profile_questions_list_div * {
+    box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+}*/
+.ow_table_2 td.selected {
+    background-color: #FFF9EC;
+    transition: all 0.2s ease;
+    -webkit-transition: all 0.2s ease;
+    -moz-transition: all 0.2s ease;
+}
+
+.selected {
+    background-color: #FFF9EC;
+   	transition: all 0.2s ease;
+    -webkit-transition: all 0.2s ease;
+    -moz-transition: all 0.2s ease;
+}
+
+.ow_table_2 td.not_selected {
+    transition: all 0.2s ease;
+    -webkit-transition: all 0.2s ease;
+    -moz-transition: all 0.2s ease;
+}
+
+.not_selected {
+    transition: all 0.2s ease;
+    -webkit-transition: all 0.2s ease;
+    -moz-transition: all 0.2s ease;
+}
+.ow_admin_profile_questions_list_div th {
+    background-color: #F0F0F0;
+}
+.ow_admin_profile_questions_list_div tr.ow_tr_first th {
+    border-color: #DDDDDD;
+    border-left: 1px solid #DDDDDD;
+}
+body .ow_admin_profile_questions_list_div tr.ow_tr_first th:last-child {
+    border-color: #DDDDDD;
+}
+.ow_admin_profile_questions_list_div tr.ow_tr_first th {
+    background-color: #F0F0F0;
+}
+body .ow_table_2 tr.ow_tr_titles th:last-child, body .ow_table_1 tr.ow_tr_titles th:last-child {
+    border-top-right-radius: 0;
+}
+.ow_table_2 td.ow_td_top {
+    width: 50%;
+}
+.ow_tr_top_buttons {
+    margin-bottom: -1px;
+    width: 100%;
+}
+.ow_tr_top_button {
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    background-color: #FCFCFC;
+    background-image: url(images/ow_tr_top_button_bg.png);
+    background-repeat: repeat-x;
+    border-bottom: none;
+    border-top: 1px solid #dedede;
+    cursor: pointer;
+    display: inline-block;
+    padding: 15px 0;
+    width: 50%;
+}
+.ow_tr_top_button:first-child {
+    float: left;
+    border-left: 1px solid #dedede;
+    border-right: 1px solid #dedede;
+}
+.ow_tr_top_button:last-child {
+    float: right;
+    border-right: 1px solid #dedede;
+}
+.ow_tr_top_button_selected {
+    background-color: #f0f0f0;
+    background-image: none;
+}
+.ow_tr_top_button div {
+    color: #626060;
+    font-family: "core_sans_e55_medium","Trebuchet MS","Helvetica CY",sans-serif;
+    font-size: 13px;
+    font-weight: normal;
+    text-transform: uppercase;
+}
+.ow_checkbox {
+    background-color: #FFFFFF;
+    background-position: center center;
+    background-repeat: no-repeat;
+    cursor: pointer;
+    height: 16px;
+    margin: auto;
+    width: 16px;
+}
+.ow_checkbox_cell_marked {
+    background-image: url(images/checkbox_cell_marked.png);
+}
+
+.ow_checkbox_cell {
+    background-image: url(images/checkbox_cell.png);
+}
+
+.ow_checkbox_cell_lock {
+    background-image: url(images/checkbox_cell_lock.png);
+}
+
+.ow_checkbox_cell_marked_lock {
+    background-image: url(images/checkbox_cell_marked_lock.png);
+}
+.relative {
+    position: relative;
+}
+.question_placeholder {
+    background-color: #FFF9DB;
+    border: 1px dashed #999;
+}
+.section_placeholder {
+    height: 80px;
+    background-color: #FFF9DB;
+    border: 1px dashed #999;
+}
+.delete_edit_buttons {
+    height: 20px;
+    width: 81px;
+    margin-left: auto;
+    margin-right: auto;
+}
+.ow_section_label {
+    display: inline-block;
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 700px;
+    overflow: hidden;
+    padding-left: 75px;
+}
+.ow_admin_profile_questions_list_div .ow_lables_table .ow_tr_titles th {
+    border-color:#DDDDDD;
+    border-width: 1px 1px 1px 0;
+}
+.ow_table_2 th, .ow_table_2 .question_tr td {
+    padding:9px;
+}
+.table_content_block {
+    width:100%;
+    overflow:hidden;
+}
+.question_label_td, .question_label_th {
+    width:171px;
+}
+.question_label_div {
+    width:153px;
+}
+.question_account_type_td, .question_account_type_th {
+    width:86px;
+}
+.question_account_type_div {
+    width:68px;
+}
+.question_values_td, .question_values_th {
+    width:112px;
+}
+.question_values_div {
+    width:94px;
+}
+.question_buttons_td, .question_buttons_th {
+    width:94px;
+}
+.question_buttons_div {
+    width:80px;
+}
+.question_require_td, 
+.question_require_th, 
+.question_sign_up_td, 
+.question_sign_up_th, 
+.question_edit_td, 
+.question_edit_th, 
+.question_view_td, 
+.question_view_th, 
+.question_search_td, 
+.question_search_th {
+    width:76px;
+}
+.question_require_div, 
+.question_sign_up_div, 
+.question_edit_div, 
+.question_view_div, 
+.question_search_div {
+    width:56px;
+}
+.ow_admin_profile_questions_list_div .ow_tooltip .ow_tooltip_body {
+	padding: 4px 0;
+}
+.ow_admin_profile_questions_list_div .ow_tooltip .ow_tooltip_body li a {
+	padding: 4px 12px;
+}
+/*Matchmaking settings*/
+.ow_open_match_section.ow_close_match_section {
+	background: url(images/minus.png) no-repeat 0 50%;
+}
+.ow_open_match_section {
+	font-size: 13px;
+	text-transform: uppercase;
+	font-family: 'core_sans_e55_medium', "Trebuchet MS", "Helvetica CY", sans-serif;
+	padding-left: 20px;
+	background: url(images/plus.png) no-repeat 0px 50%;
+	margin-bottom: 22px;
+	cursor: pointer;
+	text-align: left;
+	position: relative;
+	height: 18px;
+	margin-left: 12px;
+}
+.ow_open_match_section.ow_close_match_section {
+	background: url(images/minus.png) no-repeat 0px 50%;
+}
+.ow_open_match_section:hover {
+	color: #636363;
+}
+.ow_open_match_section span {
+	position: absolute;
+	top: 0;
+	left: 19px;
+	padding-right: 8px;
+	background-color: #fff;
+	line-height: 18px;
+}
+.ow_open_match_section div {
+	display: inline-block;
+	vertical-align: middle;
+	height: 8px;
+	width: 100%;
+	border-bottom: 1px solid #dadada;
+}
+.ow_add_match_wrap {
+	cursor: pointer;
+}
+
+.ow_marked_cell{
+    background-image: url(images/ic_ok.png);
+    background-repeat: no-repeat;
+    background-position: center center;
+}
+
+/* color picker */
+.special_block_top {
+	width: 252px;
+	height: 7px;
+}
+
+.special_block_mid {
+	width: 238px;
+	padding: 0 7px 5px;
+        margin: 0 auto;
+}
+
+.special_block_bot {
+	width: 252px;
+	height: 19px;
+}
+
+.colorCode {
+	width: 68px;
+}
+
+table.colorPicker {
+	border-collapse: separate !important;
+	border-spacing: 3px !important;
+}
+
+table.colorPicker td {
+	width: 20px;
+	height: 20px;
+	padding: 0;
+}
+/*  pages and menus */
+.ow_navbox{
+	background:url(images/btnl_bg.png) repeat-x center left;
+	float:left;
+	font-size:11px;
+	height:18px;
+	margin-right:5px;
+	margin-bottom:5px;
+	padding:4px 8px;
+	border: 1px solid #b9c7d5;
+}
+.ow_navbox a.move{
+	color:#666;
+	font-weight:bold;
+}
+.ow_navbox a.move:hover{
+	cursor:move;
+	text-decoration:none;
+}
+.ow_navbox a.edit{
+	background:url(images/arrow-up-down.png) no-repeat 10px 10px;
+	cursor:pointer;
+}
+.ow_navbox a.edit:hover{
+	text-decoration:none;
+}
+.ow_navbox.ow_mild_red a.move{
+    color: #f42217;
+}
+.ow_navbox.ow_mild_green a.move{
+	color: #7cbb11;
+}
+.guest_item{
+	background-color:#aaffaa;
+}
+.member_item{
+	background-color:#ffaaaa;
+}
+.ow_main_menu_scheme,
+.ow_bottom_menu_scheme{
+    float: left;
+    height: 134px;
+    margin-right: 10px;
+    width: 155px;
+}
+.ow_main_menu_scheme{
+    background: url(images/admin-pages-menu-main.jpg) no-repeat;
+}
+.ow_bottom_menu_scheme{
+    background: url(images/admin-pages-menu-bottom.jpg) no-repeat;
+}
+.ow_dash_help_box{
+    float: left;
+    margin-left: 5px;
+    margin-right: 5px;
+    width: 31%;
+    height: 105px;
+}
+.ow_dash_help_box h3{
+    padding: 4px 0 4px 20px;
+    background: transparent no-repeat left center;
+}
+.ow_dash_help_box a{
+    display: block;
+}
+.color_input input[type=text]{
+    width:70%;
+}
 /* - admin_bg_fix - */
 body.ow_admin_area {
  background: #f9fbfd;
