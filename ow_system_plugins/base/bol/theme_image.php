@@ -44,7 +44,12 @@ class BOL_ThemeImage extends OW_Entity
     /**
      * @var string
      */
-    public $description;
+    public $title;
+
+    /**
+     * @var string
+     */
+    public $alt;
 
     public function getFilename()
     {

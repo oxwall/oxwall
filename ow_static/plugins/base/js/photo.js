@@ -82,6 +82,13 @@
         {
             return !isNaN(+photoId) && _vars.cache.hasOwnProperty(+photoId);
         },
+        unsetCache: function( photoId )
+        {
+            if (_methods.isCached(photoId))
+            {
+                delete _vars.cache[photoId];
+            }
+        },
         cachePhotoComponents: function( photos )
         {
             var keys, idList = [];
@@ -763,7 +770,7 @@
 
             if ( cmp.contextAction.length )
             {
-                $(cmp.contextAction).addClass('ow_photo_context_action').insertAfter($('.ow_photoview_bottom_menu_wrap', content)).show();
+                $(cmp.contextAction).addClass('ow_photo_context_action').insertAfter($('.ow_photoview_arrow_right', content)).show();
             }
 
             $("#photo-delete").off().on('click', function( event )
@@ -776,17 +783,14 @@
                     {
                         url: _vars.ajaxResponder,
                         type: 'POST',
-                        data: {ajaxFunc: 'ajaxDeletePhoto', entityId: photoId},
+                        data: {ajaxFunc: 'ajaxDeleteImage', entityId: photoId},
                         dataType: 'json',
                         success: function( data )
                         {
                             if ( data.result === true )
                             {
                                 OW.info(data.msg);
-                                if ( data.url )
-                                {
-                                    document.location = data.url;
-                                };
+                                document.location.reload();
                             }
                             else if ( data.error != undefined )
                             {
@@ -802,11 +806,22 @@
                 _elements.content.find('.ow_photoview_fullscreen').attr({target: '_blank', href: cmp.photo.url});
             }
 
-            $('.ow_photoview_title input', content).val(cmp.photo.description);
+            $('.ow_photoview_title input', content).val(cmp.photo.title);
             $('.ow_photoview_url input', content).val(cmp.photo.url);
+            $('.ow_photoview_url a', content).addClass('zero-clipboard-button');
+            var randId = Math.random().toString(36).substring(7);
+            $('.ow_photoview_url a', content).attr('id', randId);
+            $('.ow_photoview_url a', content).unbind('click');
+            document.getElementById(randId).setAttribute('data-clipboard-text', cmp.photo.url);
+            var client = new ZeroClipboard(document.getElementById(randId));
+            client.on('copy', function(){
+                OW.info('Url copied to clipboard');
+            });
+            _vars.zeroclipboard_client = client;
             $('.ow_photoview_date span', content).html(cmp.photo.addDatetime);
             $('.ow_photoview_size span', content).html(cmp.photo.dimensions);
             $('.ow_photoview_filesize span', content).html(cmp.photo.filesize);
+            $('.ow_photoview_id', content).val(photoId);
         },
         setComment: function( photoId )
         {
@@ -1915,7 +1930,8 @@
     
     window.photoView = Object.defineProperties({}, {
         init: {value: _methods.init},
-        setId: {value: _methods.setId}
+        setId: {value: _methods.setId},
+        unsetCache: {value: _methods.unsetCache}
     });
     
 })(window, window.jQuery, window.photoViewParams);

@@ -156,7 +156,7 @@ class ADMIN_CTRL_Theme extends ADMIN_CTRL_Abstract
             'id' => $image->getId(),
             'dimensions' => getimagesize($this->themeService->getUserfileImagesDir() . $image->getFilename()),
             'filesize' => filesize($this->themeService->getUserfileImagesDir() . $image->getFilename()),
-            'title' => $image->description,
+            'title' => $image->title,
             'uploaddate' => UTIL_DateTime::formatSimpleDate($image->addDatetime, true)
         );
     }
@@ -316,7 +316,7 @@ class ADMIN_CTRL_Theme extends ADMIN_CTRL_Abstract
     {
         $markup = array();
 
-        $photo->description = UTIL_HtmlTag::autoLink($photo->description);
+        $photo->title = UTIL_HtmlTag::autoLink($photo->title);
         $photo->url = OW::getStorage()->getFileUrl($this->themeService->getUserfileImagesDir() . $photo->getFilename());
 
         $dimensions = getimagesize($this->themeService->getUserfileImagesDir() . $photo->getFilename());
@@ -332,58 +332,7 @@ class ADMIN_CTRL_Theme extends ADMIN_CTRL_Abstract
         $context = new BASE_CMP_ContextAction();
         $context->addAction($action);
 
-        $contextEvent = new BASE_CLASS_EventCollector('photo.collect_photo_context_actions', array(
-            'photoId' => $photo->id,
-            'photoDto' => $photo
-        ));
-
-        OW::getEventManager()->trigger($contextEvent);
-
-        foreach ( $contextEvent->getData() as $contextAction )
-        {
-            $action = new BASE_ContextAction();
-            $action->setKey(empty($contextAction['key']) ? uniqid() : $contextAction['key']);
-            $action->setParentKey('photo-moderate');
-            $action->setLabel($contextAction['label']);
-
-            if ( !empty($contextAction['id']) )
-            {
-                $action->setId($contextAction['id']);
-            }
-
-            if ( !empty($contextAction['order']) )
-            {
-                $action->setOrder($contextAction['order']);
-            }
-
-            if ( !empty($contextAction['class']) )
-            {
-                $action->setClass($contextAction['class']);
-            }
-
-            if ( !empty($contextAction['url']) )
-            {
-                $action->setUrl($contextAction['url']);
-            }
-
-            $attributes = empty($contextAction['attributes']) ? array() : $contextAction['attributes'];
-            foreach ( $attributes as $key => $value )
-            {
-                $action->addAttribute($key, $value);
-            }
-
-            $context->addAction($action);
-        }
-
         $lang = OW::getLanguage();
-
-        $action = new BASE_ContextAction();
-        $action->setKey('edit');
-        $action->setParentKey('photo-moderate');
-        $action->setLabel($lang->text('base', 'edit'));
-        $action->setId('btn-photo-edit');
-        $action->addAttribute('rel', $photo->id);
-        $context->addAction($action);
 
         $action = new BASE_ContextAction();
         $action->setKey('delete');
@@ -391,6 +340,7 @@ class ADMIN_CTRL_Theme extends ADMIN_CTRL_Abstract
         $action->setLabel($lang->text('base', 'delete'));
         $action->setId('photo-delete');
         $action->addAttribute('rel', $photo->id);
+
         $context->addAction($action);
 
         $markup['contextAction'] = $context->render();
@@ -473,7 +423,7 @@ class ADMIN_CTRL_Theme extends ADMIN_CTRL_Abstract
             {
                 $entityIdList[] = $photo->id;
                 $dimensions = getimagesize($this->themeService->getUserfileImagesDir() . $photos[$key]->getFilename());
-                $photos[$key]->title = UTIL_HtmlTag::autoLink($photos[$key]->description);
+                $photos[$key]->title = UTIL_HtmlTag::autoLink($photos[$key]->title);
                 $photos[$key]->unique = $unique;
                 $photos[$key]->dimensions = "{$dimensions[0]}x{$dimensions[1]}";
                 $photos[$key]->filesize = UTIL_File::getFileSize($this->themeService->getUserfileImagesDir() . $photos[$key]->getFilename());
@@ -514,6 +464,21 @@ class ADMIN_CTRL_Theme extends ADMIN_CTRL_Abstract
         return array(
             'result' => true,
             'msg' => OW::getLanguage()->text('admin', 'theme_graphics_delete_success_message'),
+            'imageId' => $imageId
+        );
+    }
+
+    public function ajaxSaveImageData( $params )
+    {
+        $imageId = (int) $params['entityId'];
+        $image = $this->themeService->findImageById($imageId);
+        if ( isset($params['title']) && !empty($params['title']) )
+        {
+            $image->title = $params['title'];
+        }
+        BOL_ThemeImageDao::getInstance()->save($image);
+        return array(
+            'result' => true,
             'imageId' => $imageId
         );
     }

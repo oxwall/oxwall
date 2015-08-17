@@ -419,3 +419,35 @@ body .ow_photo_album_info_wrap .ow_photo_album_info .ow_photo_album_description 
 {
     height: 50px;
 }
+.ow_photo_chekbox_area .ow_photo_checkbox
+{
+    width: 20px;
+    height: 20px;
+    background-repeat: no-repeat;
+    background-position: center center;
+    border-radius: 2px;
+    -moz-border-radius: 2px;
+    -webkit-border-radius: 2px;
+    margin: 4px 0 0 4px;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    background-color: rgba(87,87,87, 0.6);
+    border: 1px solid rgba(255,255,255,0.6);
+}
+
+.ow_photo_item_checked .ow_photo_chekbox_area .ow_photo_checkbox {
+    background-image: url(images/checkbox_icon.png);
+}
+.ow_photoview_alt input
+{
+    margin-bottom: 10px;
+}
+.ow_photoview_url input
+{
+    width: 90%;
+}
+.ow_photoview_url a
+{
+    font-size: 130%;
+}
