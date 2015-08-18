@@ -493,31 +493,6 @@ class ADMIN_CTRL_Theme extends ADMIN_CTRL_Abstract
         );
     }
 
-    public function ajaxDeleteImage( $params )
-    {
-        $imageId = (int) $params['entityId'];
-        $this->themeService->deleteImage($imageId);
-        return array(
-            'result' => true,
-            'msg' => OW::getLanguage()->text('admin', 'theme_graphics_delete_success_message'),
-            'imageId' => $imageId
-        );
-    }
-
-    public function ajaxSaveImageData( $params )
-    {
-        $imageId = (int) $params['entityId'];
-        $image = $this->themeService->findImageById($imageId);
-        if ( isset($params['title']) && !empty($params['title']) )
-        {
-            $image->title = $params['title'];
-        }
-        BOL_ThemeImageDao::getInstance()->save($image);
-        return array(
-            'result' => true,
-            'imageId' => $imageId
-        );
-    }
 }
 
 class UploadGraphicsForm extends Form
