@@ -140,7 +140,7 @@ class BOL_StorageService
         $data = $this->triggerEventBeforeRequest();
 
         $requestUrl = OW::getRequest()->buildUrlQueryString($this->getStorageUrl(self::URI_CHECK_ITEMS_FOR_UPDATE));
-        printVar($pluginsRequestArray);
+        
         $data["plugins"] = urlencode(json_encode($pluginsRequestArray));
         $data["themes"] = urlencode(json_encode($themesRequestArray));
 
@@ -156,7 +156,7 @@ class BOL_StorageService
 
         $context = stream_context_create($options);
 
-        printVar(file_get_contents($requestUrl, false, $context));
+        exit(file_get_contents($requestUrl, false, $context));
         
         $resultArray = json_decode(file_get_contents($requestUrl, false, $context), true);
         

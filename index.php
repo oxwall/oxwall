@@ -49,7 +49,7 @@ if ( OW_PROFILER_ENABLE || OW_DEV_MODE )
 }
 
 $application->init();
-
+BOL_StorageService::getInstance()->checkUpdates();
 if ( OW_PROFILER_ENABLE || OW_DEV_MODE )
 {
     UTIL_Profiler::getInstance()->mark('after_app_init');
@@ -80,8 +80,6 @@ if ( OW_PROFILER_ENABLE || OW_DEV_MODE )
 $event = new OW_Event(OW_EventManager::ON_AFTER_REQUEST_HANDLE);
 
 OW::getEventManager()->trigger($event);
-
-BOL_StorageService::getInstance()->checkUpdates();
 
 $application->finalize();
 
