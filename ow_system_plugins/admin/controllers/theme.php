@@ -527,6 +527,17 @@ class ADMIN_CTRL_Theme extends ADMIN_CTRL_Abstract
             'imageId' => $imageId
         );
     }
+
+    public function ajaxDeleteImage( $params )
+    {
+        $imageId = (int) $params['entityId'];
+        $this->themeService->deleteImage($imageId);
+        return array(
+            'result' => true,
+            'msg' => OW::getLanguage()->text('admin', 'theme_graphics_delete_success_message'),
+            'imageId' => $imageId
+        );
+    }
 }
 
 class UploadGraphicsForm extends Form
