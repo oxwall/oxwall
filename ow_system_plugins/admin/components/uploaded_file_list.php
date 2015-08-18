@@ -111,6 +111,6 @@ class ADMIN_CMP_UploadedFileList extends OW_Component
 
         $document->addStyleSheet($plugin->getStaticCssUrl() . 'browse_files.css');
         $document->addScript($plugin->getStaticJsUrl() . 'browse_file.js');
-
+        OW::getLanguage()->addKeyForJs("admin", "copy_url");
     }
 }

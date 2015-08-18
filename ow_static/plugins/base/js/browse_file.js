@@ -277,7 +277,7 @@
                     href: "javascript://",
                     class: 'zero-clipboard-button',
                     'data-clipboard-text': entity.url,
-                    'text': 'Copy'
+                    'text': OW.getLanguageText('admin', 'copy_url')
 
                 });
                 this.find('.ow_photo_item_info_url').append(link);

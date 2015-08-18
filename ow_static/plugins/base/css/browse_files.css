@@ -407,10 +407,6 @@ body .ow_photo_album_info_wrap .ow_photo_album_info .ow_photo_album_description 
 {
     float: right;
 }
-.ow_admin_bulk_options
-{
-    margin-left: 10px;
-}
 .ow_admin_ajax_file_upload_form .floatbox_container
 {
     width: 746px !important;
@@ -445,9 +441,14 @@ body .ow_photo_album_info_wrap .ow_photo_album_info .ow_photo_album_description 
 }
 .ow_photoview_url input
 {
-    width: 90%;
+    width: 88%;
 }
 .ow_photoview_url a
 {
     font-size: 130%;
+}
+.ow_photoview_url h5,
+.ow_photoview_title h5
+{
+    margin-bottom: 4px;
 }

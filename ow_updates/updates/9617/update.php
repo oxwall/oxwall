@@ -57,32 +57,41 @@ foreach ($languages as $lang)
     }
 }
 
-if ( !is_null($langId) )
-{
+if ( !is_null($langId) ) {
     $languageService->addOrUpdateValue($langId, 'admin', 'all_files', 'All files');
     $languageService->addOrUpdateValue($langId, 'admin', 'copy_url', 'Copy Url');
     $languageService->addOrUpdateValue($langId, 'admin', 'delete_image', 'Delete');
     $languageService->addOrUpdateValue($langId, 'admin', 'undefined_action', 'Undefined action');
     $languageService->addOrUpdateValue($langId, 'admin', 'not_enough_params', 'Not enough params');
     $languageService->addOrUpdateValue($langId, 'admin', 'no_photo_selected', 'No photo selected');
-}
+    $languageService->addOrUpdateValue($langId, 'admin', 'select_mode', 'Select mode');
+    $languageService->addOrUpdateValue($langId, 'admin', 'delete_selected', 'Delete selected');
+    $languageService->addOrUpdateValue($langId, 'admin', 'exit_select_mode', 'Exit select mode');
+    $languageService->addOrUpdateValue($langId, 'admin', 'period', 'Period');
+    $languageService->addOrUpdateValue($langId, 'admin', 'all_time', 'All time');
+    $languageService->addOrUpdateValue($langId, 'admin', 'title', 'Title');
+    $languageService->addOrUpdateValue($langId, 'admin', 'url', 'URL');
+    $languageService->addOrUpdateValue($langId, 'admin', 'date', 'Date');
+    $languageService->addOrUpdateValue($langId, 'admin', 'size', 'Size');
+    $languageService->addOrUpdateValue($langId, 'admin', 'filesize', 'Filesize');
+    $languageService->addOrUpdateValue($langId, 'admin', 'upload_date', 'Upload date');
+    $languageService->addOrUpdateValue($langId, 'admin', '', '');
 
-$keys = array(
-    'tb_edit_photo', 'confirm_delete', 'mark_featured', 'remove_from_featured', 'rating_total', 'rating_your', 'of',
-    'album', 'slideshow_interval', 'pending_approval', 'not_all_photos_uploaded', 'size_limit', 'type_error',
-    'dnd_support', 'dnd_not_support', 'drop_here', 'please_wait', 'describe_photo', 'photo_upload_error',
-    'error_ini_size', 'error_form_size', 'error_partial', 'error_no_file', 'error_no_tmp_dir', 'error_cant_write',
-    'error_extension', 'no_photo_uploaded', 'photos_uploaded'
-);
+    $keys = array(
+        'tb_edit_photo', 'confirm_delete', 'mark_featured', 'remove_from_featured', 'rating_total', 'rating_your', 'of',
+        'album', 'slideshow_interval', 'pending_approval', 'not_all_photos_uploaded', 'size_limit', 'type_error',
+        'dnd_support', 'dnd_not_support', 'drop_here', 'please_wait', 'describe_photo', 'photo_upload_error',
+        'error_ini_size', 'error_form_size', 'error_partial', 'error_no_file', 'error_no_tmp_dir', 'error_cant_write',
+        'error_extension', 'no_photo_uploaded', 'photos_uploaded'
+    );
 
-foreach ($keys as $key)
-{
-    $photoKey = $languageService->findKey('photo', $key);
-    if ( is_null($photoKey) )
-    {
-        continue;
+    foreach ($keys as $key) {
+        $photoKey = $languageService->findKey('photo', $key);
+        if (is_null($photoKey)) {
+            continue;
+        }
+        $photoValue = $languageService->findValue($langId, $photoKey->id);
+        $languageService->addOrUpdateValue($langId, 'admin', $key, $photoValue->value);
     }
-    $photoValue = $languageService->findValue($langId, $photoKey->id);
-    $languageService->addOrUpdateValue($langId, 'admin', $key, $photoValue->value);
-}
 
+}

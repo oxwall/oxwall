@@ -59,7 +59,7 @@ class ADMIN_CMP_UploadedFilesFilter extends OW_Component
         $jsString = ";$('#{$id} ul li a').click(function(e){
             e.preventDefault();
             window.browsePhoto.filter({'date': $(this).data('date')});
-            $(this).parents('.ow_context_action').find('.ow_context_action_value').html($(this).html());
+            $(this).parents('.ow_context_action').find('.ow_context_action_value span').html($(this).html());
         });
         ";
         OW::getDocument()->addOnloadScript($jsString);

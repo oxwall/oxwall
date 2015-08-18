@@ -176,13 +176,10 @@ class ADMIN_CTRL_AjaxUpload extends OW_ActionController
                 'addTimestamp' => $file->addDatetime,
                 'fileId' => $file->id,
                 'filename' => $file->filename,
-                'description' => $file->description
+                'title' => $file->title
             );
         }
         
-        $event = new OW_Event(PHOTO_CLASS_EventHandler::EVENT_ON_PHOTO_ADD, $movedArray);
-        OW::getEventManager()->trigger($event);
-
         $fileCount = count($files);
         $fileIdList = array();
         foreach ( $files as $file )
