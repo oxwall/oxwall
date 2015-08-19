@@ -43,6 +43,9 @@ class BOL_ThemeService
     const DIR_NAME_MASTER_PAGES = 'master_pages';
     const DIR_NAME_FONTS = 'fonts';
     const DIR_NAME_MOBILE = 'mobile';
+    const THEME_STATUS_UP_TO_DATE = BOL_PluginDao::UPDATE_VAL_UP_TO_DATE;
+    const THEME_STATUS_UPDATE = BOL_PluginDao::UPDATE_VAL_UPDATE;
+    const THEME_STATUS_MANUAL_UPDATE = BOL_PluginDao::UPDATE_VAL_MANUAL_UPDATE;
 
     /**
      * @var BOL_ThemeDao

@@ -299,7 +299,7 @@ class ADMIN_CTRL_Themes extends ADMIN_CTRL_StorageAbstract
         $itemData = $this->storageService->getItemInfoForUpdate($params[BOL_StorageService::URI_VAR_KEY], $params[BOL_StorageService::URI_VAR_DEV_KEY]);
 
         // check if it's free
-        if ( isset($itemData[BOL_StorageService::STORE_ITEM_PROP_FREEWARE]) && (bool) $itemData[BOL_StorageService::STORE_ITEM_PROP_FREEWARE] )
+        if ( isset($itemData[BOL_StorageService::URI_VAR_FREEWARE]) && (bool) $itemData[BOL_StorageService::URI_VAR_FREEWARE] )
         {
             $activateTheme = true;
         }

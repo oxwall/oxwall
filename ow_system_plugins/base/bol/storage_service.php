@@ -30,29 +30,29 @@
 class BOL_StorageService
 {
     const UPDATE_SERVER = "https://storage.oxwall.org";
-    /* --------------------------------------------- */
+    /* ---------------------------------------------------------------------- */
     const URI_CHECK_ITEMS_FOR_UPDATE = "get-items-update-info";
     const URI_GET_ITEM_INFO = "get-item-info";
     const URI_GET_PLATFORM_INFO = "platform-info";
     const URI_DOWNLOAD_PLATFORM_ARCHIVE = "download-platform";
     const URI_DOWNLOAD_ITEM = "get-item";
     const URI_CHECK_LECENSE_KEY = "check-license-key";
-    /* --------------------------------------------- */
+    /* ---------------------------------------------------------------------- */
     const URI_VAR_KEY = "key";
     const URI_VAR_DEV_KEY = "developerKey";
     const URI_VAR_BUILD = "build";
     const URI_VAR_LICENSE_KEY = "licenseKey";
-    const URI_VAR_ITEM_TYPE = "item-type";
+    const URI_VAR_ITEM_TYPE = "type";
     const URI_VAR_BACK_URI = "back-uri";
     const URI_VAR_LICENSE_CHECK_COMPLETE = "license-check-complete";
     const URI_VAR_LICENSE_CHECK_RESULT = "license-check-result";
     const URI_VAR_FREEWARE = "freeware";
-    /* --------------------------------------------- */
-    const STORE_ITEM_PROP_BUILD = "build";
-    const STORE_ITEM_PROP_FREEWARE = "freeware";
-
-    /* --------------------------------------------- */
+    /* ---------------------------------------------------------------------- */
+    const URI_VAR_ITEM_TYPE_VAL_PLUGIN = "plugin";
+    const URI_VAR_ITEM_TYPE_VAL_THEME = "theme";
+    /* ---------------------------------------------------------------------- */
     const EVENT_ON_STORAGE_INTERECT = "base.on_plugin_info_update";
+    const OXWALL_STORE_DEV_KEY = "e547ebcf734341ec11911209d93a1054";
 
     /**
      * @var BOL_ThemeService
@@ -100,27 +100,21 @@ class BOL_StorageService
      */
     public function checkUpdates()
     {
-        $pluginsRequestArray = array(
-            array(
-                self::URI_VAR_KEY => "core",
-                self::URI_VAR_DEV_KEY => "ow",
-                self::URI_VAR_BUILD => OW::getConfig()->getValue("base", "soft_build"))
-        );
+        $requestArray = array("platform" => array(self::URI_VAR_BUILD => OW::getConfig()->getValue("base", "soft_build")), "items" => array());
 
         $plugins = $this->pluginService->findRegularPlugins();
 
         /* @var $plugin BOL_Plugin */
         foreach ( $plugins as $plugin )
         {
-            $pluginsRequestArray[] = array(
+            $requestArray["items"][] = array(
                 self::URI_VAR_KEY => $plugin->getKey(),
                 self::URI_VAR_DEV_KEY => $plugin->getDeveloperKey(),
                 self::URI_VAR_BUILD => $plugin->getBuild(),
-                self::URI_VAR_LICENSE_KEY => $plugin->getLicenseKey()
+                self::URI_VAR_LICENSE_KEY => $plugin->getLicenseKey(),
+                self::URI_VAR_ITEM_TYPE => self::URI_VAR_ITEM_TYPE_VAL_PLUGIN
             );
         }
-
-        $themesRequestArray = array();
 
         //check all manual updates before reading builds in DB
         $this->themeService->checkManualUpdates();
@@ -129,21 +123,19 @@ class BOL_StorageService
         /* @var $theme BOL_Theme */
         foreach ( $themes as $theme )
         {
-            $themesRequestArray[] = array(
+            $requestArray["items"][] = array(
                 self::URI_VAR_KEY => $theme->getName(),
                 self::URI_VAR_DEV_KEY => $theme->getDeveloperKey(),
                 self::URI_VAR_BUILD => $theme->getBuild(),
-                self::URI_VAR_LICENSE_KEY => $theme->getLicenseKey()
+                self::URI_VAR_LICENSE_KEY => $theme->getLicenseKey(),
+                self::URI_VAR_ITEM_TYPE => self::URI_VAR_ITEM_TYPE_VAL_THEME
             );
         }
 
         $data = $this->triggerEventBeforeRequest();
-
         $requestUrl = OW::getRequest()->buildUrlQueryString($this->getStorageUrl(self::URI_CHECK_ITEMS_FOR_UPDATE));
-        
-        $data["plugins"] = urlencode(json_encode($pluginsRequestArray));
-        $data["themes"] = urlencode(json_encode($themesRequestArray));
 
+        $data["info"] = urlencode(json_encode($requestArray));
         $postdata = http_build_query($data);
 
         $options = array("http" =>
@@ -155,42 +147,59 @@ class BOL_StorageService
         );
 
         $context = stream_context_create($options);
-
-        exit(file_get_contents($requestUrl, false, $context));
-        
         $resultArray = json_decode(file_get_contents($requestUrl, false, $context), true);
-        
+
+        pv($resultArray);
+
         if ( empty($resultArray) || !is_array($resultArray) )
         {
             OW::getLogger()->addEntry(__CLASS__ . "::" . __METHOD__ . " remote request returned empty result", "core.update");
             return;
         }
 
-        if ( !empty($resultArray["plugins"]) && is_array($resultArray["plugins"]) )
+        if ( !empty($resultArray["update"]) )
         {
-            foreach ( $plugins as $plugin )
-            {
-                if ( in_array($plugin->getKey(), $resultArray["plugins"]) && (int) $plugin->getUpdate() === 0 )
-                {
-                    $plugin->setUpdate(1);
-                    $this->pluginService->savePlugin($plugin);
-                }
-            }
-
-            if ( in_array("core", $resultArray["plugins"]) )
+            if ( !empty($resultArray["update"]["platform"]) && (bool) $resultArray["update"]["platform"] )
             {
                 OW::getConfig()->saveConfig("base", "update_soft", 1);
             }
-        }
 
-        if ( !empty($resultArray["themes"]) && is_array($resultArray["themes"]) )
-        {
-            foreach ( $themes as $theme )
+            if ( !empty($resultArray["update"]["items"]) )
             {
-                if ( in_array($theme->getName(), $resultArray['themes']) && (int) $theme->getUpdate() === 0 )
+                foreach ( $resultArray["update"]["items"] as $item )
                 {
-                    $theme->setUpdate(1);
-                    $this->themeService->saveTheme($theme);
+                    
+                }
+                
+                
+                
+                
+                
+                
+                
+                $itemsToUpdate = array(self::URI_VAR_ITEM_TYPE_VAL_PLUGIN => array(), self::URI_VAR_ITEM_TYPE_VAL_THEME => array());
+
+                foreach ( $resultArray["update"]["items"] as $item )
+                {
+                    $itemsToUpdate[$item[self::URI_VAR_ITEM_TYPE]][$item[self::URI_VAR_KEY]] = $item[self::URI_VAR_DEV_KEY];
+                }
+
+                foreach ( $plugins as $plugin )
+                {
+                    if ( (int) $plugin->getUpdate() == BOL_PluginService::PLUGIN_STATUS_UP_TO_DATE && array_key_exists($plugin->getKey(), $itemsToUpdate[self::URI_VAR_ITEM_TYPE_VAL_PLUGIN]) && $itemsToUpdate[self::URI_VAR_ITEM_TYPE_VAL_PLUGIN][$plugin->getKey()] == $plugin->getDeveloperKey() )
+                    {
+                        $plugin->setUpdate(BOL_PluginService::PLUGIN_STATUS_UPDATE);
+                        $this->pluginService->savePlugin($plugin);
+                    }
+                }
+
+                foreach ( $themes as $theme )
+                {
+                    if ( (int) $theme->getUpdate() == BOL_ThemeService::THEME_STATUS_UP_TO_DATE && array_key_exists($theme->getName(), $itemsToUpdate[self::URI_VAR_ITEM_TYPE_VAL_THEME]) && $itemsToUpdate[self::URI_VAR_ITEM_TYPE_VAL_THEME][$theme->getName()] == $theme->getDeveloperKey() )
+                    {
+                        $theme->setUpdate(BOL_ThemeService::THEME_STATUS_UPDATE);
+                        $this->themeService->saveTheme($theme);
+                    }
                 }
             }
         }
@@ -391,7 +400,7 @@ class BOL_StorageService
     {
         return OW_URL_HOME . "ow_updates/index.php";
     }
-    /* -------------------------------------------------------------------------------------- */
+    /* ---------------------------------------------------------------------- */
 
     protected function getStorageUrl( $uri )
     {

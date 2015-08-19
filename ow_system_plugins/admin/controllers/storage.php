@@ -75,7 +75,7 @@ class ADMIN_CTRL_Storage extends ADMIN_CTRL_StorageAbstract
             return;
         }
 
-        if ( (bool) $data[BOL_StorageService::STORE_ITEM_PROP_FREEWARE] )
+        if ( (bool) $data[BOL_StorageService::URI_VAR_FREEWARE] )
         {
             $params[BOL_StorageService::URI_VAR_LICENSE_CHECK_COMPLETE] = 1;
             $params[BOL_StorageService::URI_VAR_LICENSE_CHECK_RESULT] = 1;
