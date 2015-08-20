@@ -33,7 +33,29 @@ class ADMIN_CMP_UploadedFilesFloatbox extends OW_Component
     {
         parent::__construct();
 
-        $this->assign('class', '');
-        $this->assign('layout', $layout);
+        $saveImageDataUrl = OW::getRouter()->urlFor('ADMIN_CTRL_Theme', 'ajaxResponder');
+
+        $jsString = ";$('.image_save_data').click(function(e){
+            e.preventDefault();
+            var floatbox = $('.floatbox_container');
+            var title = $('.ow_photoview_title input', floatbox).val();
+            var imageId = $('.ow_photoview_id', floatbox).val();
+            var data = {'entityId': imageId, 'title': title, 'ajaxFunc': 'ajaxSaveImageData'};
+            $('.image_save_data').attr('disabled', 'disabled');
+            $('.image_save_data').addClass('ow_inprogress');
+            $.ajax({
+                url: '{$saveImageDataUrl}',
+                data: data,
+                method: 'POST',
+                success: function(data){
+                    $('.image_save_data').removeAttr('disabled');
+                    $('.image_save_data').removeClass('ow_inprogress');
+                    photoView.unsetCache(data.imageId);
+                    OW.info('All changes saved');
+                }
+            });
+        });
+        ";
+        OW::getDocument()->addOnloadScript($jsString);
     }
 }

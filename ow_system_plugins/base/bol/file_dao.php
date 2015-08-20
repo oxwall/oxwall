@@ -31,7 +31,6 @@
  */
 class BOL_FileDao extends OW_BaseDao
 {
-    CONST FILE_PREFIX = 'file_';
     CONST CACHE_TAG_FILE_LIST = 'photo.list';
     CONST FILE_ENTITY_TYPE = 'file';
 
@@ -78,61 +77,6 @@ class BOL_FileDao extends OW_BaseDao
     public function getTableName()
     {
         return OW_DB_PREFIX . 'base_file';
-    }
-
-    /**
-     * Get file URL
-     *
-     * @param int $id
-     * @return string
-     */
-    public function getPhotoUrl( $id )
-    {
-        $storage = OW::getStorage();
-        $userfilesDir = OW::getPluginManager()->getPlugin('base')->getUserFilesDir();
-
-        $file = $this->findById($id);
-
-        return $storage->getFileUrl($userfilesDir . self::FILE_PREFIX . $id . $file->filename);
-    }
-
-    /**
-     * Get directory where 'photo' plugin images are uploaded
-     *
-     * @return string
-     */
-    public function getFileUploadDir()
-    {
-        return OW::getPluginManager()->getPlugin('base')->getUserFilesDir();
-    }
-
-    /**
-     * Get path to photo in file system
-     *
-     * @param int $fileId
-     * @return string
-     */
-    public function getFilePath( $fileId )
-    {
-        $file = $this->findById($fileId);
-        return $this->getFileUploadDir() . self::FILE_PREFIX . $fileId . $file->filename;
-    }
-
-    /**
-     * Removes file
-     *
-     * @param int $id
-     */
-    public function removeFile( $id )
-    {
-        $path = $this->getFilePath($id);
-
-        $storage = OW::getStorage();
-
-        if ( $storage->fileExists($path) )
-        {
-            $storage->removeFile($path);
-        }
     }
 
     /**

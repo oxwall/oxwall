@@ -32,6 +32,7 @@
  */
 final class BOL_FileTemporaryService
 {
+    CONST TMP_FILE_PREFIX = 'tmp_photo_';
     CONST TEMPORARY_FILE_LIVE_LIMIT = 86400;
     
     /**
@@ -84,7 +85,7 @@ final class BOL_FileTemporaryService
         $this->fileTemporaryDao->save($tmpFile);
 
         $storage = OW::getStorage();
-        $storage->copyFile($source, $this->fileTemporaryDao->getTemporaryFilePath($tmpFile->id));
+        $storage->copyFile($source, $this->getTemporaryFilePath($tmpFile->id));
 
         return $tmpFile->id;
     }
@@ -99,7 +100,7 @@ final class BOL_FileTemporaryService
             foreach ( $list as $file )
             {
                 $result[$file->id]['dto'] = $file;
-                $result[$file->id]['src'] = $this->fileTemporaryDao->getTemporaryFileUrl($file->id, 1);
+                $result[$file->id]['src'] = $this->getTemporaryFileUrl($file->id, 1);
             }
         }
         
@@ -117,7 +118,7 @@ final class BOL_FileTemporaryService
 
         foreach ( $list as $file )
         {
-            @unlink($this->fileTemporaryDao->getTemporaryFilePath($file->id));
+            @unlink($this->getTemporaryFilePath($file->id));
             $this->fileTemporaryDao->delete($file);
         }
 
@@ -132,7 +133,7 @@ final class BOL_FileTemporaryService
             return false;
         }
 
-        @unlink($this->fileTemporaryDao->getTemporaryFilePath($fileId));
+        @unlink($this->getTemporaryFilePath($fileId));
         $this->fileTemporaryDao->delete($file);
         
         return true;
@@ -155,7 +156,7 @@ final class BOL_FileTemporaryService
             return false;
         }
 
-        $tmpFilePath = $this->fileTemporaryDao->getTemporaryFilePath($tmp->id);
+        $tmpFilePath = $this->getTemporaryFilePath($tmp->id);
 
         $fileService = BOL_FileService::getInstance();
 
@@ -177,5 +178,33 @@ final class BOL_FileTemporaryService
         }
 
         return $file;
+    }
+
+    /**
+     * Get temporary file URL
+     *
+     * @param int $id
+     *
+     * @return string
+     */
+    public function getTemporaryFileUrl( $id )
+    {
+        $userfilesUrl = OW::getPluginManager()->getPlugin('base')->getUserFilesUrl();
+        $file = $this->fileTemporaryDao->findById($id);
+        return $userfilesUrl . self::TMP_FILE_PREFIX . $id . $file->filename;
+    }
+
+    /**
+     * Get path to temporary file in file system
+     *
+     * @param int $id
+     *
+     * @return string
+     */
+    public function getTemporaryFilePath( $id )
+    {
+        $userfilesDir = OW::getPluginManager()->getPlugin('base')->getUserFilesDir();
+        $file = $this->fileTemporaryDao->findById($id);
+        return $userfilesDir . self::TMP_FILE_PREFIX . $id . $file->filename;
     }
 }

@@ -176,13 +176,10 @@ class ADMIN_CTRL_AjaxUpload extends OW_ActionController
                 'addTimestamp' => $file->addDatetime,
                 'fileId' => $file->id,
                 'filename' => $file->filename,
-                'description' => $file->description
+                'title' => $file->title
             );
         }
         
-        $event = new OW_Event(PHOTO_CLASS_EventHandler::EVENT_ON_PHOTO_ADD, $movedArray);
-        OW::getEventManager()->trigger($event);
-
         $fileCount = count($files);
         $fileIdList = array();
         foreach ( $files as $file )
@@ -205,7 +202,7 @@ class ADMIN_CTRL_AjaxUpload extends OW_ActionController
             
             if ( ($id = BOL_FileTemporaryService::getInstance()->addTemporaryFile($_FILES['file']['tmp_name'], $_FILES['file']['name'], OW::getUser()->getId(), $order)) )
             {
-                $fileUrl = BOL_FileTemporaryDao::getInstance()->getTemporaryFileUrl($id);
+                $fileUrl = BOL_FileTemporaryService::getInstance()->getTemporaryFileUrl($id);
                 
                 $this->returnResponse(array(
                     'status' => self::STATUS_SUCCESS,

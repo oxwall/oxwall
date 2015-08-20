@@ -55,8 +55,13 @@ class ADMIN_CMP_UploadedFilesFilter extends OW_Component
         $id = uniqid('filter');
         $this->assign('id', $id);
         $images = BOL_ThemeService::getInstance()->findAllCssImages();
-        $dates = $this->getDates($images);
-        $form = new ADMIN_CLASS_FilterForm($dates);
-        $this->addForm($form);
+        $this->assign('dates', $this->getDates($images));
+        $jsString = ";$('#{$id} ul li a').click(function(e){
+            e.preventDefault();
+            window.browsePhoto.filter({'date': $(this).data('date')});
+            $(this).parents('.ow_context_action').find('.ow_context_action_value span').html($(this).html());
+        });
+        ";
+        OW::getDocument()->addOnloadScript($jsString);
     }
 }

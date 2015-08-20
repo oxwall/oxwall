@@ -272,6 +272,15 @@
                 this.find('.ow_photo_item_info_dimensions span').html(entity.dimensions);
                 this.find('.ow_photo_item_info_fileszie span').html(entity.filesize);
                 this.find('.ow_photo_item_info_uploaddate span').html(entity.addDatetime);
+                this.find('.ow_photo_item_info_url span').html(entity.url.substring(0,25) + '... ');
+                var link = $('<a></a>', {
+                    href: "javascript://",
+                    class: 'zero-clipboard-button',
+                    'data-clipboard-text': entity.url,
+                    'text': OW.getLanguageText('admin', 'copy_url')
+
+                });
+                this.find('.ow_photo_item_info_url').append(link);
             },
             getData: function( keys, entity )
             {
@@ -529,6 +538,11 @@
         },
         deleteImages: function( imagesIds )
         {
+            if (imagesIds.length == 0)
+            {
+                OW.error(OW.getLanguageText('admin', 'no_photo_selected'));
+                return false;
+            }
             if ( !confirm(OW.getLanguageText('photo', 'confirm_delete_images')) )
             {
                 return false;
