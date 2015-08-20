@@ -41,6 +41,7 @@ class BOL_PluginDao extends OW_BaseDao
     const VERSION = "version";
     const UPDATE = "update";
     const LICENSE_KEY = "licenseKey";
+    const LICENSE_CHECK_STAMP = "licenseCheckTimestamp";
     const UPDATE_VAL_UP_TO_DATE = 0;
     const UPDATE_VAL_UPDATE = 1;
     const UPDATE_VAL_MANUAL_UPDATE = 2;
@@ -163,5 +164,16 @@ class BOL_PluginDao extends OW_BaseDao
         $example->setLimitClause(0, 1);
 
         return $this->findObjectByExample($example);
+    }
+
+    /**
+     * @return array 
+     */
+    public function findPluginsWithInvalidLicense()
+    {
+        $example = new OW_Example();
+        $example->andFieldGreaterThan(self::LICENSE_CHECK_STAMP, 0);
+
+        return $this->findListByExample($example);
     }
 }

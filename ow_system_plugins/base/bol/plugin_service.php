@@ -608,6 +608,16 @@ class BOL_PluginService
     {
         return $this->pluginDao->findPluginForManualUpdate();
     }
+
+    /**
+     * Returns plugins with invalid license
+     * 
+     * @return array
+     */
+    public function findPluginsWithInvalidLicense()
+    {
+        return $this->pluginDao->findPluginsWithInvalidLicense();
+    }
     /* ---------------------------------------------------------------------- */
 
     private function updatePluginListCache()

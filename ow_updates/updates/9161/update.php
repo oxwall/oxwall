@@ -22,7 +22,8 @@
  * which combines Covered Code or portions thereof with code not governed by the terms of the CPAL.
  */
 $queryList = array(
-    "ALTER TABLE `" . OW_DB_PREFIX . "base_plugin` ADD `licenseCheckTimestamp` INT UNSIGNED NULL DEFAULT '0' AFTER `licenseKey`, ADD INDEX `licenseCheckTimestamp` (`licenseCheckTimestamp`)"
+    "ALTER TABLE `" . OW_DB_PREFIX . "base_plugin` ADD `licenseCheckTimestamp` INT UNSIGNED NULL DEFAULT NULL AFTER `licenseKey`, ADD INDEX `licenseCheckTimestamp` (`licenseCheckTimestamp`)",
+    "ALTER TABLE `" . OW_DB_PREFIX . "base_theme` ADD `licenseCheckTimestamp` INT UNSIGNED NULL DEFAULT NULL AFTER `sidebarPosition`, ADD INDEX `licenseCheckTimestamp` (`licenseCheckTimestamp`);"
 );
 
 foreach ( $queryList as $query )

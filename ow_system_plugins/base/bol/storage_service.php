@@ -120,14 +120,14 @@ class BOL_StorageService
         $this->themeService->checkManualUpdates();
         $themes = $this->themeService->findAllThemes();
 
-        /* @var $theme BOL_Theme */
-        foreach ( $themes as $theme )
+        /* @var $dto BOL_Theme */
+        foreach ( $themes as $dto )
         {
             $requestArray["items"][] = array(
-                self::URI_VAR_KEY => $theme->getName(),
-                self::URI_VAR_DEV_KEY => $theme->getDeveloperKey(),
-                self::URI_VAR_BUILD => $theme->getBuild(),
-                self::URI_VAR_LICENSE_KEY => $theme->getLicenseKey(),
+                self::URI_VAR_KEY => $dto->getName(),
+                self::URI_VAR_DEV_KEY => $dto->getDeveloperKey(),
+                self::URI_VAR_BUILD => $dto->getBuild(),
+                self::URI_VAR_LICENSE_KEY => $dto->getLicenseKey(),
                 self::URI_VAR_ITEM_TYPE => self::URI_VAR_ITEM_TYPE_VAL_THEME
             );
         }
@@ -149,8 +149,6 @@ class BOL_StorageService
         $context = stream_context_create($options);
         $resultArray = json_decode(file_get_contents($requestUrl, false, $context), true);
 
-        pv($resultArray);
-
         if ( empty($resultArray) || !is_array($resultArray) )
         {
             OW::getLogger()->addEntry(__CLASS__ . "::" . __METHOD__ . " remote request returned empty result", "core.update");
@@ -166,42 +164,15 @@ class BOL_StorageService
 
             if ( !empty($resultArray["update"]["items"]) )
             {
-                foreach ( $resultArray["update"]["items"] as $item )
-                {
-                    
-                }
-                
-                
-                
-                
-                
-                
-                
-                $itemsToUpdate = array(self::URI_VAR_ITEM_TYPE_VAL_PLUGIN => array(), self::URI_VAR_ITEM_TYPE_VAL_THEME => array());
-
-                foreach ( $resultArray["update"]["items"] as $item )
-                {
-                    $itemsToUpdate[$item[self::URI_VAR_ITEM_TYPE]][$item[self::URI_VAR_KEY]] = $item[self::URI_VAR_DEV_KEY];
-                }
-
-                foreach ( $plugins as $plugin )
-                {
-                    if ( (int) $plugin->getUpdate() == BOL_PluginService::PLUGIN_STATUS_UP_TO_DATE && array_key_exists($plugin->getKey(), $itemsToUpdate[self::URI_VAR_ITEM_TYPE_VAL_PLUGIN]) && $itemsToUpdate[self::URI_VAR_ITEM_TYPE_VAL_PLUGIN][$plugin->getKey()] == $plugin->getDeveloperKey() )
-                    {
-                        $plugin->setUpdate(BOL_PluginService::PLUGIN_STATUS_UPDATE);
-                        $this->pluginService->savePlugin($plugin);
-                    }
-                }
-
-                foreach ( $themes as $theme )
-                {
-                    if ( (int) $theme->getUpdate() == BOL_ThemeService::THEME_STATUS_UP_TO_DATE && array_key_exists($theme->getName(), $itemsToUpdate[self::URI_VAR_ITEM_TYPE_VAL_THEME]) && $itemsToUpdate[self::URI_VAR_ITEM_TYPE_VAL_THEME][$theme->getName()] == $theme->getDeveloperKey() )
-                    {
-                        $theme->setUpdate(BOL_ThemeService::THEME_STATUS_UPDATE);
-                        $this->themeService->saveTheme($theme);
-                    }
-                }
+                $this->updateItemsUpdateStatus($resultArray["update"]["items"]);
             }
+        }
+
+        $this->resetItemsLicenseStatus();
+
+        if ( !empty($resultArray["invalidLicense"]) )
+        {
+            $this->updateItemsLicenseStatus($resultArray["invalidLicense"]);
         }
     }
 
@@ -400,18 +371,114 @@ class BOL_StorageService
     {
         return OW_URL_HOME . "ow_updates/index.php";
     }
+
+    /**
+     * Returns the list of items with invalid license.
+     * 
+     * @return type
+     */
+    public function findItemsWithInvalidLicense()
+    {
+        $plugins = $this->pluginService->findPluginsWithInvalidLicense();
+    }
     /* ---------------------------------------------------------------------- */
 
-    protected function getStorageUrl( $uri )
+    private function getStorageUrl( $uri )
     {
         return UTIL_String::removeFirstAndLastSlashes(self::UPDATE_SERVER) . "/" . UTIL_String::removeFirstAndLastSlashes($uri) . "/";
     }
 
-    protected function triggerEventBeforeRequest( $params = array() )
+    private function triggerEventBeforeRequest( $params = array() )
     {
         $event = OW::getEventManager()->trigger(new OW_Event('base.on_plugin_info_update', $params));
         $data = $event->getData();
 
         return (!empty($data) && is_array($data) ) ? $data : array();
+    }
+
+    private function resetItemsLicenseStatus()
+    {
+        $plugins = $this->pluginService->findRegularPlugins();
+
+        /* @var $pligin BOL_Plugin */
+        foreach ( $plugins as $plugin )
+        {
+            if ( $plugin->getLicenseCheckTimestamp() > 0 )
+            {
+                $plugin->setLicenseCheckTimestamp(null);
+                $this->pluginService->savePlugin($plugin);
+            }
+        }
+
+        $themes = $this->themeService->findAllThemes();
+
+        /* @var $theme BOL_Theme */
+        foreach ( $themes as $theme )
+        {
+            if ( $theme->getLicenseCheckTimestamp() > 0 )
+            {
+                $theme->setLicenseCheckTimestamp(null);
+                $this->pluginService->savePlugin($theme);
+            }
+        }
+    }
+
+    private function updateItemsLicenseStatus( array $items )
+    {
+        foreach ( $items as $item )
+        {
+            if ( $item[self::URI_VAR_ITEM_TYPE] == self::URI_VAR_ITEM_TYPE_VAL_PLUGIN )
+            {
+                $dto = $this->pluginService->findPluginByKey($item[self::URI_VAR_KEY], $item[self::URI_VAR_DEV_KEY]);
+
+                if ( $dto != null && ( $dto->getLicenseCheckTimestamp() == 0 || $dto->getLicenseCheckTimestamp() > time()) )
+                {
+                    $dto->setLicenseCheckTimestamp(time());
+                    $this->pluginService->savePlugin($dto);
+                }
+            }
+            else if ( $item[self::URI_VAR_ITEM_TYPE] == self::URI_VAR_ITEM_TYPE_VAL_PLUGIN )
+            {
+                $dto = $this->themeService->findThemeByName($item[self::URI_VAR_KEY]);
+
+                if ( $dto != null && $dto->getDeveloperKey() == $item[self::URI_VAR_DEV_KEY] && ($dto->getLicenseCheckTimestamp() == 0 || $dto->getLicenseCheckTimestamp() > time() ) )
+                {
+                    $dto->setLicenseCheckTimestamp(time());
+                    $this->themeService->saveTheme($dto);
+                }
+            }
+        }
+    }
+
+    private function updateItemsUpdateStatus( array $items )
+    {
+        if ( empty($items) )
+        {
+            return;
+        }
+
+        foreach ( $items as $item )
+        {
+            if ( $item[self::URI_VAR_ITEM_TYPE] == self::URI_VAR_ITEM_TYPE_VAL_PLUGIN )
+            {
+                $dto = $this->pluginService->findPluginByKey($item[self::URI_VAR_KEY], $item[self::URI_VAR_DEV_KEY]);
+
+                if ( $dto != null )
+                {
+                    $dto->setUpdate(BOL_PluginService::PLUGIN_STATUS_UPDATE);
+                    $this->pluginService->savePlugin($dto);
+                }
+            }
+            else if ( $item[self::URI_VAR_ITEM_TYPE] == self::URI_VAR_ITEM_TYPE_VAL_PLUGIN )
+            {
+                $dto = $this->themeService->findThemeByName($item[self::URI_VAR_KEY]);
+
+                if ( $dto != null && $dto->getDeveloperKey() == $item[self::URI_VAR_DEV_KEY] )
+                {
+                    $dto->setUpdate(BOL_ThemeService::THEME_STATUS_UPDATE);
+                    $this->themeService->saveTheme($dto);
+                }
+            }
+        }
     }
 }

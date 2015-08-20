@@ -35,50 +35,66 @@ class BOL_Theme extends OW_Entity
      * @var string
      */
     public $name;
+
     /**
      * @var string
      */
     public $developerKey;
+
     /**
      * @var string
      */
     public $title;
+
     /**
      * @var string
      */
     public $description;
+
     /**
      * @var boolean
      */
     public $isActive = 0;
+
     /**
      * @var string
      */
     public $customCss;
+
     /**
      * @var string
      */
     public $mobileCustomCss;
+
     /**
      * @var string
      */
     public $customCssFileName;
+
     /**
      * @var string
      */
     public $sidebarPosition;
+
     /**
      * @var integer
      */
     public $build = 0;
+
     /**
      * @var boolean
      */
     public $update = 0;
+
     /**
      * @var string
      */
     public $licenseKey;
+
+    /**
+     * @var type 
+     */
+    public $licenseCheckTimestamp;
 
     /**
      * @return string
@@ -246,5 +262,15 @@ class BOL_Theme extends OW_Entity
     public function setMobileCustomCss( $mobileCustomCss )
     {
         $this->mobileCustomCss = $mobileCustomCss;
+    }
+
+    function getLicenseCheckTimestamp()
+    {
+        return intval($this->licenseCheckTimestamp);
+    }
+
+    function setLicenseCheckTimestamp( type $licenseCheckTimestamp )
+    {
+        $this->licenseCheckTimestamp = $licenseCheckTimestamp;
     }
 }
