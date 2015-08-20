@@ -230,8 +230,11 @@ class OW_Application
 
         // adding global template vars
         $currentThemeImagesDir = OW::getThemeManager()->getCurrentTheme()->getStaticImagesUrl();
+        $currentThemeStaticDir = OW::getThemeManager()->getCurrentTheme()->getStaticUrl();
+        
         $viewRenderer = OW_ViewRenderer::getInstance();
         $viewRenderer->assignVar('themeImagesUrl', $currentThemeImagesDir);
+        $viewRenderer->assignVar('themeStaticUrl', $currentThemeStaticDir);
         $viewRenderer->assignVar('siteName', OW::getConfig()->getValue('base', 'site_name'));
         $viewRenderer->assignVar('siteTagline', OW::getConfig()->getValue('base', 'site_tagline'));
         $viewRenderer->assignVar('siteUrl', OW_URL_HOME);
