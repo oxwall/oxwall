@@ -190,6 +190,11 @@ class ADMIN_CTRL_Theme extends ADMIN_CTRL_Abstract
 
         $this->assign('confirmMessage', OW::getLanguage()->text('admin', 'theme_graphics_image_delete_confirm_message'));
 
+        $cmp = OW::getClassInstance('ADMIN_CMP_UploadedFileList');
+        $event = new OW_Event('admin.init_floatbox', array('layout' => 'floatbox'));
+        OW::getEventManager()->trigger($event);
+        $this->addComponent('filelist', $cmp);
+
         if ( OW::getRequest()->isPost() )
         {
             try

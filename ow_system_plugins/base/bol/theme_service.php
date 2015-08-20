@@ -791,7 +791,7 @@ class BOL_ThemeService
     public function moveTemporaryFile( $tmpId, $title = '' )
     {
         $tmp = BOL_FileTemporaryDao::getInstance()->findById($tmpId);
-        $tmpPath = BOL_FileTemporaryDao::getInstance()->getTemporaryFilePath($tmpId);
+        $tmpPath = BOL_FileTemporaryService::getInstance()->getTemporaryFilePath($tmpId);
 
         if ( !$tmp )
         {

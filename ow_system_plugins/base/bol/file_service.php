@@ -13,7 +13,6 @@
  */
 class BOL_FileService
 {
- 
     /**
      * Singleton instance.
      *
@@ -203,6 +202,23 @@ class BOL_FileService
         $userfilesDir = OW::getPluginManager()->getPlugin('base')->getUserFilesDir();
         $file = $this->fileDao->findById($id);
         return $userfilesDir . $id . $file->filename;
+    }
+
+    /**
+     * Removes file
+     *
+     * @param int $id
+     */
+    public function removeFile( $id )
+    {
+        $path = $this->getFilePath($id);
+
+        $storage = OW::getStorage();
+
+        if ( $storage->fileExists($path) )
+        {
+            $storage->removeFile($path);
+        }
     }
 
 }

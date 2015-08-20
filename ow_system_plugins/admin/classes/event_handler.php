@@ -36,7 +36,6 @@ class ADMIN_CLASS_EventHandler
         $eventManager->bind('admin.disable_fields_on_edit_profile_question', array($this, 'onGetJoinStampDisableActionList'), 999);
         $eventManager->bind('admin.add_admin_notification', array($this, 'addAdminNotification'));
         $eventManager->bind('admin.init_floatbox', array($this, 'initFloatbox'));
-        $eventManager->bind('admin.uploaded_file_list', array($this, 'uploadedFileList'));
     }
 
     public function addAdminNotification( ADMIN_CLASS_NotificationCollector $coll )
@@ -292,13 +291,5 @@ class ADMIN_CLASS_EventHandler
         $document->appendBody($cmp->render());
 
         $isInitialized = true;
-    }
-
-    public function uploadedFileList( OW_Event $e )
-    {
-        $cmp = OW::getClassInstance('ADMIN_CMP_UploadedFileList');
-        $event = new OW_Event('admin.init_floatbox', array('layout' => 'floatbox'));
-        OW::getEventManager()->trigger($event);
-        $e->add($cmp->render());
     }
 }

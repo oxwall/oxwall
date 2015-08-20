@@ -31,7 +31,6 @@
  */
 class BOL_FileTemporaryDao extends OW_BaseDao
 {
-    CONST TMP_FILE_PREFIX = 'tmp_photo_';
 
     /**
      * Singleton instance.
@@ -80,34 +79,6 @@ class BOL_FileTemporaryDao extends OW_BaseDao
     public function getTableName()
     {
         return OW_DB_PREFIX . 'file_temporary';
-    }
-
-    /**
-     * Get temporary file URL
-     *
-     * @param int $id
-     *
-     * @return string
-     */
-    public function getTemporaryFileUrl( $id )
-    {
-        $userfilesUrl = OW::getPluginManager()->getPlugin('base')->getUserFilesUrl();
-        $file = $this->findById($id);
-        return $userfilesUrl . self::TMP_FILE_PREFIX . $id . $file->filename;
-    }
-    
-    /**
-     * Get path to temporary file in file system
-     *
-     * @param int $id
-     *
-     * @return string
-     */
-    public function getTemporaryFilePath( $id )
-    {
-        $userfilesDir = OW::getPluginManager()->getPlugin('base')->getUserFilesDir();
-        $file = $this->findById($id);
-        return $userfilesDir . self::TMP_FILE_PREFIX . $id . $file->filename;
     }
 
     /**
