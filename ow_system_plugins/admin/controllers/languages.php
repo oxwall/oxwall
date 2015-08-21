@@ -45,7 +45,7 @@ class ADMIN_CTRL_Languages extends ADMIN_CTRL_Abstract
             return;
         }
 
-        OW::getDocument()->getMasterPage()->getMenu(OW_Navigation::ADMIN_SETTINGS)->getElement('sidebar_menu_item_settings_language	')->setActive(true);
+        OW::getDocument()->getMasterPage()->getMenu(OW_Navigation::ADMIN_SETTINGS)->getElement('sidebar_menu_item_settings_language')->setActive(true);
 
         $this->setPageHeading(OW::getLanguage()->text('admin', 'languages_page_heading'));
         $this->setPageHeadingIconClass('ow_ic_edit');
@@ -68,7 +68,7 @@ class ADMIN_CTRL_Languages extends ADMIN_CTRL_Abstract
         }
         else
         {
-            $item->setUrl(OW::getRouter()->urlForRoute('admin_languages_index'));
+            $item->setUrl(OW::getRouter()->urlForRoute('admin_settings_language'));
         }
 
         $item->setOrder(1);
@@ -85,7 +85,7 @@ class ADMIN_CTRL_Languages extends ADMIN_CTRL_Abstract
         }
         else
         {
-            $item->setUrl(OW::getRouter()->urlFor('ADMIN_CTRL_Languages', 'mod'));
+            $item->setUrl(OW::getRouter()->urlForRoute('admin_settings_language_mod'));
         }
 
         $item->setOrder(2);
@@ -783,8 +783,8 @@ class ADMIN_CTRL_Languages extends ADMIN_CTRL_Abstract
         $language->setStatus('active');
 
         $languageService->save($language);
-        $url = OW::getRouter()->urlFor('ADMIN_CTRL_Languages', 'mod');
-
+        $url = OW::getRouter()->urlForRoute('admin_settings_language_mod');
+ 
         OW::getFeedback()->info(OW::getLanguage()->text('admin', 'language_activated'));
 
         header("location: {$url}#lang_list");
@@ -812,7 +812,7 @@ class ADMIN_CTRL_Languages extends ADMIN_CTRL_Abstract
 
         OW::getFeedback()->info(OW::getLanguage()->text('admin', 'language_deactivated'));
         
-        $url = OW::getRouter()->urlFor('ADMIN_CTRL_Languages', 'mod');
+        $url = OW::getRouter()->urlForRoute('admin_settings_language_mod');
         header("location: {$url}#lang_list");
         exit();
     }
@@ -832,7 +832,7 @@ class ADMIN_CTRL_Languages extends ADMIN_CTRL_Abstract
 
         OW::getFeedback()->info(OW::getLanguage()->text('admin', 'language_deleted'));
 
-        $url = OW::getRouter()->urlFor('ADMIN_CTRL_Languages', 'mod');
+        $url = OW::getRouter()->urlForRoute('admin_settings_language_mod');
         header("location: {$url}#lang_list");
         exit();
     }

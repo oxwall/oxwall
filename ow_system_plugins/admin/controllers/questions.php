@@ -64,8 +64,6 @@ class ADMIN_CTRL_Questions extends ADMIN_CTRL_Abstract
 
     public function pages( $params = array() )
     {
-        $this->addContentMenu();
-
         $serviceLang = BOL_LanguageService::getInstance();
         $language = OW::getLanguage();
         $currentLanguageId = OW::getLanguage()->getCurrentId();
@@ -234,8 +232,6 @@ class ADMIN_CTRL_Questions extends ADMIN_CTRL_Abstract
 
     public function accountTypes( $params = array() )
     {
-        $this->addContentMenu();
-
         $serviceLang = BOL_LanguageService::getInstance();
         $language = OW::getLanguage();
         $currentLanguageId = OW::getLanguage()->getCurrentId();
@@ -465,50 +461,6 @@ class ADMIN_CTRL_Questions extends ADMIN_CTRL_Abstract
         return $result;
     }
 
-    public function settings()
-    {
-        $this->addContentMenu();
-
-        $form = new Form('questionSettings');
-
-        $value = OW::getConfig()->getValue('base', 'user_view_presentation');
-
-        $language = OW::getLanguage();
-
-        $userViewPresentationnew = new CheckboxField("user_view_presentation");
-        $userViewPresentationnew->setLabel($language->text('base', 'questions_config_user_view_presentation_label'));
-        $userViewPresentationnew->setDescription($language->text('base', 'questions_config_user_view_presentation_description'));
-        $userViewPresentationnew->setValue($value == 'tabs' ? true : false);
-
-        $form->addElement($userViewPresentationnew);
-
-        $submit = new Submit('save');
-        $submit->setValue($language->text('admin', 'save_btn_label'));
-
-        $form->addElement($submit);
-
-        $this->addForm($form);
-
-        if ( OW::getRequest()->isPost() )
-        {
-            if ( $form->isValid($_POST) )
-            {
-                if ( isset($_POST['user_view_presentation']) )
-                {
-                    OW::getConfig()->saveConfig('base', 'user_view_presentation', 'tabs');
-                }
-                else
-                {
-                    OW::getConfig()->saveConfig('base', 'user_view_presentation', 'table');
-                }
-
-                OW::getFeedback()->info($language->text('admin', 'question_settings_updated'));
-            }
-
-            $this->redirect();
-        }
-    }
-
     private function addContentMenu()
     {
         $language = OW::getLanguage();
@@ -520,12 +472,6 @@ class ADMIN_CTRL_Questions extends ADMIN_CTRL_Abstract
         $menuItem = new BASE_MenuItem();
         $menuItem->setKey('qst_index')->setLabel($language->text('base', 'questions_menu_index'))->setUrl($router->urlForRoute('questions_account_types'))->setOrder('1');
         $menuItem->setIconClass('ow_ic_files');
-
-        $menuItems[] = $menuItem;
-
-        $menuItem = new BASE_MenuItem();
-        $menuItem->setKey('qst_settings')->setLabel($language->text('base', 'questions_menu_settings'))->setUrl($router->urlForRoute('questions_settings'))->setOrder('4');
-        $menuItem->setIconClass('ow_ic_gear_wheel');
 
         $menuItems[] = $menuItem;
 

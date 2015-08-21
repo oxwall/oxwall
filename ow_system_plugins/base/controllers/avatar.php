@@ -153,11 +153,11 @@ class BASE_CTRL_Avatar extends OW_ActionController
             return array('result' => false, 'case' => 0);
         }
 
-        $changeUserAvatar = isset($params['changeUserAvatar']) && is_bool($params['changeUserAvatar']) === false ? false : true;
+        $changeUserAvatar = isset($params['changeUserAvatar']) && (int) !$params['changeUserAvatar'] ? false : true;
         $coords = $params['coords'];
         $viewSize = $params['view_size'];
         $path = null;
-        
+
         $localFile = false;
 
         $avatarService = BOL_AvatarService::getInstance();
@@ -210,7 +210,7 @@ class BASE_CTRL_Avatar extends OW_ActionController
                         'case' => 6
                     );
                 }
-                
+
                 $avatar = $avatarService->findByUserId($userId, false);
 
                 $event = new OW_Event('base.after_avatar_change', array(

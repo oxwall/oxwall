@@ -4,9 +4,9 @@
             {if isset($action.html)}
                 {$action.html}
             {elseif isset($action.extraLabel)}
-                <div class="extra_action">
+                <li>
                     {$action.extraLabel}
-                </div>
+                </li>
             {else}
                 <li>
                     <a {$action.attrs} >

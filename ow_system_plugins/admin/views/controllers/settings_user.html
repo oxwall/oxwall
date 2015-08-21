@@ -41,7 +41,7 @@
     });
   {/literal}
 {/script}
-{$menu}
+
 {form name='userSettingsForm'}
 
 <table class="ow_table_1 ow_form">
@@ -115,6 +115,19 @@
         <td class="ow_desc ow_small">{text key='admin+user_settings_avatar_image_desc'}</td>
     </tr>
     <tr class="ow_tr_delimiter"><td></td></tr>
+
+    <tr class="ow_tr_first">
+        <th class="ow_name ow_txtleft" colspan="3">
+            <span class="ow_section_icon ow_ic_user">{text key='admin+user_settings_profile_questions'}</span>
+        </th>
+    </tr>
+    <tr class="{cycle values='ow_alt2,alt1'}">
+        <td class="ow_label" >{label name=user_view_presentation}</td>
+        <td class="ow_value" style="text-align:left;padding-left:40px;">{input name=user_view_presentation}<br/>{error name=user_view_presentation}</td>
+        <td class="ow_desc ow_small" style="text-align:left">{desc name=user_view_presentation}</td>
+    </tr>
+    <tr class="ow_tr_delimiter"><td></td></tr>
+ 
     <tr class="ow_tr_first">
         <th class="ow_name ow_txtleft" colspan="3">
             <span class="ow_section_icon ow_ic_script">{text key='admin+join_page'}</span>
@@ -130,6 +143,39 @@
         <td class="ow_value">{input name='join_display_terms_of_use'} {error name='join_display_terms_of_use'}</td>
         <td class="ow_desc">{text key='admin+join_display_terms_of_use_desc'}</td>
     </tr>
+</table>
+
+<table class="ow_table_1 ow_form">
+    <tr class="ow_tr_first">
+        <th colspan="3" class="ow_name ow_txtleft">
+            <span class="ow_section_icon ow_ic_lock">{text key='admin+user_settings_permissions'}</span>
+        </th>
+    </tr>
+    <tr class="{cycle values='ow_alt2,ow_alt1'}">
+		<td class="ow_label">{label name='user_approve'}</td>
+		<td class="ow_value">{input name='user_approve'}</td>
+		<td class="ow_desc"></td>
+	</tr>
+	<tr class="{cycle values='ow_alt2,ow_alt1'}">
+		<td class="ow_label">{label name='who_can_join'}</td>
+		<td class="ow_value">{input name='who_can_join'}</td>
+		<td class="ow_desc"></td>
+	</tr>
+    <tr class="{cycle values='ow_alt2,ow_alt1'}" style="display:none;">
+		<td class="ow_label">{label name='who_can_invite'}</td>
+		<td class="ow_value">{input name='who_can_invite'}</td>
+		<td class="ow_desc"></td>
+	</tr>
+	<tr class="{cycle values='ow_alt2,ow_alt1'} ow_tr_last">
+		<td class="ow_label">{label name='guests_can_view'}</td>
+        <td class="ow_value">
+            <div class="clearfix">
+                <div style="float: left;width: 50%;">{input name='guests_can_view'}</div>
+                <div style="float: left;width: 50%;padding-top: 35px;">{input name='password'}</div>
+            </div>
+        </td>
+		<td class="ow_desc ow_small">{desc name='guests_can_view'}</td>
+	</tr>
 </table>
 <div class="clearfix ow_stdmargin"><div class="ow_right">
 {submit name='save' class='ow_ic_save'}

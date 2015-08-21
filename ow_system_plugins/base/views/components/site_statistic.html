@@ -1,0 +1,62 @@
+{style}
+    .statistic_amount {
+        margin-top:10px;
+    }
+
+    .statistic_amount h3 {
+        margin-bottom: 10px;
+    }
+{/style}
+
+{script}
+    var ctx = $("#{$chartId}").get(0).getContext("2d");
+    ctx.canvas.height = 100;
+
+    var data = {
+        labels: {$categories},
+        datasets: {$data}
+    };
+
+    {literal}
+        var lineChart = new Chart(ctx).Line(data, {
+            animation: false,
+            responsive : true,
+            tooltipTemplate: "<%= datasetLabel %> - <%= value %>",
+            multiTooltipTemplate: "<%= datasetLabel %> - <%= value %>"
+        });
+    {/literal}
+
+    if ( typeof OW.WidgetPanel != "undefined" )
+    {
+        // Rebuild the chart
+        OW.WidgetPanel.bind("move", function(e)
+        {
+            var canvasId = $(e.widget).find("canvas").attr("id");
+
+            if (canvasId == "{$chartId}")
+            {
+                lineChart.destroy();
+                lineChart = new Chart(ctx).Line(data, {
+                    animation: false,
+                    responsive : true,
+                    tooltipTemplate: "<%= datasetLabel %> - <%= value %>",
+                    multiTooltipTemplate: "<%= datasetLabel %> - <%= value %>"
+                });
+            }
+        });
+    }
+{/script}
+
+<div class="statistic_chart_wrapper">
+    <canvas id="{$chartId}"></canvas>
+</div>
+<div class="statistic_amount">
+    <h3>{text key='admin+statistics_amount_for_period'} :</h3>
+    <ul>
+        {foreach from=$total item=info}
+        <li>
+            {$info['label']}: <b>{$info['count']}</b>
+        </li>
+        {/foreach}
+    </ul>
+</div>
