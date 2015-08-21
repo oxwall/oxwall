@@ -120,17 +120,11 @@ class ADMIN_CTRL_Themes extends ADMIN_CTRL_Abstract
             $('.admin_themes_select a.theme_icon').click( function(){ $('.theme_info .theme_control_button').hide(); });"
         );
 
-        $adminTheme = OW::getThemeManager()->getThemeService()->getThemeObjectByName(BOL_ThemeService::DEFAULT_THEME);
-        $defaultThemeImgUrl = $adminTheme === null ? "" : $adminTheme->getStaticImagesUrl();
-
-
         $this->assign("adminThemes", array(BOL_ThemeService::DEFAULT_THEME => $themesInfo[BOL_ThemeService::DEFAULT_THEME]));
         $this->assign('themeInfo', $themesInfo[$activeTheme]);
         $event = new OW_Event("admin.filter_themes_to_choose", array(), $themesInfo);
         OW::getEventManager()->trigger($event);
         $this->assign('themes', $event->getData());
-        $this->assign('defaultThemeImgDir', $defaultThemeImgUrl);
-        
         
         // add theme
         $form = new Form('theme-add');
