@@ -1272,4 +1272,9 @@ class BOL_ThemeService
     {
         return $this->themeDao->findThemesForUpdateCount();
     }
+
+    public function findPluginsWithInvalidLicense()
+    {
+        return $this->themeDao->findPluginsWithInvalidLicense();
+    }
 }

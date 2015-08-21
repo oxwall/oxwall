@@ -44,8 +44,7 @@ class BOL_ThemeDao extends OW_BaseDao
     const BUILD = 'build';
     const LICENSE_KEY = 'licenseKey';
     const UPDATE = 'update';
-
-
+    const LICENSE_CHECK_STAMP = "licenseCheckTimestamp";
     const VALUE_SIDEBAR_POSITION_LEFT = 'left';
     const VALUE_SIDEBAR_POSITION_RIGHT = 'right';
     const VALUE_SIDEBAR_POSITION_NONE = 'none';
@@ -112,16 +111,31 @@ class BOL_ThemeDao extends OW_BaseDao
         return $this->findObjectByExample($example, 24 * 3600, array(self::CACHE_TAG_PAGE_LOAD_THEME, OW_CacheManager::TAG_OPTION_INSTANT_LOAD));
     }
 
-    protected function clearCache()
-    {
-        OW::getCacheManager()->clean(array(BOL_ThemeDao::CACHE_TAG_PAGE_LOAD_THEME));
-    }
-
+    /**
+     * @return int
+     */
     public function findThemesForUpdateCount()
     {
         $example = new OW_Example();
         $example->andFieldEqual(self::UPDATE, 1);
 
         return $this->countByExample($example);
+    }
+
+    /**
+     * @return array
+     */
+    public function findPluginsWithInvalidLicense()
+    {
+        $example = new OW_Example();
+        $example->andFieldGreaterThan(self::LICENSE_CHECK_STAMP, 0);
+
+        return $this->findListByExample($example);
+    }
+    /* ---------------------------------------------------------------------- */
+
+    protected function clearCache()
+    {
+        OW::getCacheManager()->clean(array(BOL_ThemeDao::CACHE_TAG_PAGE_LOAD_THEME));
     }
 }

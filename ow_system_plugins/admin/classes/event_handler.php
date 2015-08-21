@@ -35,7 +35,8 @@ class ADMIN_CLASS_EventHandler
         $eventManager = OW::getEventManager();
         $eventManager->bind('admin.disable_fields_on_edit_profile_question', array($this, 'onGetDisableActionList'));
         $eventManager->bind('admin.disable_fields_on_edit_profile_question', array($this, 'onGetJoinStampDisableActionList'), 999);
-        
+        $eventManager->bind('admin.add_admin_notification', array($this, 'onCollectAdminNotifications'));
+        $eventManager->bind('admin.add_admin_warning', array($this, 'onCollectAdminWarnings'));
     }
 
     public function onGetDisableActionList( OW_Event $e )
@@ -49,15 +50,15 @@ class ADMIN_CLASS_EventHandler
 
             foreach ( $data as $key => $value )
             {
-                switch($key)
+                switch ( $key )
                 {
                     case 'disable_account_type' :
-                        
+
                         if ( $dto->base == 1 )
                         {
                             $data['disable_account_type'] = true;
                         }
-                        
+
                         break;
                     case 'disable_answer_type' :
 
@@ -65,7 +66,7 @@ class ADMIN_CLASS_EventHandler
                         {
                             $data['disable_answer_type'] = true;
                         }
-                        
+
                         break;
                     case 'disable_presentation' :
 
@@ -73,26 +74,26 @@ class ADMIN_CLASS_EventHandler
                         {
                             $data['disable_presentation'] = true;
                         }
-                        
+
                         break;
                     case 'disable_column_count' :
-                                                
+
                         if ( !empty($dto->parent) )
                         {
                             $data['disable_column_count'] = true;
                         }
-                        
+
                         break;
-                        
+
                     case 'disable_possible_values' :
-                        
+
                         if ( !empty($dto->parent) )
                         {
                             $data['disable_possible_values'] = true;
                         }
-                        
+
                         break;
-                    
+
                     case 'disable_display_config' :
 
                         if ( $dto->name == 'joinStamp' )
@@ -102,36 +103,36 @@ class ADMIN_CLASS_EventHandler
 
                         break;
                     case 'disable_required' :
-                        
+
                         if ( $dto->base == 1 )
                         {
                             $data['disable_required'] = true;
                         }
 
-                        
+
                         break;
                     case 'disable_on_join' :
 
-                        if ( in_array($dto->name, array('password') ) || $dto->base == 1 )
+                        if ( in_array($dto->name, array('password')) || $dto->base == 1 )
                         {
                             $data['disable_on_join'] = true;
                         }
 
                         break;
                     case 'disable_on_view' :
-                        if ( in_array($dto->name, array('password') ) )
+                        if ( in_array($dto->name, array('password')) )
                         {
                             $data['disable_on_view'] = true;
                         }
                         break;
                     case 'disable_on_search' :
-                        if ( in_array($dto->name, array('password') ) )
+                        if ( in_array($dto->name, array('password')) )
                         {
                             $data['disable_on_search'] = true;
                         }
                         break;
                     case 'disable_on_edit' :
-                        if ( in_array($dto->name, array('password') ) )
+                        if ( in_array($dto->name, array('password')) )
                         {
                             $data['disable_on_edit'] = true;
                         }
@@ -142,8 +143,8 @@ class ADMIN_CLASS_EventHandler
 
         $e->setData($data);
     }
-    
-    function onGetJoinStampDisableActionList( OW_Event $e )
+
+    public function onGetJoinStampDisableActionList( OW_Event $e )
     {
         $params = $e->getParams();
         $data = $e->getData();
@@ -166,5 +167,55 @@ class ADMIN_CLASS_EventHandler
 
             $e->setData($disableActionList);
         }
+    }
+
+    public function onCollectAdminNotifications( BASE_CLASS_EventCollector $e )
+    {
+        $router = OW::getRouter();
+        $language = OW::getLanguage();
+        $pluginService = BOL_PluginService::getInstance();
+        $themeService = BOL_ThemeService::getInstance();
+
+        if ( OW::getConfig()->getValue("base", "update_soft") )
+        {
+            $e->add($language->text("admin", "notification_soft_update", array("link" => $router->urlForRoute("admin_core_update_request"))));
+        }
+
+        $pluginsToUpdateCount = $pluginService->getPluginsToUpdateCount();
+
+        if ( $pluginsToUpdateCount > 0 )
+        {
+            $e->add($language->text("admin", "notification_plugins_to_update", array("link" => $router->urlForRoute("admin_plugins_installed"), "count" => $pluginsToUpdateCount)));
+        }
+
+        $themesToUpdateCount = $themeService->getThemesToUpdateCount();
+
+        if ( $themesToUpdateCount > 0 )
+        {
+            $e->add($language->text("admin", "notification_themes_to_update", array("link" => $router->urlForRoute("admin_themes_choose"), "count" => $themesToUpdateCount)));
+        }
+    }
+
+    public function onCollectAdminWarnings( BASE_CLASS_EventCollector $e )
+    {
+        $language = OW::getLanguage();
+        $pluginService = BOL_PluginService::getInstance();
+        $themeService = BOL_ThemeService::getInstance();
+
+        if ( OW::getConfig()->configExists("base", "cron_is_active") && (int) OW::getConfig()->getValue("base", "cron_is_active") == 0 )
+        {
+            $e->add($language->text("admin", "warning_cron_is_not_active", array("path" => OW_DIR_ROOT . "ow_cron" . DS . "run.php")));
+        }
+
+        if ( !ini_get("allow_url_fopen") )
+        {
+            $e->add($language->text('admin', 'warning_url_fopen_disabled'));
+        }
+        
+        $plugins = $pluginService->findPluginsWithInvalidLicense();
+        
+        
+        
+        printVar( $plugins );
     }
 }

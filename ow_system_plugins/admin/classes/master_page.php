@@ -81,64 +81,28 @@ class ADMIN_CLASS_MasterPage extends OW_MasterPage
             $this->addMenu($value, $this->menuCmps[$key]);
         }
 
-        // admin notifications
-        $adminNotifications = array();
-
-        if ( !defined('OW_PLUGIN_XP') && OW::getConfig()->getValue('base', 'update_soft') )
-        {
-            $adminNotifications[] = $language->text('admin', 'notification_soft_update', array('link' => OW::getRouter()->urlForRoute('admin_core_update_request')));
-        }
-
-        $pluginsCount = BOL_PluginService::getInstance()->getPluginsToUpdateCount();
-
-        if ( !defined('OW_PLUGIN_XP') && $pluginsCount > 0 )
-        {
-            $adminNotifications[] = $language->text('admin', 'notification_plugins_to_update', array('link' => OW::getRouter()->urlForRoute('admin_plugins_installed'), 'count' => $pluginsCount));
-        }
-
-        $themesCount = BOL_ThemeService::getInstance()->getThemesToUpdateCount();
-
-        if ( !defined('OW_PLUGIN_XP') && $themesCount > 0 )
-        {
-            $adminNotifications[] = $language->text('admin', 'notification_themes_to_update', array('link' => OW::getRouter()->urlForRoute('admin_themes_choose'), 'count' => $themesCount));
-        }
-
         $event = new BASE_CLASS_EventCollector('admin.add_admin_notification');
+
         OW::getEventManager()->trigger($event);
 
-        $adminNotifications = array_merge($adminNotifications, $event->getData());
-
-        $this->assign('notifications', $adminNotifications);
-
-        $adminWarnings = array();
-
-        if ( !defined('OW_PLUGIN_XP') && OW::getConfig()->configExists('base', 'cron_is_active') && (int) OW::getConfig()->getValue('base', 'cron_is_active') === 0 )
-        {
-            $adminWarnings[] = $language->text('admin', 'warning_cron_is_not_active', array('path' => OW_DIR_ROOT . 'ow_cron' . DS . 'run.php'));
-        }
-
-        if ( !defined('OW_PLUGIN_XP') && !ini_get('allow_url_fopen') )
-        {
-            $adminWarnings[] = $language->text('admin', 'warning_url_fopen_disabled');
-        }
+        $this->assign('notifications', $event->getData());
 
         $event = new BASE_CLASS_EventCollector('admin.add_admin_warning');
         OW::getEventManager()->trigger($event);
 
-        $adminWarnings = array_merge($adminWarnings, $event->getData());
-        $this->assign('warnings', $adminWarnings);
+        $this->assign('warnings', $event->getData());
 
         // platform info        
         $event = new OW_Event('admin.get_soft_version_text');
         OW_EventManager::getInstance()->trigger($event);
-        
+
         $verString = $event->getData();
-        
+
         if ( empty($verString) )
         {
-            $verString = OW::getLanguage()->text('admin', 'soft_version', array('version' => OW::getConfig()->getValue('base', 'soft_version'), 'build' => OW::getConfig()->getValue('base', 'soft_build')) );
+            $verString = OW::getLanguage()->text('admin', 'soft_version', array('version' => OW::getConfig()->getValue('base', 'soft_version'), 'build' => OW::getConfig()->getValue('base', 'soft_build')));
         }
-        
+
         $this->assign('version', OW::getConfig()->getValue('base', 'soft_version'));
         $this->assign('build', OW::getConfig()->getValue('base', 'soft_build'));
         $this->assign('softVersion', $verString);
@@ -162,11 +126,11 @@ class ADMIN_CLASS_MasterPage extends OW_MasterPage
         foreach ( $this->menuCmps as $key => $value )
         {
             //check if there are any items in the menu
-            if( $value->getElementsCount() <= 0 )
+            if ( $value->getElementsCount() <= 0 )
             {
                 continue;
             }
-            
+
             $id = UTIL_HtmlTag::generateAutoId("mi");
 
             $value->onBeforeRender();
