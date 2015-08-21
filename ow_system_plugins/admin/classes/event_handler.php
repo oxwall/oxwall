@@ -201,6 +201,7 @@ class ADMIN_CLASS_EventHandler
         $language = OW::getLanguage();
         $pluginService = BOL_PluginService::getInstance();
         $themeService = BOL_ThemeService::getInstance();
+        $request = OW::getRequest();
 
         if ( OW::getConfig()->configExists("base", "cron_is_active") && (int) OW::getConfig()->getValue("base", "cron_is_active") == 0 )
         {
@@ -211,11 +212,34 @@ class ADMIN_CLASS_EventHandler
         {
             $e->add($language->text('admin', 'warning_url_fopen_disabled'));
         }
-        
+
         $plugins = $pluginService->findPluginsWithInvalidLicense();
-        
-        
-        
-        printVar( $plugins );
+        $licenseRequestUrl = OW::getRouter()->urlFor("ADMIN_CTRL_Storage", "checkItemLicense");
+
+        /* @var $plugin BOL_Plugin */
+        foreach ( $plugins as $plugin )
+        {
+            $params = array(
+                BOL_StorageService::URI_VAR_ITEM_TYPE => BOL_StorageService::URI_VAR_ITEM_TYPE_VAL_PLUGIN,
+                BOL_StorageService::URI_VAR_KEY => $plugin->getKey(),
+                BOL_StorageService::URI_VAR_DEV_KEY => $plugin->getDeveloperKey(),
+            );
+
+            $e->add($plugin->getTitle() . " <a href=\"{$request->buildUrlQueryString($licenseRequestUrl, $params)}\">aaa</a>");
+        }
+
+        $themes = $themeService->findPluginsWithInvalidLicense();
+
+        /* @var $theme BOL_Theme */
+        foreach ( $themes as $theme )
+        {
+            $params = array(
+                BOL_StorageService::URI_VAR_ITEM_TYPE => BOL_StorageService::URI_VAR_ITEM_TYPE_VAL_THEME,
+                BOL_StorageService::URI_VAR_KEY => $theme->getName(),
+                BOL_StorageService::URI_VAR_DEV_KEY => $theme->getDeveloperKey(),
+            );
+
+            $e->add($plugin->getTitle() . " <a href=\"{$request->buildUrlQueryString($licenseRequestUrl, $params)}\">aaa</a>");
+        }
     }
 }

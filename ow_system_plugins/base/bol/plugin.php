@@ -284,6 +284,6 @@ class BOL_Plugin extends OW_Entity
 
     public function setLicenseCheckTimestamp( $licenseCheckTimestamp )
     {
-        $this->licenseCheckTimestamp = $licenseCheckTimestamp;
+        $this->licenseCheckTimestamp = ($licenseCheckTimestamp === null ? null : intval($licenseCheckTimestamp));
     }
 }

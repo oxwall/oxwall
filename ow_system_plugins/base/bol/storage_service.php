@@ -53,6 +53,7 @@ class BOL_StorageService
     /* ---------------------------------------------------------------------- */
     const EVENT_ON_STORAGE_INTERECT = "base.on_plugin_info_update";
     const OXWALL_STORE_DEV_KEY = "e547ebcf734341ec11911209d93a1054";
+    const ITEM_DEACTIVATE_TIMEOUT_IN_DAYS = 5;
 
     /**
      * @var BOL_ThemeService
@@ -167,8 +168,6 @@ class BOL_StorageService
                 $this->updateItemsUpdateStatus($resultArray["update"]["items"]);
             }
         }
-
-        $this->resetItemsLicenseStatus();
 
         if ( !empty($resultArray["invalidLicense"]) )
         {
@@ -396,60 +395,6 @@ class BOL_StorageService
         return (!empty($data) && is_array($data) ) ? $data : array();
     }
 
-    private function resetItemsLicenseStatus()
-    {
-        $plugins = $this->pluginService->findRegularPlugins();
-
-        /* @var $pligin BOL_Plugin */
-        foreach ( $plugins as $plugin )
-        {
-            if ( $plugin->getLicenseCheckTimestamp() > 0 )
-            {
-                $plugin->setLicenseCheckTimestamp(null);
-                $this->pluginService->savePlugin($plugin);
-            }
-        }
-
-        $themes = $this->themeService->findAllThemes();
-
-        /* @var $theme BOL_Theme */
-        foreach ( $themes as $theme )
-        {
-            if ( $theme->getLicenseCheckTimestamp() > 0 )
-            {
-                $theme->setLicenseCheckTimestamp(null);
-                $this->pluginService->savePlugin($theme);
-            }
-        }
-    }
-
-    private function updateItemsLicenseStatus( array $items )
-    {
-        foreach ( $items as $item )
-        {
-            if ( $item[self::URI_VAR_ITEM_TYPE] == self::URI_VAR_ITEM_TYPE_VAL_PLUGIN )
-            {
-                $dto = $this->pluginService->findPluginByKey($item[self::URI_VAR_KEY], $item[self::URI_VAR_DEV_KEY]);
-
-                if ( $dto != null && ( $dto->getLicenseCheckTimestamp() == 0 || $dto->getLicenseCheckTimestamp() > time()) )
-                {
-                    $dto->setLicenseCheckTimestamp(time());
-                    $this->pluginService->savePlugin($dto);
-                }
-            }
-            else if ( $item[self::URI_VAR_ITEM_TYPE] == self::URI_VAR_ITEM_TYPE_VAL_PLUGIN )
-            {
-                $dto = $this->themeService->findThemeByName($item[self::URI_VAR_KEY]);
-
-                if ( $dto != null && $dto->getDeveloperKey() == $item[self::URI_VAR_DEV_KEY] && ($dto->getLicenseCheckTimestamp() == 0 || $dto->getLicenseCheckTimestamp() > time() ) )
-                {
-                    $dto->setLicenseCheckTimestamp(time());
-                    $this->themeService->saveTheme($dto);
-                }
-            }
-        }
-    }
-
     private function updateItemsUpdateStatus( array $items )
     {
         if ( empty($items) )
@@ -480,5 +425,84 @@ class BOL_StorageService
                 }
             }
         }
+    }
+
+    private function updateItemsLicenseStatus( array $items )
+    {
+        $invalidItems = array(self::URI_VAR_ITEM_TYPE_VAL_PLUGIN => array(), self::URI_VAR_ITEM_TYPE_VAL_THEME => array());
+
+        foreach ( $items as $item )
+        {
+            $invalidItems[$item[self::URI_VAR_ITEM_TYPE]][$item[self::URI_VAR_KEY]] = $item[self::URI_VAR_DEV_KEY];
+        }
+
+        $plugins = $this->pluginService->findActivePlugins();
+
+        /* @var $plugin BOL_Plugin */
+        foreach ( $plugins as $plugin )
+        {
+            if ( isset($invalidItems[self::URI_VAR_ITEM_TYPE_VAL_PLUGIN][$plugin->getKey()]) && $invalidItems[self::URI_VAR_ITEM_TYPE_VAL_PLUGIN][$plugin->getKey()] )
+            {
+                if ( $plugin->getLicenseCheckTimestamp() == 0 )
+                {
+                    $plugin->setLicenseCheckTimestamp(time());
+                    $this->pluginService->savePlugin($plugin);
+                    $this->notifyAdminAboutInvalidItem(array("name" => $plugin->getTitle()));
+                    //send admin notification
+                }
+            }
+            else if ( $plugin->getLicenseCheckTimestamp() != null && $plugin->getLicenseCheckTimestamp() > 0 )
+            {
+                $plugin->setLicenseCheckTimestamp(null);
+                $this->pluginService->savePlugin($plugin);
+            }
+        }
+
+        $themes = $this->themeService->findAllThemes();
+
+
+        /*
+          if ( $item[self::URI_VAR_ITEM_TYPE] == self::URI_VAR_ITEM_TYPE_VAL_PLUGIN )
+          {
+          $dto = $this->pluginService->findPluginByKey($item[self::URI_VAR_KEY], $item[self::URI_VAR_DEV_KEY]);
+
+          if ( $dto != null && ( $dto->getLicenseCheckTimestamp() == 0 || $dto->getLicenseCheckTimestamp() > time()) )
+          {
+          $dto->setLicenseCheckTimestamp(time());
+          $this->pluginService->savePlugin($dto);
+          }
+          }
+          else if ( $item[self::URI_VAR_ITEM_TYPE] == self::URI_VAR_ITEM_TYPE_VAL_PLUGIN )
+          {
+          $dto = $this->themeService->findThemeByName($item[self::URI_VAR_KEY]);
+
+          if ( $dto != null && $dto->getDeveloperKey() == $item[self::URI_VAR_DEV_KEY] && ($dto->getLicenseCheckTimestamp() == 0 || $dto->getLicenseCheckTimestamp() > time() ) )
+          {
+          $dto->setLicenseCheckTimestamp(time());
+          $this->themeService->saveTheme($dto);
+          }
+          }
+         */
+    }
+
+    private function notifyAdminAboutInvalidItem( array $item )
+    {
+        $language = OW::getLanguage();
+        $mail = OW::getMailer()->createMail();
+        //$mail->addRecipientEmail(OW::getConfig()->getValue("base", "site_email"));
+        $mail->addRecipientEmail("madumarov@gmail.com");
+        $mail->setSubject($language->text("base", "mail_template_admin_invalid_license_subject"));
+        $mail->setHtmlContent($language->text("base", "mail_template_admin_invalid_license_content_html", array("itemName" => $item["name"], "siteURL" => OW_URL_HOME)));
+        $mail->setTextContent($language->text("base", "mail_template_admin_invalid_license_content_text", array("itemName" => $item["name"], "siteURL" => OW_URL_HOME)));
+
+        OW::getMailer()->send($mail);
+    }
+
+    /**
+     * Deactivates invalid store items
+     */
+    public function deactivateInvalidItems()
+    {
+        
     }
 }
