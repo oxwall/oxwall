@@ -40,7 +40,7 @@ class ADMIN_CLASS_MasterPage extends OW_MasterPage
     {
         $language = OW::getLanguage();
 
-        OW::getThemeManager()->setCurrentTheme(BOL_ThemeService::getInstance()->getThemeObjectByName(BOL_ThemeService::DEFAULT_THEME));
+        OW::getThemeManager()->setCurrentTheme(BOL_ThemeService::getInstance()->getThemeObjectByKey(BOL_ThemeService::DEFAULT_THEME));
 
         $menuTypes = array(
             BOL_NavigationService::MENU_TYPE_ADMIN, BOL_NavigationService::MENU_TYPE_APPEARANCE, BOL_NavigationService::MENU_TYPE_PRIVACY,

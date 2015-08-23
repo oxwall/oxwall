@@ -235,7 +235,7 @@ class ADMIN_CLASS_EventHandler
         {
             $params = array(
                 BOL_StorageService::URI_VAR_ITEM_TYPE => BOL_StorageService::URI_VAR_ITEM_TYPE_VAL_THEME,
-                BOL_StorageService::URI_VAR_KEY => $theme->getName(),
+                BOL_StorageService::URI_VAR_KEY => $theme->getKey(),
                 BOL_StorageService::URI_VAR_DEV_KEY => $theme->getDeveloperKey(),
             );
 

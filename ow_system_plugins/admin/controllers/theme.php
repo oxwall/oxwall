@@ -78,7 +78,7 @@ class ADMIN_CTRL_Theme extends ADMIN_CTRL_Abstract
 
     public function settings()
     {
-        $dto = $this->themeService->findThemeByName(OW::getConfig()->getValue('base', 'selectedTheme'));
+        $dto = $this->themeService->findThemeByKey(OW::getConfig()->getValue('base', 'selectedTheme'));
 
         if ( $dto === null )
         {
@@ -87,8 +87,8 @@ class ADMIN_CTRL_Theme extends ADMIN_CTRL_Abstract
 
         $assignArray = (array) json_decode($dto->getDescription());
 
-        $assignArray['iconUrl'] = $this->themeService->getStaticUrl($dto->getName()) . BOL_ThemeService::ICON_FILE;
-        $assignArray['name'] = $dto->getName();
+        $assignArray['iconUrl'] = $this->themeService->getStaticUrl($dto->getKey()) . BOL_ThemeService::ICON_FILE;
+        $assignArray['name'] = $dto->getKey();
         $assignArray['title'] = $dto->getTitle();
         $this->assign('themeInfo', $assignArray);
         $this->assign('resetUrl', OW::getRouter()->urlFor(__CLASS__, 'reset'));
@@ -127,7 +127,7 @@ class ADMIN_CTRL_Theme extends ADMIN_CTRL_Abstract
         {
             $css = isset($_POST['css']) ? trim($_POST['css']) : '';
 
-            $dto = $this->themeService->findThemeByName(OW::getConfig()->getValue('base', 'selectedTheme'));
+            $dto = $this->themeService->findThemeByKey(OW::getConfig()->getValue('base', 'selectedTheme'));
             $dto->setCustomCss($css);
             $this->themeService->saveTheme($dto);
             $this->themeService->updateCustomCssFile($dto->getId());
@@ -195,7 +195,7 @@ class ADMIN_CTRL_Theme extends ADMIN_CTRL_Abstract
 
     public function reset()
     {
-        $dto = $this->themeService->findThemeByName(OW::getConfig()->getValue('base', 'selectedTheme'));
+        $dto = $this->themeService->findThemeByKey(OW::getConfig()->getValue('base', 'selectedTheme'));
         $this->themeService->resetTheme($dto->getId());
         $this->redirectToAction('settings');
     }
@@ -231,7 +231,7 @@ class AddCssForm extends Form
         parent::__construct('add-css');
 
         $text = new Textarea('css');
-        $dto = BOL_ThemeService::getInstance()->findThemeByName(OW::getConfig()->getValue('base', 'selectedTheme'));
+        $dto = BOL_ThemeService::getInstance()->findThemeByKey(OW::getConfig()->getValue('base', 'selectedTheme'));
         $text->setValue($dto->getCustomCss());
         $this->addElement($text);
 

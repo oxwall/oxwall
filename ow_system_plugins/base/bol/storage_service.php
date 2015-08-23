@@ -125,7 +125,7 @@ class BOL_StorageService
         foreach ( $themes as $dto )
         {
             $requestArray["items"][] = array(
-                self::URI_VAR_KEY => $dto->getName(),
+                self::URI_VAR_KEY => $dto->getKey(),
                 self::URI_VAR_DEV_KEY => $dto->getDeveloperKey(),
                 self::URI_VAR_BUILD => $dto->getBuild(),
                 self::URI_VAR_LICENSE_KEY => $dto->getLicenseKey(),
@@ -416,7 +416,7 @@ class BOL_StorageService
             }
             else if ( $item[self::URI_VAR_ITEM_TYPE] == self::URI_VAR_ITEM_TYPE_VAL_THEME )
             {
-                $dto = $this->themeService->findThemeByName($item[self::URI_VAR_KEY]);
+                $dto = $this->themeService->findThemeByKey($item[self::URI_VAR_KEY]);
 
                 if ( $dto != null && $dto->getDeveloperKey() == $item[self::URI_VAR_DEV_KEY] )
                 {
@@ -467,7 +467,7 @@ class BOL_StorageService
         /* @var $theme BOL_Theme */
         foreach ( $themes as $theme )
         {
-            if ( isset($invalidItems[self::URI_VAR_ITEM_TYPE_VAL_THEME][$theme->getName()]) && $invalidItems[self::URI_VAR_ITEM_TYPE_VAL_THEME][$theme->getName()] )
+            if ( isset($invalidItems[self::URI_VAR_ITEM_TYPE_VAL_THEME][$theme->getKey()]) && $invalidItems[self::URI_VAR_ITEM_TYPE_VAL_THEME][$theme->getKey()] )
             {
                 if ( (int) $theme->getLicenseCheckTimestamp() == 0 )
                 {
@@ -475,7 +475,7 @@ class BOL_StorageService
                     $this->themeService->saveTheme($theme);
                     $this->notifyAdminAboutInvalidItem(array("name" => $theme->getTitle()));
                 }
-                else if ( (intval($theme->getLicenseCheckTimestamp()) + $licenseExpireTimeInSeconds) <= time() && $this->themeService->getSelectedThemeName() == $theme->getName() )
+                else if ( (intval($theme->getLicenseCheckTimestamp()) + $licenseExpireTimeInSeconds) <= time() && $this->themeService->getSelectedThemeName() == $theme->getKey() )
                 {
                     $this->themeService->setSelectedThemeName(BOL_ThemeService::DEFAULT_THEME);
                 }

@@ -251,7 +251,14 @@ class UTIL_String
      */
     public static function xmlToArray( $xmlString )
     {
-        return self::processXmlObject(simplexml_load_string($xmlString));
+        $xml = simplexml_load_string($xmlString);
+
+        if ( !$xml )
+        {
+            return false;
+        }
+
+        return self::processXmlObject($xml);
     }
 
     private static function processXmlObject( SimpleXMLElement $el )

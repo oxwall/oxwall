@@ -44,12 +44,17 @@ class UTIL_File
     private static $videoExtensions = array('avi', 'mpeg', 'wmv', 'flv', 'mov', 'mp4');
 
     /**
-     * Enter description here...
-     *
-     * @param unknown_type $sourcePath
-     * @param unknown_type $destPath
+     * Copies whole directory from source to destination folder. The destionation folder will be created if it doesn't exist.
+     * Array and callable can be passed as filter argument. Array should contain the list of file extensions to be copied.
+     * Callable is more flexible way for filtering, it should contain one parameter (file/dir to be copied) and return bool 
+     * value which indicates if the item should be copied.
+     * 
+     * @param string $sourcePath
+     * @param string $destPath
+     * @param mixed $filter
+     * @param int $level
      */
-    public static function copyDir( $sourcePath, $destPath, array $fileTypes = null, $level = -1 )
+    public static function copyDir( $sourcePath, $destPath, array $filter = null, $level = -1 )
     {
         $sourcePath = self::removeLastDS($sourcePath);
 
@@ -71,7 +76,7 @@ class UTIL_File
         {
             while ( ($item = readdir($handle)) !== false )
             {
-                if ( $item === '.' || $item === '..' )
+                if ( $item === "." || $item === ".." )
                 {
                     continue;
                 }
@@ -79,13 +84,20 @@ class UTIL_File
                 $path = $sourcePath . DS . $item;
                 $dPath = $destPath . DS . $item;
 
-                if ( is_file($path) && ( $fileTypes === null || in_array(self::getExtension($item), $fileTypes) ) )
+                if ( is_callable($filter) && !call_user_func($filter, $path) )
+                {
+                    continue;
+                }
+
+                $copy = ($filter === null || (is_array($filter) && in_array(self::getExtension($item), $filter)));
+
+                if ( is_file($path) && $copy )
                 {
                     copy($path, $dPath);
                 }
                 else if ( $level && is_dir($path) )
                 {
-                    self::copyDir($path, $dPath, $fileTypes, ($level - 1));
+                    self::copyDir($path, $dPath, $filter, ($level - 1));
                 }
             }
 

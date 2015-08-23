@@ -34,7 +34,7 @@ class BOL_Theme extends OW_Entity
     /**
      * @var string
      */
-    public $name;
+    public $key;
 
     /**
      * @var string
@@ -123,9 +123,9 @@ class BOL_Theme extends OW_Entity
     /**
      * @return string
      */
-    public function getName()
+    public function getKey()
     {
-        return $this->name;
+        return $this->key;
     }
 
     /**
@@ -165,12 +165,12 @@ class BOL_Theme extends OW_Entity
     }
 
     /**
-     * @param string $name
+     * @param string $key
      * @return BOL_Theme
      */
-    public function setName( $name )
+    public function setKey( $key )
     {
-        $this->name = trim($name);
+        $this->key = trim($key);
         return $this;
     }
 

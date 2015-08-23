@@ -240,6 +240,11 @@ class BOL_PluginService
         $propList = array("key", "name", "description", "license", "author", "build", "copyright", "licenseUrl");
         $xmlInfo = (array) simplexml_load_file($pluginXmlPath);
 
+        if ( !$xmlInfo )
+        {
+            return null;
+        }
+
         foreach ( $propList as $prop )
         {
             if ( empty($xmlInfo[$prop]) )
@@ -249,7 +254,6 @@ class BOL_PluginService
         }
 
         $xmlInfo["title"] = $xmlInfo["name"];
-        unset($xmlInfo["name"]);
         $xmlInfo["path"] = dirname($pluginXmlPath);
         return $xmlInfo;
     }

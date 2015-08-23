@@ -98,8 +98,8 @@ class BASE_Export extends DATAEXPORTER_CLASS_Export
             $this->configs['controlValue'][$controlValue['themeControlKey']] = $controlValue['value'];
         }
 
-        $za->addEmptyDir($archiveDir . '/' . $currentTheme->getName());
-        $this->zipFolder($za, $currentThemeDir, $archiveDir . '/' . $currentTheme->getName() . '/');
+        $za->addEmptyDir($archiveDir . '/' . $currentTheme->getKey());
+        $this->zipFolder($za, $currentThemeDir, $archiveDir . '/' . $currentTheme->getKey() . '/');
 
         $themesDir = Ow::getPluginManager()->getPlugin('dataexporter')->getPluginFilesDir(). 'themes' . DS;
 

@@ -32,7 +32,7 @@
 class BOL_ThemeDao extends OW_BaseDao
 {
     const ID = 'id';
-    const NAME = 'name';
+    const KEY = 'key';
     const TITLE = 'title';
     const DESCRIPTION = 'description';
     const IS_ACTIVE = 'isActive';
@@ -104,10 +104,10 @@ class BOL_ThemeDao extends OW_BaseDao
      * @param string $name
      * @return BOL_Theme
      */
-    public function findByName( $name )
+    public function findByKey( $name )
     {
         $example = new OW_Example();
-        $example->andFieldEqual(self::NAME, trim($name));
+        $example->andFieldEqual(self::KEY, trim($name));
         return $this->findObjectByExample($example, 24 * 3600, array(self::CACHE_TAG_PAGE_LOAD_THEME, OW_CacheManager::TAG_OPTION_INSTANT_LOAD));
     }
 
