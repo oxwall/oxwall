@@ -414,7 +414,7 @@ class BOL_StorageService
                     $this->pluginService->savePlugin($dto);
                 }
             }
-            else if ( $item[self::URI_VAR_ITEM_TYPE] == self::URI_VAR_ITEM_TYPE_VAL_PLUGIN )
+            else if ( $item[self::URI_VAR_ITEM_TYPE] == self::URI_VAR_ITEM_TYPE_VAL_THEME )
             {
                 $dto = $this->themeService->findThemeByName($item[self::URI_VAR_KEY]);
 
@@ -436,6 +436,7 @@ class BOL_StorageService
             $invalidItems[$item[self::URI_VAR_ITEM_TYPE]][$item[self::URI_VAR_KEY]] = $item[self::URI_VAR_DEV_KEY];
         }
 
+        $licenseExpireTimeInSeconds = self::ITEM_DEACTIVATE_TIMEOUT_IN_DAYS * 24 * 5;
         $plugins = $this->pluginService->findActivePlugins();
 
         /* @var $plugin BOL_Plugin */
@@ -443,12 +444,15 @@ class BOL_StorageService
         {
             if ( isset($invalidItems[self::URI_VAR_ITEM_TYPE_VAL_PLUGIN][$plugin->getKey()]) && $invalidItems[self::URI_VAR_ITEM_TYPE_VAL_PLUGIN][$plugin->getKey()] )
             {
-                if ( $plugin->getLicenseCheckTimestamp() == 0 )
+                if ( (int) $plugin->getLicenseCheckTimestamp() == 0 )
                 {
                     $plugin->setLicenseCheckTimestamp(time());
                     $this->pluginService->savePlugin($plugin);
                     $this->notifyAdminAboutInvalidItem(array("name" => $plugin->getTitle()));
-                    //send admin notification
+                }
+                else if ( (intval($plugin->getLicenseCheckTimestamp()) + $licenseExpireTimeInSeconds) <= time() )
+                {
+                    $this->pluginService->deactivate($plugin->getKey());
                 }
             }
             else if ( $plugin->getLicenseCheckTimestamp() != null && $plugin->getLicenseCheckTimestamp() > 0 )
@@ -460,29 +464,28 @@ class BOL_StorageService
 
         $themes = $this->themeService->findAllThemes();
 
-
-        /*
-          if ( $item[self::URI_VAR_ITEM_TYPE] == self::URI_VAR_ITEM_TYPE_VAL_PLUGIN )
-          {
-          $dto = $this->pluginService->findPluginByKey($item[self::URI_VAR_KEY], $item[self::URI_VAR_DEV_KEY]);
-
-          if ( $dto != null && ( $dto->getLicenseCheckTimestamp() == 0 || $dto->getLicenseCheckTimestamp() > time()) )
-          {
-          $dto->setLicenseCheckTimestamp(time());
-          $this->pluginService->savePlugin($dto);
-          }
-          }
-          else if ( $item[self::URI_VAR_ITEM_TYPE] == self::URI_VAR_ITEM_TYPE_VAL_PLUGIN )
-          {
-          $dto = $this->themeService->findThemeByName($item[self::URI_VAR_KEY]);
-
-          if ( $dto != null && $dto->getDeveloperKey() == $item[self::URI_VAR_DEV_KEY] && ($dto->getLicenseCheckTimestamp() == 0 || $dto->getLicenseCheckTimestamp() > time() ) )
-          {
-          $dto->setLicenseCheckTimestamp(time());
-          $this->themeService->saveTheme($dto);
-          }
-          }
-         */
+        /* @var $theme BOL_Theme */
+        foreach ( $themes as $theme )
+        {
+            if ( isset($invalidItems[self::URI_VAR_ITEM_TYPE_VAL_THEME][$theme->getName()]) && $invalidItems[self::URI_VAR_ITEM_TYPE_VAL_THEME][$theme->getName()] )
+            {
+                if ( (int) $theme->getLicenseCheckTimestamp() == 0 )
+                {
+                    $theme->setLicenseCheckTimestamp(time());
+                    $this->themeService->saveTheme($theme);
+                    $this->notifyAdminAboutInvalidItem(array("name" => $theme->getTitle()));
+                }
+                else if ( (intval($theme->getLicenseCheckTimestamp()) + $licenseExpireTimeInSeconds) <= time() && $this->themeService->getSelectedThemeName() == $theme->getName() )
+                {
+                    $this->themeService->setSelectedThemeName(BOL_ThemeService::DEFAULT_THEME);
+                }
+            }
+            else if ( $theme->getLicenseCheckTimestamp() != null && $theme->getLicenseCheckTimestamp() > 0 )
+            {
+                $theme->setLicenseCheckTimestamp(null);
+                $this->themeService->saveTheme($theme);
+            }
+        }
     }
 
     private function notifyAdminAboutInvalidItem( array $item )
@@ -496,13 +499,5 @@ class BOL_StorageService
         $mail->setTextContent($language->text("base", "mail_template_admin_invalid_license_content_text", array("itemName" => $item["name"], "siteURL" => OW_URL_HOME)));
 
         OW::getMailer()->send($mail);
-    }
-
-    /**
-     * Deactivates invalid store items
-     */
-    public function deactivateInvalidItems()
-    {
-        
     }
 }

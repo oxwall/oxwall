@@ -31,18 +31,18 @@
  */
 class BOL_ThemeService
 {
-    const DEFAULT_THEME = 'origin';
-    const CSS_FILE_NAME = 'base.css';
-    const MOBILE_CSS_FILE_NAME = 'mobile.css';
-    const MANIFEST_FILE = 'theme.xml';
-    const PREVIEW_FILE = 'theme_preview.jpg';
-    const ICON_FILE = 'theme.jpg';
+    const DEFAULT_THEME = "origin";
+    const CSS_FILE_NAME = "base.css";
+    const MOBILE_CSS_FILE_NAME = "mobile.css";
+    const THEME_XML = "theme.xml";
+    const PREVIEW_FILE = "theme_preview.jpg";
+    const ICON_FILE = "theme.jpg";
     const CONTROL_IMAGE_MAX_FILE_SIZE = 2000000;
-    const DIR_NAME_DECORATORS = 'decorators';
-    const DIR_NAME_IMAGES = 'images';
-    const DIR_NAME_MASTER_PAGES = 'master_pages';
-    const DIR_NAME_FONTS = 'fonts';
-    const DIR_NAME_MOBILE = 'mobile';
+    const DIR_NAME_DECORATORS = "decorators";
+    const DIR_NAME_IMAGES = "images";
+    const DIR_NAME_MASTER_PAGES = "master_pages";
+    const DIR_NAME_FONTS = "fonts";
+    const DIR_NAME_MOBILE = "mobile";
     const THEME_STATUS_UP_TO_DATE = BOL_PluginDao::UPDATE_VAL_UP_TO_DATE;
     const THEME_STATUS_UPDATE = BOL_PluginDao::UPDATE_VAL_UPDATE;
     const THEME_STATUS_MANUAL_UPDATE = BOL_PluginDao::UPDATE_VAL_MANUAL_UPDATE;
@@ -78,16 +78,6 @@ class BOL_ThemeService
     private $themeImageDao;
 
     /**
-     * @var string
-     */
-    private $userfileImagesDir;
-
-    /**
-     * @var string
-     */
-    private $userfileImagesUrl;
-
-    /**
      * Singleton instance.
      *
      * @var BOL_ThemeService
@@ -120,9 +110,26 @@ class BOL_ThemeService
         $this->themeControlDao = BOL_ThemeControlDao::getInstance();
         $this->themeControlValueDao = BOL_ThemeControlValueDao::getInstance();
         $this->themeImageDao = BOL_ThemeImageDao::getInstance();
+    }
 
-        $this->userfileImagesDir = OW_DIR_USERFILES . 'themes' . DS;
-        $this->userfileImagesUrl = OW_URL_USERFILES . 'themes/';
+    /**
+     * Returns the name of selected theme
+     * 
+     * @return string
+     */
+    public function getSelectedThemeName()
+    {
+        return OW::getConfig()->getValue("base", "selectedTheme");
+    }
+
+    /**
+     * Sets the name of selected theme
+     * 
+     * @param type $name
+     */
+    public function setSelectedThemeName( $name )
+    {
+        OW::getConfig()->saveConfig("base", "selectedTheme", trim($name));
     }
 
     /**
@@ -130,7 +137,7 @@ class BOL_ThemeService
      */
     public function getUserfileImagesDir()
     {
-        return $this->userfileImagesDir;
+        return OW_DIR_USERFILES . "themes" . DS;
     }
 
     /**
@@ -138,7 +145,7 @@ class BOL_ThemeService
      */
     public function getUserfileImagesUrl()
     {
-        return $this->userfileImagesUrl;
+        return OW_URL_USERFILES . "themes/";
     }
 
     /**
@@ -164,11 +171,11 @@ class BOL_ThemeService
 
         foreach ( $xmlFiles as $themeXml )
         {
-            if ( basename($themeXml) === self::MANIFEST_FILE )
+            if ( basename($themeXml) == self::THEME_XML )
             {
                 $xml = simplexml_load_file($themeXml);
 
-                if ( (string) $xml->key === self::DEFAULT_THEME )
+                if ( (string) $xml->key == self::DEFAULT_THEME )
                 {
                     $defaultThemeExists = true;
                 }
@@ -235,6 +242,20 @@ class BOL_ThemeService
         if ( !empty($problemThemes) )
         {
             throw new LogicException('Cant process themes `' . implode(',', $problemThemes) . '`!');
+        }
+    }
+
+    private function readThemeXmlInfo( $themeXmlPath )
+    {
+        $propList = array("key", "name", "description", "license", "author", "build", "copyright", "licenseUrl");
+        $xmlInfo = (array) simplexml_load_file($themeXmlPath);
+
+        foreach ( $propList as $prop )
+        {
+            if ( empty($xmlInfo[$prop]) )
+            {
+                return null;
+            }
         }
     }
 
@@ -438,7 +459,7 @@ class BOL_ThemeService
         }
 
         // xml master page assignes
-        $xml = simplexml_load_file($this->getRootDir($themeName) . self::MANIFEST_FILE);
+        $xml = simplexml_load_file($this->getRootDir($themeName) . self::THEME_XML);
         $masterPages = (array) $xml->masterPages;
 
         foreach ( $masterPages as $key => $value )
@@ -776,7 +797,7 @@ class BOL_ThemeService
         //cloudfiles header fix for amazon : need right extension to upload file with right header
         $newTempName = $file['tmp_name'] . '.' . $ext;
         rename($file['tmp_name'], $newTempName);
-        OW::getStorage()->copyFile($newTempName, $this->userfileImagesDir . $imageName);
+        OW::getStorage()->copyFile($newTempName, $this->getUserfileImagesDir() . $imageName);
 
         if ( file_exists($newTempName) )
         {
@@ -807,9 +828,9 @@ class BOL_ThemeService
 
         if ( $image !== null )
         {
-            if ( OW::getStorage()->fileExists($this->userfileImagesDir . $image->getFilename()) )
+            if ( OW::getStorage()->fileExists($this->getUserfileImagesDir() . $image->getFilename()) )
             {
-                OW::getStorage()->removeFile($this->userfileImagesDir . $image->getFilename());
+                OW::getStorage()->removeFile($this->getUserfileImagesDir() . $image->getFilename());
             }
 
             $this->themeImageDao->delete($image);
@@ -1120,9 +1141,9 @@ class BOL_ThemeService
     {
         $fileName = basename(str_replace(')', '', $controlValue));
 
-        if ( OW::getStorage()->fileExists($this->userfileImagesDir . $fileName) )
+        if ( OW::getStorage()->fileExists($this->getUserfileImagesDir() . $fileName) )
         {
-            OW::getStorage()->removeFile($this->userfileImagesDir . $fileName);
+            OW::getStorage()->removeFile($this->getUserfileImagesDir() . $fileName);
         }
     }
 
@@ -1172,7 +1193,7 @@ class BOL_ThemeService
 
         $themeXml = $xmlFiles[0];
 
-        if ( basename($themeXml) === self::MANIFEST_FILE )
+        if ( basename($themeXml) === self::THEME_XML )
         {
             $xml = simplexml_load_file($themeXml);
 
@@ -1234,7 +1255,7 @@ class BOL_ThemeService
 
     public function getThemeXmlInfo( $name )
     {
-        $filePath = OW_DIR_THEME . trim($name) . DS . self::MANIFEST_FILE;
+        $filePath = OW_DIR_THEME . trim($name) . DS . self::THEME_XML;
 
         if ( !file_exists($filePath) )
         {
