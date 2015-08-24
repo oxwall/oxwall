@@ -141,12 +141,6 @@ class BASE_CTRL_AjaxComponentAdminPanel extends BASE_CTRL_AjaxComponentPanel
 
         $cmpClass = empty($data["settingsCmpClass"]) ? "BASE_CMP_ComponentSettings" : $data["settingsCmpClass"];
         $cmp = OW::getClassInstance($cmpClass, $componentPlaceUniqName, $componentSettingList, $entitySettingList, $componentAccess);
-        
-        if ( $data['place'] == BOL_ComponentService::PLACE_INDEX )
-        {
-            $cmp->markAsHidden('freeze');
-        }
-
         $cmp->setStandardSettingValueList($componentStandardSettingValueList);
 
         return $this->getSettingFormMarkup($cmp);

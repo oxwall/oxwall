@@ -144,7 +144,7 @@ class BOL_CommentDao extends OW_BaseDao
 			LEFT JOIN `" . BOL_CommentEntityDao::getInstance()->getTableName() . "` AS `ce` ON ( `c`.`" . self::COMMENT_ENTITY_ID . "` = `ce`.`id` )
 			WHERE `ce`.`" . BOL_CommentEntityDao::ENTITY_TYPE . "` = :entityType AND `ce`.`" . BOL_CommentEntityDao::ACTIVE . "` = 1
 			GROUP BY `" . BOL_CommentEntityDao::ENTITY_ID . "`
-			ORDER BY `commentCount` DESC
+			ORDER BY `commentCount` DESC, `id` DESC
 			LIMIT :first, :count";
 
         return $this->dbo->queryForList($query, array('entityType' => $entityType, 'first' => $first, 'count' => $count));

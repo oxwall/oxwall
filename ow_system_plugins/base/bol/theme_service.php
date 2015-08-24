@@ -31,7 +31,7 @@
  */
 class BOL_ThemeService
 {
-    const DEFAULT_THEME = 'origin';
+    const DEFAULT_THEME = 'simplicity';
     const CSS_FILE_NAME = 'base.css';
     const MOBILE_CSS_FILE_NAME = 'mobile.css';
     const MANIFEST_FILE = 'theme.xml';

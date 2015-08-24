@@ -3036,8 +3036,8 @@ class MobileWysiwygTextarea extends Textarea
                 OW::getDocument()->addScript(OW::getPluginManager()->getPlugin('base')->getStaticJsUrl() . 'jquery.html5_upload.js');
             }
 
-            OW::getDocument()->addScript(OW::getPluginManager()->getPlugin('base')->getStaticJsUrl() . 'suitup.jquery.js?a='.time());
-            OW::getDocument()->addStyleSheet(OW::getPluginManager()->getPlugin('base')->getStaticCssUrl() . 'suitup.css?a='.time());
+            OW::getDocument()->addScript(OW::getPluginManager()->getPlugin('base')->getStaticJsUrl() . 'suitup.jquery.js');
+            OW::getDocument()->addStyleSheet(OW::getPluginManager()->getPlugin('base')->getStaticCssUrl() . 'suitup.css');
 
             // register js langs
             OW::getLanguage()->addKeyForJs('base', 'ws_button_label_link');

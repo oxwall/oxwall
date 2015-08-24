@@ -135,6 +135,11 @@ class ADMIN_CTRL_Theme extends ADMIN_CTRL_Abstract
             echo json_encode(array('message' => OW::getLanguage()->text('admin', 'css_edit_success_message')));
         }
 
+        if ( !OW::getRequest()->isAjax() )
+        {
+            OW::getDocument()->getMasterPage()->getMenu(OW_Navigation::ADMIN_APPEARANCE)->getElement('sidebar_menu_item_themes_customize')->setActive(true);
+        }
+
         OW::getDocument()->addScript(OW::getPluginManager()->getPlugin('admin')->getStaticJsUrl() . 'prettify.js');
         OW::getDocument()->addScript(OW::getPluginManager()->getPlugin('admin')->getStaticJsUrl() . 'lang-css.js');
         OW::getDocument()->addStyleSheet(OW::getPluginManager()->getPlugin('admin')->getStaticCssUrl() . 'prettify.css');
@@ -149,6 +154,11 @@ class ADMIN_CTRL_Theme extends ADMIN_CTRL_Abstract
 
     public function graphics()
     {
+        if ( !OW::getRequest()->isAjax() )
+        {
+            OW::getDocument()->getMasterPage()->getMenu(OW_Navigation::ADMIN_APPEARANCE)->getElement('sidebar_menu_item_themes_customize')->setActive(true);
+        }
+
         $images = $this->themeService->findAllCssImages();
         $assignArray = array();
 
@@ -190,21 +200,21 @@ class ADMIN_CTRL_Theme extends ADMIN_CTRL_Abstract
     public function resetGraphics()
     {
         $this->themeService->resetImageControl(OW::getThemeManager()->getSelectedTheme()->getDto()->getId(), trim($_GET['name']));
-        $this->redirectToAction('settings');
+        $this->redirect(OW::getRouter()->urlForRoute('admin_themes_edit'));
     }
 
     public function reset()
     {
         $dto = $this->themeService->findThemeByName(OW::getConfig()->getValue('base', 'selectedTheme'));
         $this->themeService->resetTheme($dto->getId());
-        $this->redirectToAction('settings');
+        $this->redirect(OW::getRouter()->urlForRoute('admin_themes_edit'));
     }
 
     public function deleteImage( $params )
     {
         $this->themeService->deleteImage((int) $params['image-id']);
         OW::getFeedback()->info(OW::getLanguage()->text('admin', 'theme_graphics_delete_success_message'));
-        $this->redirectToAction('graphics');
+        $this->redirect(OW::getRouter()->urlForRoute('admin_theme_graphics'));
     }
 }
 

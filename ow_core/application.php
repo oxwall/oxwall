@@ -117,6 +117,9 @@ class OW_Application
         // setting default time zone
         date_default_timezone_set(OW::getConfig()->getValue('base', 'site_timezone'));
 
+        // synchronize the db's time zone
+        OW::getDbo()->setTimezone();
+
         OW::getRequestHandler()->setIndexPageAttributes('BASE_CTRL_ComponentPanel');
         OW::getRequestHandler()->setStaticPageAttributes('BASE_CTRL_StaticDocument');
         $uri = OW::getRequest()->getRequestUri();
@@ -227,8 +230,11 @@ class OW_Application
 
         // adding global template vars
         $currentThemeImagesDir = OW::getThemeManager()->getCurrentTheme()->getStaticImagesUrl();
+        $currentThemeStaticDir = OW::getThemeManager()->getCurrentTheme()->getStaticUrl();
+        
         $viewRenderer = OW_ViewRenderer::getInstance();
         $viewRenderer->assignVar('themeImagesUrl', $currentThemeImagesDir);
+        $viewRenderer->assignVar('themeStaticUrl', $currentThemeStaticDir);
         $viewRenderer->assignVar('siteName', OW::getConfig()->getValue('base', 'site_name'));
         $viewRenderer->assignVar('siteTagline', OW::getConfig()->getValue('base', 'site_tagline'));
         $viewRenderer->assignVar('siteUrl', OW_URL_HOME);

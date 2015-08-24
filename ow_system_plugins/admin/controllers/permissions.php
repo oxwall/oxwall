@@ -118,8 +118,8 @@ class ADMIN_CTRL_Permissions extends ADMIN_CTRL_Abstract
                     $mail->addRecipientEmail($adminEmail);
                     $mail->setSender($senderMail);
                     $mail->setSenderSuffix(false);
-                    $mail->setSubject(OW::getLanguages()->text( 'admin', 'site_password'));
-                    $mail->setTextContent( OW::getLanguages()->text( 'admin', 'admin_password', array('password' => $data['password'])));
+                    $mail->setSubject(OW::getLanguage()->text( 'admin', 'site_password'));
+                    $mail->setTextContent( OW::getLanguage()->text( 'admin', 'admin_password', array('password' => $data['password'])));
                     try
                     {
                         OW::getMailer()->send($mail);
@@ -130,7 +130,7 @@ class ADMIN_CTRL_Permissions extends ADMIN_CTRL_Abstract
                         $logger->addEntry($e->getMessage());
                         $logger->writeLog();
                     }
-                    
+
                     $data['password'] = crypt($data['password'], OW_PASSWORD_SALT);
                     $config->saveConfig('base', 'guests_can_view', (int) $data['guests_can_view']);
                     $config->saveConfig('base', 'guests_can_view_password', $data['password']);
@@ -300,7 +300,7 @@ class ADMIN_CTRL_Permissions extends ADMIN_CTRL_Abstract
         }
 
         OW::getFeedback()->info(OW::getLanguage()->text('admin', 'permissions_successfully_updated'));
-        $this->redirectToAction('moderators');
+        $this->redirect(OW::getRouter()->urlForRoute('admin_permissions_moderators'));
     }
 
     public function addModerator()
@@ -326,7 +326,7 @@ class ADMIN_CTRL_Permissions extends ADMIN_CTRL_Abstract
             }
         }
 
-        $this->redirectToAction('moderators');
+        $this->redirect(OW::getRouter()->urlForRoute('admin_permissions_moderators'));
     }
 
     public function deleteModerator( array $params )
@@ -349,7 +349,7 @@ class ADMIN_CTRL_Permissions extends ADMIN_CTRL_Abstract
             OW::getFeedback()->error(OW::getLanguage()->text('admin', 'permissions_feedback_user_not_found'));
         }
 
-        $this->redirectToAction('moderators');
+        $this->redirect(OW::getRouter()->urlForRoute('admin_permissions_moderators'));
     }
 
     public function savePermissions()
@@ -369,6 +369,6 @@ class ADMIN_CTRL_Permissions extends ADMIN_CTRL_Abstract
         }
         OW::getFeedback()->info(OW::getLanguage()->text('admin', 'permissions_successfully_updated'));
 
-        $this->redirectToAction('roles');
+        $this->redirect(OW::getRouter()->urlForRoute('admin_user_roles'));
     }
 }
