@@ -126,48 +126,7 @@ final class BASE_MCLASS_JoinFormUtlis
     
     public static function addOnloadJs( $formName )
     {
-        /* OW::getDocument()->addOnloadScript('window.owForms['.  json_encode($formName).'].validate = function(){
 
-        var error = false;
-        var element = null;
-        var errorMessage;
-
-        $.each( this.elements,
-            function(index, data){
-                try{
-                    data.validate();
-                }catch (e){
-                    error = true;
-
-                    if( element == null ){
-                        element = data;
-                        errorMessage = e;
-                    }
-                }
-            }
-        );
-
-        if( error ){
-            element.input.focus();
-            $(element.input).parents(".owm_field_container:eq(0)").addClass("owm_field_error");
-
-            if( this.validateErrorMessage ){
-                throw this.validateErrorMessage;
-            }else{
-                throw errorMessage;
-            }
-        }
-    }
-
-    window.owForms['.  json_encode($formName).'].removeErrors = function(){
-        $.each( this.elements,
-            function( index, data ){
-                data.removeErrors();
-                $(data.input).parents(".owm_field_container:eq(0)").removeClass("owm_field_error");
-            }
-            );
-    }
-', 99999999); */
     }
 }
-?>
+
