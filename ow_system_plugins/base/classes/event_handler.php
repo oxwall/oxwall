@@ -33,6 +33,9 @@ class BASE_CLASS_EventHandler
     public function genericInit()
     {
         $eventManager = OW::getEventManager();
+        $eventManager->bind(BOL_BillingService::EVENT_ON_AFTER_DELIVER_SALE, array($this, 'onAfterBillingDeliverSale'));
+        $eventManager->bind(OW_EventManager::ON_USER_LOGIN, array($this, 'onUserLoginSaveStatistics'));
+        $eventManager->bind(BOL_ContentService::EVENT_AFTER_ADD, array($this, 'onAfterAdd'));
         $eventManager->bind('base.add_global_lang_keys', array($this, 'onAddGlobalLangs'));
         $eventManager->bind(OW_EventManager::ON_USER_UNREGISTER, array($this, 'onDeleteUserContent'));
         $eventManager->bind(OW_EventManager::ON_USER_LOGIN, array($this, 'onUserLogin'));
@@ -129,7 +132,19 @@ class BASE_CLASS_EventHandler
             $eventManager->bind('base.add_page_content', array($this, 'addPageBanner'));
         }
     }
-    
+
+    public function onAfterAdd( OW_Event $event )
+    {
+        $params = $event->getParams();
+        $entityTypes = explode(',',
+                OW::getConfig()->getValue('base', 'site_statistics_disallowed_entity_types'));
+
+        if ( !in_array($params['entityType'], $entityTypes) )
+        {
+            BOL_SiteStatisticService::getInstance()->addEntity($params['entityType'], $params['entityId']);
+        }
+    }
+
     public function onGetClassInstance( OW_Event $event )
     {
         $params = $event->getParams();
@@ -208,6 +223,21 @@ class BASE_CLASS_EventHandler
         {
             OW::getSession()->set('errorData', serialize($e->getParams()));
         }
+    }
+
+    public function onAfterBillingDeliverSale( OW_Event $event )
+    {
+        $params  = $event->getParams();
+        $service = BOL_SiteStatisticService::getInstance();
+
+        $service->addEntity('billing_transaction', $params['saleDbo']->id);
+        $service->addEntity('billing_transaction_amount', $params['saleDbo']->id, $params['saleDbo']->totalAmount);
+    }
+
+    public function onUserLoginSaveStatistics( OW_Event $event )
+    {
+        $params = $event->getParams();
+        BOL_SiteStatisticService::getInstance()->addEntity('user_login', $params['userId']);
     }
 
     public function onUserLoginSetAdminCookie( OW_Event $event )

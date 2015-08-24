@@ -180,13 +180,15 @@ class BOL_StorageService
      * 
      * @param string $key
      * @param string $devKey
+     * @param int $currentBuild
      * @return array
      */
-    public function getItemInfoForUpdate( $key, $devKey )
+    public function getItemInfoForUpdate( $key, $devKey, $currentBuild = 0 )
     {
         $params = array(
             self::URI_VAR_KEY => trim($key),
-            self::URI_VAR_DEV_KEY => trim($devKey)
+            self::URI_VAR_DEV_KEY => trim($devKey),
+            self::URI_VAR_BUILD => (int) $currentBuild
         );
 
         $data = array_merge($params, $this->triggerEventBeforeRequest($params));

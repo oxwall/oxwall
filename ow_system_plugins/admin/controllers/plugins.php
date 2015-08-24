@@ -117,6 +117,10 @@ class ADMIN_CTRL_Plugins extends ADMIN_CTRL_StorageAbstract
     {
         OW::getNavigation()->activateMenuItem(OW_Navigation::ADMIN_PLUGINS, "admin", "sidebar_menu_plugins_available");
 
+        $language = OW::getLanguage();
+        $this->setPageTitle($language->text('admin', 'page_title_available_plugins'));
+        $this->setPageHeading($language->text('admin', 'page_title_available_plugins'));
+
         // read plugins dir and find available plugins
         $arrayToAssign = $this->pluginService->getAvailablePluginsList();
 
@@ -310,7 +314,7 @@ class ADMIN_CTRL_Plugins extends ADMIN_CTRL_StorageAbstract
 
         $this->pluginService->deactivate($pluginDto->getKey());
         OW::getFeedback()->info($language->text("admin", "manage_plugins_deactivate_success_message", array("plugin" => $pluginDto->getTitle())));
-        $this->redirectToAction("index");
+        $this->redirect(OW::getRouter()->urlForRoute("admin_plugins_installed"));
     }
 
     /**
@@ -329,7 +333,7 @@ class ADMIN_CTRL_Plugins extends ADMIN_CTRL_StorageAbstract
         OW::getEventManager()->trigger($event);
 
         OW::getFeedback()->info(OW::getLanguage()->text("admin", "manage_plugins_activate_success_message", array("plugin" => $pluginDto->getTitle())));
-        $this->redirectToAction("index");
+        $this->redirect(OW::getRouter()->urlForRoute("admin_plugins_installed"));
     }
 
     /**
@@ -344,7 +348,7 @@ class ADMIN_CTRL_Plugins extends ADMIN_CTRL_StorageAbstract
         $language = OW::getLanguage();
         $router = OW::getRouter();
 
-        $remotePluginInfo = (array) $this->storageService->getItemInfoForUpdate($pluginDto->getKey(), $pluginDto->getDeveloperKey());
+        $remotePluginInfo = (array) $this->storageService->getItemInfoForUpdate($pluginDto->getKey(), $pluginDto->getDeveloperKey(), $pluginDto->getBuild());
 
         $this->assign("backUrl", $router->urlFor(__CLASS__, "index"));
 
@@ -358,8 +362,8 @@ class ADMIN_CTRL_Plugins extends ADMIN_CTRL_StorageAbstract
         {
             if ( !isset($_GET[BOL_StorageService::URI_VAR_LICENSE_CHECK_COMPLETE]) )
             {
-                $get = array(BOL_StorageService::URI_VAR_BACK_URI => OW::getRouter()->uriFor(__CLASS__, "updateRequest", $params));
-                $this->redirect(OW::getRequest()->buildUrlQueryString(OW::getRouter()->urlFor("ADMIN_CTRL_Storage", "checkItemLicense"), $get));
+                $get = array(BOL_StorageService::URI_VAR_BACK_URI => $router->uriFor(__CLASS__, "updateRequest", $params));
+                $this->redirect(OW::getRequest()->buildUrlQueryString($router->urlFor("ADMIN_CTRL_Storage", "checkItemLicense"), $get));
             }
             else
             {
@@ -368,8 +372,9 @@ class ADMIN_CTRL_Plugins extends ADMIN_CTRL_StorageAbstract
             }
         }
 
-        $this->assign("text", $language->text("admin", "free_plugin_request_text", array("oldVersion" => $pluginDto->getBuild(), "newVersion" => $remotePluginInfo["build"], "name" => $pluginDto->getTitle())));
-        $this->assign("updateUrl", OW::getRouter()->urlFor(__CLASS__, "update", $params));
+        $this->assign("text", $language->text("admin", "free_plugin_request_text", array("releaseNotes" => "", "oldVersion" => $pluginDto->getBuild(), "newVersion" => $remotePluginInfo["build"], "name" => $pluginDto->getTitle())));
+        $this->assign("updateUrl", $router->urlFor(__CLASS__, "update", $params));
+        $this->assign("returnUrl", $router->urlForRoute("admin_plugins_installed"));
     }
 
     /**
@@ -382,6 +387,7 @@ class ADMIN_CTRL_Plugins extends ADMIN_CTRL_StorageAbstract
         $pluginDto = $this->getPluginDtoByKey($params);
         $language = OW::getLanguage();
         $feedback = OW::getFeedback();
+        $redirectUrl = OW::getRouter()->urlForRoute("admin_plugins_installed");
 
         //TODO remove hardcoded constants
         // process data returned by update script
@@ -403,21 +409,21 @@ class ADMIN_CTRL_Plugins extends ADMIN_CTRL_StorageAbstract
                     break;
             }
 
-            $this->redirectToAction("index");
+            $this->redirect($redirectUrl);
         }
 
-        $remotePluginInfo = (array) $this->storageService->getItemInfoForUpdate($pluginDto->getKey(), $pluginDto->getDeveloperKey());
+        $remotePluginInfo = (array) $this->storageService->getItemInfoForUpdate($pluginDto->getKey(), $pluginDto->getDeveloperKey(), $pluginDto->getBuild());
 
         if ( empty($remotePluginInfo) || !empty($remotePluginInfo["error"]) )
         {
             $feedback->error($language->text("admin", "manage_plugins_update_process_error"));
-            $this->redirectToAction('index');
+            $this->redirect($redirectUrl);
         }
 
         if ( !(bool) $remotePluginInfo["freeware"] && ($pluginDto->getLicenseKey() == null || !$this->storageService->checkLicenseKey($pluginDto->getKey(), $pluginDto->getDeveloperKey(), $pluginDto->getLicenseKey())) )
         {
             $feedback->error($language->text("admin", "manage_plugins_update_invalid_key_error"));
-            $this->redirectToAction('index');
+            $this->redirect($redirectUrl);
         }
 
         $ftp = $this->getFtpConnection();
@@ -429,13 +435,13 @@ class ADMIN_CTRL_Plugins extends ADMIN_CTRL_StorageAbstract
         catch ( Exception $e )
         {
             $feedback->error($e->getMessage());
-            $this->redirectToAction("index");
+            $this->redirect($redirectUrl);
         }
 
         if ( !file_exists($archivePath) )
         {
             $feedback->error(OW::getLanguage()->text("admin", "plugin_update_download_error"));
-            $this->redirectToAction("index");
+            $this->redirect($redirectUrl);
         }
 
         $zip = new ZipArchive();
@@ -451,7 +457,7 @@ class ADMIN_CTRL_Plugins extends ADMIN_CTRL_StorageAbstract
         else
         {
             $feedback->error(OW::getLanguage()->text("admin", "plugin_update_download_error"));
-            $this->redirectToAction("index");
+            $this->redirect($redirectUrl);
         }
 
         // locate plugin.xml file to find plugin source root dir
@@ -469,7 +475,7 @@ class ADMIN_CTRL_Plugins extends ADMIN_CTRL_StorageAbstract
         if ( $localPluginRootPath == null )
         {
             $feedback->error($language->text("admin", "manage_plugin_add_extract_error"));
-            $this->redirectToAction("index");
+            $this->redirect($redirectUrl);
         }
 
         try
@@ -479,7 +485,7 @@ class ADMIN_CTRL_Plugins extends ADMIN_CTRL_StorageAbstract
         catch ( InvalidArgumentException $ex )
         {
             $feedback->error($language->text("admin", "manage_plugin_update_plugin_not_active_error"));
-            $this->redirectToAction("index");
+            $this->redirect($redirectUrl);
         }
 
         $remoteDirPath = $plugin->getRootDir();
@@ -525,12 +531,12 @@ class ADMIN_CTRL_Plugins extends ADMIN_CTRL_StorageAbstract
                     break;
             }
 
-            $this->redirectToAction("index");
+            $this->redirect(OW::getRouter()->urlForRoute("admin_plugins_installed"));
         }
 
         if ( (int) $pluginDto->getUpdate() != BOL_PluginService::PLUGIN_STATUS_MANUAL_UPDATE )
         {
-            $this->redirectToAction("index");
+            $this->redirect(OW::getRouter()->urlForRoute("admin_plugins_installed"));
         }
 
         $this->assign("text", $language->text("admin", "manage_plugins_manual_update_request", array("name" => $pluginDto->getTitle())));
@@ -616,7 +622,7 @@ class ADMIN_CTRL_Plugins extends ADMIN_CTRL_StorageAbstract
             OW::getFeedback()->error($language->text("admin", "manage_plugins_install_invalid_license_key"));
         }
 
-        $this->redirectToAction("index");
+        $this->redirect(OW::getRouter()->urlForRoute("admin_plugins_installed"));
     }
 
     /**
@@ -626,18 +632,20 @@ class ADMIN_CTRL_Plugins extends ADMIN_CTRL_StorageAbstract
      */
     public function uninstall( array $params )
     {
-        if ( empty($params['key']) )
+        $language = OW::getLanguage();
+
+        if ( empty($params["key"]) )
         {
-            OW::getFeedback()->error(OW::getLanguage()->text('admin', 'manage_plugins_uninstall_error_message'));
-            $this->redirectToAction('index');
+            OW::getFeedback()->error($language->text('admin', 'manage_plugins_uninstall_error_message'));
+            $this->redirect(OW::getRouter()->urlForRoute("admin_plugins_installed"));
         }
 
         $pluginDto = $this->getPluginDtoByKey($params);
 
         if ( $pluginDto === null )
         {
-            OW::getFeedback()->error(OW::getLanguage()->text('admin', 'manage_plugins_uninstall_error_message'));
-            $this->redirectToAction('index');
+            OW::getFeedback()->error($language->text('admin', 'manage_plugins_uninstall_error_message'));
+            $this->redirect(OW::getRouter()->urlForRoute("admin_plugins_installed"));
         }
 
         try
@@ -650,35 +658,39 @@ class ADMIN_CTRL_Plugins extends ADMIN_CTRL_StorageAbstract
             {
                 throw $e;
             }
+            else
+            {
+                OW::getLogger()->addEntry($e->getTraceAsString());
+            }
 
-            OW::getFeedback()->error(OW::getLanguage()->text('admin', 'manage_plugins_uninstall_error_message'));
-            $this->redirectToAction('index');
+            OW::getFeedback()->error($language->text("admin", "manage_plugins_uninstall_error_message"));
+            $this->redirect(OW::getRouter()->urlForRoute("admin_plugins_installed"));
         }
 
-        OW::getFeedback()->info(OW::getLanguage()->text('admin', 'manage_plugins_uninstall_success_message', array('plugin' => $pluginDto->getTitle())));
-
-        $this->redirectToAction('index');
+        OW::getFeedback()->info($language->text("admin", "manage_plugins_uninstall_success_message", array("plugin" => $pluginDto->getTitle())));
+        $this->redirect(OW::getRouter()->urlForRoute("admin_plugins_installed"));
     }
 
     public function uninstallRequest( array $params )
     {
-        if ( empty($params['key']) )
+        $language = OW::getLanguage();
+
+        if ( empty($params["key"]) )
         {
-            OW::getFeedback()->error(OW::getLanguage()->text('admin', 'manage_plugins_uninstall_error_message'));
-            $this->redirectToAction('index');
+            OW::getFeedback()->error($language->text("admin", "manage_plugins_uninstall_error_message"));
+            $this->redirect(OW::getRouter()->urlForRoute("admin_plugins_installed"));
         }
 
         $pluginDto = $this->getPluginDtoByKey($params);
-        $language = OW::getLanguage();
 
         if ( $pluginDto === null )
         {
-            OW::getFeedback()->error(OW::getLanguage()->text('admin', 'manage_plugins_uninstall_error_message'));
-            $this->redirectToAction('index');
+            OW::getFeedback()->error($language->text("admin", "manage_plugins_uninstall_error_message"));
+            $this->redirect(OW::getRouter()->urlForRoute("admin_plugins_installed"));
         }
 
-        $this->assign('text', $language->text('admin', 'plugin_uninstall_request_text', array('name' => $pluginDto->getTitle())));
-        $this->assign('redirectUrl', OW::getRouter()->urlFor('ADMIN_CTRL_Plugins', 'uninstall', $params));
+        $this->assign("text", $language->text("admin", "plugin_uninstall_request_text", array('name' => $pluginDto->getTitle())));
+        $this->assign("redirectUrl", OW::getRouter()->urlFor("ADMIN_CTRL_Plugins", "uninstall", $params));
     }
 
     /**

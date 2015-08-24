@@ -17,3 +17,22 @@
 </div>
 {/block_decorator}
 </div>
+
+
+
+
+<div class="ow_wide ow_automargin">
+{block_decorator name='box'  addClass='ow_stdmargin' iconClass='ow_ic_plugin' langLabel='admin+manage_themes_update_request_box_cap_label'}
+<div style="text-align:center;">
+{if !empty($text}
+{$text}<br /><br />
+{/if}
+{if !empty($updateUrl)}
+{decorator name='button' langLabel='admin+plugin_update_yes_button_label' onclick="window.location='`$redirectUrl`'"}
+{/if}
+{if !empty($returnUrl)}
+{decorator name='button' langLabel='admin+license_form_leave_label' onclick="window.location='`$returnUrl`'"}
+{/if}
+</div>
+{/block_decorator}
+</div>

@@ -279,13 +279,16 @@ abstract class BASE_CMP_DragAndDropPanel extends OW_Component
         $this->additionalSettingList = $settingList;
     }
 
+    protected function isComponentClone( $uniqName )
+    {
+        return $this->componentList[$uniqName]['clone'];
+    }
+    
     public function tplComponent( $params )
     {
         $uniqName = $params['uniqName'];
 
-        $isClone = $this->componentList[$uniqName]['clone'];
-
-        $viewInstance = new $this->itemClassName($uniqName, $isClone, 'drag_and_drop_item_customize', $this->sharedData);
+        $viewInstance = new $this->itemClassName($uniqName, $this->isComponentClone($uniqName), 'drag_and_drop_item_customize', $this->sharedData);
         $viewInstance->setSettingList(empty($this->settingList[$uniqName]) ? array() : $this->settingList[$uniqName]);
         $viewInstance->componentParamObject->additionalParamList = $this->additionalSettingList;
         $viewInstance->componentParamObject->customizeMode = null;

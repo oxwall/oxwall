@@ -31,7 +31,7 @@
  */
 class BOL_ThemeService
 {
-    const DEFAULT_THEME = "origin";
+    const DEFAULT_THEME = "simplicity";
     const CSS_FILE_NAME = "base.css";
     const MOBILE_CSS_FILE_NAME = "mobile.css";
     const THEME_XML = "theme.xml";
@@ -292,9 +292,9 @@ class BOL_ThemeService
             throw new InvalidArgumentException("Can't unlink theme with id `" . $themeId . "`, not found!");
         }
 
-        if ( file_exists($this->getStaticDir($theme->getName())) )
+        if ( file_exists($this->getStaticDir($theme->getKey())) )
         {
-            UTIL_File::removeDir($this->getStaticDir($theme->getName()));
+            UTIL_File::removeDir($this->getStaticDir($theme->getKey()));
         }
 
         $this->deleteThemeContent($theme->getId());
@@ -329,7 +329,7 @@ class BOL_ThemeService
             throw new InvalidArgumentException("Can't process theme with id `" . $id . "`, not found!");
         }
 
-        $themeName = $theme->getName();
+        $themeName = $theme->getKey();
 
         if ( !file_exists($this->getRootDir($themeName)) )
         {
@@ -351,7 +351,7 @@ class BOL_ThemeService
             {
                 return false;
             }
-
+            
             if ( is_dir($itemPath) )
             {
                 return true;
@@ -1136,7 +1136,7 @@ class BOL_ThemeService
      * Checks if theme exists.
      *
      * @param type $themeId
-     * @return type
+     * @return BOL_Theme
      */
     private function getThemeById( $id )
     {

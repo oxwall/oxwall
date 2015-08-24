@@ -54,7 +54,7 @@ class UTIL_File
      * @param mixed $filter
      * @param int $level
      */
-    public static function copyDir( $sourcePath, $destPath, array $filter = null, $level = -1 )
+    public static function copyDir( $sourcePath, $destPath, $filter = null, $level = -1 )
     {
         $sourcePath = self::removeLastDS($sourcePath);
 
@@ -89,7 +89,7 @@ class UTIL_File
                     continue;
                 }
 
-                $copy = ($filter === null || (is_array($filter) && in_array(self::getExtension($item), $filter)));
+                $copy = ($filter === null || (is_array($filter) && in_array(self::getExtension($item), $filter)) || is_callable($filter));
 
                 if ( is_file($path) && $copy )
                 {
@@ -342,7 +342,7 @@ class UTIL_File
 
         if ( empty($filesItem) || !array_key_exists("tmp_name", $filesItem) || !array_key_exists("size", $filesItem) )
         {
-            return array("result" => false, "message" => $language->text('base', 'upload_file_fail'));
+            return array("result" => false, "message" => $language->text("base", "upload_file_fail"));
         }
 
         if ( $fileSizeLimitInBytes == null )
@@ -355,31 +355,31 @@ class UTIL_File
             switch ( $filesItem["error"] )
             {
                 case UPLOAD_ERR_INI_SIZE:
-                    $errorString = $language->text('base', 'upload_file_max_upload_filesize_error', array("limit" => ($fileSizeLimitInBytes / 1024 / 1024) . "MB"));
+                    $errorString = $language->text("base", "upload_file_max_upload_filesize_error", array("limit" => ($fileSizeLimitInBytes / 1024 / 1024) . "MB"));
                     break;
 
                 case UPLOAD_ERR_PARTIAL:
-                    $errorString = $language->text('base', 'upload_file_file_partially_uploaded_error');
+                    $errorString = $language->text("base", "upload_file_file_partially_uploaded_error");
                     break;
 
                 case UPLOAD_ERR_NO_FILE:
-                    $errorString = $language->text('base', 'upload_file_no_file_error');
+                    $errorString = $language->text("base", "upload_file_no_file_error");
                     break;
 
                 case UPLOAD_ERR_NO_TMP_DIR:
-                    $errorString = $language->text('base', 'upload_file_no_tmp_dir_error');
+                    $errorString = $language->text("base", "upload_file_no_tmp_dir_error");
                     break;
 
                 case UPLOAD_ERR_CANT_WRITE:
-                    $errorString = $language->text('base', 'upload_file_cant_write_file_error');
+                    $errorString = $language->text("base", "upload_file_cant_write_file_error");
                     break;
 
                 case UPLOAD_ERR_EXTENSION:
-                    $errorString = $language->text('base', 'upload_file_invalid_extention_error');
+                    $errorString = $language->text("base", "upload_file_invalid_extention_error");
                     break;
 
                 default:
-                    $errorString = $language->text('base', 'upload_file_fail');
+                    $errorString = $language->text("base", "upload_file_fail");
             }
 
             return array("result" => false, "message" => $errorString);
@@ -387,12 +387,12 @@ class UTIL_File
 
         if ( $filesItem['size'] > $fileSizeLimitInBytes )
         {
-            return array("result" => false, "message" => $language->text('base', 'upload_file_max_upload_filesize_error', array("limit" => ($fileSizeLimitInBytes / 1024 / 1024) . "MB")));
+            return array("result" => false, "message" => $language->text("base", "upload_file_max_upload_filesize_error", array("limit" => ($fileSizeLimitInBytes / 1024 / 1024) . "MB")));
         }
 
-        if ( !is_uploaded_file($filesItem['tmp_name']) )
+        if ( !is_uploaded_file($filesItem["tmp_name"]) )
         {
-            return array("result" => false, "message" => $language->text('base', 'upload_file_fail'));
+            return array("result" => false, "message" => $language->text("base", "upload_file_fail"));
         }
 
         return array("result" => true);

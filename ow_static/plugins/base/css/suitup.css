@@ -88,3 +88,48 @@ a.owm_suitup-control[data-command="insertVideo"] {
 a.owm_suitup-control.active[data-command="insertVideo"] {
     background-image: url("images/ico_wysiwyg_video_hover.png");
 }
+@media only screen and (-webkit-min-device-pixel-ratio: 2),
+       only screen and (min-device-pixel-ratio : 2) {        
+        .owm_suitup-control[data-command="bold"] {
+            background-image: url(images/ico_wysiwyg_b@2x.png);
+            background-size: 10px 11px;
+        }
+        .owm_suitup-control[data-command="italic"] {
+            background-image: url(images/ico_wysiwyg_i@2x.png);
+            background-size: 5px 11px;
+        }
+        .owm_suitup-control[data-command="underline"] {
+            background-image: url(images/ico_wysiwyg_u@2x.png);
+            background-size: 10px 11px;
+        }
+        .owm_suitup-control[data-command="createlink"] {
+            background-image: url(images/ico_wysiwyg_link@2x.png);
+            background-size: 14px 11px;
+        }
+        .owm_suitup-control[data-command="insertImage"] {
+            background-image: url(images/ico_wysiwyg_photo@2x.png);
+            background-size: 15px 11px;
+        }
+        .owm_suitup-control[data-command="insertVideo"] {
+            background-image: url(images/ico_wysiwyg_video@2x.png);
+            background-size: 12px 11px;
+        }
+        .owm_suitup-control.active[data-command="bold"] {
+            background-image: url(images/ico_wysiwyg_b_hover@2x.png);
+        }
+        .owm_suitup-control.active[data-command="italic"] {
+            background-image: url(images/ico_wysiwyg_i_hover@2x.png);
+        }
+        .owm_suitup-control.active[data-command="underline"] {
+            background-image: url(images/ico_wysiwyg_u_hover@2x.png);
+        }
+        .owm_suitup-control.active[data-command="createlink"] {
+            background-image: url(images/ico_wysiwyg_link_hover@2x.png);
+        }
+        .owm_suitup-control.active[data-command="insertImage"] {
+            background-image: url(images/ico_wysiwyg_photo_hover@2x.png);
+        }
+        .owm_suitup-control.active[data-command="insertVideo"] {
+            background-image: url(images/ico_wysiwyg_video_hover@2x.png);
+        }
+}

@@ -35,8 +35,77 @@ class ADMIN_CLASS_EventHandler
         $eventManager = OW::getEventManager();
         $eventManager->bind('admin.disable_fields_on_edit_profile_question', array($this, 'onGetDisableActionList'));
         $eventManager->bind('admin.disable_fields_on_edit_profile_question', array($this, 'onGetJoinStampDisableActionList'), 999);
-        $eventManager->bind('admin.add_admin_notification', array($this, 'onCollectAdminNotifications'));
-        $eventManager->bind('admin.add_admin_warning', array($this, 'onCollectAdminWarnings'));
+        $eventManager->bind('admin.add_admin_notification', array($this, 'onAddAdminNotification'));
+    }
+
+    public function onAddAdminNotification( ADMIN_CLASS_NotificationCollector $coll )
+    {
+        $router = OW::getRouter();
+        $language = OW::getLanguage();
+        $pluginService = BOL_PluginService::getInstance();
+        $themeService = BOL_ThemeService::getInstance();
+        $request = OW::getRequest();
+
+        // update soft
+        if ( OW::getConfig()->getValue("base", "update_soft") )
+        {
+            $coll->add($language->text("admin", "notification_soft_update", array("link" => $router->urlForRoute("admin_core_update_request"))), ADMIN_CLASS_NotificationCollector::NOTIFICATION_UPDATE);
+        }
+
+        $pluginsToUpdateCount = $pluginService->getPluginsToUpdateCount();
+
+        // plugins update
+        if ( $pluginsToUpdateCount > 0 )
+        {
+            $coll->add($language->text("admin", "notification_plugins_to_update", array("link" => $router->urlForRoute("admin_plugins_installed"), "count" => $pluginsToUpdateCount)), ADMIN_CLASS_NotificationCollector::NOTIFICATION_UPDATE);
+        }
+
+        $themesToUpdateCount = $themeService->getThemesToUpdateCount();
+
+        // themes update
+        if ( $themesToUpdateCount > 0 )
+        {
+            $coll->add($language->text("admin", "notification_themes_to_update", array("link" => $router->urlForRoute("admin_themes_choose"), "count" => $themesToUpdateCount)), ADMIN_CLASS_NotificationCollector::NOTIFICATION_UPDATE);
+        }
+
+        if ( OW::getConfig()->configExists("base", "cron_is_active") && (int) OW::getConfig()->getValue("base", "cron_is_active") == 0 )
+        {
+            $coll->add($language->text("admin", "warning_cron_is_not_active", array("path" => OW_DIR_ROOT . "ow_cron" . DS . "run.php")), ADMIN_CLASS_NotificationCollector::NOTIFICATION_WARNING);
+        }
+
+        if ( !ini_get("allow_url_fopen") )
+        {
+            $coll->add($language->text('admin', 'warning_url_fopen_disabled'), ADMIN_CLASS_NotificationCollector::NOTIFICATION_WARNING);
+        }
+
+        $plugins = $pluginService->findPluginsWithInvalidLicense();
+        $licenseRequestUrl = OW::getRouter()->urlFor("ADMIN_CTRL_Storage", "checkItemLicense");
+
+        /* @var $plugin BOL_Plugin */
+        foreach ( $plugins as $plugin )
+        {
+            $params = array(
+                BOL_StorageService::URI_VAR_ITEM_TYPE => BOL_StorageService::URI_VAR_ITEM_TYPE_VAL_PLUGIN,
+                BOL_StorageService::URI_VAR_KEY => $plugin->getKey(),
+                BOL_StorageService::URI_VAR_DEV_KEY => $plugin->getDeveloperKey(),
+            );
+
+            $coll->add($plugin->getTitle() . " <a href=\"{$request->buildUrlQueryString($licenseRequestUrl, $params)}\">aaa</a>", ADMIN_CLASS_NotificationCollector::NOTIFICATION_WARNING);
+        }
+
+        $themes = $themeService->findPluginsWithInvalidLicense();
+
+        /* @var $theme BOL_Theme */
+        foreach ( $themes as $theme )
+        {
+            $params = array(
+                BOL_StorageService::URI_VAR_ITEM_TYPE => BOL_StorageService::URI_VAR_ITEM_TYPE_VAL_THEME,
+                BOL_StorageService::URI_VAR_KEY => $theme->getKey(),
+                BOL_StorageService::URI_VAR_DEV_KEY => $theme->getDeveloperKey(),
+            );
+
+            $coll->add($plugin->getTitle() . " <a href=\"{$request->buildUrlQueryString($licenseRequestUrl, $params)}\">aaa</a>", ADMIN_CLASS_NotificationCollector::NOTIFICATION_WARNING);
+        }
     }
 
     public function onGetDisableActionList( OW_Event $e )
@@ -166,80 +235,6 @@ class ADMIN_CLASS_EventHandler
             );
 
             $e->setData($disableActionList);
-        }
-    }
-
-    public function onCollectAdminNotifications( BASE_CLASS_EventCollector $e )
-    {
-        $router = OW::getRouter();
-        $language = OW::getLanguage();
-        $pluginService = BOL_PluginService::getInstance();
-        $themeService = BOL_ThemeService::getInstance();
-
-        if ( OW::getConfig()->getValue("base", "update_soft") )
-        {
-            $e->add($language->text("admin", "notification_soft_update", array("link" => $router->urlForRoute("admin_core_update_request"))));
-        }
-
-        $pluginsToUpdateCount = $pluginService->getPluginsToUpdateCount();
-
-        if ( $pluginsToUpdateCount > 0 )
-        {
-            $e->add($language->text("admin", "notification_plugins_to_update", array("link" => $router->urlForRoute("admin_plugins_installed"), "count" => $pluginsToUpdateCount)));
-        }
-
-        $themesToUpdateCount = $themeService->getThemesToUpdateCount();
-
-        if ( $themesToUpdateCount > 0 )
-        {
-            $e->add($language->text("admin", "notification_themes_to_update", array("link" => $router->urlForRoute("admin_themes_choose"), "count" => $themesToUpdateCount)));
-        }
-    }
-
-    public function onCollectAdminWarnings( BASE_CLASS_EventCollector $e )
-    {
-        $language = OW::getLanguage();
-        $pluginService = BOL_PluginService::getInstance();
-        $themeService = BOL_ThemeService::getInstance();
-        $request = OW::getRequest();
-
-        if ( OW::getConfig()->configExists("base", "cron_is_active") && (int) OW::getConfig()->getValue("base", "cron_is_active") == 0 )
-        {
-            $e->add($language->text("admin", "warning_cron_is_not_active", array("path" => OW_DIR_ROOT . "ow_cron" . DS . "run.php")));
-        }
-
-        if ( !ini_get("allow_url_fopen") )
-        {
-            $e->add($language->text('admin', 'warning_url_fopen_disabled'));
-        }
-
-        $plugins = $pluginService->findPluginsWithInvalidLicense();
-        $licenseRequestUrl = OW::getRouter()->urlFor("ADMIN_CTRL_Storage", "checkItemLicense");
-
-        /* @var $plugin BOL_Plugin */
-        foreach ( $plugins as $plugin )
-        {
-            $params = array(
-                BOL_StorageService::URI_VAR_ITEM_TYPE => BOL_StorageService::URI_VAR_ITEM_TYPE_VAL_PLUGIN,
-                BOL_StorageService::URI_VAR_KEY => $plugin->getKey(),
-                BOL_StorageService::URI_VAR_DEV_KEY => $plugin->getDeveloperKey(),
-            );
-
-            $e->add($plugin->getTitle() . " <a href=\"{$request->buildUrlQueryString($licenseRequestUrl, $params)}\">aaa</a>");
-        }
-
-        $themes = $themeService->findPluginsWithInvalidLicense();
-
-        /* @var $theme BOL_Theme */
-        foreach ( $themes as $theme )
-        {
-            $params = array(
-                BOL_StorageService::URI_VAR_ITEM_TYPE => BOL_StorageService::URI_VAR_ITEM_TYPE_VAL_THEME,
-                BOL_StorageService::URI_VAR_KEY => $theme->getKey(),
-                BOL_StorageService::URI_VAR_DEV_KEY => $theme->getDeveloperKey(),
-            );
-
-            $e->add($plugin->getTitle() . " <a href=\"{$request->buildUrlQueryString($licenseRequestUrl, $params)}\">aaa</a>");
         }
     }
 }

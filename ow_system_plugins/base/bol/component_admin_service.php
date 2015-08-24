@@ -31,6 +31,8 @@
  */
 class BOL_ComponentAdminService extends BOL_ComponentService
 {
+    const PLASE_ADMIN_DASHBOARD = "admin.dashboard";
+    
     /**
      * @var BOL_PlaceSchemeDao
      */
