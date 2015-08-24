@@ -550,18 +550,19 @@ class ADMIN_CTRL_Plugins extends ADMIN_CTRL_StorageAbstract
     public function install()
     {
         $params = $_GET;
-
         $language = OW::getLanguage();
+        $router = OW::getRouter();
+        $feedback = OW::getFeedback();
 
         //check if key and dev_key are provided
         if ( empty($params[BOL_StorageService::URI_VAR_KEY]) || empty($params[BOL_StorageService::URI_VAR_DEV_KEY]) )
         {
             if ( !empty($params) )
             {
-                OW::getFeedback()->error($language->text("admin", "manage_plugins_install_empty_key_error_message"));
+                $feedback->error($language->text("admin", "manage_plugins_install_empty_key_error_message"));
             }
 
-            $this->redirectToAction("available");
+            $this->redirect($router->urlForRoute("admin_plugins_available"));
         }
 
         $installPlugin = false;
@@ -569,8 +570,14 @@ class ADMIN_CTRL_Plugins extends ADMIN_CTRL_StorageAbstract
         // get remote info about the plugin
         $itemData = $this->storageService->getItemInfoForUpdate($params[BOL_StorageService::URI_VAR_KEY], $params[BOL_StorageService::URI_VAR_DEV_KEY]);
 
+        if ( empty($itemData) )
+        {
+            $feedback->error($language->text("admin", "manage_plugins_server_invalid_responce_error_message"));
+            $this->redirect($router->urlForRoute("admin_plugins_available"));
+        }
+
         // check if it's free
-        if ( isset($itemData[BOL_StorageService::URI_VAR_FREEWARE]) && (bool) $itemData[BOL_StorageService::URI_VAR_FREEWARE] )
+        if ( !empty($itemData[BOL_StorageService::URI_VAR_FREEWARE]) || !empty($itemData[BOL_StorageService::URI_VAR_NOT_FOUND]) )
         {
             $installPlugin = true;
         }
@@ -603,7 +610,7 @@ class ADMIN_CTRL_Plugins extends ADMIN_CTRL_StorageAbstract
                     $this->pluginService->savePlugin($pluginDto);
                 }
 
-                OW::getFeedback()->info($language->text("admin", "manage_plugins_install_success_message", array("plugin" => $pluginDto->getTitle())));
+                $feedback->info($language->text("admin", "manage_plugins_install_success_message", array("plugin" => $pluginDto->getTitle())));
             }
             catch ( LogicException $e )
             {
@@ -614,15 +621,15 @@ class ADMIN_CTRL_Plugins extends ADMIN_CTRL_StorageAbstract
                     throw $e;
                 }
 
-                OW::getFeedback()->error($language->text("admin", "manage_plugins_install_error_message", array("key" => ( empty($pluginDto) ? "_INVALID_" : $pluginDto->getKey()))));
+                $feedback->error($language->text("admin", "manage_plugins_install_error_message", array("key" => ( empty($pluginDto) ? "_INVALID_" : $pluginDto->getKey()))));
             }
         }
         else
         {
-            OW::getFeedback()->error($language->text("admin", "manage_plugins_install_invalid_license_key"));
+            $feedback->error($language->text("admin", "manage_plugins_install_invalid_license_key"));
         }
 
-        $this->redirect(OW::getRouter()->urlForRoute("admin_plugins_installed"));
+        $this->redirect($router->urlForRoute("admin_plugins_available"));
     }
 
     /**
