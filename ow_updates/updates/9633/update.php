@@ -28,7 +28,6 @@ $logger = Updater::getLogger();
 
 try
 {
-    OW::getNavigation()->deleteMenuItem('base', 'mobile_pages_dashboard');
     OW::getNavigation()->deleteMenuItem('mobile', 'menu_item_dashboard');
     
     $menuItem = new BOL_MenuItem();
