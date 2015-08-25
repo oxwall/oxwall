@@ -26,12 +26,12 @@ class OW_RemoteAuthAdapter extends OW_AuthAdapter
     
     public function getRemoteId()
     {
-        return $this->remoteUserId;
+        return $this->remoteId;
     }
     
     public function isRegistered()
     {
-        return $this->remoteAuthService->findByRemoteId($this->remoteId);
+        return $this->remoteAuthService->findByRemoteTypeAndId($this->type, $this->remoteId);
     }
     
     public function register( $userId, $custom = null )
@@ -52,7 +52,8 @@ class OW_RemoteAuthAdapter extends OW_AuthAdapter
      */
     public function authenticate()
     {
-        $entity = $this->remoteAuthService->findByRemoteId($this->remoteId);
+        $entity = $this->remoteAuthService->findByRemoteTypeAndId($this->type, $this->remoteId);
+        
         if ( $entity === null )
         {
             $userId = null;
