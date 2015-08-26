@@ -1054,30 +1054,30 @@ html body .ow_admin_permissions.ow_superwide {
 }
 .ow_admin_submenu li,
 .ow_admin_submenu_hover li {
-	margin-bottom: 12px;
 	cursor: pointer;
 }
 .ow_admin_submenu_hover li {
 	min-width: 160px;
-	margin-bottom: 8px;
 }
 .ow_admin_submenu li a {
-	display: inline-block;
 	padding-left: 52px;
+	padding-bottom: 12px;
 	color: #9ca6b0;	
 	font-family: 'core_sans_e35_light', "Trebuchet MS", "Helvetica CY", sans-serif;
 }
 .ow_admin_submenu li a,
 .ow_admin_submenu_hover li a {
+	display: block;	
 	font-size: 13px;
 	line-height: 14px;
 }
 .ow_admin_submenu_hover li a {
 	color: #67727d;
+	padding-bottom: 8px;	
 }
-.ow_admin_submenu li:last-child,
-.ow_admin_submenu_hover li:last-child {
-	margin-bottom: 0;
+.ow_admin_submenu li:last-child a,
+.ow_admin_submenu_hover li:last-child a {
+	padding-bottom: 0;
 }
 .ow_admin_submenu li:hover a,
 .ow_admin_submenu li.active a,
