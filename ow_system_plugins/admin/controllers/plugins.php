@@ -380,6 +380,11 @@ class ADMIN_CTRL_Plugins extends ADMIN_CTRL_Abstract
 
         $remotePluginInfo = (array) $this->pluginService->getItemInfoForUpdate($pluginDto->getKey(), $pluginDto->getDeveloperKey());
 
+        if ( OW::getConfig()->getValue('base', 'update_soft') )
+        {
+            $this->assign("platformUpdateAvail", true);
+        }
+
         if ( empty($remotePluginInfo) || !empty($remotePluginInfo['error']) )
         {
             $this->assign('mode', 'error');
