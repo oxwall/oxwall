@@ -5,6 +5,9 @@
 {$text}<br /><br />
 {decorator name='button' langLabel='admin+license_form_leave_label' onclick="window.location='`$returnUrl`'"}
 {elseif !empty($mode) && $mode == 'free'}
+{if !empty($platformUpdateAvail)}
+<div class="ow_anno">{text key="admin+item_update_request_platform_update_warning"}</div>
+{/if}
 {$text}<br /><br />
 {decorator name='button' langLabel='admin+plugin_update_yes_button_label' onclick="window.location='`$redirectUrl`'"}
 {else}

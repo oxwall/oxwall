@@ -46,7 +46,7 @@ class ADMIN_CLASS_EventHandler
                 OW::getLanguage()->text('admin', 'notification_soft_update', 
                         array('link' => OW::getRouter()->urlForRoute('admin_core_update_request'))),
 
-                ADMIN_CLASS_NotificationCollector::NOTIFICATION_UPDATE
+                ADMIN_CLASS_NotificationCollector::NOTIFICATION_WARNING
             );
         }
 
