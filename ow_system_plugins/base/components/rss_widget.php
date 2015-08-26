@@ -162,14 +162,6 @@ class BASE_CMP_RssWidget extends BASE_CLASS_Widget
         {
             throw new WidgetSettingValidateException(OW::getLanguage()->text('base', 'rss_widget_url_invalid_msg'), 'rss_url');
         }
-
-        $urlInfo = parse_url($settingList['rss_url']);
-        $urlHomeInfo = parse_url(OW_URL_HOME);
-
-        if ( $urlInfo['host'] == $urlHomeInfo['host'] )
-        {
-            throw new WidgetSettingValidateException(OW::getLanguage()->text('base', 'rss_widget_url_invalid_msg'), 'rss_url');
-        }
     }
 
     public static function getStandardSettingValueList()
