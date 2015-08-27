@@ -4,9 +4,7 @@
     {assign var='id' value=$dto->id}
     <div class="owm_content_list_item" onclick=" window.location.href='{$avatars[$id]['url']}'  ">
         <div class="owm_user_list_item">
-            <div class="owm_avatar">
-                {decorator name='avatar_item' data=$avatars[$id]}
-            </div>
+            {decorator name='avatar_item' data=$avatars[$id]}
             <div class="owm_user_list_info owm_remark">
                 <div class="owm_user_list_name"><span>{$displayNameList[$id]}</span></div>
                 {foreach from=$fields[$id] item=field name='field_list'}

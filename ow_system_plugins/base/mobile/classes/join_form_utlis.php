@@ -12,7 +12,7 @@ final class BASE_MCLASS_JoinFormUtlis
             switch($presentation)
             {
                 case BOL_QuestionService::QUESTION_PRESENTATION_CHECKBOX:
-                    $result[$presentation] = 'owm_checkbox_wrap owm_simple_checkbox';
+                    $result[$presentation] = 'owm_checkbox_wrap owm_checkbox_single';
                     break;
                 case BOL_QuestionService::QUESTION_PRESENTATION_MULTICHECKBOX:
                     $result[$presentation] = 'owm_checkbox_wrap';

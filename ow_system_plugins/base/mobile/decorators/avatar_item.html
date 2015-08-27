@@ -2,7 +2,7 @@
 
 <div class="owm_avatar{if !empty($data.class)} {$data.class}{/if}">
 {if !empty($data.isMarked)}
-    <div class="owm_ic_bookmark owm_bookmark_icon"></div>
+    <div class="owm_ico_bookmark owm_bookmark_icon"></div>
 {/if}
 {if !empty($data.url)}
     <a href="{$data.url}"><img alt=""{if !empty($data.title)} title="{$data.title}"{/if} src="{$data.src}" />{if !empty($data.label)}<span class="owm_avatar_label"{if !empty($data.labelColor)} style="background-color: {$data.labelColor}"{/if}>{$data.label}</span>{/if}</a>
