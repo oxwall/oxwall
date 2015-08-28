@@ -22,18 +22,4 @@
  * which combines Covered Code or portions thereof with code not governed by the terms of the CPAL.
  */
 
-$queryList = array(
-    "INSERT IGNORE INTO `" . OW_DB_PREFIX . "base_place` (`id`, `name`, `editableByUser`) VALUES (NULL, 'admin.dashboard', '0');"
-);
-
-foreach ( $queryList as $query )
-{
-    try
-    {
-        Updater::getDbo()->query($query);
-    }
-    catch ( Exception $e )
-    {
-        Updater::getLogger()->addEntry(json_encode($e));
-    }
-}
+UPDATE_LanguageService::getInstance()->importPrefixFromZip(dirname(__FILE__) . DS . 'langs.zip', 'admin');
