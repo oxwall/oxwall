@@ -239,12 +239,11 @@ class ADMIN_CLASS_EventHandler
         $layout = (!empty($params['layout']) && in_array($params['layout'], array('page', 'floatbox'))) ? $params['layout'] : 'floatbox';
 
         $document = OW::getDocument();
-        $plugin = OW::getPluginManager()->getPlugin('photo');
         $basePlugin = OW::getPluginManager()->getPlugin('base');
 
-        $document->addStyleSheet($plugin->getStaticCssUrl() . 'photo_floatbox.css');
-        $document->addScript(OW::getPluginManager()->getPlugin('base')->getStaticJsUrl() . 'jquery-ui.min.js');
-        $document->addScript($plugin->getStaticJsUrl() . 'slider.min.js', 'text/javascript', 1000000);
+        $document->addStyleSheet($basePlugin->getStaticCssUrl() . 'photo_floatbox.css');
+        $document->addScript($basePlugin->getStaticJsUrl() . 'jquery-ui.min.js');
+        $document->addScript($basePlugin->getStaticJsUrl() . 'slider.min.js', 'text/javascript', 1000000);
         $document->addScript($basePlugin->getStaticJsUrl() . 'photo.js');
 
         $language = OW::getLanguage();
