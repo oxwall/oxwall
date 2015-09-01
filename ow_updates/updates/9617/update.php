@@ -33,6 +33,9 @@ $queryList[] = "ALTER TABLE `{$tblPrefix}base_theme_image`
   ADD `addDatetime` INT NULL ,
   ADD `title` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL;";
 
+$queryList[] = "UPDATE `{$tblPrefix}base_theme_image`
+  set `addDatetime` = UNIX_TIMESTAMP();";
+
 foreach ( $queryList as $query )
 {
     try
