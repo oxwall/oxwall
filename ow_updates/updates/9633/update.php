@@ -45,3 +45,9 @@ catch ( Exception $e )
 {
     $logger->addEntry(json_encode($e));
 }
+
+
+if ( !Updater::getConfigService()->configExists('base', 'users_limit') )
+{
+    Updater::getConfigService()->addConfig('base', 'users_limit', 10000);
+}
