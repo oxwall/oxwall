@@ -992,13 +992,15 @@ class UserSettingsForm extends Form
         if((int) $values['guests_can_view'] == 3)
         {
             $adminEmail = OW::getUser()->getEmail();
+            $siteName =  $config->getValue('base', 'site_name');
             $senderMail = $config->getValue('base', 'site_email');
             $mail = OW::getMailer()->createMail();
             $mail->addRecipientEmail($adminEmail);
             $mail->setSender($senderMail);
             $mail->setSenderSuffix(false);
-            $mail->setSubject(OW::getLanguage()->text( 'admin', 'site_password'));
-            $mail->setTextContent( OW::getLanguage()->text( 'admin', 'admin_password', array('password' => $values['password'])));
+            $mail->setSubject(OW::getLanguage()->text( 'admin', 'site_password', array('sitename' => $siteName)));
+            $mail->setTextContent( OW::getLanguage()->text( 'admin', 'admin_password', array('password' => $values['password'], 'sitename' => $sitename)));
+            $mail->setHtmlContent( OW::getLanguage()->text( 'admin', 'admin_password_html', array('password' => $values['password'], 'sitename' => $sitename)));
             try
             {
                 OW::getMailer()->send($mail);
