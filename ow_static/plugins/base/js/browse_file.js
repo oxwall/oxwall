@@ -157,7 +157,7 @@
 
                     if ( _elements.content[0].childNodes.length === 0 )
                     {
-                        _elements.content.append($('<div>', {style: 'text-align:center; padding-top: 24px;'}).html(OW.getLanguageText('photo', 'no_items')));
+                        _elements.content.append($('<div>', {style: 'text-align:center; padding-top: 24px;'}).html(OW.getLanguageText('admin', 'no_items')));
                     }
 
                     return;
@@ -518,7 +518,7 @@
         },
         deleteImage: function( imageId )
         {
-            if ( !confirm(OW.getLanguageText('photo', 'confirm_delete')) )
+            if ( !confirm(OW.getLanguageText('admin', 'confirm_delete')) )
             {
                 return false;
             }
@@ -543,7 +543,7 @@
                 OW.error(OW.getLanguageText('admin', 'no_photo_selected'));
                 return false;
             }
-            if ( !confirm(OW.getLanguageText('photo', 'confirm_delete_images')) )
+            if ( !confirm(OW.getLanguageText('admin', 'confirm_delete_images')) )
             {
                 return false;
             }

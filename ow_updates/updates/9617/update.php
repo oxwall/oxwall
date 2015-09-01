@@ -59,7 +59,7 @@ foreach ($languages as $lang)
 
 if ( !is_null($langId) ) {
     $languageService->addOrUpdateValue($langId, 'admin', 'all_files', 'All files');
-    $languageService->addOrUpdateValue($langId, 'admin', 'copy_url', 'Copy Url');
+    $languageService->addOrUpdateValue($langId, 'admin', 'copy_url', 'Copy URL');
     $languageService->addOrUpdateValue($langId, 'admin', 'delete_image', 'Delete');
     $languageService->addOrUpdateValue($langId, 'admin', 'undefined_action', 'Undefined action');
     $languageService->addOrUpdateValue($langId, 'admin', 'not_enough_params', 'Not enough params');
@@ -75,23 +75,36 @@ if ( !is_null($langId) ) {
     $languageService->addOrUpdateValue($langId, 'admin', 'size', 'Size');
     $languageService->addOrUpdateValue($langId, 'admin', 'filesize', 'Filesize');
     $languageService->addOrUpdateValue($langId, 'admin', 'upload_date', 'Upload date');
-    $languageService->addOrUpdateValue($langId, 'admin', '', '');
 
-    $keys = array(
-        'tb_edit_photo', 'confirm_delete', 'mark_featured', 'remove_from_featured', 'rating_total', 'rating_your', 'of',
-        'album', 'slideshow_interval', 'pending_approval', 'not_all_photos_uploaded', 'size_limit', 'type_error',
-        'dnd_support', 'dnd_not_support', 'drop_here', 'please_wait', 'describe_photo', 'photo_upload_error',
-        'error_ini_size', 'error_form_size', 'error_partial', 'error_no_file', 'error_no_tmp_dir', 'error_cant_write',
-        'error_extension', 'no_photo_uploaded', 'photos_uploaded'
-    );
-
-    foreach ($keys as $key) {
-        $photoKey = $languageService->findKey('photo', $key);
-        if (is_null($photoKey)) {
-            continue;
-        }
-        $photoValue = $languageService->findValue($langId, $photoKey->id);
-        $languageService->addOrUpdateValue($langId, 'admin', $key, $photoValue->value);
-    }
+    $languageService->addOrUpdateValue($langId, 'admin', 'confirm_delete_images', 'Are you sure you want to delete this photos?');
+    $languageService->addOrUpdateValue($langId, 'admin', 'no_items', 'No items');
+	$languageService->addOrUpdateValue($langId, 'admin', 'album', 'Album');
+	$languageService->addOrUpdateValue($langId, 'admin', 'confirm_delete', 'Are you sure you want to delete this photo?');
+	$languageService->addOrUpdateValue($langId, 'admin', 'describe_photo', 'Description text...');
+	$languageService->addOrUpdateValue($langId, 'admin', 'dnd_not_support', 'Click to browse photos');
+	$languageService->addOrUpdateValue($langId, 'admin', 'dnd_support', 'Drag & Drop photos here or click to browse');
+	$languageService->addOrUpdateValue($langId, 'admin', 'drop_here', 'Drop photos to start upload');
+	$languageService->addOrUpdateValue($langId, 'admin', 'error_cant_write', 'Failed to write file to disk');
+	$languageService->addOrUpdateValue($langId, 'admin', 'error_extension', 'A PHP extension stopped the file upload. PHP does not provide a way to ascertain which extension caused the file upload to stop; examining the list of loaded extensions with phpinfo() may help');
+	$languageService->addOrUpdateValue($langId, 'admin', 'error_form_size', 'The uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the HTML form');
+	$languageService->addOrUpdateValue($langId, 'admin', 'error_ini_size', 'The uploaded file exceeds the upload_max_filesize directive in php.ini');
+	$languageService->addOrUpdateValue($langId, 'admin', 'error_no_file', 'No file was uploaded');
+	$languageService->addOrUpdateValue($langId, 'admin', 'error_no_tmp_dir', 'Missing a temporary folder');
+	$languageService->addOrUpdateValue($langId, 'admin', 'error_partial', 'The uploaded file was only partially uploaded');
+	$languageService->addOrUpdateValue($langId, 'admin', 'mark_featured', 'Mark as Featured');
+	$languageService->addOrUpdateValue($langId, 'admin', 'not_all_photos_uploaded', 'Some photos were not uploaded because of excessive size or wrong format');
+	$languageService->addOrUpdateValue($langId, 'admin', 'no_photo_uploaded', 'No photos were uploaded because of excessive size or wrong format');
+	$languageService->addOrUpdateValue($langId, 'admin', 'of', 'of');
+	$languageService->addOrUpdateValue($langId, 'admin', 'pending_approval', 'Pending Approval . . .');
+	$languageService->addOrUpdateValue($langId, 'admin', 'photos_uploaded', '{$count} photos uploaded');
+	$languageService->addOrUpdateValue($langId, 'admin', 'photo_upload_error', 'Photo upload error');
+	$languageService->addOrUpdateValue($langId, 'admin', 'please_wait', 'Please wait while previously photo is being uploaded');
+	$languageService->addOrUpdateValue($langId, 'admin', 'rating_total', '(Total {$count})');
+	$languageService->addOrUpdateValue($langId, 'admin', 'rating_your', '(Total {$count}. Your is {$score})');
+	$languageService->addOrUpdateValue($langId, 'admin', 'remove_from_featured', 'Remove from Featured');
+	$languageService->addOrUpdateValue($langId, 'admin', 'size_limit', 'Photo "{$name}" file size cannot be greater than <b>{$size}</b> Mb');
+	$languageService->addOrUpdateValue($langId, 'admin', 'slideshow_interval', 'Slideshow time:&nbsp;');
+	$languageService->addOrUpdateValue($langId, 'admin', 'tb_edit_photo', 'Edit photo');
+	$languageService->addOrUpdateValue($langId, 'admin', 'type_error', 'Invalid file type. {$name}');
 
 }

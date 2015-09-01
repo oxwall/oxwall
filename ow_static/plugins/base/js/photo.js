@@ -777,7 +777,7 @@
             {
                 var photoId = $(this).attr("rel");
 
-                if ( confirm(OW.getLanguageText('photo', 'confirm_delete')) )
+                if ( confirm(OW.getLanguageText('admin', 'confirm_delete')) )
                 {
                     $.ajax(
                     {
