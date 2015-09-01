@@ -23,42 +23,39 @@
  */
 
 /**
- * Data Transfer Object for `base_theme_image` table.
- *
- * @author Sardar Madumarov <madumarov@gmail.com>
- * @package ow_system_plugins.base.bol
- * @since 1.0
+ * @author Sergei Kiselev <arrserg@gmail.com>
+ * @package ow_system_plugins.admin.components
+ * @since 1.7.5
  */
-class BOL_ThemeImage extends OW_Entity
+class ADMIN_CMP_UploadedFilesFloatbox extends OW_Component
 {
-    /**
-     * @var string
-     */
-    public $filename;
-
-    /**
-     * @var integer
-     */
-    public $addDatetime;
-
-    /**
-     * @var string
-     */
-    public $title;
-
-    public function getFilename()
+    public function __construct( $layout )
     {
-        return $this->filename;
-    }
+        parent::__construct();
 
-    /**
-     *
-     * @param string $filename
-     * @return BOL_ThemeImage
-     */
-    public function setFilename( $filename )
-    {
-        $this->filename = $filename;
-        return $this;
+        $saveImageDataUrl = OW::getRouter()->urlFor('ADMIN_CTRL_Theme', 'ajaxResponder');
+
+        $jsString = ";$('.image_save_data').click(function(e){
+            e.preventDefault();
+            var floatbox = $('.floatbox_container');
+            var title = $('.ow_photoview_title input', floatbox).val();
+            var imageId = $('.ow_photoview_id', floatbox).val();
+            var data = {'entityId': imageId, 'title': title, 'ajaxFunc': 'ajaxSaveImageData'};
+            $('.image_save_data').attr('disabled', 'disabled');
+            $('.image_save_data').addClass('ow_inprogress');
+            $.ajax({
+                url: '{$saveImageDataUrl}',
+                data: data,
+                method: 'POST',
+                success: function(data){
+                    $('.image_save_data').removeAttr('disabled');
+                    $('.image_save_data').removeClass('ow_inprogress');
+                    photoView.unsetCache(data.imageId);
+                    OW.info('All changes saved');
+                }
+            });
+        });
+        ";
+        OW::getDocument()->addOnloadScript($jsString);
     }
 }

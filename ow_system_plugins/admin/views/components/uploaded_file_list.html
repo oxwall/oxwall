@@ -1,0 +1,36 @@
+<div class="ow_fw_menu ow_high2 clearfix ow_smallmargin">
+    <div class="ow_admin_date_filter">{component class="ADMIN_CMP_UploadedFilesFilter"}</div>
+    <div class="ow_admin_bulk_options">{component class="ADMIN_CMP_UploadedFilesBulkOptions"}</div>
+    <div class="ow_admin_upload_button">{component class="BASE_CMP_AjaxFileUploadButton"}</div>
+</div>
+
+<div class="ow_photo_list_wrap ow_photo_no_sidebar">
+    <div id="browse-photo" class="ow_photo_list ow_photo_pint_mode clearfix"></div>
+    <div id="browse-photo-preloader" class="ow_fw_menu ow_preloader"></div>
+</div>
+
+<div id="browse-photo-item-prototype" class="ow_photo_item_wrap" style="display: none">
+    <div class="ow_photo_item">
+        <div class="ow_photo_pint_album">
+            <img src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs%3D" width="0" height="0" alt="" />
+            <div class="ow_photo_chekbox_area" style="display: none;"><div class="ow_photo_checkbox"></div></div>
+        </div>
+        <div class="ow_photo_item_info ow_small">
+            <div class="ow_photo_item_info_title">{text key="admin+title"}: <b><span></span></b></div>
+            <div class="ow_photo_item_info_dimensions">{text key="admin+size"}: <b><span></span></b></div>
+            <div class="ow_photo_item_info_fileszie">{text key="admin+filesize"}: <b><span></span></b></div>
+            <div class="ow_photo_item_info_uploaddate">{text key="admin+upload_date"}: <b><span></span></b></div>
+            <div class="ow_photo_item_info_url">{text key="admin+url"}: <span></span></div>
+        </div>
+    </div>
+</div>
+
+<div class="ow_hidden">
+    <div id="context-action-prototype" class="ow_context_action">
+        <div class="ow_tooltip ow_small ow_tooltip_top_right" style="opacity: 1; top: 19px;">
+            <div class="ow_tooltip_tail"><span></span></div>
+            <div class="ow_tooltip_body"></div>
+        </div>
+    </div>
+    <iframe name="photo-downloader"  style="display:none;"></iframe>
+</div>

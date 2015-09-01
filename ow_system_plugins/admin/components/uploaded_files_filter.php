@@ -23,42 +23,45 @@
  */
 
 /**
- * Data Transfer Object for `base_theme_image` table.
- *
- * @author Sardar Madumarov <madumarov@gmail.com>
- * @package ow_system_plugins.base.bol
- * @since 1.0
+ * @author Sergei Kiselev <arrserg@gmail.com>
+ * @package ow_system_plugins.admin.components
+ * @since 1.7.5
  */
-class BOL_ThemeImage extends OW_Entity
+class ADMIN_CMP_UploadedFilesFilter extends OW_Component
 {
-    /**
-     * @var string
-     */
-    public $filename;
 
-    /**
-     * @var integer
-     */
-    public $addDatetime;
-
-    /**
-     * @var string
-     */
-    public $title;
-
-    public function getFilename()
+    public function __construct($params = array())
     {
-        return $this->filename;
+        parent::__construct();
     }
 
-    /**
-     *
-     * @param string $filename
-     * @return BOL_ThemeImage
-     */
-    public function setFilename( $filename )
+    private function getDates($images)
     {
-        $this->filename = $filename;
-        return $this;
+        $dates = array();
+        foreach ($images as $image)
+        {
+            if ( $image->addDatetime )
+            {
+                $dates[date('Y-m-t', $image->addDatetime)] = date('F Y', $image->addDatetime);
+            }
+        }
+        ksort($dates);
+        return array_reverse($dates, true);
+    }
+
+    public function onBeforeRender()
+    {
+        parent::onBeforeRender();
+        $id = uniqid('filter');
+        $this->assign('id', $id);
+        $images = BOL_ThemeService::getInstance()->findAllCssImages();
+        $this->assign('dates', $this->getDates($images));
+        $jsString = ";$('#{$id} ul li a').click(function(e){
+            e.preventDefault();
+            window.browsePhoto.filter({'date': $(this).data('date')});
+            $(this).parents('.ow_context_action').find('.ow_context_action_value span').html($(this).html());
+        });
+        ";
+        OW::getDocument()->addOnloadScript($jsString);
     }
 }

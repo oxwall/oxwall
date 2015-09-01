@@ -1,0 +1,319 @@
+.floatbox_container .floatbox_body {
+    overflow: visible;
+}
+.ow_photo_upload_wrap * {
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+}
+.ow_photo_dragndrop {
+    display: inline-block;
+    width: 100%;
+    line-height: 84px;
+    margin-bottom: 20px;
+    text-align: center;
+    cursor: pointer;
+    font-weight: normal;
+    border-radius: 4px;
+    -moz-border-radius: 4px;
+    -webkit-border-radius: 4px;
+    position: relative;
+    padding: 4px;
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+}
+.ow_photo_dragndrop div {
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    bottom: 4px;
+    right: 4px;
+}
+.ow_photo_upload_wrap .ow_suggest_field input {
+    width: 474px;
+    margin-top: 1px;
+}
+.ow_photo_upload_wrap .ow_photo_preview_block_wrap .ow_photo_preview_edit {
+    display: block;
+    float: left;
+    width: 230px;
+    position: relative;
+    margin-bottom: 15px;
+    box-sizing: content-box;
+    -moz-box-sizing: content-box;
+    -webkit-box-sizing: content-box;
+    min-height: 230px;
+}
+.ow_photo_upload_wrap .ow_photo_preview_block_wrap .ow_photo_preview_edit:nth-child(3n+2){
+    margin: 0 9px;
+}
+body .ow_photo_upload_description {
+    cursor: text;
+    border-width: 1px 0 0 0;
+    border-style: solid;
+    border-radius: 0;
+    -moz-border-radius: 0;
+    -webkit-border-radius: 0;
+}
+body .ow_photo_preview_edit .CodeMirror {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    margin: 0;
+    border-width: 1px 0 0 0;
+    border-style: solid;
+    font-size: 12px;
+    padding: 6px;
+    line-height: 14px;
+    overflow: hidden;
+    border-radius: 0;
+    -moz-border-radius: 0;
+    -webkit-border-radius: 0;
+}
+.ow_photo_preview_image {
+    width: 100%;
+    height: 230px;
+    position: relative;
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: cover;
+    transition: box-shadow 0.15s ease;
+    -moz-transition: box-shadow 0.15s ease;
+    -webkit-transition: box-shadow 0.15s ease;
+}
+.ow_photo_preview_action:hover .ow_photo_preview_image {
+    -webkit-box-shadow: inset 0px 0px 40px 0px rgba(0,0,0,0.5);
+    -moz-box-shadow: inset 0px 0px 40px 0px rgba(0,0,0,0.5);
+    box-shadow: inset 0px 0px 40px 0px rgba(0,0,0,0.5);
+}
+.ow_photo_preview_image_filtered .ow_photo_preview_action:hover .ow_photo_preview_image,
+.ow_photo_preview_action:hover .ow_photo_preview_loading.ow_photo_preview_image {
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+    box-shadow: none;
+}
+.ow_photo_preview_image_filter {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    -moz-transition: opacity 0.3s ease;
+    -webkit-transition: opacity 0.3s ease;
+}
+.ow_photo_preview_image_filtered .ow_photo_preview_image_filter {
+    opacity: 0.4;
+    cursor: pointer;
+}
+.ow_photo_preview_image_filtered .ow_photo_preview_image_active .ow_photo_preview_image_filter,
+.ow_photo_preview_image_filtered .ow_photo_preview_loading .ow_photo_preview_image_filter{
+    opacity: 0;
+}
+.ow_photo_preview_x {
+    display: none;
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    top: 3px;
+    right: 2px;
+    cursor: pointer;
+}
+.ow_photo_preview_rotate {
+    display: none;
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    bottom: 4px;
+    right: 2px;
+    cursor: pointer;
+    top: 212px;
+}
+.ow_photo_preview_action:hover .ow_photo_preview_x,
+.ow_photo_preview_action:hover .ow_photo_preview_rotate {
+    display: block;
+}
+.ow_photo_preview_image_filtered .ow_photo_preview_action:hover .ow_photo_preview_x,
+.ow_photo_preview_image_filtered .ow_photo_preview_action:hover .ow_photo_preview_rotate,
+.ow_photo_preview_loading.ow_photo_preview_action:hover .ow_photo_preview_x,
+.ow_photo_preview_loading.ow_photo_preview_action:hover .ow_photo_preview_rotate {
+    display: none;
+}
+.ow_photo_upload_bottom {
+    position: relative;
+}
+.ow_photo_upload_submit {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+}
+
+.CodeMirror {
+    min-height: 58px;
+    max-height: 108px;
+}
+.CodeMirror-scroll {
+    overflow: auto;
+}
+.CodeMirror-lines {
+    padding: 4px 0;
+}
+.CodeMirror pre {
+    padding: 0 4px;
+}
+.CodeMirror-scrollbar-filler, .CodeMirror-gutter-filler {
+    background-color: white;
+}
+.CodeMirror-gutters {
+    border-right: 1px solid #ddd;
+    background-color: #f7f7f7;
+    white-space: nowrap;
+}
+.CodeMirror div.CodeMirror-cursor {
+    border-left: 1px solid black;
+    z-index: 3;
+}
+.CodeMirror div.CodeMirror-secondarycursor {
+    border-left: 1px solid silver;
+}
+.CodeMirror.cm-keymap-fat-cursor div.CodeMirror-cursor {
+    width: auto;
+    border: 0;
+    background: #7e7;
+    z-index: 1;
+}
+div.CodeMirror span.CodeMirror-matchingbracket {color: #0f0;}
+div.CodeMirror span.CodeMirror-nonmatchingbracket {color: #f22;}
+.CodeMirror-activeline-background {background: #e8f2ff;}
+.CodeMirror-scroll {
+    margin-bottom: -30px; margin-right: -30px;
+    padding-bottom: 30px; padding-right: 30px;
+    height: 100%;
+    outline: none;
+    position: relative;
+    -moz-box-sizing: content-box;
+    box-sizing: content-box;
+}
+.CodeMirror-sizer {
+    position: relative;
+    width: 216px;
+}
+.CodeMirror-vscrollbar, .CodeMirror-hscrollbar, .CodeMirror-scrollbar-filler, .CodeMirror-gutter-filler {
+    position: absolute;
+    z-index: 6;
+    display: none;
+}
+.CodeMirror-vscrollbar {
+    right: 0; top: 0;
+    overflow-x: hidden;
+    overflow-y: hidden;
+}
+.CodeMirror-hscrollbar {
+    bottom: 0; left: 0;
+    overflow-y: hidden;
+    overflow-x: scroll;
+}
+.CodeMirror-scrollbar-filler {
+    right: 0; bottom: 0;
+}
+.CodeMirror-gutter-filler {
+    left: 0; bottom: 0;
+}
+.CodeMirror-gutters {
+    position: absolute; left: 0; top: 0;
+    padding-bottom: 30px;
+    z-index: 3;
+}
+.CodeMirror-gutter {
+    white-space: normal;
+    height: 100%;
+    -moz-box-sizing: content-box;
+    box-sizing: content-box;
+    padding-bottom: 30px;
+    margin-bottom: -32px;
+    display: inline-block;
+    *zoom:1;
+    *display:inline;
+}
+.CodeMirror-gutter-elt {
+    position: absolute;
+    cursor: default;
+    z-index: 4;
+}
+.CodeMirror-lines {
+    cursor: text;
+}
+.CodeMirror pre {
+    -moz-border-radius: 0; -webkit-border-radius: 0; border-radius: 0;
+    border-width: 0;
+    background: transparent;
+    font-family: inherit;
+    font-size: inherit;
+    margin: 0;
+    white-space: pre;
+    word-wrap: normal;
+    line-height: inherit;
+    color: inherit;
+    z-index: 2;
+    position: relative;
+    overflow: visible;
+}
+.CodeMirror-wrap pre {
+    word-wrap: break-word;
+    white-space: pre-wrap;
+    word-break: normal;
+}
+.CodeMirror-code pre {
+    border-right: 30px solid transparent;
+    width: -webkit-fit-content;
+    width: -moz-fit-content;
+    width: fit-content;
+}
+.CodeMirror-wrap .CodeMirror-code pre {
+    border-right: none;
+    width: auto;
+}
+.CodeMirror-linebackground {
+    position: absolute;
+    left: 0; right: 0; top: 0; bottom: 0;
+    z-index: 0;
+}
+.CodeMirror-linewidget {
+    position: relative;
+    z-index: 2;
+    overflow: auto;
+}
+.CodeMirror-wrap .CodeMirror-scroll {
+    overflow-x: hidden;
+}
+.CodeMirror-measure {
+    position: absolute;
+    width: 100%;
+    height: 0;
+    overflow: hidden;
+    visibility: hidden;
+}
+.CodeMirror-measure pre { position: static; }
+.CodeMirror div.CodeMirror-cursor {
+    position: absolute;
+    visibility: hidden;
+    border-right: none;
+    width: 0;
+}
+.CodeMirror-focused div.CodeMirror-cursor {
+    visibility: visible;
+}
+.CodeMirror-selected { background: #ccc; }
+.CodeMirror-focused .CodeMirror-selected { background: #ccc; }
+.cm-searching {
+    background: #ffa;
+    background: rgba(255, 255, 0, .4);
+}
+.CodeMirror span { *vertical-align: text-bottom; }
+@media print {
+  .CodeMirror div.CodeMirror-cursor {
+    visibility: hidden;
+  }
+}
