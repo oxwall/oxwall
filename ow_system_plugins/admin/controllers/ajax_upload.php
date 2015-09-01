@@ -29,7 +29,7 @@
  * @package ow_system_plugins.admin.controllers
  * @since 1.7.5
  */
-class ADMIN_CTRL_AjaxUpload extends OW_ActionController
+class ADMIN_CTRL_AjaxUpload extends ADMIN_CTRL_Abstract
 {
     CONST STATUS_SUCCESS = 'success';
     const STATUS_ERROR = 'error';

@@ -51,11 +51,8 @@
                 }
                 
                 _elements.slotData[slotId].remove();
-                _elements.descEditors[slotId].setValue('');
-                _elements.descEditors[slotId].clearHistory();
-                
+
                 delete _elements.slotData[slotId];
-                delete _elements.descEditors[slotId];
                 delete _elements.descCache[slotId];
                 delete _elements.relations[slotId];
             });
