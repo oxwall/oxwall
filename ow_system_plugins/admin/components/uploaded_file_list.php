@@ -112,5 +112,9 @@ class ADMIN_CMP_UploadedFileList extends OW_Component
         $document->addStyleSheet($plugin->getStaticCssUrl() . 'browse_files.css');
         $document->addScript($plugin->getStaticJsUrl() . 'browse_file.js');
         OW::getLanguage()->addKeyForJs("admin", "copy_url");
+        OW::getLanguage()->addKeyForJs("admin", "confirm_delete_images");
+        OW::getLanguage()->addKeyForJs("admin", "no_photo_selected");
+        OW::getLanguage()->addKeyForJs("admin", "no_items");
+        OW::getLanguage()->addKeyForJs("admin", "dnd_support");
     }
 }
