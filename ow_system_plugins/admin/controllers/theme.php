@@ -558,6 +558,11 @@ class ThemeEditForm extends Form
         
         foreach ( $controls as $value )
         {
+            if( !array_key_exists($value["type"], $typeArray) )
+            {
+                continue;
+            }
+            
             $refField = new ReflectionClass($typeArray[$value['type']]);
             $field = $refField->newInstance($value['key']);
 

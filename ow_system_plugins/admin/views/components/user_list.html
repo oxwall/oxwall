@@ -12,12 +12,7 @@
         width: 55px;
         height: 45px;
     }
-    
-    .user_list_thumb img {
-        width: 45px;
-        height: 45px;
-    }
-    
+
     #user-list-form .ow_lbutton {
         cursor: default;
     }
@@ -89,7 +84,7 @@
      <td><input type="checkbox" id="check-all" /></th>
      <td colspan="3" class="ow_txtleft">
          {text key='base+check_all'} | {text key='base+with_selected'}
-         
+
          {foreach from=$buttons item='btn'}
             {decorator name='button_list_item' type='submit' buttonName=$btn.name label=$btn.label id=$btn.id class=$btn.class}
          {/foreach}
@@ -102,7 +97,7 @@
     <div class="ow_stdmargin">
         {text key="admin+confirm_delete_users"}
     </div>
-	
+
 	{decorator name="button" type="submit" id="button-confirm-user-delete" class="ow_ic_delete ow_red" langLabel="base+delete_user_delete_button"}
 </div>
 </div>

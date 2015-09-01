@@ -230,13 +230,23 @@ class OW_Application
 
         // adding global template vars
         $currentThemeImagesDir = OW::getThemeManager()->getCurrentTheme()->getStaticImagesUrl();
+        $currentThemeStaticDir = OW::getThemeManager()->getCurrentTheme()->getStaticUrl();
+
         $viewRenderer = OW_ViewRenderer::getInstance();
         $viewRenderer->assignVar('themeImagesUrl', $currentThemeImagesDir);
+        $viewRenderer->assignVar('themeStaticUrl', $currentThemeStaticDir);
         $viewRenderer->assignVar('siteName', OW::getConfig()->getValue('base', 'site_name'));
         $viewRenderer->assignVar('siteTagline', OW::getConfig()->getValue('base', 'site_tagline'));
         $viewRenderer->assignVar('siteUrl', OW_URL_HOME);
         $viewRenderer->assignVar('bottomPoweredByLink', '<a href="http://www.oxwall.org/" target="_blank" title="Powered by Oxwall Community Software"><img src="' . $currentThemeImagesDir . 'powered-by-oxwall.png" alt="Oxwall Community Software" /></a>');
-        $viewRenderer->assignVar('adminDashboardIframeUrl', "//static.oxwall.org/spotlight/?platform=oxwall&platform-version=" . OW::getConfig()->getValue('base', 'soft_version') . "&platform-build=" . OW::getConfig()->getValue('base', 'soft_build'));
+
+        $spotParams = array(
+            "platform-version" => OW::getConfig()->getValue("base", "soft_version"),
+            "platform-build" => OW::getConfig()->getValue("base", "soft_build"),
+            "theme" => OW::getConfig()->getValue("base", "selectedTheme")
+        );
+
+        $viewRenderer->assignVar('adminDashboardIframeUrl', OW::getRequest()->buildUrlQueryString("//static.oxwall.org/spotlight/", $spotParams));
 
         if ( function_exists('ow_service_actions') )
         {

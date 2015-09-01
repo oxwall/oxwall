@@ -23,8 +23,12 @@ var ColorPicker = function($parent, callback, colorC){
 			}
 		}
 	);
-	var $colorInputSubmit = $(Fce('input')).attr('type', 'button').attr('value', 'Ok').bind('click', function(){callback(color);});
-	var $colorInputCont = $('<td colspan="5"></td>').append($colorInput).append($colorInputSubmit);
+	var $colorInputSubmit = $(Fce('input')).attr('type', 'button').attr('value', 'Ok').attr('class', 'ow_ic_ok').bind('click', function(){callback(color);});
+
+	var $colorInputSubmitWrapper = $('<span class="ow_ic_ok"></span>').append($colorInputSubmit);
+	$colorInputSubmitWrapper = $('<span class="ow_button"></span>').append($colorInputSubmitWrapper);
+
+	var $colorInputCont = $('<td colspan="5"></td>').append($colorInput).append($colorInputSubmitWrapper);
 	var $inputTr = $(Fce('tr')).append($coloredTd).append($colorInputCont);
 	$colorTable.append($inputTr);
 	for(i=0;i<colors.length;i++){

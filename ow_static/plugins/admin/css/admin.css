@@ -1,3 +1,26 @@
+@font-face {
+    font-family: 'core_sans_e45_regular';
+    src: url('images/fonts/simplicity-webfont.eot');
+    src: url('images/fonts/simplicity-webfont.eot?#iefix') format('embedded-opentype'),
+         url('images/fonts/simplicity-webfont.woff2') format('woff2'),
+         url('images/fonts/simplicity-webfont.woff') format('woff'),
+         url('images/fonts/simplicity-webfont.ttf') format('truetype'),
+         url('images/fonts/simplicity-webfont.svg#core_sans_e45_regular') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'core_sans_e35_light';
+    src: url('images/fonts/simplicity_light-webfont.eot');
+    src: url('images/fonts/simplicity_light-webfont.eot?#iefix') format('embedded-opentype'),
+         url('images/fonts/simplicity_light-webfont.woff2') format('woff2'),
+         url('images/fonts/simplicity_light-webfont.woff') format('woff'),
+         url('images/fonts/simplicity_light-webfont.ttf') format('truetype'),
+         url('images/fonts/simplicity_light-webfont.svg#core_sans_e35_light') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+
 /*Account types. Admin dashboard*/
 
 .ow_admin_profile_questions_list_div .ow_lables_table th.ow_tr_top {
@@ -304,7 +327,7 @@ table.colorPicker td {
 }
 .ow_navbox a.move{
 	color:#666;
-	font-weight:bold;
+    font-family: "core_sans_e55_medium","Trebuchet MS","Helvetica CY",sans-serif;
 }
 .ow_navbox a.move:hover{
 	cursor:move;
@@ -359,22 +382,26 @@ table.colorPicker td {
 .color_input input[type=text]{
     width:70%;
 }
-/* - admin_bg_fix - */
-body.ow_admin_area {
- background: #f9fbfd;
- background-image: none;
- position: relative;
- padding-top: 57px;
- height: auto;
+.ow_admin_page_wrap {
+	min-height: 100%;
+	position: relative;
 }
-
-/* - admin footer fix */
+.ow_admin_page_padding {
+	padding-top: 70px;
+	padding-bottom: 62px;
+}
+/* - admin_bg- */
+body.ow_admin_area {
+	background: #fff;
+	background-image: none;
+	position: relative;
+	height: 100%;
+}
+/* - admin footer */
 .ow_footer.ow_admin {
- 	margin-top: 0;
- 	height: 55px;
- 	border-color: #d6dde5;
- 	border-bottom: 1px solid #d6dde5;
- 	background-color: #f9fbfd;
+ 	margin-top: -62px;
+ 	height: 60px;
+ 	background-color: #fff;
 }
 .ow_footer.ow_admin .ow_canvas {
 	padding: 0 16px;
@@ -389,7 +416,7 @@ body.ow_admin_area {
 	position: fixed;
 	width: 100%;
 	height: auto;
-	background: #fff;
+	background: none;
 	padding: 0px;
 	margin:0px;
 	top: 0;
@@ -397,24 +424,21 @@ body.ow_admin_area {
 	z-index: 99;
 }
 .ow_admin_header .ow_site_panel {
-	height: 56px;
-	background-color: #4b4e61;
-	border-color: #d6dde5;
+	height: 70px;
+	background-color: rgba(239,242,245,0.5);
     position: static;
 }
-
 .ow_admin_header .ow_console{
     height: 56px;
-    background-color: #4b4e61;
+    background-color: transparent;
     position: fixed;
-    right: 0;
+    right: 16px;
     top: 0;
     z-index: 99;
-    
 }
 .ow_admin_header .ow_console_body {
 	padding: 16px 4px 16px 8px;
-	background-color: #4b4e61;
+	background-color: transparent;
 	height: 56px;
 }
 .ow_page_container.ow_admin {
@@ -425,21 +449,17 @@ body.ow_admin_area {
 .ow_page_container.ow_admin .ow_page {
 	min-height: 300px;
 }
-
 .ow_page_container.ow_admin .ow_page .ow_content {
 	float: none;
 }
-
 .ow_admin_header .ow_logo_wrap {
 	padding: 12px 0px 0px 115px;
 }
-
 table.ow_admin_footer {
 	margin-top: 15px;
 	font-size: 11px;
 	line-height: 1.25;
 }
-
 table.ow_admin_footer div.group {
 	margin-bottom: 20px;
 }
@@ -451,7 +471,6 @@ table.ow_admin_footer h3 {
 	margin-bottom: 5px;
 	margin-top: 0;
 }
-
 table.ow_admin_footer a {
 	color: #aaa;
 	text-decoration: none;
@@ -459,13 +478,11 @@ table.ow_admin_footer a {
 	margin-bottom: 2px;
 	margin-right: 1px;
 }
-
 table.ow_admin_footer a:hover {
 	color: #fff;
 	margin-left: 1px;
 	margin-right: 0;
 }
-
 .ow_header .ow_logo_wrap .ow_admin_title {
 	color: #ff7000;
 	margin-left: 5px;
@@ -560,21 +577,18 @@ table.ow_admin_footer a:hover {
 
 
 /* ---- Admin Sidebar styles ---- */
-
 .ow_admin_sidebar{
 	float: left;
 	padding: 0;
 	width: 170px;
 	margin: 0;
 }
-
 .ow_admin_sidebar .ow_box_cap{
 	background: #ddd;
 	border-bottom: 1px solid #aaa;
 	height: 16px;
 	padding: 5px 5px 6px 10px;
 }
-
 .ow_admin_menu_cont .ow_box_cap h3{
 	background: none;
 	color: #ff7000;
@@ -585,7 +599,6 @@ table.ow_admin_footer a:hover {
     line-height:15px;
 	text-transform: none;
 }
-
 .ow_admin_sidebar .ow_box_cap a.close,
 .ow_admin_sidebar .ow_box_cap a.open{
 	background: url(images/icon-arrow-down.png) no-repeat;
@@ -594,16 +607,13 @@ table.ow_admin_footer a:hover {
 	margin-top: 1px;
 	width: 16px;
 }
-
 .ow_admin_sidebar .ow_box_cap a.open{
     background: url(images/ic_arrow-right.png) no-repeat;
 }
-
 .ow_admin_sidebar .ow_box{
 	background: url(images/box-body-bg.png) repeat;
 
 }
-
 /* ---- End of Admin Sidebar styles ---- */
 
 /* ---- Admin Profile Questions styles ---- */
@@ -671,6 +681,10 @@ th.delete_edit_buttons{
 	-moz-border-radius: 3px;
 	-webkit-border-radius: 3px;	
 }
+body .theme_controls .color_button {
+	height: 30px;
+	vertical-align: top;
+}
 /* ---- End of the Admin Theme styles ---- */
 
 /* ---- Other Admin styles ---- */
@@ -689,120 +703,6 @@ html body .ow_admin_permissions.ow_superwide {
 	overflow: initial;
 }
 /* ---- End of the Other Admin styles ---- */
-
-
-@font-face {
-    font-family: 'robotoregular';
-    src: url('images/fonts/Roboto-Regular-webfont.eot');
-    src: url('images/fonts/Roboto-Regular-webfont.eot?#iefix') format('embedded-opentype'),
-         url('images/fonts/Roboto-Regular-webfont.woff') format('woff'),
-         url('images/fonts/Roboto-Regular-webfont.ttf') format('truetype'),
-         url('images/fonts/Roboto-Regular-webfont.svg#robotoregular') format('svg');
-    font-weight: normal;
-    font-style: normal;
-
-}
-/*Content*/
-@media (max-width: 1420px) {
-	.ow_page_container.ow_admin {
-		margin-left: 200px;
-	}
-	.ow_page_container.ow_admin .ow_canvas {
-		width: 100%;
-	}
-	.ow_admin_area .ow_footer.ow_admin {
-		margin-left: 200px;
-	}
-	.ow_admin_area .ow_footer.ow_admin .ow_canvas {
-		float: left;
-	}
-}
-@media (max-width: 1220px) {
-	.ow_page_container.ow_admin,
-	.ow_admin_area .ow_footer.ow_admin .ow_canvas {
-		width: 880px;
-	}
-}
-@media (max-width: 1100px) {
-	body.ow_admin_area,
-	body.ow_admin_area < html {
-		min-width: 940px;
-	}
-	.ow_admin_area .ow_admin_menu_wrap {
-		width: 56px;
-	}
-	.ow_admin_area .ow_admin_menu_item {
-		width: 56px;
-	}
-	.ow_admin_area .ow_admin_menu_item span,
-	.ow_admin_area .ow_admin_menu_item_label {
-		display: none;
-	}
-	.ow_page_container.ow_admin {
-		margin-left: 57px;
-	}
-	.ow_admin_area .ow_footer.ow_admin {
-		margin-left: 57px;
-	}
-	.ow_admin_submenu {
-		display: none !important;
-	}
-	.ow_admin_menu .ow_admin_menu_item,
-	.ow_site_panel .ow_admin_home_btn {
-		padding-right: 0;
-	}
-	.ow_admin_menu .ow_admin_menu_item .ow_admin_menu_arrow {
-		background-position: 4px top;
-	}
-	.ow_admin_menu .ow_admin_menu_item.active .ow_admin_menu_arrow {
-		background-position: 4px 100%;
-	}
-	.ow_admin_menu .ow_admin_menu_item.active:hover .ow_admin_menu_arrow {
-	animation: changearrow 0.3s 0.2s 1 forwards;
-	-webkit-animation: changearrow 0.3s 0.2s 1 forwards;
-	-moz-animation: changearrow 0.3s 0.2s 1 forwards;
-	-o-animation: changearrow 0.3s 0.2s 1 forwards;
-	}
-	@-webkit-keyframes changearrow {
-	    1% {opacity: 1; background-position: 4px 100%;}
-	    40% {opacity: 0; background-position: 4px 100%;}
-	    60% {opacity: 0; background-position: 4px top;}
-	    100% {opacity: 1; background-position: 4px top;}
-	}
-	@-moz-keyframes changearrow {
-	    1% {opacity: 1; background-position: 4px 100%;}
-	    40% {opacity: 0; background-position: 4px 100%;}
-	    60% {opacity: 0; background-position: 4px top;}
-	    100% {opacity: 1; background-position: 4px top;}
-	}
-	@-o-keyframes changearrow {
-	    1% {opacity: 1; background-position: 4px 100%;}
-	    40% {opacity: 0; background-position: 4px 100%;}
-	    60% {opacity: 0; background-position: 4px top;}
-	    100% {opacity: 1; background-position: 4px top;}
-	}
-	@keyframes changearrow {
-	    1% {opacity: 1; background-position: 4px 100%;}
-	    40% {opacity: 0; background-position: 4px 100%;}
-	    60% {opacity: 0; background-position: 4px top;}
-	    100% {opacity: 1; background-position: 4px top;}
-	}
-	.ow_admin_submenu_hover .ow_admin_submenu_title {
-		display: block;
-	}
-}
-@media (min-width: 1100px) {
-	.ow_admin_menu_item.active:hover .ow_admin_submenu_hover {
-		display: none;
-		opacity: 0;
-	}
-	.ow_admin_menu .ow_admin_menu_item.active:hover .ow_admin_menu_arrow {
-	animation: none;
-	-webkit-animation: none;
-	-moz-animation: none;
-	-o-animation: none;
-	}
-}
 /*Console*/
 .ow_admin_console_update {
 	float: left;
@@ -810,8 +710,8 @@ html body .ow_admin_permissions.ow_superwide {
 	position: relative;
 }
 .ow_admin_console_update_link {
-	width: 56px;
-	height: 56px;
+	width: 70px;
+	height: 70px;
 	display: inline-block;
 	background-image: url(images/admin_console_update.svg);
 	background-position: center center;
@@ -872,6 +772,9 @@ html body .ow_admin_permissions.ow_superwide {
 	margin-left: 48px;
 	color: #666;
 }
+.ow_admin_notification_text a {
+	color: #2db395;
+}
 /*Menu*/
 .ow_admin_menu_wrap {
 	width: 200px;
@@ -879,64 +782,63 @@ html body .ow_admin_permissions.ow_superwide {
 	position: absolute;
 	top: 0;
 	left: 0;
-	background-color: #fff;
+	background-color: #2f3235;
 	z-index: 1;
-	border-right: 1px solid #dddfeb;
+	border-right: 1px solid #eff2f5;
+	font-family: 'core_sans_e45_regular', "Trebuchet MS", "Helvetica CY", sans-serif;
 }
 .ow_admin_menu_wrap.sticky {
 	position: fixed;
 }
 .ow_admin_menu {
-	padding-top: 56px;
+	padding-top: 70px;
 }
 .ow_admin_menu_item {
-	font-family: "RobotoRegular","Lucida Grande","Tahoma","Verdana";
 	display: table;
 	position: relative;
 	width: 200px;
 	height: 56px;
-	padding-left: 56px;
-	padding-right: 28px;
-	color: #67727d;
-	background-position: 16px 16px;
+	color: #e9eff5;
+	background-position: 16px 14px;
 	background-repeat: no-repeat;
 	cursor: pointer;
 	box-sizing: border-box;
 	-moz-box-sizing: border-box;
 	-webkit-box-sizing: border-box;
-	transition: background-color 400ms ease-in-out 0s;
+	transition: background-color 300ms ease-in-out 0s;
 }
-.ow_admin_menu_item a {
-	color: #67727d;	
+.ow_admin_menu_item > a {
+	color: #e9eff5;	
 }
 .ow_admin_menu_item a:hover {
 	text-decoration: none;
 }
 .ow_admin_menu_item.active {
-	background-color: #f9fbfd;
-	border-left: 4px solid #2f94f2;
-	padding-left: 52px;
-	/*background-position: -4px -56px;*/
+	background-color: #2f3235;
+	border-left: 4px solid #0ec199;
+	background-position: 12px 14px;
 }
-
 .ow_admin_menu_item:hover {
-	background-color: #f1f6f9;
-	/*background-position: left -56px;*/
+	background-color: #454a4d;
 	text-decoration: none;
 }
 .ow_admin_menu_item.active:hover {
-	background-color: #f9fbfd;
-	/*background-position: -4px -56px;*/
+	background-color: #2f3235;
 }
 .ow_admin_menu_item.home {
 	background-image: url(images/admin_home.svg);
-	background-color: #2f94f2;
+	background-color: #1f2124;
+	background-position: 16px 20px;
 	text-transform: uppercase;
-	color: #fff;
+	color: #e9eff5;
+	height: 70px;
 }
 .ow_admin_menu_item.home:hover {
-	color: #fff;
-	background-color: #2f94f2;
+	color: #e9eff5;
+	background-color: #1f2124;
+}
+.ow_admin_menu_item.home .ow_admin_menu_item_label {
+	font-size: 13px;
 }
 .ow_admin_menu_item.menu_admin {
 	background-image: url(images/admin_dashboard.svg);
@@ -962,6 +864,8 @@ html body .ow_admin_permissions.ow_superwide {
 .ow_admin_menu_item_label {
 	display: table-cell;
 	vertical-align: middle;
+	padding-left: 56px;
+	padding-right: 28px;
 }
 .ow_admin_submenu_title {
 	margin-bottom: 16px;
@@ -971,10 +875,14 @@ html body .ow_admin_permissions.ow_superwide {
 .ow_admin_menu_item_label,
 .ow_admin_submenu_title {
 	font-size: 15px;
+	text-transform: uppercase;
 }
 .ow_admin_menu_item.active .ow_admin_menu_item_label a,
 .ow_admin_menu_item .ow_admin_submenu_title {
 	text-decoration: none;
+}
+.ow_admin_menu_item.active .ow_admin_menu_item_label {
+	padding-left: 52px;
 }
 .ow_admin_menu_arrow {
 	background-image: url(images/admin_menu_hover.png);
@@ -992,27 +900,21 @@ html body .ow_admin_permissions.ow_superwide {
 }
 .ow_admin_menu_item:hover .ow_admin_menu_arrow {
 	display: inline-block;
-	animation: openmenu 0.4s 0.3s 1 forwards;
-	-webkit-animation: openmenu 0.4s 0.3s 1 forwards;
-	-moz-animation: openmenu 0.4s 0.3s 1 forwards;
-	-o-animation: openmenu 0.4s 0.3s 1 forwards;
-}
-@-webkit-keyframes openarrow {
-    1% {opacity: 0;}
-    100% {opacity: 1;}
-}
-@-moz-keyframes openarrow {
-    1% {opacity: 0;}
-    100% {opacity: 1;}
-}
-@-o-keyframes openarrow {
-   	1% {opacity: 0;}
-    100% {opacity: 1;}
-}
-@keyframes openarrow {
-    1% {opacity: 0;}
-    100% {opacity: 1;}
-}
+	-webkit-animation-duration: 0.8s; 
+    animation-duration: 0.8s; 
+    -webkit-animation-fill-mode: both; 
+    animation-fill-mode: both;
+    -webkit-animation-name: fadeIn; 
+    animation-name: fadeIn;
+} 
+@-webkit-keyframes fadeIn { 
+    0% {opacity: 0;} 
+    100% {opacity: 1;} 
+} 
+@keyframes fadeIn { 
+    0% {opacity: 0;} 
+    100% {opacity: 1;} 
+} 
 .ow_admin_submenu_hover {
 	position: absolute;
 	padding: 16px;
@@ -1023,31 +925,25 @@ html body .ow_admin_permissions.ow_superwide {
 	background-color: #fff;
 	display: none;
 	list-style: none;
-	border: 1px solid #dddfeb;
+	border: 1px solid #eff2f5;
 }
 .ow_admin_menu_item:hover .ow_admin_submenu_hover {
 	color: #666;
 	display: inline-block;
-	animation: openmenu 0.4s 0.3s 1 forwards;
-	-webkit-animation: openmenu 0.4s 0.3s 1 forwards;
-	-moz-animation: openmenu 0.4s 0.3s 1 forwards;
-	-o-animation: openmenu 0.4s 0.3s 1 forwards;
-}
-@-webkit-keyframes openmenu {
-    1% {opacity: 0;}
-    100% {opacity: 1;}
-}
-@-moz-keyframes openmenu {
-    1% {opacity: 0;}
-    100% {opacity: 1;}
-}
-@-o-keyframes openmenu {
-    1% {opacity: 0;}
-    100% {opacity: 1;}
-}
-@keyframes openmenu {
-    1% {opacity: 0;}
-    100% {opacity: 1;}
+	-webkit-animation-duration: 0.8s; 
+    animation-duration: 0.8s; 
+    -webkit-animation-fill-mode: both; 
+    animation-fill-mode: both;
+    -webkit-animation-name: fadeIn; 
+    animation-name: fadeIn;
+} 
+@-webkit-keyframes fadeIn { 
+    0% {opacity: 0;} 
+    100% {opacity: 1;} 
+} 
+@keyframes fadeIn { 
+    0% {opacity: 0;} 
+    100% {opacity: 1;} 
 }
 .ow_admin_menu_item + .ow_admin_submenu {
 	display: none;
@@ -1056,40 +952,43 @@ html body .ow_admin_permissions.ow_superwide {
 	display: block;
 }
 .ow_admin_submenu {
-	padding-left: 52px;
 	padding-bottom: 20px;
-	padding-right: 28px;
-	background-color: #f9fbfd;
-	border-left: 4px solid #2f94f2;
+	background-color: #2f3235;
+	border-left: 4px solid #0ec199;
 	list-style: none;
 }
 .ow_admin_submenu li,
 .ow_admin_submenu_hover li {
-	margin-bottom: 12px;
 	cursor: pointer;
 }
 .ow_admin_submenu_hover li {
 	min-width: 160px;
-	margin-bottom: 8px;
 }
 .ow_admin_submenu li a {
-	text-transform: uppercase;
+	padding-left: 52px;
+	padding-bottom: 12px;
+	color: #9ca6b0;	
+	font-family: 'core_sans_e35_light', "Trebuchet MS", "Helvetica CY", sans-serif;
 }
 .ow_admin_submenu li a,
 .ow_admin_submenu_hover li a {
+	display: block;	
 	font-size: 13px;
-	color: #9ea0b1;
 	line-height: 14px;
 }
-.ow_admin_submenu li:last-child,
-.ow_admin_submenu_hover li:last-child {
-	margin-bottom: 0;
+.ow_admin_submenu_hover li a {
+	color: #67727d;
+	padding-bottom: 12px;	
+}
+.ow_admin_submenu li:last-child a,
+.ow_admin_submenu_hover li:last-child a {
+	padding-bottom: 0;
 }
 .ow_admin_submenu li:hover a,
 .ow_admin_submenu li.active a,
 .ow_admin_submenu_hover li:hover a,
 .ow_admin_submenu_hover li.active a {
-	color: #2f94f2;
+	color: #36d0ae;
 	text-decoration: none;
 }
 /* Plugins page style */
@@ -1102,4 +1001,254 @@ html body .ow_admin_permissions.ow_superwide {
 .ow_inactive_plugins .ow_plugin_update {
     background: #fff;
     border: 1px solid #18d398;
+}
+
+/* Choose theme Page */
+.ow_admin_choose_theme .theme_thumbs {
+    float: left;
+    width: 519px;
+}
+
+.ow_admin_choose_theme .theme_icon {
+    background-repeat:no-repeat;
+    display:block;
+    cursor:pointer;
+    background-position: 5px 5px;
+    background-repeat: no-repeat;
+    border: none;
+    height: 103px;
+    width: 164px;
+    margin: 0;
+}
+
+.ow_admin_choose_theme .theme_title{
+    font-family: "core_sans_e55_medium","Trebuchet MS","Helvetica CY",sans-serif;
+}
+
+.ow_admin_choose_theme .theme_desc{
+    padding:10px 0;
+}
+
+.ow_admin_choose_theme .theme_controls input[type="text"]{
+    width:200px;
+}
+
+.ow_admin_choose_theme .theme_control_image{
+    background-repeat:no-repeat;
+    background-position:50% 50%;
+    border:1px solid #ccc;
+    height:40px;
+    width:200px;
+}
+
+.ow_admin_choose_theme .theme_item {
+    float:left;
+    padding-bottom: 7px;
+    padding-right: 9px;
+    text-align: center;    
+    position: relative;
+}
+
+.ow_admin_choose_theme .theme_item a {
+    display: block;
+    outline: 0 none;
+}
+
+.ow_admin_choose_theme .theme_icon span.name {
+    display: none;
+}
+
+.ow_admin_choose_theme .theme_item span.fake{
+    background: url(images/theme_frame_small.png) no-repeat scroll 0 0 transparent;
+    display: block;
+    height: 103px;
+}
+
+.ow_admin_choose_theme .theme_item .theme_icon span.clicked,
+.ow_admin_choose_theme .theme_item .theme_icon.clicked span.clicked {
+    background: url(images/theme_frame_small.png) no-repeat scroll 0 -112px transparent;
+}
+
+.ow_admin_choose_theme .theme_item .theme_icon.clicked span {
+    background: url(images/theme_frame_small.png) no-repeat scroll 0 -224px transparent;
+}
+
+html body .ow_admin_choose_theme .selected_theme_info{
+    float:right;
+    width:312px;
+}
+
+html body .ow_admin_choose_theme .selected_theme_info_stick{
+    width:312px;
+}
+.ow_admin_choose_theme .themes_preview {
+    overflow: hidden;
+    padding: 6px 6px 0;
+    position: relative;
+    width: 302px;
+    background: url(images/theme_frame_preview.png) no-repeat scroll 0 0 transparent;
+}
+.ow_admin_choose_theme .theme_wrap a {
+    display: block;
+    height: 179px;
+    width: auto;
+    cursor: pointer;
+    background-position: 0px 0px;
+}
+.ow_admin_choose_theme .theme_text_wrap {
+    padding: 13px 0 0;
+}
+.ow_admin_choose_theme .theme_text_wrap .theme_desc {
+    font-size: 11px;
+    padding: 3px 0;
+}
+.ow_admin_choose_theme .theme_info .ow_table_3 td {
+    text-align: left;
+}
+.ow_admin_choose_theme .theme_info .ow_table_3 {
+    margin-bottom: 5px;
+}
+.ow_admin_choose_theme .theme_info .ow_table_3 td.ow_label {
+    padding-left: 0;
+    width: 18%;
+}
+.ow_admin_choose_theme .theme_item.theme_update span.fake {
+    background: url("images/theme_frame_small.png") no-repeat scroll 0 -336px transparent
+}
+.ow_admin_choose_theme .theme_item.theme_clicked span.fake {
+    background: url("images/theme_frame_small.png") no-repeat scroll 0 -224px transparent
+}
+.ow_admin_choose_theme .theme_item.active span.clicked {
+    background: url("images/theme_frame_small.png") no-repeat scroll 0 -112px transparent
+}
+.ow_admin_choose_theme .theme_update_label {
+    position: absolute;
+    right: 14px;
+    top: 5px;
+    background: #ff9927;
+    border-left: 4px solid #ff9927;
+    border-bottom: 4px solid #ff9927;
+}
+.ow_admin_choose_theme .theme_item.theme_clicked .theme_update_label,
+.ow_admin_choose_theme .theme_item.active .theme_update_label {
+    background: none repeat scroll 0 0 #A8D700;
+    border-color: #A8D700;
+}
+/*Content*/
+@media (max-width: 1420px) {
+	.ow_page_container.ow_admin {
+		margin-left: 200px;
+	}
+	.ow_page_container.ow_admin .ow_canvas {
+		width: 100%;
+	}
+	.ow_admin_area .ow_footer.ow_admin {
+		margin-left: 200px;
+	}
+	.ow_admin_area .ow_footer.ow_admin .ow_canvas {
+		float: left;
+	}
+}
+@media (max-width: 1220px) {
+	.ow_page_container.ow_admin,
+	.ow_admin_area .ow_footer.ow_admin .ow_canvas {
+		width: 880px;
+	}
+}
+@media (max-width: 1100px) {
+	body.ow_admin_area,
+	body.ow_admin_area < html {
+		min-width: 940px;
+	}
+	.ow_admin_area .ow_admin_menu_wrap {
+		width: 56px;
+	}
+	.ow_admin_area .ow_admin_menu_item {
+		width: 56px;
+	}
+	.ow_admin_console_update_link {
+		width: 56px;
+		height: 56px;
+	}
+	.ow_admin_header .ow_console_body {
+		padding-top: 12px;
+	}
+	.ow_admin_header .ow_site_panel {
+		height: 56px;
+	}
+	.ow_site_panel .ow_admin_home_btn {
+		height: 56px;
+		background-position: 16px 14px;
+	}
+	.ow_admin_menu {
+		padding-top: 56px;
+	}
+	.ow_admin_area .ow_admin_menu_item span,
+	.ow_admin_area .ow_admin_menu_item_label {
+		display: none;
+	}
+	.ow_page_container.ow_admin {
+		margin-left: 57px;
+	}
+	.ow_admin_area .ow_footer.ow_admin {
+		margin-left: 57px;
+	}
+	.ow_admin_submenu {
+		display: none !important;
+	}
+	.ow_admin_menu .ow_admin_menu_item,
+	.ow_site_panel .ow_admin_home_btn {
+		padding-right: 0;
+	}
+	.ow_admin_menu .ow_admin_menu_item .ow_admin_menu_arrow {
+		background-position: 4px top;
+	}
+	.ow_admin_menu .ow_admin_menu_item.active .ow_admin_menu_arrow {
+		background-position: 4px 100%;
+	}
+	/*.ow_admin_menu .ow_admin_menu_item.active:hover .ow_admin_menu_arrow {
+	animation: changearrow 0.3s 0.2s 1 forwards;
+	-webkit-animation: changearrow 0.3s 0.2s 1 forwards;
+	-moz-animation: changearrow 0.3s 0.2s 1 forwards;
+	-o-animation: changearrow 0.3s 0.2s 1 forwards;
+	}
+	@-webkit-keyframes changearrow {
+	    1% {opacity: 1; background-position: 4px 100%;}
+	    40% {opacity: 0; background-position: 4px 100%;}
+	    60% {opacity: 0; background-position: 4px top;}
+	    100% {opacity: 1; background-position: 4px top;}
+	}
+	@-moz-keyframes changearrow {
+	    1% {opacity: 1; background-position: 4px 100%;}
+	    40% {opacity: 0; background-position: 4px 100%;}
+	    60% {opacity: 0; background-position: 4px top;}
+	    100% {opacity: 1; background-position: 4px top;}
+	}
+	@-o-keyframes changearrow {
+	    1% {opacity: 1; background-position: 4px 100%;}
+	    40% {opacity: 0; background-position: 4px 100%;}
+	    60% {opacity: 0; background-position: 4px top;}
+	    100% {opacity: 1; background-position: 4px top;}
+	}
+	@keyframes changearrow {
+	    1% {opacity: 1; background-position: 4px 100%;}
+	    40% {opacity: 0; background-position: 4px 100%;}
+	    60% {opacity: 0; background-position: 4px top;}
+	    100% {opacity: 1; background-position: 4px top;}
+	}*/
+	.ow_admin_submenu_hover .ow_admin_submenu_title {
+		display: block;
+	}
+}
+@media (min-width: 1100px) {
+	.ow_admin_menu_item.active:hover .ow_admin_submenu_hover {
+		display: none;
+		opacity: 0;
+	}
+	.ow_admin_menu .ow_admin_menu_item.active:hover .ow_admin_menu_arrow {
+	animation: none;
+	-webkit-animation: none;
+	-moz-animation: none;
+	-o-animation: none;
+	}
 }
