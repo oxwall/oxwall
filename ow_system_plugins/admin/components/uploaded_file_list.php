@@ -35,7 +35,7 @@ class ADMIN_CMP_UploadedFileList extends OW_Component
 
         $hasSideBar = OW::getThemeManager()->getCurrentTheme()->getDto()->getSidebarPosition() != 'none';
         $photoParams = array(
-            'classicMode' => (bool)OW::getConfig()->getValue('photo', 'photo_list_view_classic')
+            'classicMode' => false
         );
         $photoParams[] = ($photoParams['classicMode'] ? ($hasSideBar ? 4 : 5) : 4);
 
