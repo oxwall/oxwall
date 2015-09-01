@@ -33,7 +33,7 @@
     border: none;
     color: #868686;
     font-weight: normal;
-    line-height: 14px;
+    font-size: 14px;
     padding: 0 0 0 8px;
     text-align: left;
     vertical-align: top;
@@ -96,7 +96,6 @@ body .ow_table_2 tr.ow_tr_titles th:last-child, body .ow_table_1 tr.ow_tr_titles
     -webkit-box-sizing: border-box;
     box-sizing: border-box;
     background-color: #FCFCFC;
-    background-image: url(images/ow_tr_top_button_bg.png);
     background-repeat: repeat-x;
     border-bottom: none;
     border-top: 1px solid #dedede;
@@ -344,7 +343,7 @@ table.colorPicker td {
     color: #f42217;
 }
 .ow_navbox.ow_mild_green a.move{
-	color: #7cbb11;
+	color: #57ba98;
 }
 .guest_item{
 	background-color:#aaffaa;
@@ -1133,6 +1132,28 @@ html body .ow_admin_choose_theme .selected_theme_info_stick{
 .ow_admin_choose_theme .theme_item.active .theme_update_label {
     background: none repeat scroll 0 0 #A8D700;
     border-color: #A8D700;
+}
+/* Restricted Usernames */
+#restrictedUsernamesForm td {
+	vertical-align: middle;
+}
+/* User Roles color */
+.floatbox_container #role-edit-cont .ow_table_3 td.ow_label {
+	width: 15% !important;
+}
+.ow_lbutton.edit_role {
+	color: #fff;
+}
+/* Browse Users */
+#user-list-form .ow_lbutton:hover {
+	border-color: transparent;
+}
+/* Settings */
+#search_in_inp {
+	vertical-align: sub;
+}
+#search_in_inp ~ label {
+	vertical-align: baseline;
 }
 /*Content*/
 @media (max-width: 1420px) {
