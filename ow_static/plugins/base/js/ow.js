@@ -2081,6 +2081,7 @@ OwComments.prototype = {
             .bind('keypress',
                 function(e){
                     if( e.which === 13 && !e.shiftKey ){
+                        e.stopImmediatePropagation();
                         var textBody = $(this).val();
 
                          if ( $.trim(textBody) == '' && !self.attachmentInfo && !self.oembedInfo ){
