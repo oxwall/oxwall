@@ -272,13 +272,14 @@ class ADMIN_CTRL_Settings extends ADMIN_CTRL_Abstract
             }
 
             $values = $userSettingsForm->getValues();
+            $guestPassword = OW_Config::getInstance()->getValue('base', 'guests_can_view_password');
 
-            if ( (int) $values['guests_can_view'] === 3 && empty($values['password']) )
+            if ( (int) $values['guests_can_view'] === 3 && empty($values['password']) && is_null($guestPassword) )
             {
                 OW::getFeedback()->error($language->text('admin', 'permission_global_privacy_empty_pass_error_message'));
                 $this->redirect();
             }
-            else if ( (int) $values['guests_can_view'] === 3 && strlen(trim($values['password'])) < 4 )
+            else if ( (int) $values['guests_can_view'] === 3 && strlen(trim($values['password'])) < 4 && strlen(trim($values['password'])) > 0 )
             {
                 OW::getFeedback()->error($language->text('admin', 'permission_global_privacy_pass_length_error_message'));
                 $this->redirect();
@@ -1014,6 +1015,11 @@ class UserSettingsForm extends Form
             
             $values['password'] = crypt($values['password'], OW_PASSWORD_SALT);            
             $config->saveConfig('base', 'guests_can_view_password', $values['password']);
+        }
+        else
+        {
+            $config->saveConfig('base', 'guests_can_view_password', null);
+
         }
         
         $config->saveConfig('base', 'guests_can_view', (int) $values['guests_can_view']);
