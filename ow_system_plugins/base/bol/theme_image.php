@@ -36,6 +36,16 @@ class BOL_ThemeImage extends OW_Entity
      */
     public $filename;
 
+    /**
+     * @var integer
+     */
+    public $addDatetime;
+
+    /**
+     * @var string
+     */
+    public $title;
+
     public function getFilename()
     {
         return $this->filename;

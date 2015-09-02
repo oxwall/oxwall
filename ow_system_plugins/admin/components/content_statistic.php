@@ -90,6 +90,13 @@ class ADMIN_CMP_ContentStatistic extends OW_Component
         // e.g. forum-topic, forum-post, etc
         $entityTypes = $contentGroups[$this->defaultContentGroup]['entityTypes'];
 
+        // TODO: Delete me or fix in a next version!!!
+        if ( in_array('forum-post', $entityTypes) )
+        {
+            $key = array_search('forum-post', $entityTypes);
+            unset($entityTypes[$key]);
+        }
+
         // get detailed content types info
         $contentTypes = BOL_ContentService::getInstance()->getContentTypes();
 

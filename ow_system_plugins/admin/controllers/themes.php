@@ -125,7 +125,7 @@ class ADMIN_CTRL_Themes extends ADMIN_CTRL_Abstract
         $event = new OW_Event("admin.filter_themes_to_choose", array(), $themesInfo);
         OW::getEventManager()->trigger($event);
         $this->assign('themes', $event->getData());
-        
+
         // add theme
         $form = new Form('theme-add');
         $form->setEnctype(Form::ENCTYPE_MULTYPART_FORMDATA);
@@ -317,6 +317,11 @@ class ADMIN_CTRL_Themes extends ADMIN_CTRL_Abstract
         $language = OW::getLanguage();
 
         $remoteThemeInfo = (array) $this->themeService->getThemeInfoForUpdate($themeDto->getName(), $themeDto->getDeveloperKey());
+
+        if ( OW::getConfig()->getValue('base', 'update_soft') )
+        {
+            $this->assign("platformUpdateAvail", true);
+        }
 
         if ( empty($remoteThemeInfo) || !empty($remoteThemeInfo['error']) )
         {

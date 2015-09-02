@@ -91,4 +91,80 @@ class BOL_ThemeImageDao extends OW_BaseDao
 
         return $this->findListByExample($example);
     }
+
+    /**
+     * @param OW_Example$example
+     * @param array $params
+     */
+    private function applyDatesBetweenFilter(OW_Example $example, $params)
+    {
+        if ( isset($params['start'], $params['end']) )
+        {
+            $start = $params['start'];
+            $end = $params['end'];
+            if ( !is_null($start) && !is_null($end) )
+            {
+                $example->andFieldBetween('addDatetime', $start, $end);
+            }
+        }
+    }
+
+    /**
+     * @param OW_Example $example
+     * @param array $params
+     */
+    private function applyLimitClause(OW_Example $example, $params)
+    {
+        if ( isset($params['page'], $params['limit']) && !is_null($params['page']) && !is_null($params['limit']) )
+        {
+            $page = $params['page'];
+            $limit = $params['limit'];
+            $first = ( $page - 1 ) * $limit;
+            $example->setLimitClause($first, $limit);
+        }
+    }
+
+    /**
+     * @param array $params
+     * @return array <BOL_ThemeImage>
+     */
+    public function filterGraphics($params)
+    {
+        $example = new OW_Example();
+        $this->applyDatesBetweenFilter($example, $params);
+        $this->applyLimitClause($example, $params);
+
+        $example->setOrder('`id` DESC');
+        return $this->findListByExample($example);
+    }
+
+    /**
+     * @param int $id
+     * @param array $params
+     * @return array <BOL_ThemeImage>
+     */
+    public function getPrevImageList($id, $params)
+    {
+        $example = new OW_Example();
+        $this->applyDatesBetweenFilter($example, $params);
+        $this->applyLimitClause($example, $params);
+        $example->andFieldGreaterThan('id', $id);
+        $example->setOrder('`id` DESC');
+        return $this->findListByExample($example);
+    }
+
+    /**
+     * @param int $id
+     * @param array $params
+     * @return array <BOL_ThemeImage>
+     */
+    public function getNextImageList($id, $params)
+    {
+        $example = new OW_Example();
+        $this->applyDatesBetweenFilter($example, $params);
+        $this->applyLimitClause($example, $params);
+        $example->andFieldLessThan('id', $id);
+        $example->setOrder('`id` DESC');
+        return $this->findListByExample($example);
+    }
 }

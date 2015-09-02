@@ -1373,7 +1373,7 @@ class RangeValidator extends OW_Validator
         
         $valArray = explode('-', $value);
 
-        if ( empty($valArray) || empty($valArray[0]) || empty($valArray[1]) )
+        if ( empty($valArray) || !isset($valArray[0]) || !isset($valArray[1]) )
         {
             return false;
         }

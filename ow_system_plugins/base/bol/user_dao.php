@@ -920,7 +920,7 @@ class BOL_UserDao extends OW_BaseDao
         return $result;
     }
 
-    public function findUserIdListByPreferenceValues( $preferenceValues )
+    public function findUserIdListByPreferenceValues( $preferenceValues, $start = 0, $count = 1000 )
     {
         if ( empty($preferenceValues) || !is_array($preferenceValues) )
         {
@@ -933,13 +933,15 @@ class BOL_UserDao extends OW_BaseDao
         {
             $sqlList[$key] = " SELECT d.userId FROM " . (BOL_PreferenceDao::getInstance()->getTableName()) . " p
                 LEFT JOIN " . (BOL_PreferenceDataDao::getInstance()->getTableName()) . " d ON ( d.`key` = p.`key` )
-                WHERE p.`key` = '" . $this->dbo->escapeString($key) . "' AND ( d.value = '" . $this->dbo->escapeString($value) . "' OR d.value IS NULL AND p.defaultValue = '" . $this->dbo->escapeString($value) . "' ) ";
+                WHERE p.`key` = '" . $this->dbo->escapeString($key) . "' AND ( d.value = '" . $this->dbo->escapeString($value) . "' OR d.value IS NULL AND p.defaultValue = '" . $this->dbo->escapeString($value) . "' ) "
+                    . " LIMIT :start, :count ";
 
             if ( !empty($value) && is_array($value) )
             {
                 $sqlList[$key] = " SELECT d.userId FROM " . (BOL_PreferenceDao::getInstance()->getTableName()) . " p
                     LEFT JOIN " . (BOL_PreferenceDataDao::getInstance()->getTableName()) . " d ON ( d.`key` = p.`key` )
-                    WHERE p.`key` = '" . $this->dbo->escapeString($key) . "' AND ( d.value IN " . $this->dbo->mergeInClause($value) . " OR d.value IS NULL AND p.defaultValue IN " . $this->dbo->mergeInClause($value) . " ) ";
+                    WHERE p.`key` = '" . $this->dbo->escapeString($key) . "' AND ( d.value IN " . $this->dbo->mergeInClause($value) . " OR d.value IS NULL AND p.defaultValue IN " . $this->dbo->mergeInClause($value) . " ) "
+                        . " LIMIT :start, :count ";
             }
         }
 
@@ -958,7 +960,7 @@ class BOL_UserDao extends OW_BaseDao
             $sqlString .= $sql;
         }
 
-        return $this->dbo->queryForColumnList($sqlString);
+        return $this->dbo->queryForColumnList($sqlString, array('start' => $start, 'count' => $count));
     }
     protected $cachedItems = array();
 
