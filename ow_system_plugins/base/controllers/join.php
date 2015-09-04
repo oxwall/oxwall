@@ -625,7 +625,7 @@ class JoinForm extends BASE_CLASS_UserQuestionForm
 
                     $addFakes = $event->getData();
 
-                    if ( !$addFakes || $this->questions[$sort]['presentation'] == 'password' )
+                    if ( !$addFakes || in_array( $this->questions[$sort]['presentation'], array('password', 'range') ) )
                     {
                         $this->questions[$sort]['fake'] = false;
                         $this->questions[$sort]['realName'] = $question['name'];
