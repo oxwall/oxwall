@@ -961,7 +961,7 @@ function OW_FloatBox(options)
             this.$body.css("height", options.height);
 
     jQuery('.close', this.$header)
-        .one('click', function()
+        .on('click', function()
         {
             fl_box.close();
             return false;
