@@ -6,6 +6,8 @@ class ADMIN_CTRL_Settings extends ADMIN_CTRL_Abstract
     public function __construct()
     {
         parent::__construct();
+        
+        require_once(OW_DIR_LIB . 'password_compat' . DS . 'password.php');
     }
 
     private function getMenu()
