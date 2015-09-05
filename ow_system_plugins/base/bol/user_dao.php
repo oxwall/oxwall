@@ -1054,4 +1054,13 @@ class BOL_UserDao extends OW_BaseDao
 
         return $result;
     }
+    
+    public function checkPasswordChange( $userId )
+    {
+    	$example = new OW_Example();
+    	$example->andFieldEqual('userId', $userId);
+    	$example->andFieldEqual('passwordChange', '1');
+    	
+    	return $this->findObjectByExample($example);
+    }
 }
