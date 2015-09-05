@@ -22,6 +22,13 @@
  * which combines Covered Code or portions thereof with code not governed by the terms of the CPAL.
  */
 
+$config = Updater::getConfigService();
+
+if( !$config->configExists('base', 'passwordHashChanged') )
+{
+	$config->addConfig('base', 'passwordHashChanged', '0');
+}
+
 $db = Updater::getDbo();
 $logger = Updater::getLogger();
 $tblPrefix = OW_DB_PREFIX;
