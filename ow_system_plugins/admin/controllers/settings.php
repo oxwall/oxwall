@@ -1012,8 +1012,12 @@ class UserSettingsForm extends Form
                 $logger->writeLog();
             }
             
-            $values['password'] = crypt($values['password'], OW_PASSWORD_SALT);            
-            $config->saveConfig('base', 'guests_can_view_password', $values['password']);
+            $config->saveConfig('base', 'guests_can_view_password', password_hash($values['password'] . OW_PASSWORD_SALT, PASSWORD_DEFAULT));
+            
+            if( $config->getValue('base', 'passwordHashChanged') === '0' )
+            {
+                $config->saveConfig('base', 'passwordHasChanged', '1');
+            }
         }
         else
         {
