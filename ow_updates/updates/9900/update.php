@@ -33,9 +33,9 @@ $db = Updater::getDbo();
 $logger = Updater::getLogger();
 $tblPrefix = OW_DB_PREFIX;
 
-$queryList = array();
-$queryList[] = "ALTER TABLE `{$tblPrefix}base_user` ADD `passwordChange` tinyint(1) NOT NULL DEFAULT 0;";
-$queryList[] = "ALTER TABLE `{$tblPrefix}base_config` ADD `passwordChange` tinyint(1) NOT NULL DEFAULT 0;";
+$queryList = array(
+	"ALTER TABLE `{$tblPrefix}base_user` ADD `passwordChange` tinyint(1) NOT NULL DEFAULT 0;"
+);
 
 foreach( $queryList as $query )
 {
