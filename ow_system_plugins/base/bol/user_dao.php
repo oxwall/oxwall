@@ -1054,4 +1054,20 @@ class BOL_UserDao extends OW_BaseDao
 
         return $result;
     }
+    
+    public function checkPasswordChange( $userId )
+    {
+    	$example = new OW_Example();
+    	$example->andFieldEqual('id', $userId);
+    	$example->andFieldEqual('passwordChange', '1');
+    	
+    	return $this->findObjectByExample($example);
+    }
+    
+    public function updatePasswordChanged( $userId )
+    {
+    	$sql ="UPDATE `" . $this->getTableName() . "` SET `passwordChange` = :value WHERE `id` = :userId";
+    	
+    	$this->dbo->query($sql, array('userId' => $userId, 'value' => '1'));
+    }
 }

@@ -6,6 +6,8 @@ class ADMIN_CTRL_Settings extends ADMIN_CTRL_Abstract
     public function __construct()
     {
         parent::__construct();
+        
+        require_once(OW_DIR_LIB . 'password_compat' . DS . 'password.php');
     }
 
     private function getMenu()
@@ -1012,8 +1014,12 @@ class UserSettingsForm extends Form
                 $logger->writeLog();
             }
             
-            $values['password'] = crypt($values['password'], OW_PASSWORD_SALT);            
-            $config->saveConfig('base', 'guests_can_view_password', $values['password']);
+            $config->saveConfig('base', 'guests_can_view_password', password_hash($values['password'] . OW_PASSWORD_SALT, PASSWORD_DEFAULT));
+            
+            if( $config->getValue('base', 'passwordHashChanged') === '0' )
+            {
+                $config->saveConfig('base', 'passwordHasChanged', '1');
+            }
         }
         else
         {
