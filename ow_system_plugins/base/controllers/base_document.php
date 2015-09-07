@@ -115,6 +115,10 @@ class BASE_CTRL_BaseDocument extends OW_ActionController
 
     public function passwordProtection()
     {
+        require_once(OW_DIR_LIB . 'password_compat' . DS . 'password.php');
+
+        $config = OW::getConfig();
+
         $form = new Form('password_protection');
         $form->setAjax(true);
         $form->setAction(OW::getRouter()->urlFor('BASE_CTRL_BaseDocument', 'passwordProtection'));
@@ -132,18 +136,35 @@ class BASE_CTRL_BaseDocument extends OW_ActionController
         {
             $data = $form->getValues();
             $password = OW::getConfig()->getValue('base', 'guests_can_view_password');
-            $data['password'] = crypt($data['password'], OW_PASSWORD_SALT);
-
-            if ( !empty($data['password']) && $data['password'] === $password )
+            
+            if( $config->getValue('base', 'passwordHashChanged') === '1' )
             {
-                setcookie('base_password_protection', UTIL_String::getRandomString(), (time() + 86400 * 30), '/');
-                echo "OW.info('" . OW::getLanguage()->text('base', 'password_protection_success_message') . "');window.location.reload();";
+                if( !empty($data['password']) && password_verify($data['password'] . OW_PASSWORD_SALT, $password) )
+                {
+                    setcookie('base_password_protection', UTIL_String::getRandomString(), (time() + 86400 * 30), '/');
+                    echo "OW.info('" . OW::getLanguage()->text('base', 'password_protection_success_message') . "');window.location.reload();";
+                }
+                else
+                {
+                    echo "OW.error('" . OW::getLanguage()->text('base', 'password_protection_error_message') . "');";
+                }
+                exit;
             }
             else
             {
-                echo "OW.error('" . OW::getLanguage()->text('base', 'password_protection_error_message') . "');";
+                $data['password'] = crypt($data['password'], OW_PASSWORD_SALT);
+        
+                if ( !empty($data['password']) && $data['password'] === $password )
+                {
+                    setcookie('base_password_protection', UTIL_String::getRandomString(), (time() + 86400 * 30), '/');
+                    echo "OW.info('" . OW::getLanguage()->text('base', 'password_protection_success_message') . "');window.location.reload();";
+                }
+                else
+                {
+                    echo "OW.error('" . OW::getLanguage()->text('base', 'password_protection_error_message') . "');";
+                }
+                exit;
             }
-            exit;
         }
 
         OW::getDocument()->getMasterPage()->setTemplate(OW::getThemeManager()->getMasterPageTemplate(OW_MasterPage::TEMPLATE_BLANK));
