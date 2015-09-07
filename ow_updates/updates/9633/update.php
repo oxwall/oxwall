@@ -27,19 +27,22 @@ UPDATE_LanguageService::getInstance()->importPrefixFromZip(dirname(__FILE__) . D
 $logger = Updater::getLogger();
 
 try
+{    
+    OW::getNavigation()->deleteMenuItem('mobile', 'mobile_pages_dashboard');
+}
+catch ( Exception $e )
 {
-    OW::getNavigation()->deleteMenuItem('mobile', 'menu_item_dashboard');
-    
-    $menuItem = new BOL_MenuItem();
-    $menuItem->setType(OW_Navigation::MOBILE_TOP);
-    $menuItem->setRoutePath('base_member_dashboard');
-    $menuItem->setPrefix('mobile');
-    $menuItem->setKey('menu_item_dashboard');
-    $menuItem->setOrder(2);
-    $menuItem->setVisibleFor( OW_Navigation::VISIBLE_FOR_MEMBER);
+    $logger->addEntry(json_encode($e));
+}
 
-    Updater::getNavigationService()->saveMenuItem($menuItem);
-    
+try
+{
+    $navigation->addMenuItem(
+        OW_Navigation::MOBILE_TOP,
+        'base_member_dashboard',
+        'mobile',
+        'mobile_pages_dashboard',
+        OW_Navigation::VISIBLE_FOR_MEMBER);
 }
 catch ( Exception $e )
 {
