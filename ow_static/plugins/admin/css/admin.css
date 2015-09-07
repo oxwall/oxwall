@@ -998,7 +998,7 @@ html body .ow_admin_permissions.ow_superwide {
 .ow_plugin_update,
 .ow_active_plugins .ow_plugin_update, 
 .ow_inactive_plugins .ow_plugin_update {
-    background: #fff;
+    background: #F3FCF9;
     border: 1px solid #18d398;
 }
 
@@ -1190,6 +1190,10 @@ html body .ow_admin_choose_theme .selected_theme_info_stick{
 	.ow_admin_console_update_link {
 		width: 56px;
 		height: 56px;
+	}
+	.ow_admin_console_update .ow_count_wrap {
+		top: 12px;
+		right: 12px; 
 	}
 	.ow_admin_header .ow_console_body {
 		padding-top: 12px;
