@@ -22,8 +22,29 @@
  * which combines Covered Code or portions thereof with code not governed by the terms of the CPAL.
  */
 
-BOL_MobileWidgetService::getInstance()->deleteWidget('BASE_MCMP_JoinNowWidget');
+UPDATE_LanguageService::getInstance()->importPrefixFromZip(dirname(__FILE__) . DS . 'langs.zip', 'mobile');
 
-$widget = BOL_MobileWidgetService::getInstance()->addWidget('BASE_MCMP_JoinNowWidget', false);
-$placeWidget = BOL_MobileWidgetService::getInstance()->addWidgetToPlace($widget, BOL_MobileWidgetService::PLACE_MOBILE_INDEX);
-BOL_MobileWidgetService::getInstance()->addWidgetToPosition($placeWidget, BOL_MobileWidgetService::SECTION_MOBILE_MAIN );
+$logger = Updater::getLogger();
+
+try
+{    
+    OW::getNavigation()->deleteMenuItem('mobile', 'mobile_pages_dashboard');
+}
+catch ( Exception $e )
+{
+    $logger->addEntry(json_encode($e));
+}
+
+try
+{
+    OW::getNavigation()->addMenuItem(
+        OW_Navigation::MOBILE_TOP,
+        'base_member_dashboard',
+        'mobile',
+        'mobile_pages_dashboard',
+        OW_Navigation::VISIBLE_FOR_MEMBER);
+}
+catch ( Exception $e )
+{
+    $logger->addEntry(json_encode($e));
+}

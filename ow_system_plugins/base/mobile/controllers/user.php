@@ -142,7 +142,7 @@ class BASE_MCTRL_User extends OW_MobileActionController
         }
         
 
-        if ( !OW::getUser()->isAuthorized('base', 'view_profile') )
+        if ( (OW::getUser()->isAuthenticated() && OW::getUser()->getId() != $userDto->id || !OW::getUser()->isAuthenticated()) && !OW::getUser()->isAuthorized('base', 'view_profile')  )
         {
             $status = BOL_AuthorizationService::getInstance()->getActionStatus('base', 'view_profile');
             $this->assign('permissionMessage', $status['msg']);

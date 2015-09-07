@@ -47,6 +47,8 @@ class BASE_MCLASS_EventHandler extends BASE_CLASS_EventHandler
         $eventManager->bind('mobile.notifications.on_item_render', array($this, 'onNotificationRender'));
         $eventManager->bind(BASE_MCMP_ConnectButtonList::HOOK_REMOTE_AUTH_BUTTON_LIST, array($this, "onCollectButtonList"));
         $eventManager->bind('class.get_instance', array($this, "onGetClassInstance"));
+        
+        $eventManager->bind("base.user_list.get_fields", array($this, 'getUserListFields'));
     }
     
     public function onGetClassInstance( OW_Event $event )
@@ -161,6 +163,7 @@ class BASE_MCLASS_EventHandler extends BASE_CLASS_EventHandler
     {
         // Langs
         OW::getLanguage()->addKeyForJs('base', 'flag_as');
+        OW::getLanguage()->addKeyForJs('base', 'authorization_limited_permissions');
         
         $scriptGen = UTIL_JsGenerator::newInstance()->setVariable(
                 array('OWM', 'ajaxComponentLoaderRsp'), OW::getRouter()->urlFor('BASE_MCTRL_AjaxLoader', 'component')
@@ -611,5 +614,91 @@ class BASE_MCLASS_EventHandler extends BASE_CLASS_EventHandler
             $data = $params['data'];
             $event->setData($data);
         }
+    }
+    
+    public function getUserListFields( OW_Event $e )
+    {
+        $params = $e->getParams();
+        
+        $list = !empty($params['list']) ? $params['list'] : null;
+        $userIdList = !empty($params['userIdList']) ? $params['userIdList'] : null;
+        
+        if ( empty($userIdList) )
+        {
+            return;
+        }
+        
+        $fieldsList = array();
+        $qBirthdate = BOL_QuestionService::getInstance()->findQuestionByName('birthdate');
+        
+        if ( $qBirthdate->onView )
+        {
+            $fieldsList[] = 'birthdate';
+        }
+
+        $qSex = BOL_QuestionService::getInstance()->findQuestionByName('sex');
+
+        if ( $qSex->onView )
+        {
+            $fieldsList[] = 'sex';
+        }
+        
+        $questionList = BOL_QuestionService::getInstance()->findQuestionByNameList($fieldsList);
+        $qData = BOL_QuestionService::getInstance()->getQuestionData($userIdList, $fieldsList);
+        
+        $data = $e->getData();
+        
+        foreach ( $userIdList as $userId )
+        {
+            $questionsData = $qData[$userId];
+            
+            $age = '';
+            if ( !empty($questionsData['birthdate']))
+            {
+                $date = UTIL_DateTime::parseDate($questionsData['birthdate'], UTIL_DateTime::MYSQL_DATETIME_DATE_FORMAT);
+                $age = UTIL_DateTime::getAge($date['year'], $date['month'], $date['day']);
+            }
+
+            $sexValue = '';
+            if ( !empty($questionsData['sex']) )
+            {
+                $sexValue = BOL_QuestionService::getInstance()->getQuestionValueForUserList($questionList['sex'], $questionsData['sex']);
+            }
+
+            if ( !empty($sexValue) && !empty($age) )
+            {
+                $data[$userId][] = $sexValue . ' ' . $age;
+            }
+            
+            switch( $list )
+            {
+                case "birthdays":
+                    if ( !empty($questionsData['birthdate']) && $list == 'birthdays'  )
+                    {
+                        $dinfo = date_parse($questionsData['birthdate']);
+                        $birthdate = '';
+
+                        if ( intval(date('d')) + 1 == intval($dinfo['day']) )
+                        {
+                            $birthday= OW::getLanguage()->text('base', 'date_time_tomorrow');
+                            $birthdate = '<a href="#" class="ow_lbutton ow_green">' . $birthday . '</a>';
+                        }
+                        else if ( intval(date('d')) == intval($dinfo['day']) )
+                        {
+                            $birthday = OW::getLanguage()->text('base', 'date_time_today');
+                            $birthdate = '<a href="#" class="ow_lbutton ow_green">' . $birthday . '</a>';
+                        }
+                        else
+                        {
+                            $birthdate = UTIL_DateTime::formatBirthdate($dinfo['year'], $dinfo['month'], $dinfo['day']);
+                        }
+
+                        $data[$userId][] = OW::getLanguage()->text('birthdays', 'birthday') . ":" . $birthdate;
+                    }
+                break;
+            }
+        }
+        
+        $e->setData($data);
     }
 }

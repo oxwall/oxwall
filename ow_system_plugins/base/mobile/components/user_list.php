@@ -40,26 +40,30 @@ abstract class BASE_MCMP_UserList extends OW_MobileComponent
 
         $this->setTemplate(OW::getPluginManager()->getPlugin('base')->getMobileCmpViewDir().'user_list.html');
     }
-
+    
     abstract public function getFields( $userIdList );
 
-    protected function process( $list, $showOnline )
+    protected function process( $idList, $showOnline )
     {
         $service = BOL_UserService::getInstance();
-
-        $idList = array();
+        
+        if ( empty($idList) )
+        {
+            $idList = array();
+        }
+        
         $userList = array();
 
-        foreach ( $list as $id )
-        {
-            $idList[] = $id;
-        }
-
         $dtoList = BOL_UserService::getInstance()->findUserListByIdList($idList);
-
+        $tmpUserList = array();
         foreach ( $dtoList as $dto )
         {
-            $userList[] = array('dto' => $dto);
+            $tmpUserList[$dto->id] = array('dto' => $dto);
+        }
+        
+        foreach ( $idList as $id )
+        {
+            $userList[$id] = $tmpUserList[$id];
         }
 
         $avatars = array();
@@ -127,8 +131,6 @@ abstract class BASE_MCMP_UserList extends OW_MobileComponent
                 $contextMenuList[$uid] = null;
             }
         }
-        
-        $fields = array();
 
         $this->assign('contextMenuList', $contextMenuList);
 

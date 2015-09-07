@@ -94,4 +94,14 @@ class UPDATE_NavigationService
     {
         $this->navigation->deleteMenuItem($prefix, $key);
     }
+    
+    /**
+     * Saves and updates menu items.
+     * 
+     * @param BOL_MenuItem $menuItem
+     */
+    public function saveMenuItem( BOL_MenuItem $menuItem )
+    {
+        BOL_NavigationService::getInstance()->saveMenuItem($menuItem);
+    }
 }

@@ -23,46 +23,18 @@
  */
 
 /**
- * @author Podyachev Evgeny <joker.OW2@gmail.com>
- * @package ow_system_plugins.base.components
- * @since 1.0
+ * Authorization limited component
+ *
+ * @author Kairat Bakytov <kainisoft@gmail.com>
+ * @package ow.ow_system_plugins.base.components
+ * @since 1.7.5
  */
-class BASE_MCMP_UserListWidget extends BASE_CMP_UserListWidget
+class BASE_MCMP_AuthorizationLimited extends OW_MobileComponent
 {
-    public function __construct( BASE_CLASS_WidgetParameter $params )
+    public function __construct( $message )
     {
-        parent::__construct( $params );
-        
-        if ( $this->getComponent('menu') )
-        {
-            $params->standartParamList->capContent = $this->getComponent('menu')->render();
-        }
-        
-        $this->setTemplate(OW::getPluginManager()->getPlugin('base')->getMobileCmpViewDir() . 'user_list_widget.html');
-    }
+        parent::__construct();
 
-    public function getData( BASE_CLASS_WidgetParameter $params )
-    {
-        return parent::getData($params);
-    }
-
-    protected function getUsersCmp( $list )
-    {
-        return new BASE_MCMP_AvatarUserList($list);
-    }
-
-    protected function getMenuCmp( $menuItems )
-    {
-        return new BASE_MCMP_WidgetMenu($menuItems);
-    }
-
-    public static function getStandardSettingValueList()
-    {
-        return array(
-            self::SETTING_WRAP_IN_BOX => true,
-            self::SETTING_SHOW_TITLE => true,
-            self::SETTING_TITLE => OW::getLanguage()->text('base', 'user_list_widget_settings_title'),
-            self::SETTING_ICON => self::ICON_USER
-        );
+        $this->assign('message', $message);
     }
 }
