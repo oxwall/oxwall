@@ -63,6 +63,10 @@ class BOL_User extends OW_Entity
      * @var int
      */
     public $joinIp = 0;
+    /**
+     * @var tinyint
+     */
+    public $passwordChange;
 
     /**
      * @return integer
