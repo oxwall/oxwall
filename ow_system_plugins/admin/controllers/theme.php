@@ -565,6 +565,11 @@ class ThemeEditForm extends Form
             
             $refField = new ReflectionClass($typeArray[$value['type']]);
             $field = $refField->newInstance($value['key']);
+            
+            if(method_exists($field, "setMobile") )
+            {
+                call_user_func(array($field, "setMobile"), $value["mobile"]);
+            }
 
             if ( $this->getElement($field->getName()) !== null )
             {
@@ -623,12 +628,15 @@ class ImageField extends FormElement
 {
     private $mobile;
 
-    public function __construct( $name, $mobile = false )
+    public function __construct( $name )
     {
-        parent::__construct($name);
-        $this->mobile = (bool)$mobile;
+        parent::__construct($name);        
     }
 
+    function setMobile($mobile) {
+        $this->mobile = (bool)$mobile;
+    }
+        
     public function getValue()
     {
         return isset($_FILES[$this->getName()]) ? $_FILES[$this->getName()] : null;

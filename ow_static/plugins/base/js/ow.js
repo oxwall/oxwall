@@ -961,7 +961,7 @@ function OW_FloatBox(options)
             this.$body.css("height", options.height);
 
     jQuery('.close', this.$header)
-        .one('click', function()
+        .on('click', function()
         {
             fl_box.close();
             return false;
@@ -2081,6 +2081,7 @@ OwComments.prototype = {
             .bind('keypress',
                 function(e){
                     if( e.which === 13 && !e.shiftKey ){
+                        e.stopImmediatePropagation();
                         var textBody = $(this).val();
 
                          if ( $.trim(textBody) == '' && !self.attachmentInfo && !self.oembedInfo ){
