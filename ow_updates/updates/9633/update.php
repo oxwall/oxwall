@@ -37,7 +37,7 @@ catch ( Exception $e )
 
 try
 {
-    $navigation->addMenuItem(
+    OW::getNavigation()->addMenuItem(
         OW_Navigation::MOBILE_TOP,
         'base_member_dashboard',
         'mobile',
