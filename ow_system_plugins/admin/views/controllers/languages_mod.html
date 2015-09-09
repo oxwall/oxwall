@@ -184,13 +184,13 @@ tr.lang_placeholder td{
        	</td>
 
         <td class="ow_center">
-        	<a href="{if $devMode}{url_for_route for="admin_developer_tools_language"}{else}{url_for for="ADMIN_CTRL_Languages:"}{/if}?language={$lang.tag}&prefix=missing-text">{$lang.missing_key_count}</a>
+        	<a href="{if $devMode}{url_for_route for="admin_developer_tools_language"}{else}{url_for_route for="admin_settings_language"}{/if}?language={$lang.tag}&prefix=missing-text">{$lang.missing_key_count}</a>
        	</td>
 
         <td>
         	<div style="width:250px;height: 20px;" class="ow_center">
 	        	<span style="display: none;">
-		            <a class="ow_lbutton" href="{url_for for="ADMIN_CTRL_Languages:index"}?language={$lang.tag}">{text key="admin+btn_label_edit_values"}</a>
+		            <a class="ow_lbutton" href="{url_for_route for="admin_settings_language"}?language={$lang.tag}">{text key="admin+btn_label_edit_values"}</a>
                     <a class="ow_lbutton" href="javascript://" onclick="OW.ajaxFloatBox('ADMIN_CMP_LangEdit',['{$lang.id}'], {literal}{{/literal}width:600, iconClass: 'ow_ic_edit', title: '{text key='admin+edit_langs_cap_label'}'{literal}}{/literal})">{text key="admin+btn_label_edit"}</a>
 		            <a class="ow_lbutton" onclick="$('form[name=clone-form] input:hidden[name=language]').attr('value', '{$lang.tag}'); new OW_FloatBox({ldelim}$title: '{text key='admin+clone_language_cap_label'}', $contents: $('#clone_cont'), width: '420px'{rdelim})" href="javascript://">{text key="admin+btn_label_clone"}</a>
 
@@ -219,12 +219,12 @@ tr.lang_placeholder td{
         	{$lang.label}
         </td>
         <td class="ow_center">
-        	<a href="{url_for for="ADMIN_CTRL_Languages:index"}?language={$lang.tag}&prefix=missing-text">{$lang.missing_key_count}</a>
+        	<a href="{url_for_route for="admin_settings_language"}?language={$lang.tag}&prefix=missing-text">{$lang.missing_key_count}</a>
        	</td>
         <td>
         	<div style="width: 250px; height: 20px;" class="ow_center">
 	        	<span style="display: none;">
-                    <a class="ow_lbutton" href="{url_for for="ADMIN_CTRL_Languages:index"}?language={$lang.tag}">{text key="admin+btn_label_edit_values"}</a>
+                    <a class="ow_lbutton" href="{url_for_route for="admin_settings_language"}?language={$lang.tag}">{text key="admin+btn_label_edit_values"}</a>
                     <a class="ow_lbutton" href="javascript://" onclick="OW.ajaxFloatBox('ADMIN_CMP_LangEdit',['{$lang.id}'], {literal}{{/literal}width:600, iconClass: 'ow_ic_edit', title: '{text key='admin+edit_langs_cap_label'}'{literal}}{/literal})">{text key="admin+btn_label_edit"}</a>
 		            <a class="ow_lbutton" onclick="$('form[name=clone-form] input:hidden[name=language]').attr('value', '{$lang.tag}'); new OW_FloatBox({ldelim}$title: '{text key='admin+clone_language_cap_label'}', $contents: $('#clone_cont'), width: '420px'{rdelim})" href="javascript://">{text key="admin+btn_label_clone"}</a>
 

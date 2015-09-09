@@ -2957,6 +2957,12 @@ class MobileWysiwygTextarea extends Textarea
     protected $pluginKey;
 
     /**
+     * Text format service 
+     * @var BOL_TextFormatService
+     */
+    protected $textFormatService;
+
+    /**
      * Buttons list
      * 
      * @var array
@@ -2982,11 +2988,30 @@ class MobileWysiwygTextarea extends Textarea
         parent::__construct($name);
 
         $this->pluginKey = $pluginKey;
+        $this->textFormatService = BOL_TextFormatService::getInstance();
 
         // init list of buttons
         if ( !empty($buttons) )
         {
             $this->buttons = $buttons;
+        }
+
+        // remove image and video buttons
+        if ( !$this->textFormatService->isRichMediaAllowed() )
+        {
+            $imageIndex = array_search(BOL_TextFormatService::WS_BTN_IMAGE, $this->buttons);
+
+            if ( $imageIndex !== false)
+            {
+                unset($this->buttons[$imageIndex]);
+            }
+
+            $videoIndex = array_search(BOL_TextFormatService::WS_BTN_VIDEO, $this->buttons);
+
+            if ( $videoIndex !== false)
+            {
+                unset($this->buttons[$videoIndex]);
+            }
         }
 
         $stringValidator = new StringValidator(0, 50000);
@@ -3011,8 +3036,8 @@ class MobileWysiwygTextarea extends Textarea
                 OW::getDocument()->addScript(OW::getPluginManager()->getPlugin('base')->getStaticJsUrl() . 'jquery.html5_upload.js');
             }
 
-            OW::getDocument()->addScript(OW::getPluginManager()->getPlugin('base')->getStaticJsUrl() . 'suitup.jquery.js?a='.time());
-            OW::getDocument()->addStyleSheet(OW::getPluginManager()->getPlugin('base')->getStaticCssUrl() . 'suitup.css?a='.time());
+            OW::getDocument()->addScript(OW::getPluginManager()->getPlugin('base')->getStaticJsUrl() . 'suitup.jquery.js');
+            OW::getDocument()->addStyleSheet(OW::getPluginManager()->getPlugin('base')->getStaticCssUrl() . 'suitup.css');
 
             // register js langs
             OW::getLanguage()->addKeyForJs('base', 'ws_button_label_link');

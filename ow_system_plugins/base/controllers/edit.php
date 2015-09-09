@@ -166,8 +166,7 @@ class BASE_CTRL_Edit extends OW_ActionController
         // add avatar field
         $editAvatar = OW::getClassInstance("BASE_CLASS_AvatarField", 'avatar', false);
         $editAvatar->setLabel(OW::getLanguage()->text('base', 'questions_question_user_photo_label'));
-        $editAvatar->setValue(BOL_AvatarService::getInstance()->getAvatarUrl($user->id));
-
+        $editAvatar->setValue(BOL_AvatarService::getInstance()->getAvatarUrl($user->id, 1, null, true, false));
         $displayPhotoUpload = OW::getConfig()->getValue('base', 'join_display_photo_upload');
 
         // add the required avatar validator

@@ -43,7 +43,7 @@ class ADMIN_CLASS_MasterPage extends OW_MasterPage
         OW::getThemeManager()->setCurrentTheme(BOL_ThemeService::getInstance()->getThemeObjectByName(BOL_ThemeService::DEFAULT_THEME));
 
         $menuTypes = array(
-            BOL_NavigationService::MENU_TYPE_ADMIN, BOL_NavigationService::MENU_TYPE_APPEARANCE, BOL_NavigationService::MENU_TYPE_PRIVACY,
+            BOL_NavigationService::MENU_TYPE_ADMIN, BOL_NavigationService::MENU_TYPE_APPEARANCE,
             BOL_NavigationService::MENU_TYPE_PAGES, BOL_NavigationService::MENU_TYPE_PLUGINS, BOL_NavigationService::MENU_TYPE_SETTINGS,
             BOL_NavigationService::MENU_TYPE_USERS, BOL_NavigationService::MENU_TYPE_MOBILE
         );
@@ -68,7 +68,6 @@ class ADMIN_CLASS_MasterPage extends OW_MasterPage
             'menu_admin' => BOL_NavigationService::MENU_TYPE_ADMIN,
             'menu_users' => BOL_NavigationService::MENU_TYPE_USERS,
             'menu_settings' => BOL_NavigationService::MENU_TYPE_SETTINGS,
-            'menu_privacy' => BOL_NavigationService::MENU_TYPE_PRIVACY,
             'menu_appearance' => BOL_NavigationService::MENU_TYPE_APPEARANCE,
             'menu_pages' => BOL_NavigationService::MENU_TYPE_PAGES,
             'menu_plugins' => BOL_NavigationService::MENU_TYPE_PLUGINS,
@@ -81,52 +80,9 @@ class ADMIN_CLASS_MasterPage extends OW_MasterPage
             $this->addMenu($value, $this->menuCmps[$key]);
         }
 
-        // admin notifications
-        $adminNotifications = array();
-
-        if ( !defined('OW_PLUGIN_XP') && OW::getConfig()->getValue('base', 'update_soft') )
-        {
-            $adminNotifications[] = $language->text('admin', 'notification_soft_update', array('link' => OW::getRouter()->urlForRoute('admin_core_update_request')));
-        }
-
-        $pluginsCount = BOL_PluginService::getInstance()->getPluginsToUpdateCount();
-
-        if ( !defined('OW_PLUGIN_XP') && $pluginsCount > 0 )
-        {
-            $adminNotifications[] = $language->text('admin', 'notification_plugins_to_update', array('link' => OW::getRouter()->urlForRoute('admin_plugins_installed'), 'count' => $pluginsCount));
-        }
-
-        $themesCount = BOL_ThemeService::getInstance()->getThemesToUpdateCount();
-
-        if ( !defined('OW_PLUGIN_XP') && $themesCount > 0 )
-        {
-            $adminNotifications[] = $language->text('admin', 'notification_themes_to_update', array('link' => OW::getRouter()->urlForRoute('admin_themes_choose'), 'count' => $themesCount));
-        }
-
-        $event = new BASE_CLASS_EventCollector('admin.add_admin_notification');
+        $event = new ADMIN_CLASS_NotificationCollector('admin.add_admin_notification');
         OW::getEventManager()->trigger($event);
-
-        $adminNotifications = array_merge($adminNotifications, $event->getData());
-
-        $this->assign('notifications', $adminNotifications);
-
-        $adminWarnings = array();
-
-        if ( !defined('OW_PLUGIN_XP') && OW::getConfig()->configExists('base', 'cron_is_active') && (int) OW::getConfig()->getValue('base', 'cron_is_active') === 0 )
-        {
-            $adminWarnings[] = $language->text('admin', 'warning_cron_is_not_active', array('path' => OW_DIR_ROOT . 'ow_cron' . DS . 'run.php'));
-        }
-
-        if ( !defined('OW_PLUGIN_XP') && !ini_get('allow_url_fopen') )
-        {
-            $adminWarnings[] = $language->text('admin', 'warning_url_fopen_disabled');
-        }
-
-        $event = new BASE_CLASS_EventCollector('admin.add_admin_warning');
-        OW::getEventManager()->trigger($event);
-
-        $adminWarnings = array_merge($adminWarnings, $event->getData());
-        $this->assign('warnings', $adminWarnings);
+        $this->assign('notifications', $event->getData());
 
         // platform info        
         $event = new OW_Event('admin.get_soft_version_text');
@@ -154,31 +110,20 @@ class ADMIN_CLASS_MasterPage extends OW_MasterPage
         $arrayToAssign = array();
         srand(time());
 
-        $script = "$('.admin_menu_cont .menu_item')
-        .mouseover(function(){ $('span.menu_items', $(this)).css({display:'block'});$(this).addClass('ow_hover');})
-        .mouseout(function(){ $('span.menu_items', $(this)).hide();$(this).removeClass('ow_hover');});";
-
         /* @var $value ADMIN_CMP_AdminMenu */
         foreach ( $this->menuCmps as $key => $value )
         {
             $id = 'mi' . rand(1, 10000);
 
+            $value->setCategory($key);
             $value->onBeforeRender();
-
-            $arrayToAssign[$key] = array('id' => $id, 'key' => $key, 'isActive' => $value->isActive(), 'label' => $language->text('admin', 'sidebar_' . $key), 'cmp' => ( $value->getElementsCount() < 2 || $value->isActive() ) ? '' : $value->render());
-
-            if ( $value->isActive() && $value->getElementsCount() > 1 )
-            {
-                $this->assign('submenu', $value->render());
-            }
 
             $menuItem = $value->getFirstElement();
 
-            $script .= "$('#{$id}').click(function(e){if(!$(e.target).is('#{$id} .menu_cont *')){window.location='{$menuItem->getUrl()}';}});";
+            $arrayToAssign[$key] = array('id' => $id, 'firstLink' => $menuItem->getUrl(), 'key' => $key, 'isActive' => $value->isActive(), 'label' => $language->text('admin', 'sidebar_' . $key), 'sub_menu' => ( $value->getElementsCount() < 2 ) ? '' : $value->render(), 'active_sub_menu' => ( $value->getElementsCount() < 2 ) ? '' : $value->render('ow_admin_submenu'));
         }
 
         $this->assign('menuArr', $arrayToAssign);
-        OW::getDocument()->addOnloadScript($script);
     }
 
     public function deleteMenu( $name )

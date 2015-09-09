@@ -128,7 +128,7 @@ class BASE_CTRL_AjaxComponentEntityPanel extends BASE_CTRL_AjaxComponentPanel
         $componentId = $this->componentService->findComponentPlace($componentPlaceUniqName, $entity)->componentId;
         $componentClass = $this->componentService->findComponent($componentId)->className;
         $componentSettingList = $this->getComponentSettingList($componentClass, $data);
-        $componentStandardSettingValueList = $this->getComponentStandardSettingValueList($componentClass);
+        $componentStandardSettingValueList = $this->getComponentStandardSettingValueList($componentClass, $data);
         $componentAccess = $this->getComponentAccess($componentClass, $data);
 
         $defaultSettingList = BOL_ComponentAdminService::getInstance()->findSettingList($componentPlaceUniqName);
@@ -136,8 +136,6 @@ class BASE_CTRL_AjaxComponentEntityPanel extends BASE_CTRL_AjaxComponentPanel
 
         $cmpClass = empty($data["settingsCmpClass"]) ? "BASE_CMP_ComponentSettings" : $data["settingsCmpClass"];
         $cmp = OW::getClassInstance($cmpClass, $componentPlaceUniqName, $componentSettingList, array_merge($defaultSettingList, $entitySettingList), $componentAccess);
-        
-        $cmp->markAsHidden('freeze');
         $cmp->setStandardSettingValueList($componentStandardSettingValueList);
 
         return $this->getSettingFormMarkup($cmp);

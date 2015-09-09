@@ -44,7 +44,6 @@ final class OW_Navigation
     const ADMIN_APPEARANCE = BOL_NavigationService::MENU_TYPE_APPEARANCE;
     const ADMIN_SETTINGS = BOL_NavigationService::MENU_TYPE_SETTINGS;
     const ADMIN_PAGES = BOL_NavigationService::MENU_TYPE_PAGES;
-    const ADMIN_DEV_TOOLS = BOL_NavigationService::MENU_TYPE_PRIVACY;
     const ADMIN_DASHBOARD = BOL_NavigationService::MENU_TYPE_ADMIN;
     
 

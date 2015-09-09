@@ -961,7 +961,7 @@ function OW_FloatBox(options)
             this.$body.css("height", options.height);
 
     jQuery('.close', this.$header)
-        .one('click', function()
+        .on('click', function()
         {
             fl_box.close();
             return false;
@@ -1681,11 +1681,13 @@ var OwAvatarField = function( id, name, params ){
     var $preview = $(formElement.input).closest(".ow_avatar_field").find(".ow_avatar_field_preview");
     var $img = $preview.find("img");
 
-    $img.click(function(){
+    $preview.click(function(){
         $(formElement.input).trigger('click');
     });
 
-    $preview.find("span").click(function(){
+    $preview.find("span").click(function(e){
+        e.stopPropagation();
+ 
         $img.attr("src", "");
         formElement.resetValue();
         $preview.hide();
@@ -2079,6 +2081,7 @@ OwComments.prototype = {
             .bind('keypress',
                 function(e){
                     if( e.which === 13 && !e.shiftKey ){
+                        e.stopImmediatePropagation();
                         var textBody = $(this).val();
 
                          if ( $.trim(textBody) == '' && !self.attachmentInfo && !self.oembedInfo ){
