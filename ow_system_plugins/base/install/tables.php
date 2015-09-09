@@ -49,7 +49,7 @@ OW::getDbo()->query("CREATE TABLE `" . OW_DB_PREFIX . "base_authorization_action
   `availableForGuest` tinyint(1) NOT NULL DEFAULT '1',
   PRIMARY KEY (`id`),
   UNIQUE KEY `groupId` (`groupId`,`name`)
-) ENGINE=MyISAM AUTO_INCREMENT=172 DEFAULT CHARSET=utf8;");
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;");
 
 OW::getDbo()->query("CREATE TABLE `" . OW_DB_PREFIX . "base_authorization_group` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -57,7 +57,7 @@ OW::getDbo()->query("CREATE TABLE `" . OW_DB_PREFIX . "base_authorization_group`
   `moderated` tinyint(1) NOT NULL DEFAULT '1',
   PRIMARY KEY (`id`),
   UNIQUE KEY `name` (`name`)
-) ENGINE=MyISAM AUTO_INCREMENT=8 DEFAULT CHARSET=utf8;");
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;");
 
 OW::getDbo()->query("CREATE TABLE `" . OW_DB_PREFIX . "base_authorization_moderator` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -81,7 +81,7 @@ OW::getDbo()->query("CREATE TABLE `" . OW_DB_PREFIX . "base_authorization_permis
   `roleId` int(11) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `actionId` (`actionId`,`roleId`)
-) ENGINE=MyISAM AUTO_INCREMENT=61 DEFAULT CHARSET=utf8;");
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;");
 
 OW::getDbo()->query("CREATE TABLE `" . OW_DB_PREFIX . "base_authorization_role` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -91,7 +91,7 @@ OW::getDbo()->query("CREATE TABLE `" . OW_DB_PREFIX . "base_authorization_role` 
   `custom` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `name` (`name`)
-) ENGINE=MyISAM AUTO_INCREMENT=13 DEFAULT CHARSET=utf8;");
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;");
 
 OW::getDbo()->query("CREATE TABLE `" . OW_DB_PREFIX . "base_authorization_user_role` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -227,7 +227,7 @@ OW::getDbo()->query("CREATE TABLE `" . OW_DB_PREFIX . "base_component` (
   `className` varchar(50) NOT NULL,
   `clonable` tinyint(1) NOT NULL DEFAULT '0',
   UNIQUE KEY `id` (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=767 DEFAULT CHARSET=utf8;");
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;");
 
 OW::getDbo()->query("CREATE TABLE `" . OW_DB_PREFIX . "base_component_entity_place` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -271,7 +271,7 @@ OW::getDbo()->query("CREATE TABLE `" . OW_DB_PREFIX . "base_component_place` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `uniqName` (`uniqName`),
   KEY `componentId` (`componentId`)
-) ENGINE=MyISAM AUTO_INCREMENT=100791 DEFAULT CHARSET=utf8 COMMENT='utf8_general_ci';");
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='utf8_general_ci';");
 
 OW::getDbo()->query("CREATE TABLE `" . OW_DB_PREFIX . "base_component_place_cache` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -289,7 +289,7 @@ OW::getDbo()->query("CREATE TABLE `" . OW_DB_PREFIX . "base_component_position` 
   `order` int(11) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `componentPlaceUniqName` (`componentPlaceUniqName`)
-) ENGINE=MyISAM AUTO_INCREMENT=11266 DEFAULT CHARSET=utf8 COMMENT='utf8_general_ci';");
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='utf8_general_ci';");
 
 OW::getDbo()->query("CREATE TABLE `" . OW_DB_PREFIX . "base_component_setting` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -299,7 +299,7 @@ OW::getDbo()->query("CREATE TABLE `" . OW_DB_PREFIX . "base_component_setting` (
   `type` varchar(20) NOT NULL DEFAULT 'string',
   PRIMARY KEY (`id`),
   UNIQUE KEY `componentPlaceUniqName` (`componentPlaceUniqName`,`name`)
-) ENGINE=MyISAM AUTO_INCREMENT=1447 DEFAULT CHARSET=utf8 COMMENT='utf8_general_ci';");
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='utf8_general_ci';");
 
 OW::getDbo()->query("CREATE TABLE `" . OW_DB_PREFIX . "base_config` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
@@ -309,7 +309,7 @@ OW::getDbo()->query("CREATE TABLE `" . OW_DB_PREFIX . "base_config` (
   `description` text,
   PRIMARY KEY (`id`),
   UNIQUE KEY `key` (`key`,`name`)
-) ENGINE=MyISAM AUTO_INCREMENT=730 DEFAULT CHARSET=utf8;");
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;");
 
 OW::getDbo()->query("CREATE TABLE `" . OW_DB_PREFIX . "base_cron_job` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -337,8 +337,8 @@ OW::getDbo()->query("CREATE TABLE `" . OW_DB_PREFIX . "base_document` (
   `isMobile` tinyint(4) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   UNIQUE KEY `key` (`key`),
-  UNIQUE KEY `uriIndex` (`uri`)
-) ENGINE=MyISAM AUTO_INCREMENT=56 DEFAULT CHARSET=utf8;");
+  KEY `uriIndex` (`uri`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;");
 
 OW::getDbo()->query("CREATE TABLE `" . OW_DB_PREFIX . "base_email_verify` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -364,6 +364,17 @@ OW::getDbo()->query("CREATE TABLE `" . OW_DB_PREFIX . "base_entity_tag` (
   KEY `tagId` (`tagId`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;");
 
+OW::getDbo()->query("CREATE TABLE `" . OW_DB_PREFIX . "base_file` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `filename` varchar(255) NOT NULL,
+  `description` varchar(255) NOT NULL,
+  `addDatetime` int(11) NOT NULL,
+  `userId` int(11) NOT NULL,
+  `order` int(11) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  KEY `userId` (`userId`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;");
+
 OW::getDbo()->query("CREATE TABLE `" . OW_DB_PREFIX . "base_flag` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `entityType` varchar(100) NOT NULL,
@@ -374,6 +385,14 @@ OW::getDbo()->query("CREATE TABLE `" . OW_DB_PREFIX . "base_flag` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `entityType` (`entityType`,`entityId`,`userId`),
   KEY `timeStamp` (`timeStamp`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;");
+
+OW::getDbo()->query("CREATE TABLE `" . OW_DB_PREFIX . "base_geolocation_country` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `cc2` char(2) NOT NULL,
+  `cc3` char(3) NOT NULL,
+  `name` varchar(50) NOT NULL,
+  PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;");
 
 OW::getDbo()->query("CREATE TABLE `" . OW_DB_PREFIX . "base_invitation` (
@@ -411,7 +430,7 @@ OW::getDbo()->query("CREATE TABLE `" . OW_DB_PREFIX . "base_language` (
   `rtl` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   UNIQUE KEY `tag` (`tag`)
-) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;");
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;");
 
 OW::getDbo()->query("CREATE TABLE `" . OW_DB_PREFIX . "base_language_key` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -419,7 +438,7 @@ OW::getDbo()->query("CREATE TABLE `" . OW_DB_PREFIX . "base_language_key` (
   `key` varchar(255) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `prefix_key` (`prefixId`,`key`)
-) ENGINE=MyISAM AUTO_INCREMENT=18662 DEFAULT CHARSET=utf8;");
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;");
 
 OW::getDbo()->query("CREATE TABLE `" . OW_DB_PREFIX . "base_language_prefix` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -427,7 +446,7 @@ OW::getDbo()->query("CREATE TABLE `" . OW_DB_PREFIX . "base_language_prefix` (
   `label` varchar(255) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `prefix` (`prefix`)
-) ENGINE=MyISAM AUTO_INCREMENT=254 DEFAULT CHARSET=utf8;");
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;");
 
 OW::getDbo()->query("CREATE TABLE `" . OW_DB_PREFIX . "base_language_value` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -436,7 +455,7 @@ OW::getDbo()->query("CREATE TABLE `" . OW_DB_PREFIX . "base_language_value` (
   `value` text NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `keyId` (`keyId`,`languageId`)
-) ENGINE=MyISAM AUTO_INCREMENT=62092 DEFAULT CHARSET=utf8;");
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;");
 
 OW::getDbo()->query("CREATE TABLE `" . OW_DB_PREFIX . "base_log` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -502,7 +521,7 @@ OW::getDbo()->query("CREATE TABLE `" . OW_DB_PREFIX . "base_menu_item` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `key` (`key`,`prefix`),
   KEY `documentKey` (`documentKey`)
-) ENGINE=MyISAM AUTO_INCREMENT=482 DEFAULT CHARSET=utf8;");
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;");
 
 OW::getDbo()->query("CREATE TABLE `" . OW_DB_PREFIX . "base_place` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -510,7 +529,7 @@ OW::getDbo()->query("CREATE TABLE `" . OW_DB_PREFIX . "base_place` (
   `editableByUser` tinyint(1) DEFAULT '0',
   PRIMARY KEY (`id`),
   UNIQUE KEY `name` (`name`)
-) ENGINE=MyISAM AUTO_INCREMENT=7 DEFAULT CHARSET=utf8;");
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;");
 
 OW::getDbo()->query("CREATE TABLE `" . OW_DB_PREFIX . "base_place_entity_scheme` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -526,7 +545,7 @@ OW::getDbo()->query("CREATE TABLE `" . OW_DB_PREFIX . "base_place_scheme` (
   `placeId` int(11) DEFAULT NULL,
   `schemeId` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;");
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;");
 
 OW::getDbo()->query("CREATE TABLE `" . OW_DB_PREFIX . "base_plugin` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -545,7 +564,7 @@ OW::getDbo()->query("CREATE TABLE `" . OW_DB_PREFIX . "base_plugin` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `key` (`key`),
   UNIQUE KEY `module` (`module`)
-) ENGINE=MyISAM AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;");
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;");
 
 OW::getDbo()->query("CREATE TABLE `" . OW_DB_PREFIX . "base_preference` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -556,7 +575,7 @@ OW::getDbo()->query("CREATE TABLE `" . OW_DB_PREFIX . "base_preference` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `key` (`key`),
   KEY `sortOrder` (`sortOrder`)
-) ENGINE=MyISAM AUTO_INCREMENT=33 DEFAULT CHARSET=utf8;");
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;");
 
 OW::getDbo()->query("CREATE TABLE `" . OW_DB_PREFIX . "base_preference_data` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -574,7 +593,7 @@ OW::getDbo()->query("CREATE TABLE `" . OW_DB_PREFIX . "base_preference_section` 
   `sortOrder` int(11) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `name` (`name`)
-) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;");
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;");
 
 OW::getDbo()->query("CREATE TABLE `" . OW_DB_PREFIX . "base_question` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -597,7 +616,7 @@ OW::getDbo()->query("CREATE TABLE `" . OW_DB_PREFIX . "base_question` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `name` (`name`),
   KEY `sectionId` (`sectionName`)
-) ENGINE=MyISAM AUTO_INCREMENT=120 DEFAULT CHARSET=utf8;");
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;");
 
 OW::getDbo()->query("CREATE TABLE `" . OW_DB_PREFIX . "base_question_account_type` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -606,7 +625,7 @@ OW::getDbo()->query("CREATE TABLE `" . OW_DB_PREFIX . "base_question_account_typ
   `roleId` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`,`name`),
   UNIQUE KEY `name` (`name`)
-) ENGINE=MyISAM AUTO_INCREMENT=54 DEFAULT CHARSET=utf8;");
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;");
 
 OW::getDbo()->query("CREATE TABLE `" . OW_DB_PREFIX . "base_question_config` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -615,7 +634,7 @@ OW::getDbo()->query("CREATE TABLE `" . OW_DB_PREFIX . "base_question_config` (
   `description` varchar(1024) DEFAULT NULL,
   `presentationClass` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;");
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;");
 
 OW::getDbo()->query("CREATE TABLE `" . OW_DB_PREFIX . "base_question_data` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -638,14 +657,14 @@ OW::getDbo()->query("CREATE TABLE `" . OW_DB_PREFIX . "base_question_section` (
   `isDeletable` int(11) NOT NULL DEFAULT '1',
   PRIMARY KEY (`id`),
   UNIQUE KEY `sectionName` (`name`)
-) ENGINE=MyISAM AUTO_INCREMENT=36 DEFAULT CHARSET=utf8;");
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;");
 
 OW::getDbo()->query("CREATE TABLE `" . OW_DB_PREFIX . "base_question_to_account_type` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `accountType` varchar(32) CHARACTER SET utf8 DEFAULT NULL,
   `questionName` varchar(255) CHARACTER SET utf8 DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=24 DEFAULT CHARSET=latin1;");
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;");
 
 OW::getDbo()->query("CREATE TABLE `" . OW_DB_PREFIX . "base_question_value` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -654,7 +673,7 @@ OW::getDbo()->query("CREATE TABLE `" . OW_DB_PREFIX . "base_question_value` (
   `sortOrder` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   UNIQUE KEY `questionName` (`questionName`,`value`)
-) ENGINE=MyISAM AUTO_INCREMENT=427 DEFAULT CHARSET=utf8;");
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;");
 
 OW::getDbo()->query("CREATE TABLE `" . OW_DB_PREFIX . "base_rate` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
@@ -692,13 +711,36 @@ OW::getDbo()->query("CREATE TABLE `" . OW_DB_PREFIX . "base_scheme` (
   `leftCssClass` varchar(50) CHARACTER SET latin1 DEFAULT NULL,
   `cssClass` varchar(50) CHARACTER SET latin1 DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;");
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;");
 
 OW::getDbo()->query("CREATE TABLE `" . OW_DB_PREFIX . "base_search` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `timeStamp` int(11) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `timeStamp` (`timeStamp`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;");
+
+OW::getDbo()->query("CREATE TABLE `" . OW_DB_PREFIX . "base_search_entity` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `entityType` varchar(50) NOT NULL,
+  `entityId` int(10) unsigned NOT NULL,
+  `text` text NOT NULL,
+  `status` varchar(20) NOT NULL DEFAULT 'active',
+  `timeStamp` int(10) unsigned NOT NULL,
+  `activated` tinyint(1) unsigned NOT NULL DEFAULT '1',
+  PRIMARY KEY (`id`),
+  KEY `entity` (`entityType`,`entityId`),
+  KEY `status` (`status`,`activated`,`timeStamp`),
+  FULLTEXT KEY `entityText` (`text`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;");
+
+OW::getDbo()->query("CREATE TABLE `" . OW_DB_PREFIX . "base_search_entity_tag` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `entityTag` varchar(50) NOT NULL,
+  `searchEntityId` int(10) unsigned NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `searchEntityId` (`searchEntityId`),
+  KEY `entityTag` (`entityTag`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;");
 
 OW::getDbo()->query("CREATE TABLE `" . OW_DB_PREFIX . "base_search_result` (
@@ -708,6 +750,16 @@ OW::getDbo()->query("CREATE TABLE `" . OW_DB_PREFIX . "base_search_result` (
   `sortOrder` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `searchResult` (`searchId`,`userId`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;");
+
+OW::getDbo()->query("CREATE TABLE `" . OW_DB_PREFIX . "base_site_statistic` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `entityType` varchar(50) NOT NULL,
+  `entityId` int(10) unsigned NOT NULL,
+  `entityCount` int(10) unsigned NOT NULL DEFAULT '1',
+  `timeStamp` int(10) unsigned NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `entity` (`entityType`,`timeStamp`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;");
 
 OW::getDbo()->query("CREATE TABLE `" . OW_DB_PREFIX . "base_tag` (
@@ -733,7 +785,7 @@ OW::getDbo()->query("CREATE TABLE `" . OW_DB_PREFIX . "base_theme` (
   `sidebarPosition` enum('left','right','none') NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `name` (`name`)
-) ENGINE=MyISAM AUTO_INCREMENT=956 DEFAULT CHARSET=utf8;");
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;");
 
 OW::getDbo()->query("CREATE TABLE `" . OW_DB_PREFIX . "base_theme_content` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -774,6 +826,8 @@ OW::getDbo()->query("CREATE TABLE `" . OW_DB_PREFIX . "base_theme_control_value`
 OW::getDbo()->query("CREATE TABLE `" . OW_DB_PREFIX . "base_theme_image` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `filename` varchar(255) DEFAULT NULL,
+  `addDatetime` int(11) DEFAULT NULL,
+  `title` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;");
 
@@ -801,7 +855,8 @@ OW::getDbo()->query("CREATE TABLE `" . OW_DB_PREFIX . "base_user` (
   UNIQUE KEY `email` (`email`),
   UNIQUE KEY `username` (`username`),
   KEY `accountType` (`accountType`),
-  KEY `joinStamp` (`joinStamp`)
+  KEY `joinStamp` (`joinStamp`),
+  KEY `activityStamp` (`activityStamp`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='utf8_general_ci';");
 
 OW::getDbo()->query("CREATE TABLE `" . OW_DB_PREFIX . "base_user_auth_token` (
@@ -887,25 +942,12 @@ OW::getDbo()->query("CREATE TABLE `" . OW_DB_PREFIX . "base_vote` (
   KEY `entityType` (`entityType`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;");
 
-OW::getDbo()->query("CREATE TABLE `" . OW_DB_PREFIX . "base_search_entity` (
-    `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-    `entityType` varchar(50) NOT NULL,
-    `entityId` int(10) unsigned NOT NULL,
-    `text` text NOT NULL,
-    `status` varchar(20) NOT NULL DEFAULT 'active',
-    `timeStamp` int(10) unsigned NOT NULL,
-    `activated` tinyint(1) unsigned NOT NULL DEFAULT 1,
-    PRIMARY KEY (`id`),
-    KEY `entity` (`entityType`,`entityId`),
-    KEY `status` (`status`, `activated`, `timeStamp`),
-    FULLTEXT KEY `entityText` (`text`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8;");
-
-OW::getDbo()->query("CREATE TABLE `" . OW_DB_PREFIX . "base_search_entity_tag` (
-    `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-    `entityTag` varchar(50) NOT NULL,
-    `searchEntityId` int(10) unsigned NOT NULL,
-    PRIMARY KEY (`id`),
-    KEY `searchEntityId` (`searchEntityId`),
-    KEY `entityTag` (`entityTag`)
+OW::getDbo()->query("CREATE TABLE `" . OW_DB_PREFIX . "file_temporary` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `filename` varchar(255) NOT NULL,
+  `userId` int(11) NOT NULL,
+  `addDatetime` int(11) NOT NULL,
+  `order` int(11) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  KEY `userId` (`userId`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;");
