@@ -1,3 +1,80 @@
+Oxwall 1.8.0 beta, Sep 1, 2015
+====================================
+
+Platform:
+- introduced new default theme Simplicity (Frontend + Admin Panel);
+- redesigned navigation and notification system in Admin Panel;
+- added widget support in Admin Panel;
+- reorganized pages/interfaces/controls in Admin Panel for improved simplicity and comprehension;
+- fixed possible collision in database during user authorization;
+- password for "Guests can view the site with password" mode is now encrypted;
+- total interface overhaul for Admin panel >> Appearance >> Edit theme >> Graphics;
+- fixed bug within mobile version preventing avatar attachment during registration;
+
+Photos:
+- fixed bug which duplicated photos in Top rated/Most discussed lists;
+- empty albums are no longer displayed in album lists;
+- added indices for fields entityId and entityType in table ow_photo_album;
+
+Messages:
+- fixed link display in new message notifications;
+- fixed attachment display in mobile version;
+- added chat/message link within new message notification template in mobile version;
+- all latest messages are now viewable in mobile version;
+- fixed search for messages;
+- fixed message lists paging in mobile version;
+
+Contact Importer:
+- added support for latest Facebook API;
+
+Facebook connect:
+- added support for latest Facebook API;
+
+Friends:
+- enhanced synchronization with Newsfeed plugin;
+
+Forum: 
+- links within mobile version's notifications for new replies in subscribed topics now lead to mobile version's forum topic;
+
+
+Oxwall 1.7.5, July 14, 2015
+====================================
+
+Platform:
+- update server SSL connection fixed;
+- floatbox language editing in the admin panel is now scrollable;
+- links processing within content now recognizes periods and other full-stop symbols in sentences; 
+- suspended users can now edit their avatars;
+- mobile version: when users have no avatar selected, their Profile View page displays the default “No Avatar” image;
+- generation of user hash salt passwords now employs the following method: UTIL_String::getRandomString
+- if the service “add to friends” is not available, users can now delete other profiles from their friend lists;
+- added mobile version of the WYSIWYG editor;
+- fixed SMTP connection settings test in the admin panel;
+- special symbols are no longer encoded in the Profile View page in the About Me widget; 
+
+User Privacy:
+- fixed the bug allowing one user accessing private photos of another user;
+
+Messages:
+- unused attachments are now deleted by cron;
+- mobile version: fixed the markup for conversations/user list;
+
+Newsfeed:
+- unused attachments are now deleted from the file system;
+- when user changes the avatar, it also updates in the 'birthday' item;
+
+Forum:
+- added mobile version;
+
+Social Sharing:
+- adapted for the site's mobile version;
+- fixed the error 'Request-URI Too Large', which appeared when sharing content with extra volume of text/description;
+
+Contacts Importer:
+- Facebook API updated;
+- added SSL support;
+
+
 Oxwall 1.7.4, 2015-06-02
 ====================================
 

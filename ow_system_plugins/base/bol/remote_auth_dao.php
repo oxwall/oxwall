@@ -80,7 +80,22 @@ class BOL_RemoteAuthDao extends OW_BaseDao
     
     /**
      * 
+     * @param $type
      * @param $remoteId
+     * @return BOL_RemoteAuth
+     */
+    public function findByRemoteTypeAndId( $type, $remoteId )
+    {
+        $example = new OW_Example();
+        $example->andFieldEqual('remoteId', $remoteId);
+        $example->andFieldEqual('type', $type);
+        
+        return $this->findObjectByExample($example);
+    }
+    
+    /**
+     * 
+     * @param $userId
      * @return BOL_RemoteAuth
      */
     public function findByUserId( $userId )

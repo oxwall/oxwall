@@ -351,6 +351,19 @@ final class OW_Database
     }
 
     /**
+     * Set time zone
+     *
+     * @return void
+     */
+    public function setTimezone()
+    {
+        $date = new DateTime;
+        $this->query('SET TIME_ZONE = ?', array(
+            $date->format('P')
+        ));
+    }
+
+    /**
      * @param string $sql
      * @param array $params
      * @param int $cacheLifeTime

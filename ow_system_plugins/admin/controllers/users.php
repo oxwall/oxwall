@@ -83,6 +83,8 @@ class ADMIN_CTRL_Users extends ADMIN_CTRL_Abstract
     {
         $language = OW::getLanguage();
         $userService = BOL_UserService::getInstance();
+        
+        OW::getDocument()->getMasterPage()->getMenu(OW_Navigation::ADMIN_USERS)->getElement('sidebar_menu_item_users')->setActive(true);
 
         // invite members
         $form = new Form('invite-members');
@@ -280,6 +282,67 @@ class ADMIN_CTRL_Users extends ADMIN_CTRL_Abstract
 
         OW::getDocument()->setHeadingIconClass('ow_ic_user');
         OW::getDocument()->setHeading(OW::getLanguage()->text('admin', 'heading_user_roles'));
+        
+        // users roles
+        $service = BOL_AuthorizationService::getInstance();
+        $this->assign('formAction', OW::getRouter()->urlFor('ADMIN_CTRL_Permissions', 'savePermissions'));
+
+        $roles = $service->getRoleList();
+        $actions = $service->getActionList();
+        $groups = $service->getGroupList();
+        $permissions = $service->getPermissionList();
+
+        $groupActionList = array();
+
+        foreach ( $groups as $group )
+        {
+            /* @var $group BOL_AuthorizationGroup */
+            $groupActionList[$group->id]['name'] = $group->name;
+            $groupActionList[$group->id]['actions'] = array();
+        }
+
+        foreach ( $actions as $action )
+        {
+            /* @var $action BOL_AuthorizationAction */
+            $groupActionList[$action->groupId]['actions'][] = $action;
+        }
+
+        foreach ( $groupActionList as $key => $value )
+        {
+            if ( count($value['actions']) === 0 || !OW::getPluginManager()->isPluginActive($value['name']) )
+            {
+                unset($groupActionList[$key]);
+            }
+        }
+
+        $perms = array();
+        foreach ( $permissions as $permission )
+        {
+            /* @var $permission BOL_AuthorizationPermission */
+            $perms[$permission->actionId][$permission->roleId] = true;
+        }
+
+        $tplRoles = array();
+        foreach ( $roles as $role )
+        {
+            $tplRoles[$role->sortOrder] = $role;
+        }
+
+        ksort($tplRoles);
+
+        $this->assign('perms', $perms);
+        $this->assign('roles', $tplRoles);
+        $this->assign('colspanForRoles', count($roles) + 1);
+        $this->assign('groupActionList', $groupActionList);
+        $this->assign('guestRoleId', $service->getGuestRoleId());
+
+        // SD code below - collecting group labels
+        $event = new BASE_CLASS_EventCollector('admin.add_auth_labels');
+        OW::getEventManager()->trigger($event);
+        $data = $event->getData();
+
+        $dataLabels = empty($data) ? array() : call_user_func_array('array_merge', $data);
+        $this->assign('labels', $dataLabels);
     }
 
     public function role( array $params )

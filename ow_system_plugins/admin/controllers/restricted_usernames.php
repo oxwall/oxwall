@@ -109,6 +109,6 @@ class ADMIN_CTRL_RestrictedUsernames extends ADMIN_CTRL_Abstract
         $language = OW::getLanguage();
         OW::getFeedback()->info($language->text('admin', 'restrictedusernames_username_deleted'));
 
-        $this->redirect('admin/restricted-usernames');
+        $this->redirect(OW::getRouter()->urlForRoute('admin_restrictedusernames'));
     }
 }

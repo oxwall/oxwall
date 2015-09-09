@@ -79,6 +79,9 @@ class OW_MobileApplication extends OW_Application
         // setting default time zone
         date_default_timezone_set(OW::getConfig()->getValue('base', 'site_timezone'));
 
+        // synchronize the db's time zone
+        OW::getDbo()->setTimezone();
+
 //        OW::getRequestHandler()->setIndexPageAttributes('BASE_CTRL_ComponentPanel');
         OW::getRequestHandler()->setStaticPageAttributes('BASE_MCTRL_BaseDocument', 'staticDocument');
 

@@ -47,6 +47,17 @@ class BOL_RemoteAuthService
     
     /**
      * 
+     * @param $type
+     * @param $remoteId
+     * @return BOL_RemoteAuth
+     */
+    public function findByRemoteTypeAndId( $type, $remoteId )
+    {
+        return $this->remoteAuthDao->findByRemoteTypeAndId($type, $remoteId);
+    }
+    
+    /**
+     * 
      * @param $userId
      * @return BOL_RemoteAuth
      */

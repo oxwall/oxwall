@@ -348,7 +348,7 @@ componentDragAndDrop.prototype = {
         };
         event.ui = ui;
         event.originalEvent = e;
-
+        
         this.trigger('move', [event]);
     },
 
@@ -363,8 +363,9 @@ componentDragAndDrop.prototype = {
     {
         var id = $(ui.item).attr('id');
         var $ph = $(ui.placeholder);
+        var cmpNode = document.getElementById(id);
 
-        if ( $ph.next().is('#' + id) || $ph.prev().is('#' + id)	) {
+        if ( $ph.next().is(cmpNode) || $ph.prev().is(cmpNode)	) {
                 $ph.removeClass('ow_dnd_placeholder');
                 $ph.addClass('hidden-placeholder');
         }
@@ -584,7 +585,7 @@ componentDragAndDrop.prototype = {
     },
 
     drawComponent: function(cmpId, markup) {
-    	var $component = $('#' + cmpId);
+    	var $component = $(document.getElementById(cmpId));
         var $newComponent = $(markup.content);
         try {
             $component.replaceWith($newComponent);
@@ -619,7 +620,7 @@ componentDragAndDrop.prototype = {
 
     applyComponentSettings: function(cmpId, settings) {
 
-        var $component = $('#' + cmpId);
+        var $component = $(document.getElementById(cmpId));
         var $section = $component.parents('.place_section:eq(0)');
 
         if (settings.freeze > 0) {
@@ -651,7 +652,7 @@ componentDragAndDrop.prototype = {
     },
 
     isComponentInSection: function(id) {
-    	return $('#' + id).is('#place_sections .component');
+    	return $(document.getElementById(id)).is('#place_sections .component');
     },
 
     isComponentRenderable: function(id) {
