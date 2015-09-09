@@ -246,7 +246,9 @@ class BOL_ComponentAdminService extends BOL_ComponentService
         $scheme->leftCssClass = $leftCssClass;
         $scheme->cssClass = $schemeCssClass;
         
-        return $this->schemeDao->save($scheme);
+        $this->schemeDao->save($scheme);
+        
+        return $scheme;
     }
 
     /**
