@@ -198,9 +198,37 @@ class UTIL_File
     }
 
     /**
+     * @param string $filename
+     * @param bool $humanReadable
+     * @param int $decimals
+     * @return null|string
+     */
+    public static function getFileSize($filename, $humanReadable = true, $decimals = 2) {
+        try
+        {
+            $bytes = filesize($filename);
+        }
+        catch(Exception $e)
+        {
+            return null;
+        }
+        if ( !$humanReadable )
+        {
+            return $bytes;
+        }
+        $size = array('B','kB','MB','GB','TB','PB','EB','ZB','YB');
+        $factor = (int) floor((strlen($bytes) - 1) / 3);
+        if ( isset($size[$factor]) )
+        {
+            return sprintf("%.{$decimals}f ", $bytes / pow(1024, $factor)) . $size[$factor];
+        }
+        return $bytes;
+    }
+
+    /**
      * Returns file extension
      *
-     * @param string $filename
+     * @param string $filenName
      * @return string
      */
     public static function getExtension( $filenName )

@@ -781,6 +781,7 @@ class BOL_ThemeService
         }
 
         $image = new BOL_ThemeImage();
+        $image->addDatetime = time();
         $this->themeImageDao->save($image);
 
         $ext = UTIL_File::getExtension($fileArr["name"]);
@@ -802,6 +803,38 @@ class BOL_ThemeService
         return $image;
     }
 
+    public function moveTemporaryFile( $tmpId, $title = '' )
+    {
+        $tmp = BOL_FileTemporaryDao::getInstance()->findById($tmpId);
+        $tmpPath = BOL_FileTemporaryService::getInstance()->getTemporaryFilePath($tmpId);
+
+        if ( !$tmp )
+        {
+            throw new LogicException();
+        }
+
+        if ( !UTIL_File::validateImage($tmp->filename) )
+        {
+            throw new LogicException();
+        }
+
+        $image = new BOL_ThemeImage();
+        $image->addDatetime = time();
+        $image->title = $title;
+        $this->themeImageDao->save($image);
+
+        $ext = UTIL_File::getExtension($tmp->filename);
+        $imageName = 'theme_image_' . $image->getId() . '.' . $ext;
+
+        OW::getStorage()->copyFile($tmpPath, $this->userfileImagesDir . $imageName);
+        BOL_FileTemporaryDao::getInstance()->deleteById($tmpId);
+
+        $image->setFilename($imageName);
+        $this->themeImageDao->save($image);
+
+        return $image;
+    }
+
     /**
      * @return array
      */
@@ -809,6 +842,53 @@ class BOL_ThemeService
     {
         return $this->themeImageDao->findGraphics();
     }
+
+    /**
+     * @param array $params
+     * @return array
+     */
+    public function filterCssImages($params)
+    {
+        $images = $this->themeImageDao->filterGraphics($params);
+        foreach ( $images as $key => $photo )
+        {
+            $images[$key]->url = $this->getUserfileImagesUrl() . $photo->filename;
+        }
+        return $images;
+    }
+
+    /**
+     *
+     * @param integer $id
+     * @return BOL_ThemeImage
+     */
+    public function findImageById( $id )
+    {
+        return $this->themeImageDao->findById($id);
+    }
+
+    /**
+     * @param $id
+     * @param $params
+     * @return array
+     */
+    public function getPrevImageIdList($id, $params)
+    {
+        $images = $this->themeImageDao->getPrevImageList($id, $params);
+        return array_map(function($i){return $i->id;}, $images);
+    }
+
+    /**
+     * @param $id
+     * @param $params
+     * @return array
+     */
+    public function getNextImageIdList($id, $params)
+    {
+        $images = $this->themeImageDao->getNextImageList($id, $params);
+        return array_map(function($i){return $i->id;}, $images);
+    }
+
 
     /**
      *

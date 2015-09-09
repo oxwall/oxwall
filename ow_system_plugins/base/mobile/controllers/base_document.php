@@ -163,8 +163,9 @@ class BASE_MCTRL_BaseDocument extends OW_MobileActionController
         {
             $data = $form->getValues();
             $password = OW::getConfig()->getValue('base', 'guests_can_view_password');
+            $cryptedPassword = crypt($data['password'], OW_PASSWORD_SALT);
 
-            if ( !empty($data['password']) && trim($data['password']) === $password )
+            if ( !empty($data['password']) && $cryptedPassword === $password )
             {
                 setcookie('base_password_protection', UTIL_String::getRandomString(), (time() + 86400 * 30), '/');
                 echo "OW.info('" . OW::getLanguage()->text('base', 'password_protection_success_message') . "');window.location.reload();";

@@ -23,7 +23,7 @@
  */
 
 $queryList = array(
-    "REPLACE INTO `" . OW_DB_PREFIX . "base_place` (`id`, `name`, `editableByUser`) VALUES (NULL, 'admin.dashboard', '0');"
+    "INSERT IGNORE INTO `" . OW_DB_PREFIX . "base_place` (`id`, `name`, `editableByUser`) VALUES (NULL, 'admin.dashboard', '0');"
 );
 
 foreach ( $queryList as $query )

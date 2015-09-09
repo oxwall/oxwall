@@ -33,7 +33,7 @@
     border: none;
     color: #868686;
     font-weight: normal;
-    line-height: 14px;
+    font-size: 14px;
     padding: 0 0 0 8px;
     text-align: left;
     vertical-align: top;
@@ -96,7 +96,6 @@ body .ow_table_2 tr.ow_tr_titles th:last-child, body .ow_table_1 tr.ow_tr_titles
     -webkit-box-sizing: border-box;
     box-sizing: border-box;
     background-color: #FCFCFC;
-    background-image: url(images/ow_tr_top_button_bg.png);
     background-repeat: repeat-x;
     border-bottom: none;
     border-top: 1px solid #dedede;
@@ -327,7 +326,7 @@ table.colorPicker td {
 }
 .ow_navbox a.move{
 	color:#666;
-	font-weight:bold;
+    font-family: "core_sans_e55_medium","Trebuchet MS","Helvetica CY",sans-serif;
 }
 .ow_navbox a.move:hover{
 	cursor:move;
@@ -344,7 +343,7 @@ table.colorPicker td {
     color: #f42217;
 }
 .ow_navbox.ow_mild_green a.move{
-	color: #7cbb11;
+	color: #57ba98;
 }
 .guest_item{
 	background-color:#aaffaa;
@@ -416,7 +415,7 @@ body.ow_admin_area {
 	position: fixed;
 	width: 100%;
 	height: auto;
-	background: #fff;
+	background: none;
 	padding: 0px;
 	margin:0px;
 	top: 0;
@@ -425,12 +424,12 @@ body.ow_admin_area {
 }
 .ow_admin_header .ow_site_panel {
 	height: 70px;
-	background-color: #fff;
+	background-color: rgba(239,242,245,0.5);
     position: static;
 }
 .ow_admin_header .ow_console{
     height: 56px;
-    background-color: #fff;
+    background-color: transparent;
     position: fixed;
     right: 16px;
     top: 0;
@@ -438,7 +437,7 @@ body.ow_admin_area {
 }
 .ow_admin_header .ow_console_body {
 	padding: 16px 4px 16px 8px;
-	background-color: #fff;
+	background-color: transparent;
 	height: 56px;
 }
 .ow_page_container.ow_admin {
@@ -703,107 +702,6 @@ html body .ow_admin_permissions.ow_superwide {
 	overflow: initial;
 }
 /* ---- End of the Other Admin styles ---- */
-/*Content*/
-@media (max-width: 1420px) {
-	.ow_page_container.ow_admin {
-		margin-left: 200px;
-	}
-	.ow_page_container.ow_admin .ow_canvas {
-		width: 100%;
-	}
-	.ow_admin_area .ow_footer.ow_admin {
-		margin-left: 200px;
-	}
-	.ow_admin_area .ow_footer.ow_admin .ow_canvas {
-		float: left;
-	}
-}
-@media (max-width: 1220px) {
-	.ow_page_container.ow_admin,
-	.ow_admin_area .ow_footer.ow_admin .ow_canvas {
-		width: 880px;
-	}
-}
-@media (max-width: 1100px) {
-	body.ow_admin_area,
-	body.ow_admin_area < html {
-		min-width: 940px;
-	}
-	.ow_admin_area .ow_admin_menu_wrap {
-		width: 56px;
-	}
-	.ow_admin_area .ow_admin_menu_item {
-		width: 56px;
-	}
-	.ow_admin_area .ow_admin_menu_item span,
-	.ow_admin_area .ow_admin_menu_item_label {
-		display: none;
-	}
-	.ow_page_container.ow_admin {
-		margin-left: 57px;
-	}
-	.ow_admin_area .ow_footer.ow_admin {
-		margin-left: 57px;
-	}
-	.ow_admin_submenu {
-		display: none !important;
-	}
-	.ow_admin_menu .ow_admin_menu_item,
-	.ow_site_panel .ow_admin_home_btn {
-		padding-right: 0;
-	}
-	.ow_admin_menu .ow_admin_menu_item .ow_admin_menu_arrow {
-		background-position: 4px top;
-	}
-	.ow_admin_menu .ow_admin_menu_item.active .ow_admin_menu_arrow {
-		background-position: 4px 100%;
-	}
-	/*.ow_admin_menu .ow_admin_menu_item.active:hover .ow_admin_menu_arrow {
-	animation: changearrow 0.3s 0.2s 1 forwards;
-	-webkit-animation: changearrow 0.3s 0.2s 1 forwards;
-	-moz-animation: changearrow 0.3s 0.2s 1 forwards;
-	-o-animation: changearrow 0.3s 0.2s 1 forwards;
-	}
-	@-webkit-keyframes changearrow {
-	    1% {opacity: 1; background-position: 4px 100%;}
-	    40% {opacity: 0; background-position: 4px 100%;}
-	    60% {opacity: 0; background-position: 4px top;}
-	    100% {opacity: 1; background-position: 4px top;}
-	}
-	@-moz-keyframes changearrow {
-	    1% {opacity: 1; background-position: 4px 100%;}
-	    40% {opacity: 0; background-position: 4px 100%;}
-	    60% {opacity: 0; background-position: 4px top;}
-	    100% {opacity: 1; background-position: 4px top;}
-	}
-	@-o-keyframes changearrow {
-	    1% {opacity: 1; background-position: 4px 100%;}
-	    40% {opacity: 0; background-position: 4px 100%;}
-	    60% {opacity: 0; background-position: 4px top;}
-	    100% {opacity: 1; background-position: 4px top;}
-	}
-	@keyframes changearrow {
-	    1% {opacity: 1; background-position: 4px 100%;}
-	    40% {opacity: 0; background-position: 4px 100%;}
-	    60% {opacity: 0; background-position: 4px top;}
-	    100% {opacity: 1; background-position: 4px top;}
-	}*/
-	.ow_admin_submenu_hover .ow_admin_submenu_title {
-		display: block;
-	}
-}
-@media (min-width: 1100px) {
-	.ow_admin_menu_item.active:hover .ow_admin_submenu_hover {
-		display: none;
-		opacity: 0;
-	}
-	.ow_admin_menu .ow_admin_menu_item.active:hover .ow_admin_menu_arrow {
-	animation: none;
-	-webkit-animation: none;
-	-moz-animation: none;
-	-o-animation: none;
-	}
-}
 /*Console*/
 .ow_admin_console_update {
 	float: left;
@@ -811,8 +709,8 @@ html body .ow_admin_permissions.ow_superwide {
 	position: relative;
 }
 .ow_admin_console_update_link {
-	width: 56px;
-	height: 56px;
+	width: 70px;
+	height: 70px;
 	display: inline-block;
 	background-image: url(images/admin_console_update.svg);
 	background-position: center center;
@@ -820,8 +718,8 @@ html body .ow_admin_permissions.ow_superwide {
 }
 .ow_admin_console_update .ow_count_wrap {
 	position: absolute;
-	top: 12px;
-	right: 12px;
+	top: 19px;
+	right: 16px;
 }
 .ow_admin_header .ow_count_wrap {
 	line-height: 14px;
@@ -872,6 +770,9 @@ html body .ow_admin_permissions.ow_superwide {
 	float: left;
 	margin-left: 48px;
 	color: #666;
+}
+.ow_admin_notification_text a {
+	color: #2db395;
 }
 /*Menu*/
 .ow_admin_menu_wrap {
@@ -934,6 +835,9 @@ html body .ow_admin_permissions.ow_superwide {
 .ow_admin_menu_item.home:hover {
 	color: #e9eff5;
 	background-color: #1f2124;
+}
+.ow_admin_menu_item.home .ow_admin_menu_item_label {
+	font-size: 13px;
 }
 .ow_admin_menu_item.menu_admin {
 	background-image: url(images/admin_dashboard.svg);
@@ -1054,30 +958,30 @@ html body .ow_admin_permissions.ow_superwide {
 }
 .ow_admin_submenu li,
 .ow_admin_submenu_hover li {
-	margin-bottom: 12px;
 	cursor: pointer;
 }
 .ow_admin_submenu_hover li {
 	min-width: 160px;
-	margin-bottom: 8px;
 }
 .ow_admin_submenu li a {
-	display: inline-block;
 	padding-left: 52px;
+	padding-bottom: 12px;
 	color: #9ca6b0;	
 	font-family: 'core_sans_e35_light', "Trebuchet MS", "Helvetica CY", sans-serif;
 }
 .ow_admin_submenu li a,
 .ow_admin_submenu_hover li a {
+	display: block;	
 	font-size: 13px;
 	line-height: 14px;
 }
 .ow_admin_submenu_hover li a {
 	color: #67727d;
+	padding-bottom: 12px;	
 }
-.ow_admin_submenu li:last-child,
-.ow_admin_submenu_hover li:last-child {
-	margin-bottom: 0;
+.ow_admin_submenu li:last-child a,
+.ow_admin_submenu_hover li:last-child a {
+	padding-bottom: 0;
 }
 .ow_admin_submenu li:hover a,
 .ow_admin_submenu li.active a,
@@ -1094,7 +998,7 @@ html body .ow_admin_permissions.ow_superwide {
 .ow_plugin_update,
 .ow_active_plugins .ow_plugin_update, 
 .ow_inactive_plugins .ow_plugin_update {
-    background: #fff;
+    background: #F3FCF9;
     border: 1px solid #18d398;
 }
 
@@ -1117,7 +1021,7 @@ html body .ow_admin_permissions.ow_superwide {
 }
 
 .ow_admin_choose_theme .theme_title{
-    font-weight:bold;
+    font-family: "core_sans_e55_medium","Trebuchet MS","Helvetica CY",sans-serif;
 }
 
 .ow_admin_choose_theme .theme_desc{
@@ -1228,4 +1132,148 @@ html body .ow_admin_choose_theme .selected_theme_info_stick{
 .ow_admin_choose_theme .theme_item.active .theme_update_label {
     background: none repeat scroll 0 0 #A8D700;
     border-color: #A8D700;
+}
+/* Restricted Usernames */
+#restrictedUsernamesForm td {
+	vertical-align: middle;
+}
+/* User Roles color */
+.floatbox_container #role-edit-cont .ow_table_3 td.ow_label {
+	width: 15% !important;
+}
+.ow_lbutton.edit_role {
+	color: #fff;
+}
+/* Browse Users */
+#user-list-form .ow_lbutton:hover {
+	border-color: transparent;
+}
+/* Settings */
+#search_in_inp {
+	vertical-align: sub;
+}
+#search_in_inp ~ label {
+	vertical-align: baseline;
+}
+/*Content*/
+@media (max-width: 1420px) {
+	.ow_page_container.ow_admin {
+		margin-left: 200px;
+	}
+	.ow_page_container.ow_admin .ow_canvas {
+		width: 100%;
+	}
+	.ow_admin_area .ow_footer.ow_admin {
+		margin-left: 200px;
+	}
+	.ow_admin_area .ow_footer.ow_admin .ow_canvas {
+		float: left;
+	}
+}
+@media (max-width: 1220px) {
+	.ow_page_container.ow_admin,
+	.ow_admin_area .ow_footer.ow_admin .ow_canvas {
+		width: 880px;
+	}
+}
+@media (max-width: 1100px) {
+	body.ow_admin_area,
+	body.ow_admin_area < html {
+		min-width: 940px;
+	}
+	.ow_admin_area .ow_admin_menu_wrap {
+		width: 56px;
+	}
+	.ow_admin_area .ow_admin_menu_item {
+		width: 56px;
+	}
+	.ow_admin_console_update_link {
+		width: 56px;
+		height: 56px;
+	}
+	.ow_admin_console_update .ow_count_wrap {
+		top: 12px;
+		right: 12px; 
+	}
+	.ow_admin_header .ow_console_body {
+		padding-top: 12px;
+	}
+	.ow_admin_header .ow_site_panel {
+		height: 56px;
+	}
+	.ow_site_panel .ow_admin_home_btn {
+		height: 56px;
+		background-position: 16px 14px;
+	}
+	.ow_admin_menu {
+		padding-top: 56px;
+	}
+	.ow_admin_area .ow_admin_menu_item span,
+	.ow_admin_area .ow_admin_menu_item_label {
+		display: none;
+	}
+	.ow_page_container.ow_admin {
+		margin-left: 57px;
+	}
+	.ow_admin_area .ow_footer.ow_admin {
+		margin-left: 57px;
+	}
+	.ow_admin_submenu {
+		display: none !important;
+	}
+	.ow_admin_menu .ow_admin_menu_item,
+	.ow_site_panel .ow_admin_home_btn {
+		padding-right: 0;
+	}
+	.ow_admin_menu .ow_admin_menu_item .ow_admin_menu_arrow {
+		background-position: 4px top;
+	}
+	.ow_admin_menu .ow_admin_menu_item.active .ow_admin_menu_arrow {
+		background-position: 4px 100%;
+	}
+	/*.ow_admin_menu .ow_admin_menu_item.active:hover .ow_admin_menu_arrow {
+	animation: changearrow 0.3s 0.2s 1 forwards;
+	-webkit-animation: changearrow 0.3s 0.2s 1 forwards;
+	-moz-animation: changearrow 0.3s 0.2s 1 forwards;
+	-o-animation: changearrow 0.3s 0.2s 1 forwards;
+	}
+	@-webkit-keyframes changearrow {
+	    1% {opacity: 1; background-position: 4px 100%;}
+	    40% {opacity: 0; background-position: 4px 100%;}
+	    60% {opacity: 0; background-position: 4px top;}
+	    100% {opacity: 1; background-position: 4px top;}
+	}
+	@-moz-keyframes changearrow {
+	    1% {opacity: 1; background-position: 4px 100%;}
+	    40% {opacity: 0; background-position: 4px 100%;}
+	    60% {opacity: 0; background-position: 4px top;}
+	    100% {opacity: 1; background-position: 4px top;}
+	}
+	@-o-keyframes changearrow {
+	    1% {opacity: 1; background-position: 4px 100%;}
+	    40% {opacity: 0; background-position: 4px 100%;}
+	    60% {opacity: 0; background-position: 4px top;}
+	    100% {opacity: 1; background-position: 4px top;}
+	}
+	@keyframes changearrow {
+	    1% {opacity: 1; background-position: 4px 100%;}
+	    40% {opacity: 0; background-position: 4px 100%;}
+	    60% {opacity: 0; background-position: 4px top;}
+	    100% {opacity: 1; background-position: 4px top;}
+	}*/
+	.ow_admin_submenu_hover .ow_admin_submenu_title {
+		display: block;
+	}
+}
+@media (min-width: 1100px) {
+	.ow_admin_menu_item.active:hover .ow_admin_submenu_hover {
+		display: none;
+		opacity: 0;
+	}
+	.ow_admin_menu .ow_admin_menu_item.active:hover .ow_admin_menu_arrow {
+	animation: none;
+	-webkit-animation: none;
+	-moz-animation: none;
+	-o-animation: none;
+	}
 }
