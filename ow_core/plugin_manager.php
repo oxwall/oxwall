@@ -107,7 +107,7 @@ final class OW_PluginManager
                 return 0;
             }
 
-            return $a->getId() > $b->getId();
+            return ($a->getId() > $b->getId()) ? 1 : -1;
         });
 
         /* @var $value BOL_Plugin */
@@ -140,9 +140,12 @@ final class OW_PluginManager
             $initDirPath = $pluginObject->getApiDir();
         }
 
-        OW::getEventManager()->trigger(new OW_Event("core.performance_test", array("key" => "plugin_init.start", "pluginKey" => $pluginObject->getKey())));
-        include $initDirPath . BOL_PluginService::SCRIPT_INIT;
-        OW::getEventManager()->trigger(new OW_Event("core.performance_test", array("key" => "plugin_init.end", "pluginKey" => $pluginObject->getKey())));
+        if( file_exists($initDirPath . BOL_PluginService::SCRIPT_INIT) )
+        {
+            OW::getEventManager()->trigger(new OW_Event("core.performance_test", array("key" => "plugin_init.start", "pluginKey" => $pluginObject->getKey())));
+            include $initDirPath . BOL_PluginService::SCRIPT_INIT;
+            OW::getEventManager()->trigger(new OW_Event("core.performance_test", array("key" => "plugin_init.end", "pluginKey" => $pluginObject->getKey())));
+        }
     }
 
     /**
