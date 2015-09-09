@@ -26,7 +26,6 @@
 
 OW::getConfig()->addConfig("base", "avatar_big_size", "190", "User avatar width");
 OW::getConfig()->addConfig("base", "avatar_size", "90", "User avatar height");
-OW::getConfig()->addConfig("admin", "admin_menu_state", json_encode(array()), null);
 OW::getConfig()->addConfig("base", "selectedTheme", "simplicity", "Selected theme.");
 OW::getConfig()->addConfig("base", "military_time", "1", "Desc");
 OW::getConfig()->addConfig("base", "site_name", "", "Site name");
@@ -57,15 +56,10 @@ OW::getConfig()->addConfig("base", "mandatory_user_approve", null, "mandatory_us
 OW::getConfig()->addConfig("base", "billing_currency", "USD", "Site currency 3-char code");
 OW::getConfig()->addConfig("base", "site_statistics_disallowed_entity_types", "user-status,avatar-change", null);
 OW::getConfig()->addConfig("base", "tf_max_pic_size", "2.500000", null);
-OW::getConfig()->addConfig("base", "soft_build", "9900", "Current soft version");
 OW::getConfig()->addConfig("base", "update_soft", null, "Soft core update flag");
 OW::getConfig()->addConfig("base", "unverify_site_email", null, "Email address from which your users will receive notifications and mass mailing.");
-OW::getConfig()->addConfig("base", "soft_version", "1.8.0", null);
 OW::getConfig()->addConfig("base", "site_installed", null, null);
 OW::getConfig()->addConfig("base", "check_mupdates_ts", null, "Last manual updates check timestamp.");
-OW::getConfig()->addConfig("contact_importer", "yahoo_consumer_key", null, "");
-OW::getConfig()->addConfig("contact_importer", "facebook_app_secret", null, "");
-OW::getConfig()->addConfig("admin", "mass_mailing_timestamp", null, null);
 OW::getConfig()->addConfig("base", "dev_mode", "1", null);
 OW::getConfig()->addConfig("base", "log_file_max_size_mb", "20", null);
 OW::getConfig()->addConfig("base", "attch_file_max_size_mb", "2", null);
@@ -78,8 +72,6 @@ OW::getConfig()->addConfig("base", "default_avatar", "[]", "Default avatar");
 OW::getConfig()->addConfig("base", "language_switch_allowed", "1", "Allow users switch languages on site");
 OW::getConfig()->addConfig("base", "rss_loading", null, null);
 OW::getConfig()->addConfig("base", "cron_is_active", "1", "Flag showing if cron script is activated after soft install");
-OW::getConfig()->addConfig("contact_importer", "yahoo_app_id", null, "");
-OW::getConfig()->addConfig("contact_importer", "facebook_api_key", null, "");
 OW::getConfig()->addConfig("base", "users_count_on_page", "30", "Users count on page");
 OW::getConfig()->addConfig("base", "join_display_photo_upload", "display", "Display \'Photo Upload\' field on Join page.");
 OW::getConfig()->addConfig("base", "join_photo_upload_set_required", "1", "Make \'Photo Upload\' a required field on Join Page.");
@@ -87,18 +79,20 @@ OW::getConfig()->addConfig("base", "join_display_terms_of_use", null, "Display \
 OW::getConfig()->addConfig("base", "favicon", "1", null);
 OW::getConfig()->addConfig("base", "html_head_code", null, "Code (meta, css, js) added from admin panel into head section of HTML document.");
 OW::getConfig()->addConfig("base", "html_prebody_code", null, "Code (js) added before \'body\' closing tag.");
-OW::getConfig()->addConfig("contact_importer", "yahoo_consumer_secret", null, "");
 OW::getConfig()->addConfig("base", "tf_user_custom_html_disable", "1", null);
 OW::getConfig()->addConfig("base", "tf_user_rich_media_disable", null, null);
 OW::getConfig()->addConfig("base", "tf_comments_rich_media_disable", null, null);
 OW::getConfig()->addConfig("base", "tf_resource_list", json_encode(array(
     "clipfish.de", "youtube.com", "google.com", "metacafe.com", "myspace.com", "novamov.com", "myvideo.de"
 )), null);
-OW::getConfig()->addConfig("contact_importer", "yahoo_domain_verification_file", null, "");
 OW::getConfig()->addConfig("base", "cachedEntitiesPostfix", "53b266e920eba", null);
 OW::getConfig()->addConfig("base", "master_page_theme_info", "[]", null);
 OW::getConfig()->addConfig("base", "user_invites_limit", "50", null);
-OW::getConfig()->addConfig("base", "profile_question_edit_stamp", "1402999957", null);
+OW::getConfig()->addConfig("base", "profile_question_edit_stamp", "", null);
 OW::getConfig()->addConfig("base", "install_complete", null, null);
 OW::getConfig()->addConfig("base", "users_on_page", "12", null);
 OW::getConfig()->addConfig("base", "avatar_max_upload_size", "1", "Enable file attachments");
+
+// TODO Read from ow_version.xml
+OW::getConfig()->addConfig("base", "soft_build", "9900", "Current soft version");
+OW::getConfig()->addConfig("base", "soft_version", "1.8.0", null);

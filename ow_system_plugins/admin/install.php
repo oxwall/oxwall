@@ -2,8 +2,8 @@
 
 // Configs
 
-OW::getConfig()->addConfig("admin", "admin_menu_state", "[]", null);
 OW::getConfig()->addConfig("admin", "mass_mailing_timestamp", null, null);
+OW::getConfig()->addConfig("admin", "admin_menu_state", json_encode(array()), null);
 
 // Langs
 OW::getLanguage()->importPluginLangs(dirname(__FILE__) . DS . "langs.zip", "admin");
