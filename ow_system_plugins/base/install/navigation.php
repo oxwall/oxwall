@@ -24,22 +24,25 @@
 
 
 // Menus
-OW::getNavigation()->addMenuItem(OW_Navigation::MAIN, "base_index", "base", "main_menu_index", OW_Navigation::VISIBLE_FOR_ALL);
-OW::getNavigation()->addMenuItem("hidden", "base_member_profile", "base", "main_menu_my_profile", OW_Navigation::VISIBLE_FOR_MEMBER);
-OW::getNavigation()->addMenuItem(OW_Navigation::MAIN, "users", "base", "users_main_menu_item", OW_Navigation::VISIBLE_FOR_ALL);
-OW::getNavigation()->addMenuItem(OW_Navigation::MAIN, "base_join", "base", "base_join_menu_item", OW_Navigation::VISIBLE_FOR_GUEST);
 OW::getNavigation()->addMenuItem(OW_Navigation::MAIN, "base_member_dashboard", "base", "dashboard", OW_Navigation::VISIBLE_FOR_MEMBER);
-OW::getNavigation()->addMenuItem(OW_Navigation::MOBILE_HIDDEN, "base_member_dashboard", "mobile", "mobile_pages_dashboard", OW_Navigation::VISIBLE_FOR_MEMBER);
-OW::getNavigation()->addMenuItem(OW_Navigation::MOBILE_BOTTOM, "base.desktop_version", "base", "desktop_version_menu_item", OW_Navigation::VISIBLE_FOR_ALL);
-OW::getNavigation()->addMenuItem(OW_Navigation::MOBILE_TOP, "base_index", "base", "index_menu_item", OW_Navigation::VISIBLE_FOR_ALL);
+OW::getNavigation()->addMenuItem(OW_Navigation::MAIN, "base_index", "base", "main_menu_index", OW_Navigation::VISIBLE_FOR_ALL);
+OW::getNavigation()->addMenuItem(OW_Navigation::MAIN, "base_join", "base", "base_join_menu_item", OW_Navigation::VISIBLE_FOR_GUEST);
+OW::getNavigation()->addMenuItem(OW_Navigation::MAIN, "users", "base", "users_main_menu_item", OW_Navigation::VISIBLE_FOR_ALL);
+
+OW::getNavigation()->addMenuItem("hidden", "base_member_profile", "base", "main_menu_my_profile", OW_Navigation::VISIBLE_FOR_MEMBER);
 OW::getNavigation()->addMenuItem(OW_Navigation::BOTTOM, "base.mobile_version", "base", "mobile_version_menu_item", OW_Navigation::VISIBLE_FOR_ALL);
+
+OW::getNavigation()->addMenuItem(OW_Navigation::MOBILE_BOTTOM, "base.desktop_version", "base", "desktop_version_menu_item", OW_Navigation::VISIBLE_FOR_ALL);
+
+OW::getNavigation()->addMenuItem(OW_Navigation::MOBILE_TOP, "base_index", "base", "index_menu_item", OW_Navigation::VISIBLE_FOR_ALL);
+OW::getNavigation()->addMenuItem(OW_Navigation::MOBILE_TOP, "base_member_dashboard", "mobile", "mobile_pages_dashboard", OW_Navigation::VISIBLE_FOR_MEMBER);
 
 // Custom menu items
 
 $menuItem = new BOL_MenuItem(); // Terms of use
 $menuItem->prefix = "base";
-$menuItem->key = "page-119658";
-$menuItem->documentKey = "page-119658";
+$menuItem->key = "terms_of_use"; // terms_of_use
+$menuItem->documentKey = "terms_of_use"; 
 $menuItem->type = OW_Navigation::BOTTOM;
 $menuItem->order = 1;
 $menuItem->visibleFor = OW_Navigation::VISIBLE_FOR_ALL;
@@ -48,8 +51,8 @@ BOL_NavigationService::getInstance()->saveMenuItem($menuItem);
 
 $menuItem = new BOL_MenuItem(); // Terms of use
 $menuItem->prefix = "base";
-$menuItem->key = "page_81959573";
-$menuItem->documentKey = "page_81959573";
+$menuItem->key = "privacy_policy";
+$menuItem->documentKey = "privacy_policy";
 $menuItem->type = OW_Navigation::BOTTOM;
 $menuItem->order = 2;
 $menuItem->visibleFor = OW_Navigation::VISIBLE_FOR_ALL;
@@ -57,9 +60,9 @@ $menuItem->visibleFor = OW_Navigation::VISIBLE_FOR_ALL;
 BOL_NavigationService::getInstance()->saveMenuItem($menuItem);
 
 $menuItem = new BOL_MenuItem(); // Mobile terms of use
-$menuItem->prefix = "ow_custom";
-$menuItem->key = "mobile_page_14788567";
-$menuItem->documentKey = "mobile_page_14788567";
+$menuItem->prefix = "base";
+$menuItem->key = "mobile_terms_of_use";
+$menuItem->documentKey = "mobile_terms_of_use";
 $menuItem->type = OW_Navigation::MOBILE_BOTTOM;
 $menuItem->order = 0;
 $menuItem->visibleFor = OW_Navigation::VISIBLE_FOR_ALL;
@@ -68,7 +71,7 @@ BOL_NavigationService::getInstance()->saveMenuItem($menuItem);
 
 // Documents
 $document = new BOL_Document(); // Terms of use
-$document->key = "page-119658";
+$document->key = "terms_of_use";
 $document->uri = "terms-of-use";
 $document->isStatic = 1;
 $document->isMobile = 0;
@@ -76,7 +79,7 @@ $document->isMobile = 0;
 BOL_NavigationService::getInstance()->saveDocument($document);
 
 $document = new BOL_Document(); // Privacy policy
-$document->key = "page_81959573";
+$document->key = "privacy_policy";
 $document->uri = "privacy-policy";
 $document->isStatic = 1;
 $document->isMobile = 0;
@@ -84,8 +87,8 @@ $document->isMobile = 0;
 BOL_NavigationService::getInstance()->saveDocument($document);
 
 $document = new BOL_Document(); // Mobile terms of use
-$document->key = "mobile_page_14788567";
-$document->uri = "cp-55";
+$document->key = "mobile_terms_of_use";
+$document->uri = "terms-of-use";
 $document->isStatic = 1;
 $document->isMobile = 1;
 
