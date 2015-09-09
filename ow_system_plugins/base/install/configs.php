@@ -24,9 +24,16 @@
 
 // Configs
 
+// Selected theme
+OW::getConfig()->addConfig("base", "selectedTheme", "simplicity", "Selected theme.");
+
+// TODO Read from ow_version.xml
+OW::getConfig()->addConfig("base", "soft_build", "9900", "Current soft version");
+OW::getConfig()->addConfig("base", "soft_version", "1.8.0", null);
+
+
 OW::getConfig()->addConfig("base", "avatar_big_size", "190", "User avatar width");
 OW::getConfig()->addConfig("base", "avatar_size", "90", "User avatar height");
-OW::getConfig()->addConfig("base", "selectedTheme", "simplicity", "Selected theme.");
 OW::getConfig()->addConfig("base", "military_time", "1", "Desc");
 OW::getConfig()->addConfig("base", "site_name", "", "Site name");
 OW::getConfig()->addConfig("base", "confirm_email", "1", "Confirm email");
@@ -92,7 +99,3 @@ OW::getConfig()->addConfig("base", "profile_question_edit_stamp", "", null);
 OW::getConfig()->addConfig("base", "install_complete", null, null);
 OW::getConfig()->addConfig("base", "users_on_page", "12", null);
 OW::getConfig()->addConfig("base", "avatar_max_upload_size", "1", "Enable file attachments");
-
-// TODO Read from ow_version.xml
-OW::getConfig()->addConfig("base", "soft_build", "9900", "Current soft version");
-OW::getConfig()->addConfig("base", "soft_version", "1.8.0", null);
