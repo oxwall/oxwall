@@ -49,3 +49,24 @@ OW::getNavigation()->addMenuItem("admin_dev", "admin_developer_tools_language", 
 
 // Athorization
 OW::getAuthorization()->addGroup('admin'); // TODO check if the group is used somewhere
+
+// Widgets
+BOL_ComponentAdminService::getInstance()->addPlace(BOL_ComponentAdminService::PLASE_ADMIN_DASHBOARD, false);
+
+$widget = BOL_ComponentAdminService::getInstance()->addWidget("BASE_CMP_RssWidget", true);
+BOL_ComponentAdminService::getInstance()->addWidgetToPlace($widget, BOL_ComponentAdminService::PLASE_ADMIN_DASHBOARD);
+
+$widget = BOL_ComponentAdminService::getInstance()->addWidget("BASE_CMP_CustomHtmlWidget", true);
+BOL_ComponentAdminService::getInstance()->addWidgetToPlace($widget, BOL_ComponentAdminService::PLASE_ADMIN_DASHBOARD);
+
+$widget = BOL_ComponentAdminService::getInstance()->addWidget("ADMIN_CMP_FinanceStatisticWidget", false);
+$placeWidget = BOL_ComponentAdminService::getInstance()->addWidgetToPlace($widget, "admin.dashboard");
+BOL_ComponentAdminService::getInstance()->addWidgetToPosition($placeWidget, BOL_ComponentService::SECTION_TOP);
+
+$widget = BOL_ComponentAdminService::getInstance()->addWidget("ADMIN_CMP_UserStatisticWidget", false);
+$placeWidget = BOL_ComponentAdminService::getInstance()->addWidgetToPlace($widget, BOL_ComponentAdminService::PLASE_ADMIN_DASHBOARD);
+BOL_ComponentAdminService::getInstance()->addWidgetToPosition($placeWidget, BOL_ComponentService::SECTION_TOP);
+
+$widget = BOL_ComponentAdminService::getInstance()->addWidget("ADMIN_CMP_ContentStatisticWidget", false);
+$placeWidget = BOL_ComponentAdminService::getInstance()->addWidgetToPlace($widget, BOL_ComponentAdminService::PLASE_ADMIN_DASHBOARD);
+BOL_ComponentAdminService::getInstance()->addWidgetToPosition($placeWidget, BOL_ComponentService::SECTION_TOP);
