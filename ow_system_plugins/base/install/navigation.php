@@ -41,7 +41,7 @@ OW::getNavigation()->addMenuItem(OW_Navigation::MOBILE_TOP, "base_member_dashboa
 
 $menuItem = new BOL_MenuItem(); // Terms of use
 $menuItem->prefix = "base";
-$menuItem->key = "terms_of_use"; // terms_of_use
+$menuItem->key = "terms_of_use";
 $menuItem->documentKey = "terms_of_use"; 
 $menuItem->type = OW_Navigation::BOTTOM;
 $menuItem->order = 1;
@@ -49,7 +49,7 @@ $menuItem->visibleFor = OW_Navigation::VISIBLE_FOR_ALL;
 
 BOL_NavigationService::getInstance()->saveMenuItem($menuItem);
 
-$menuItem = new BOL_MenuItem(); // Terms of use
+$menuItem = new BOL_MenuItem(); // Privacy policy
 $menuItem->prefix = "base";
 $menuItem->key = "privacy_policy";
 $menuItem->documentKey = "privacy_policy";
