@@ -125,9 +125,15 @@ class OW_MasterPage extends OW_Renderable
     protected function init()
     {
         // add main menu
-        $mainMenu = new BASE_CMP_MainMenu();
+        $mainMenu = new BASE_CMP_Menu();
+        $mainMenuItems = BOL_NavigationService::getInstance()->findMenuItems(BOL_NavigationService::MENU_TYPE_MAIN);
+        $mainMenu->setMenuItems(BOL_NavigationService::getInstance()->getMenuItems($mainMenuItems));
+        
         $this->addMenu(BOL_NavigationService::MENU_TYPE_MAIN, $mainMenu);
-        $this->addComponent('main_menu', $mainMenu);
+        
+        $this->addComponent('main_menu', new BASE_CMP_MainMenu(array(
+            "responsive" => false
+        )));
 
         // add bottom menu
         $bottomMenu = new BASE_CMP_BottomMenu();
