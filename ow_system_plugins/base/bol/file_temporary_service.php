@@ -168,8 +168,7 @@ final class BOL_FileTemporaryService
 
         try
         {
-            $storage = OW::getStorage();
-            $storage->copyFile($tmpFilePath, $fileService->getFilePath($file->id));
+            copy($tmpFilePath, $fileService->getFilePath($file->id));
         }
         catch ( Exception $e )
         {
