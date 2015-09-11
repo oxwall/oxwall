@@ -84,7 +84,7 @@ final class BOL_FileTemporaryService
         $tmpFile->order = $order;
         $this->fileTemporaryDao->save($tmpFile);
 
-        $storage = OW::getStorage();
+		$storage = new BASE_CLASS_FileStorage();
         $storage->copyFile($source, $this->getTemporaryFilePath($tmpFile->id));
 
         return $tmpFile->id;

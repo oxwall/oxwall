@@ -473,4 +473,10 @@ class UPDATE_AmazonCloudStorage implements OW_Storage
         $event = new OW_Event(self::EVENT_ON_FILE_DELETE, $params);
         OW::getEventManager()->trigger($event);
     }
+
+    public function chmod( $path, $permissions )
+    {
+        //chmod($path, $permissions);
+    }
+
 }
