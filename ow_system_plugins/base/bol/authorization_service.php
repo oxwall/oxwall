@@ -1002,6 +1002,12 @@ class BOL_AuthorizationService
     public function assignDefaultRoleToUser( $userId )
     {
         $role = $this->getDefaultRole();
+        
+        if ( empty($role) )
+        {
+            return;
+        }
+        
         $this->saveUserRole((int) $userId, $role->id);
     }
 

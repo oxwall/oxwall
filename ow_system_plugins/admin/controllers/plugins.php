@@ -637,7 +637,7 @@ class ADMIN_CTRL_Plugins extends ADMIN_CTRL_Abstract
             throw new Redirect404Exception();
         }
 
-        $newCoreInfo = $this->pluginService->getCoreInfoForUpdate();
+        $newCoreInfo = $this->pluginService->getPlatformInfoForUpdate();
         $this->assign('text', OW::getLanguage()->text('admin', 'manage_plugins_core_update_request_text', array('oldVersion' => OW::getConfig()->getValue('base', 'soft_version'), 'newVersion' => $newCoreInfo['version'], 'info' => $newCoreInfo['info'])));
         $this->assign('redirectUrl', OW::getRouter()->urlFor('ADMIN_CTRL_Plugins', 'coreUpdate'));
         $this->assign('returnUrl', OW::getRouter()->urlForRoute('admin_default'));
@@ -662,7 +662,7 @@ class ADMIN_CTRL_Plugins extends ADMIN_CTRL_Abstract
         $errorMessage = false;
 
         OW::getApplication()->setMaintenanceMode(true);
-        $this->pluginService->downloadCore($archivePath);
+        $this->pluginService->downloadPlatform($archivePath);
 
         if ( !file_exists($archivePath) )
         {
