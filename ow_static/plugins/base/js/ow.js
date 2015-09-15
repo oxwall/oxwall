@@ -3215,3 +3215,64 @@ OW_UsersApi = function( _settings )
         return _query("unfeature", {"userId": userId}, callback);
     };
 };
+
+OW.ResponsiveMenu = (function() {
+    
+    // Timer
+    var interval, tickCommands = [];
+    
+    function timer(fnc) {
+        interval = interval || window.setInterval(function() {
+            tickCommands.forEach(window.setTimeout);
+        }, 100);
+        
+        return tickCommands.push(fnc) - 1;
+    }
+    
+    // observer
+    function observe(obj, prop, fnc)
+    {
+        var value = obj[prop];
+        
+        return timer(function() {
+            if ( obj[prop] !== value ) {
+                fnc(obj[prop], value);
+                value = obj[prop];
+            }
+        });
+    }
+    
+    // Private methods
+    function changed() {
+        this.node[this.moreItems.length ? "addClass" : "removeClass"]("ow_main_menu_more_active");
+    }
+    
+    function resized() {
+        var items = this.menu.find("[data-el=item]");
+        
+        var more = items.filter(function(index, item) {
+            return $(item).position().top > 0;
+        }.bind(this));
+        
+        if ( more.length !== this.moreItems.length ) {
+            this.moreItems = more.clone();
+            this.visibleItems = items.not(more);
+            this.more.html(this.moreItems);
+            
+            changed.call(this);
+        }
+    }
+    
+    function ResponsiveMenu(uniqId) {
+        this.node = $(document.getElementById(uniqId));
+        this.more = this.node.find("[data-el=more-list]");
+        this.menu = this.node.find("[data-el=list]");
+        this.visibleItems = $();
+        this.moreItems = $();
+        
+        resized.call(this);
+        observe(this.node.get(0), "clientWidth", resized.bind(this));
+    };
+        
+    return ResponsiveMenu;
+})();

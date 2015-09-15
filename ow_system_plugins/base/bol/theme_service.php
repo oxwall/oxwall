@@ -1350,4 +1350,15 @@ class BOL_ThemeService
     {
         return $this->themeDao->findThemesForUpdateCount();
     }
+
+    /**
+     * @param string $key
+     * @param int $themeId
+     * @return string
+     */
+    public function findThemeControlValue( $key, $themeId )
+    {
+        $dto = $this->themeControlValueDao->findByTcNameAndThemeId($key, $themeId);
+        return $dto == null ? null : $dto->getValue();
+    }
 }

@@ -1,0 +1,22 @@
+<div class="ow_responsive_menu ow_left" id="{$uniqId}">
+    {strip}
+    <ul class="ow_main_menu clearfix" data-el="list">
+        {foreach from=$data item='item'}
+            <li class="{$item.class}{if !empty($item.active)} active{/if}" data-el="item">
+                <a href="{$item.url}"{if $item.new_window} target="_blank"{/if}>
+                   <span>{$item.label}</span>
+                </a>
+            </li>
+        {/foreach}
+    </ul>
+    {/strip}
+    <div class="ow_menu_more_wrap ow_cursor_pointer">
+        <div class="ow_menu_more">
+            <div class="ow_menu_more_cont">
+                <ul class="ow_menu_more_list" data-el="more-list">
+
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
