@@ -37,16 +37,19 @@ class OW_Plugin
      * @var string
      */
     protected $dirName;
+
     /**
      * Plugin unique key.
      *
      * @var string
      */
     protected $key;
+
     /**
      * @var boolean
      */
     protected $active;
+
     /**
      * @var BOL_Plugin
      */
@@ -57,27 +60,12 @@ class OW_Plugin
      *
      * @param array $params
      */
-    public function __construct( $params )
+    public function __construct( BOL_Plugin $plugin )
     {
-        if ( isset($params['dir_name']) )
-        {
-            $this->dirName = trim($params['dir_name']);
-        }
-
-        if ( isset($params['key']) )
-        {
-            $this->key = trim($params['key']);
-        }
-
-        if ( isset($params['active']) )
-        {
-            $this->active = (bool) $params['active'];
-        }
-
-        if ( isset($params['dto']) )
-        {
-            $this->dto = $params['dto'];
-        }
+        $this->dirName = trim($plugin->getModule());
+        $this->key = trim($plugin->getKey());
+        $this->active = (bool) $plugin->isActive;
+        $this->dto = $plugin;
     }
 
     /**
@@ -137,7 +125,7 @@ class OW_Plugin
 
     public function getRootDir()
     {
-        return OW_DIR_PLUGIN . $this->dirName . DS;
+        return ($this->dto->isSystem ? OW_DIR_SYSTEM_PLUGIN : OW_DIR_PLUGIN) . $this->dirName . DS;
     }
 
     public function getMobileDir()
@@ -273,24 +261,5 @@ class OW_Plugin
     public function getApiClassesDir()
     {
         return $this->getApiDir() . 'classes' . DS;
-    }
-}
-
-class OW_SystemPlugin extends OW_Plugin
-{
-
-    public function __construct( $params )
-    {
-        parent::__construct($params);
-    }
-
-    /**
-     * @see OW_Plugin::getRootDir()
-     *
-     * @return unknown
-     */
-    public function getRootDir()
-    {
-        return OW_DIR_SYSTEM_PLUGIN . $this->dirName . DS;
     }
 }
