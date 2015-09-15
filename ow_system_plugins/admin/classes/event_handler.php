@@ -36,7 +36,7 @@ class ADMIN_CLASS_EventHandler
         $eventManager->bind('admin.disable_fields_on_edit_profile_question', array($this, 'onGetDisableActionList'));
         $eventManager->bind('admin.disable_fields_on_edit_profile_question', array($this, 'onGetJoinStampDisableActionList'), 999);
 
-        $eventManager->bind('admin.add_admin_notification', array($this, 'addAdminNotification'));
+        $eventManager->bind('admin.add_admin_notification', array($this, 'onAddAdminNotification'));
         $eventManager->bind('admin.init_floatbox', array($this, 'initFloatbox'));
     }
 
