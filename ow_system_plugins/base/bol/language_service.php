@@ -838,36 +838,30 @@ class BOL_LanguageService
         }
     }
 
-    public function importPrefixFromZip( $path, $key, $refreshCache=true, $addLanuage=false )
+    public function importPrefixFromDir( $path, $key, $refreshCache=true, $addLanuage=false )
     {
-        $importDir = $this->getImportDirPath() . $key . DS;
-
-        mkdir($importDir);
-
-        chmod($importDir, 0777);
-
-        $this->cleanImportDir($importDir);
-
-        $zip = new ZipArchive();
-
-        $zip->open($path);
-
-        $zip->extractTo($importDir);
-
-        $zip->close();
-
-        $arr = glob("{$importDir}language_*");
-
-        $langsToImport = array();
+        if ( !file_exists($path) )
+        {
+            throw new InvalidArgumentException( "Directory not found : {$path}" );
+        }
+        
+        $arr = glob("{$path}*");
+        
         $prefixesToImport = array();
+        $langsToImport = array();
 
         foreach ( $arr as $index => $dir )
         {
             $dh = opendir($dir);
-
+            
+            if ( !file_exists($dir . DS . 'language.xml') )
+            {
+                continue;
+            }
+            
             $langXmlE = simplexml_load_file($dir . DS . 'language.xml'); /* @var $xmlElement SimpleXMLElement */
 
-            $l = array('label' => strval($langXmlE->attributes()->label), 'tag' => strval($langXmlE->attributes()->tag));
+            $l = array('label' => strval($langXmlE->attributes()->label), 'tag' => strval($langXmlE->attributes()->tag), 'path' => $dir . DS);
 
             if ( !in_array($l, $langsToImport) )
             {
@@ -879,7 +873,7 @@ class BOL_LanguageService
                 if ( $file == '.' || $file == '..' )
                     continue;
 
-                if ( is_dir("{$dir}/{$file}") )
+                if ( is_dir($dir.DS.$file) )
                 {
                     //printVar("$file/");
                 }
@@ -889,8 +883,13 @@ class BOL_LanguageService
                     {
                         continue;
                     }
+                    
+                    if ( !file_exists($dir.DS.$file) )
+                    {
+                        continue;
+                    }
 
-                    $xmlElement = simplexml_load_file("{$dir}/{$file}"); /* @var $xmlElement SimpleXMLElement */
+                    $xmlElement = simplexml_load_file($dir.DS.$file); /* @var $xmlElement SimpleXMLElement */
 
                     $arr = $xmlElement->xpath('/prefix/key');
                     $tmp = $xmlElement->xpath('/prefix');
@@ -932,8 +931,14 @@ class BOL_LanguageService
 
             foreach ( $prefixesToImport as $prefixToImport )
             {
-                $xml = simplexml_load_file($importDir . "language_{$langToImport['tag']}" . DS . "{$prefixToImport['prefix']}.xml");
+                $filePath = $langToImport['path'] . "{$prefixToImport['prefix']}.xml";
+                
+                if ( !file_exists($filePath) )
+                {
+                    continue;
+                }
 
+                $xml = simplexml_load_file($filePath);
                 $this->importPrefix($xml, false);
             }
 
@@ -942,6 +947,33 @@ class BOL_LanguageService
                 $this->generateCacheForAllActiveLanguages();
             }
         }
+    }
+    
+    public function importPrefixFromZip( $path, $key, $refreshCache=true, $addLanuage=false )
+    {
+        $importDir = $this->getImportDirPath() . $key . DS;
+        @mkdir($importDir);
+
+        chmod($importDir, 0777);
+
+        $this->cleanImportDir($importDir);
+
+        $zip = new ZipArchive();
+
+        $zip->open($path);
+
+        $zip->extractTo($importDir);
+
+        $zip->close();
+
+        $langsDir = $importDir;
+        
+        if ( file_exists($importDir . 'langs') )
+        {
+            $langsDir = $importDir . 'langs' . DS;
+        }
+        
+        $this->importPrefixFromDir($langsDir, $key, $refreshCache, $addLanuage);
 
         UTIL_File::removeDir($importDir);
     }
