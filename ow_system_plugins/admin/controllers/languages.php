@@ -94,6 +94,20 @@ class ADMIN_CTRL_Languages extends ADMIN_CTRL_Abstract
         return new BASE_CMP_ContentMenu($items);
     }
 
+    private function getImportFilePatch($tag, $prefix)
+    {
+        $path = BOL_LanguageService::getInstance()->getImportDirPath();
+        
+        $filepath = $path . "language_{$tag}" . DS . "{$prefix}.xml";
+        
+        if ( file_exists($path . 'langs' . DS) )
+        {
+            $filepath = $path . 'langs' . DS . "{$tag}" . DS . "{$prefix}.xml";
+        }
+        
+        return $filepath;
+    }
+    
     public function import()
     {
         $service = BOL_LanguageService::getInstance();
@@ -110,8 +124,7 @@ class ADMIN_CTRL_Languages extends ADMIN_CTRL_Abstract
 
                         foreach ( $value as $prefix )
                         {
-                            $xml = simplexml_load_file($service->getImportDirPath() . "language_{$tag}" . DS . "{$prefix}.xml");
-
+                            $xml = simplexml_load_file($this->getImportFilePatch($tag, $prefix));
                             $service->importPrefix($xml, false, true);
                         }
 
@@ -128,7 +141,7 @@ class ADMIN_CTRL_Languages extends ADMIN_CTRL_Abstract
                     $tag = str_replace('lang_', '', $keys[0]);
 
                     $prefix = $_POST['set']['lang']["lang_{$tag}"][0];
-                    $xml = simplexml_load_file($service->getImportDirPath() . "{$prefix}.xml");
+                    $xml = simplexml_load_file($service->getImportPath() . "{$prefix}.xml");
 
                     $service->importPrefix($xml, true, true);
 
@@ -355,7 +368,19 @@ class ADMIN_CTRL_Languages extends ADMIN_CTRL_Abstract
 
         return $result;
     }
-
+    
+    private function getImportPath()
+    {
+        $path = BOL_LanguageService::getInstance()->getImportDirPath();
+        
+        if ( file_exists($path . 'langs' . DS) )
+        {
+            $path = $path . 'langs' . DS;
+        }
+        
+        return $path;
+    }
+    
     private function setImportInfo()
     {
         $service = BOL_LanguageService::getInstance();
@@ -363,7 +388,9 @@ class ADMIN_CTRL_Languages extends ADMIN_CTRL_Abstract
         $langsToImport = array();
         $prefixesToImport = array();
 
-        $arr = glob("{$service->getImportDirPath()}language_*");
+        $path = $this->getImportPath();
+        
+        $arr = glob("{$path}*");
         $type = '';
 
         if ( !empty($arr) )
@@ -441,7 +468,7 @@ class ADMIN_CTRL_Languages extends ADMIN_CTRL_Abstract
         else
         {
             $type = "single-xml";
-            $arr = glob("{$service->getImportDirPath()}*.xml");
+            $arr = glob("{$path}*.xml");
 
             if ( empty($arr) || !file_exists($arr[0]) )
             {
@@ -587,9 +614,8 @@ class ADMIN_CTRL_Languages extends ADMIN_CTRL_Abstract
             $tmpName = $_FILES['file']['tmp_name'];
 
             $uploadFilePath = $languageService->getImportDirPath() . $_FILES['file']['name'];
-
             move_uploaded_file($tmpName, $uploadFilePath);
-            
+
             if ( file_exists($tmpName) )
             {
                 unlink($tmpName);
@@ -606,7 +632,7 @@ class ADMIN_CTRL_Languages extends ADMIN_CTRL_Abstract
                     $zip = new ZipArchive();
 
                     $opened = $zip->open($uploadFilePath);
-
+                    
                     if ( !$opened )
                     {
                         @unlink($uploadFilePath);
@@ -615,7 +641,6 @@ class ADMIN_CTRL_Languages extends ADMIN_CTRL_Abstract
                     }
 
                     $zip->extractTo($languageService->getImportDirPath());
-
                     $zip->close();
 
                     @unlink($uploadFilePath);
@@ -660,15 +685,15 @@ class ADMIN_CTRL_Languages extends ADMIN_CTRL_Abstract
 
                 $langDto = $languageService->findById($langId); /* @var $langDto BOL_Language */
 
-
-
-                $langDir = "language_{$langDto->getTag()}/";
+                $langDir = 'langs' . DS . $langDto->getTag() . DS;
                 $za->addEmptyDir($langDir);
 
                 $dir = "{$languageService->getExportDirPath()}{$langDir}";
 
                 if ( !is_dir($dir) )
-                    mkdir($dir);
+                {
+                    mkdir($dir, 0777, true);
+                }
 
                 $file = $dir . "{$langDto->getTag()}.xml";
                 $fd = fopen($file, 'w');
