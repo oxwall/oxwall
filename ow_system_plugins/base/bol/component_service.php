@@ -115,6 +115,27 @@ class BOL_ComponentService
         return $this->findPlace($placeName)->id;
     }
     
+    /**
+     * 
+     * @param string $placeName
+     * @param boolean $editable
+     * @return BOL_Place
+     */
+    public function addPlace( $placeName, $editable = true )
+    {
+        $place = $this->findPlace($placeName);
+        
+        if ( $place === null )
+        {
+            $place = new BOL_Place();
+        }
+        
+        $place->name = $placeName;
+        $place->editableByUser = $editable;
+        
+        return $this->placeDao->save($place);
+    }
+    
     protected function fetchArrayList( $list, $keyField = null )
     {
         if ( empty($list) )
@@ -296,7 +317,7 @@ class BOL_ComponentService
      * @param string $uniqName
      * @return BOL_ComponentPlace
      */
-    public function addWidgetToPlace( BOL_Component $widget, $place, $uniqName = null )
+    public function addWidgetToPlace( BOL_Component $widget, $place, $uniqName = null, $clone = false )
     {
         $componentPlaceDao = BOL_ComponentPlaceDao::getInstance();
         $place = trim($place);
@@ -312,7 +333,7 @@ class BOL_ComponentService
         $place = $this->saveOrUpdatePlace($place);
         
         $componentPlaceDto = new BOL_ComponentPlace();
-        $componentPlaceDto->clone = false;
+        $componentPlaceDto->clone = $clone;
         $componentPlaceDto->componentId = $widget->id;
         $componentPlaceDto->uniqName = $uniqName;
         $componentPlaceDto->placeId = $place->id;

@@ -1,0 +1,30 @@
+.jhtmlarea { display: inline block; }
+.jhtmlarea div { padding: 0px; margin: 0px; }
+.toolbar { padding: 2px 1px;}
+.toolbar ul {margin: 0px; padding: 0px; float: left;}
+.toolbar ul li { list-style-type: none; float: left; padding: 0px; margin: 1px;}
+.toolbar ul a:hover { border: solid 1px #626060; padding: 0px; }
+.toolbar ul li a { display: block; width: 18px; height: 18px; background: url(wysiwyg.png) no-repeat 0 0; border: none; cursor: pointer; padding: 0px; border-radius: 2px; -moz-border-radius: 2px;	-webkit-border-radius: 2px; border: 1px solid #ccc; }
+.toolbar ul li a.highlighted { border: solid 1px #aaa; background-color: #bbb; padding: 0; }
+.toolbar ul li.separator {height: 16px; margin: 0 2px 0 3px; border-left: 1px solid #ccc;}
+.toolbar ul li.separator:hover { padding: 1px; background-color: #fff; border-top:none; border-bottom:none; border-right:none;}
+
+.toolbar ul li a.bold { background-position: -1px -1px; }
+.toolbar ul li.ow_ws_active a.bold{background-position: -1px -26px;}
+.toolbar ul li a.italic { background-position: -23px -1px; }
+.toolbar ul li.ow_ws_active a.italic { background-position: -23px -26px; }
+.toolbar ul li a.underline { background-position: -45px -1px;}
+.toolbar ul li.ow_ws_active a.underline { background-position: -45px -26px;}
+.toolbar ul li a.orderedlist { background-position: -67px -1px;}
+.toolbar ul li.ow_ws_active a.orderedlist { background-position: -67px -26px;}
+.toolbar ul li a.unorderedlist { background-position: -89px -1px;}
+.toolbar ul li.ow_ws_active a.unorderedlist { background-position: -89px -26px;}
+.toolbar ul li a.link { background-position: -221px -1px;}
+.toolbar ul li a.image { background-position: -177px -1px;}
+.toolbar ul li a.video { background-position: -199px -1px;}
+.toolbar ul li a.html { background-position: -155px -1px;}
+.toolbar ul li a.switchHtml { background-position: -133px -1px;}
+.toolbar ul li a.more { background-position: -111px -1px;}
+.toolbar ul.switch_html{
+    float: right;
+}
