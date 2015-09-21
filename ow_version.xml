@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <ow>
     <name>Oxwall community software</name>
-    <build>9646</build>
-    <version>1.7.5</version>
+    <build>9900</build>
+    <version>1.8.0</version>
     <copyright>Copyright 2012 Oxwall Foundation. All rights reserved.</copyright>
     <license>Common Public Attribution License Version 1.0</license>
     <licenseUrl>http://www.oxwall.org/license</licenseUrl>

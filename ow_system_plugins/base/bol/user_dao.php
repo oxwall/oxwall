@@ -807,7 +807,7 @@ class BOL_UserDao extends OW_BaseDao
         return $this->dbo->queryForObjectList($sql, $this->getDtoClassName());
     }
 
-    private function getQuestionWhereString( BOL_Question $question, $value, $prefix = '' )
+    public function getQuestionWhereString( BOL_Question $question, $value, $prefix = '' )
     {
         $result = '';
         $prefix = $this->dbo->escapeString($prefix);

@@ -54,6 +54,14 @@ class Updater
     {
         return UPDATE_WidgetService::getInstance();
     }
+    
+    /**
+     * @return UPDATE_WidgetService
+     */
+    public static function getMobileWidgeteService()
+    {
+        return UPDATE_MobileWidgetService::getInstance();
+    }
 
     /**
      * @return UPDATE_ConfigService
@@ -97,7 +105,7 @@ class Updater
             switch ( true )
             {
                 case defined('OW_USE_AMAZON_S3_CLOUDFILES') && OW_USE_AMAZON_S3_CLOUDFILES :
-                    self::$storage = new UPDATE_AmazonCloudStorage();
+                    self::$storage = new BASE_CLASS_AmazonCloudStorage();
                     break;
 
                 /* case defined('OW_USE_CLOUDFILES') && OW_USE_CLOUDFILES :

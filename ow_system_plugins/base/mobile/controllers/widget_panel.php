@@ -49,12 +49,14 @@ class BASE_MCTRL_WidgetPanel extends OW_MobileActionController
         $defaultComponents = $state['defaultComponents'];
         $defaultPositions = $state['defaultPositions'];
         $defaultSettings = $state['defaultSettings'];
-
+        
         $componentPanel = new BASE_MCMP_WidgetPanel($place, $entityId, $defaultComponents, $componentTemplate);
         $componentPanel->setPositionList($defaultPositions);
         $componentPanel->setSettingList($defaultSettings);
-
-        $this->assign('dnd', $componentPanel->render());
+        
+        $this->addComponent('dnd', $componentPanel);
+        
+        return $componentPanel;
     }
 
     public function dashboard()
@@ -68,7 +70,12 @@ class BASE_MCTRL_WidgetPanel extends OW_MobileActionController
         $this->setPageHeadingIconClass('ow_ic_house');
 
         $place = BOL_MobileWidgetService::PLACE_MOBILE_DASHBOARD;
-        $this->initDragAndDrop($place, OW::getUser()->getId());
+        $componentPanel = $this->initDragAndDrop($place, OW::getUser()->getId());
+        
+        $componentPanel->setAdditionalSettingList(array(
+            'entityId' => OW::getUser()->getId(),
+            'entity' => 'user'
+        ));
     }
 
     public function profile( $paramList )
@@ -123,12 +130,22 @@ class BASE_MCTRL_WidgetPanel extends OW_MobileActionController
         $this->addComponent('about', OW::getClassInstance("BASE_MCMP_ProfileAbout", $userDto->id, 80));
         
         $place = BOL_MobileWidgetService::PLACE_MOBILE_PROFILE;
-        $this->initDragAndDrop($place, $userDto->id);
+        $componentPanel = $this->initDragAndDrop($place, $userDto->id);
+        
+        $componentPanel->setAdditionalSettingList(array(
+            'entityId' => $userDto->id,
+            'entity' => 'user'
+        ));
     }
     
     public function index()
     {
         $place = BOL_MobileWidgetService::PLACE_MOBILE_INDEX;
-        $this->initDragAndDrop($place);
+        $componentPanel = $this->initDragAndDrop($place);
+        
+        $componentPanel->setAdditionalSettingList(array(
+            'entityId' => null,
+            'entity' => 'site'
+        ));
     }
 }
