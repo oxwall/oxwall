@@ -32,8 +32,10 @@
 class BASE_CLASS_QueryBuilderEvent extends OW_Event
 {
     const FIELD_USER_ID = "userId";
+    const FIELD_CONTENT_ID = "contentId";
     
     const TABLE_USER = "user";
+    const TABLE_CONTENT = "content";
     
     public function __construct( $name, array $params = array() ) 
     {

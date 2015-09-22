@@ -49,6 +49,8 @@ final class BOL_UserService
     const USER_CONTEXT_API = BOL_UserOnlineDao::CONTEXT_VAL_API;
     const PASSWORD_RESET_CODE_EXPIRATION_TIME = 3600;
     const PASSWORD_RESET_CODE_UPDATE_TIME = 600;
+    
+    const EVENT_USER_QUERY_FILTER = BOL_UserDao::EVENT_QUERY_FILTER;
 
     /**
      * @var BOL_UserDao

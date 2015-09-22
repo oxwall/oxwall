@@ -40,6 +40,8 @@ class BOL_UserDao extends OW_BaseDao
     const CACHE_TAG_FEATURED_LIST = 'base.featured_list';
     const CACHE_TAG_LATEST_LIST = 'base.latest_list';
     const CACHE_LIFE_TIME = 86400; //24 hour
+    
+    const EVENT_QUERY_FILTER = "base.query.user_filter";
 
     /**
      * Singleton instance.
@@ -110,7 +112,7 @@ class BOL_UserDao extends OW_BaseDao
         $tableAlias = $tables[BASE_CLASS_QueryBuilderEvent::TABLE_USER];
         $keyField = $fields[BASE_CLASS_QueryBuilderEvent::FIELD_USER_ID];
         
-        $event = new BASE_CLASS_QueryBuilderEvent("base.query.user_filter", array_merge(array(
+        $event = new BASE_CLASS_QueryBuilderEvent(self::EVENT_QUERY_FILTER, array_merge(array(
             "tables" => $tables,
             "fields" => $fields
         ), $params));
