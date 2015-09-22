@@ -275,10 +275,10 @@ class BOL_ContentService
      * 
      * @param array $tables
      * @param array $fields
-     * @param array $params
+     * @param array $options
      * @return array
      */
-    public function getQueryFilter( array $tables, array $fields, $params = array() )
+    public function getQueryFilter( array $tables, array $fields, $options = array() )
     {
         if ( empty($tables[BASE_CLASS_QueryBuilderEvent::TABLE_CONTENT]) 
                 || empty($fields[BASE_CLASS_QueryBuilderEvent::FIELD_CONTENT_ID]) )
@@ -289,7 +289,7 @@ class BOL_ContentService
         $event = new BASE_CLASS_QueryBuilderEvent("base.query.content_filter", array_merge(array(
             "tables" => $tables,
             "fields" => $fields
-        ), $params));
+        ), $options));
 
         OW::getEventManager()->trigger($event);
 
