@@ -1857,8 +1857,17 @@ final class BOL_UserService
         return array('questions' => $questionArray, 'data' => $questionData, 'labels' => $questionLabelList);
     }
     
-    public function getQueryFilter()
+    /**
+     * Returns query parts for filtering users ( by default: suspended, not approved, not verified ). 
+     * Result array includes strings: join, where, order
+     * 
+     * @param array $tables
+     * @param array $fields
+     * @param array $params
+     * @return array
+     */
+    public function getQueryFilter( array $tables, array $fields, $params = array() )
     {
-        
+        return $this->userDao->getQueryFilter($tables, $fields, $params);
     }
 }

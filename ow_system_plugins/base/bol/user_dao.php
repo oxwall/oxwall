@@ -91,6 +91,8 @@ class BOL_UserDao extends OW_BaseDao
 
     
     /**
+     * Returns query parts for filtering users ( by default: suspended, not approved, not verified ). 
+     * Result array includes strings: join, where, order
      * 
      * @param array $tables
      * @param array $fields
@@ -142,7 +144,8 @@ class BOL_UserDao extends OW_BaseDao
     }
 
     /**
-     * Returns query parts for all user lists queries
+     * Returns query parts for filtering users ( by default: suspended, not approved, not verified ). 
+     * Result array includes strings: join, where, order
      * 
      * @deprecated since version 1.8.1; use getQueryFilter instead
      * 
