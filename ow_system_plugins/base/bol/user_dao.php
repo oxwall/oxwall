@@ -98,10 +98,10 @@ class BOL_UserDao extends OW_BaseDao
      * 
      * @param array $tables
      * @param array $fields
-     * @param array $params
+     * @param array $options
      * @return array
      */
-    public function getQueryFilter( array $tables, array $fields, $params = array() )
+    public function getQueryFilter( array $tables, array $fields, $options = array() )
     {
         if ( empty($tables[BASE_CLASS_QueryBuilderEvent::TABLE_USER]) 
                 || empty($fields[BASE_CLASS_QueryBuilderEvent::FIELD_USER_ID]) )
@@ -115,7 +115,7 @@ class BOL_UserDao extends OW_BaseDao
         $event = new BASE_CLASS_QueryBuilderEvent(self::EVENT_QUERY_FILTER, array_merge(array(
             "tables" => $tables,
             "fields" => $fields
-        ), $params));
+        ), $options));
 
         $userTable = "base_user_table_alias";
         $event->addJoin("INNER JOIN `" . $this->getTableName() . "` $userTable ON $userTable.`id` = `$tableAlias`.`$keyField`");
