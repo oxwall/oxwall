@@ -1856,4 +1856,9 @@ final class BOL_UserService
 
         return array('questions' => $questionArray, 'data' => $questionData, 'labels' => $questionLabelList);
     }
+    
+    public function getQueryFilter()
+    {
+        
+    }
 }

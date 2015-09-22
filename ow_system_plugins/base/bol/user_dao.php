@@ -89,9 +89,29 @@ class BOL_UserDao extends OW_BaseDao
         return OW_DB_PREFIX . 'base_user';
     }
 
-    public function getUserQueryFilter( $tableAlias, $keyField, $params = array() )
+    
+    /**
+     * 
+     * @param array $tables
+     * @param array $fields
+     * @param array $params
+     * @return array
+     */
+    public function getQueryFilter( array $tables, array $fields, $params = array() )
     {
-        $event = new BASE_CLASS_QueryBuilderEvent("base.query.user_filter", $params);
+        if ( empty($tables[BASE_CLASS_QueryBuilderEvent::TABLE_USER]) 
+                || $fields[BASE_CLASS_QueryBuilderEvent::FIELD_USER_ID] )
+        {
+            throw new InvalidArgumentException("User table name and key field were not provided.");
+        }
+        
+        $tableAlias = $tables[BASE_CLASS_QueryBuilderEvent::TABLE_USER];
+        $keyField = $fields[BASE_CLASS_QueryBuilderEvent::FIELD_USER_ID];
+        
+        $event = new BASE_CLASS_QueryBuilderEvent("base.query.user_filter", array_merge(array(
+            "tables" => $tables,
+            "fields" => $fields
+        ), $params));
 
         $userTable = "base_user_table_alias";
         $event->addJoin("INNER JOIN `" . $this->getTableName() . "` $userTable ON $userTable.`id` = `$tableAlias`.`$keyField`");
@@ -121,6 +141,25 @@ class BOL_UserDao extends OW_BaseDao
         );
     }
 
+    /**
+     * Returns query parts for all user lists queries
+     * 
+     * @deprecated since version 1.8.1; use getQueryFilter instead
+     * 
+     * @param string $tableAlias
+     * @param string $keyField
+     * @param array $params
+     * @return array
+     */
+    public function getUserQueryFilter( $tableAlias, $keyField, $params = array() )
+    {
+        return $this->getQueryFilter(array(
+            BASE_CLASS_QueryBuilderEvent::TABLE_USER => $tableAlias
+        ), array(
+            BASE_CLASS_QueryBuilderEvent::FIELD_USER_ID => $keyField
+        ), $params);
+    }
+    
     /**
      * Returns user for provided username/email.
      *

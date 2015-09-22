@@ -31,11 +31,9 @@
  */
 class BASE_CLASS_QueryBuilderEvent extends OW_Event
 {
-    const JOIN_INNER = "inner-join";
-    const JOIN_LEFT = "left-join";
+    const FIELD_USER_ID = "userId";
     
-    const WHERE_OR = "where-or";
-    const WHERE_AND = "where-and";
+    const TABLE_USER = "userId";
     
     public function __construct( $name, array $params = array() ) 
     {
