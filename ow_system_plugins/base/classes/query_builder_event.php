@@ -40,7 +40,7 @@ class BASE_CLASS_QueryBuilderEvent extends OW_Event
     const WHERE_AND = "where-and";
     const WHERE_OR = "where-or";
     
-    const ORDER_ASK = "ASK";
+    const ORDER_ASC = "ASC";
     const ORDER_DESC = "DESC";
     
     public function __construct( $name, array $params = array() ) 
@@ -92,7 +92,7 @@ class BASE_CLASS_QueryBuilderEvent extends OW_Event
         return "(" . implode( $type == self::WHERE_AND ? ") AND (" : ") OR (", $this->getWhereList() ) . ")";
     }
 
-    public function addOrder( $field, $order = self::ORDER_ASK )
+    public function addOrder( $field, $order = self::ORDER_ASC )
     {
         $this->data["order"][$field] = $order;
     }
