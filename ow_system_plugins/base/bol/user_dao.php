@@ -104,9 +104,9 @@ class BOL_UserDao extends OW_BaseDao
     public function getQueryFilter( array $tables, array $fields, $params = array() )
     {
         if ( empty($tables[BASE_CLASS_QueryBuilderEvent::TABLE_USER]) 
-                || $fields[BASE_CLASS_QueryBuilderEvent::FIELD_USER_ID] )
+                || empty($fields[BASE_CLASS_QueryBuilderEvent::FIELD_USER_ID]) )
         {
-            throw new InvalidArgumentException("User table name and key field were not provided.");
+            throw new InvalidArgumentException("User table name or key field were not provided.");
         }
         
         $tableAlias = $tables[BASE_CLASS_QueryBuilderEvent::TABLE_USER];

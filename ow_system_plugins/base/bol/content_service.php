@@ -281,9 +281,9 @@ class BOL_ContentService
     public function getQueryFilter( array $tables, array $fields, $params = array() )
     {
         if ( empty($tables[BASE_CLASS_QueryBuilderEvent::TABLE_CONTENT]) 
-                || $fields[BASE_CLASS_QueryBuilderEvent::FIELD_CONTENT_ID] )
+                || empty($fields[BASE_CLASS_QueryBuilderEvent::FIELD_CONTENT_ID]) )
         {
-            throw new InvalidArgumentException("Content table name and key field were not provided.");
+            throw new InvalidArgumentException("Content table name or key field were not provided.");
         }
         
         $event = new BASE_CLASS_QueryBuilderEvent("base.query.content_filter", array_merge(array(
