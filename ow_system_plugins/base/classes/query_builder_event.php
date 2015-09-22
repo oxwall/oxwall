@@ -31,11 +31,17 @@
  */
 class BASE_CLASS_QueryBuilderEvent extends OW_Event
 {
-    const JOIN_INNER = "inner-join";
-    const JOIN_LEFT = "left-join";
+    const FIELD_USER_ID = "userId";
+    const FIELD_CONTENT_ID = "contentId";
     
-    const WHERE_OR = "where-or";
+    const TABLE_USER = "user";
+    const TABLE_CONTENT = "content";
+    
     const WHERE_AND = "where-and";
+    const WHERE_OR = "where-or";
+    
+    const ORDER_ASC = "ASC";
+    const ORDER_DESC = "DESC";
     
     public function __construct( $name, array $params = array() ) 
     {
@@ -86,7 +92,7 @@ class BASE_CLASS_QueryBuilderEvent extends OW_Event
         return "(" . implode( $type == self::WHERE_AND ? ") AND (" : ") OR (", $this->getWhereList() ) . ")";
     }
 
-    public function addOrder( $field, $order = "ASC" )
+    public function addOrder( $field, $order = self::ORDER_ASC )
     {
         $this->data["order"][$field] = $order;
     }

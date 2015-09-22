@@ -40,6 +40,8 @@ class BOL_ContentService
     const EVENT_AFTER_CHANGE = "content.before_change";
     const EVENT_BEFORE_DELETE = "content.before_delete";
     
+    const EVENT_CONTENT_QUERY_FILTER = "base.query.content_filter";
+    
     const STATUS_ACTIVE = "active";
     const STATUS_APPROVAL = "approval";
     const STATUS_SUSPENDED = "suspended";
@@ -265,5 +267,36 @@ class BOL_ContentService
     public function deleteContent( $entityType, $entityId )
     {
         $this->deleteContentList($entityType, array($entityId));
+    }
+    
+    /**
+     * Returns query parts for filtering content. 
+     * Result array includes strings: join, where, order
+     * 
+     * @param array $tables
+     * @param array $fields
+     * @param array $params
+     * @return array
+     */
+    public function getQueryFilter( array $tables, array $fields, $params = array() )
+    {
+        if ( empty($tables[BASE_CLASS_QueryBuilderEvent::TABLE_CONTENT]) 
+                || empty($fields[BASE_CLASS_QueryBuilderEvent::FIELD_CONTENT_ID]) )
+        {
+            throw new InvalidArgumentException("Content table name or key field were not provided.");
+        }
+        
+        $event = new BASE_CLASS_QueryBuilderEvent("base.query.content_filter", array_merge(array(
+            "tables" => $tables,
+            "fields" => $fields
+        ), $params));
+
+        OW::getEventManager()->trigger($event);
+
+        return array(
+            "join" => $event->getJoin(),
+            "where" => $event->getWhere(),
+            "order" => $event->getOrder()
+        );
     }
 }
