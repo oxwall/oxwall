@@ -40,6 +40,8 @@ class ADMIN_CTRL_Permissions extends ADMIN_CTRL_Abstract
     public function __construct()
     {
         parent::__construct();
+        
+        require_once(OW_DIR_LIB . 'password_compat' . DS . 'password.php');
 
         $this->setPageHeading(OW::getLanguage()->text('admin', 'permissions_page_heading'));
         $this->setPageHeadingIconClass('ow_ic_lock');
@@ -131,9 +133,13 @@ class ADMIN_CTRL_Permissions extends ADMIN_CTRL_Abstract
                         $logger->writeLog();
                     }
 
-                    $data['password'] = crypt($data['password'], OW_PASSWORD_SALT);
                     $config->saveConfig('base', 'guests_can_view', (int) $data['guests_can_view']);
-                    $config->saveConfig('base', 'guests_can_view_password', $data['password']);
+                    $config->saveConfig('base', 'guests_can_view_password', password_hash($data['password'] . OW_PASSWORD_SALT, PASSWORD_DEFAULT));
+                    
+                    if( $config->getValue('base', 'passwordHashChanged') === '0' )
+                    {
+                        $config->saveConfig('base', 'passwordHashChanged', '1');
+                    }
                 }
 
                 OW::getFeedback()->info($language->text('admin', 'permission_global_privacy_settings_success_message'));

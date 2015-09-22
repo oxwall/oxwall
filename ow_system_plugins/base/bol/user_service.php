@@ -136,6 +136,8 @@ final class BOL_UserService
      */
     private function __construct()
     {
+        require_once(OW_DIR_LIB . 'password_compat' . DS . 'password.php');
+
         $this->userDao = BOL_UserDao::getInstance();
         $this->loginCookieDao = BOL_LoginCookieDao::getInstance();
         $this->userFeaturedDao = BOL_UserFeaturedDao::getInstance();
@@ -557,15 +559,27 @@ final class BOL_UserService
         {
             return false;
         }
-
-        $password = $this->hashPassword($value);
-
-        if ( $user->password === $password )
+        
+        if( $this->checkPasswordChange($userId) != null )
         {
-            return true;
+            if( password_verify($value . OW_PASSWORD_SALT, $user->password) )
+            {
+                return true;
+            }
+            
+            return false;
         }
+        else
+        {
+            $password = $this->hashPassword($value);
 
-        return false;
+            if ( $user->password === $password )
+            {
+                return true;
+            }
+
+            return false;
+        }
     }
 
     public function markAsFeatured( $userId )
@@ -800,12 +814,22 @@ final class BOL_UserService
     {
         if ( !empty($password) )
         {
-            $this->userDao->updatePassword((int) $userId, $this->hashPassword($password));
+            $this->userDao->updatePassword((int) $userId, $this->changePasswordHash($password));
+            
+            if( $this->checkPasswordChange($userId) == null )
+            {
+                $this->updatePasswordChanged($userId);
+            }
         }
         else
         {
             throw new InvalidArgumentException('Invalid password!');
         }
+    }
+    
+    public function updatePasswordChanged( $userId )
+    {
+        $this->userDao->updatePasswordChanged($userId);
     }
 
     public function suspend( $userId, $message )
@@ -883,6 +907,11 @@ final class BOL_UserService
     {
         return hash('sha256', OW_PASSWORD_SALT . $password);
     }
+    
+    public function changePasswordHash( $password )
+    {
+        return password_hash($password . OW_PASSWORD_SALT, PASSWORD_DEFAULT);
+    }
 
     public function findListByRoleId( $roleId, $first, $count )
     {
@@ -948,7 +977,8 @@ final class BOL_UserService
         $user = new BOL_User();
 
         $user->username = trim($username);
-        $user->password = BOL_UserService::getInstance()->hashPassword($password);
+        $user->password = BOL_UserService::getInstance()->changePasswordHash($password);
+        $user->passwordChange = '1';
         $user->email = trim($email);
         $user->joinStamp = time();
         $user->activityStamp = time();
@@ -1511,7 +1541,13 @@ final class BOL_UserService
             throw new LogicException(OW::getLanguage()->text('base', 'reset_password_length_error_message', array('min' => UTIL_Validator::PASSWORD_MIN_LENGTH, 'max' => UTIL_Validator::PASSWORD_MAX_LENGTH)));
         }
 
-        $user->setPassword($this->hashPassword($data['password']));
+        $user->setPassword($this->changePasswordHash($data['password']));
+        
+        if( $this->checkPasswordChange($resetCode->getUserId()) == null )
+        {
+            $this->updatePasswordChanged($resetCode->getUserId());
+        }
+
         $this->saveOrUpdate($user);
         $this->deleteResetCode($resetCode->getId());
     }
@@ -1855,5 +1891,10 @@ final class BOL_UserService
         }
 
         return array('questions' => $questionArray, 'data' => $questionData, 'labels' => $questionLabelList);
+    }
+    
+    public function checkPasswordChange( $userId )
+    {
+        return $this->userDao->checkPasswordChange($userId);
     }
 }

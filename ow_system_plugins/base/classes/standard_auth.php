@@ -50,6 +50,8 @@ class BASE_CLASS_StandardAuth extends OW_AuthAdapter
      */
     public function __construct( $identity, $password )
     {
+        require_once(OW_DIR_LIB . 'password_compat' . DS . 'password.php');
+
         $this->identity = trim($identity);
         $this->password = trim($password);
 
@@ -72,11 +74,30 @@ class BASE_CLASS_StandardAuth extends OW_AuthAdapter
             return new OW_AuthResult(OW_AuthResult::FAILURE_IDENTITY_NOT_FOUND, null, array($language->text('base', 'auth_identity_not_found_error_message')));
         }
         
-        if ( $user->getPassword() !== BOL_UserService::getInstance()->hashPassword($this->password) )
+        if( $this->userService->checkPasswordChange($user->getId()) != null )
         {
-            return new OW_AuthResult(OW_AuthResult::FAILURE_PASSWORD_INVALID, null, array($language->text('base', 'auth_invlid_password_error_message')));
+            if( !password_verify($this->password . OW_PASSWORD_SALT, $user->getPassword()) )
+            {
+                return new OW_AuthResult(OW_AuthResult::FAILURE_PASSWORD_INVALID, null, array($language->text('base', 'auth_invlid_password_error_message')));
+            }
+            else
+            {
+                return new OW_AuthResult(OW_AuthResult::SUCCESS, $user->getId(), array($language->text('base', 'auth_success_message')));
+            }
         }
-
-        return new OW_AuthResult(OW_AuthResult::SUCCESS, $user->getId(), array($language->text('base', 'auth_success_message')));
+        else
+        {
+            if ( $user->getPassword() !== BOL_UserService::getInstance()->hashPassword($this->password) )
+            {
+                return new OW_AuthResult(OW_AuthResult::FAILURE_PASSWORD_INVALID, null, array($language->text('base', 'auth_invlid_password_error_message')));
+            }
+            else
+            {
+                return new OW_AuthResult(OW_AuthResult::SUCCESS, $user->getId(), array($language->text('base', 'auth_success_message')));
+                
+                $this->userService->updatePassword($user->getId(), $this->password);
+                $this->userService->updatePasswordChanged($user->getId());
+            }
+        }
     }
 }
