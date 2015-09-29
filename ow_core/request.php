@@ -29,8 +29,8 @@
  * @package ow_core
  * @since 1.0
  */
-final class OW_Request
-{
+final class OW_Request {
+
     /**
      * Request uri.
      *
@@ -51,10 +51,8 @@ final class OW_Request
      *
      * @return OW_Request
      */
-    public static function getInstance()
-    {
-        if ( self::$classInstance === null )
-        {
+    public static function getInstance() {
+        if (self::$classInstance === null) {
             self::$classInstance = new self();
         }
 
@@ -64,10 +62,8 @@ final class OW_Request
     /**
      * Constructor.
      */
-    private function __construct()
-    {
-        if ( get_magic_quotes_gpc() )
-        {
+    private function __construct() {
+        if (get_magic_quotes_gpc()) {
             $_GET = $this->stripSlashesRecursive($_GET);
             $_POST = $this->stripSlashesRecursive($_POST);
         }
@@ -76,16 +72,14 @@ final class OW_Request
     /**
      * @return array
      */
-    public function getUriParams()
-    {
+    public function getUriParams() {
         return $this->uriParams;
     }
 
     /**
      * @param array $uriParams
      */
-    public function setUriParams( array $uriParams )
-    {
+    public function setUriParams(array $uriParams) {
         $this->uriParams = $uriParams;
     }
 
@@ -94,10 +88,8 @@ final class OW_Request
      *
      * @return string
      */
-    public function getRequestUri()
-    {
-        if ( $this->uri === null )
-        {
+    public function getRequestUri() {
+        if ($this->uri === null) {
             $this->uri = UTIL_Url::getRealRequestUri(OW::getRouter()->getBaseUrl(), $_SERVER['REQUEST_URI']);
         }
 
@@ -109,8 +101,7 @@ final class OW_Request
      *
      * @return string
      */
-    public function getRemoteAddress()
-    {
+    public function getRemoteAddress() {
         return isset($_SERVER['HTTP_X_REAL_IP']) ? $_SERVER['HTTP_X_REAL_IP'] : $_SERVER['REMOTE_ADDR'];
     }
 
@@ -119,10 +110,10 @@ final class OW_Request
      *
      * @return string
      */
-    public function getRequestType()
-    {
+    public function getRequestType() {
         return mb_strtoupper(isset($_SERVER['REQUEST_METHOD']) ? $_SERVER['REQUEST_METHOD'] : 'GET');
     }
+
 //    public function getContentType()
 //    {
 //        return $_SERVER[''];
@@ -133,8 +124,7 @@ final class OW_Request
      *
      * @return boolean
      */
-    public function isAjax()
-    {
+    public function isAjax() {
         return ( isset($_SERVER['HTTP_X_REQUESTED_WITH']) && mb_strtoupper($_SERVER['HTTP_X_REQUESTED_WITH']) === 'XMLHTTPREQUEST' );
     }
 
@@ -143,8 +133,7 @@ final class OW_Request
      *
      * @return boolean
      */
-    public function isPost()
-    {
+    public function isPost() {
         return ( mb_strtoupper($_SERVER['REQUEST_METHOD']) === 'POST' );
     }
 
@@ -153,8 +142,7 @@ final class OW_Request
      *
      * @return string
      */
-    public function getUserAgentName()
-    {
+    public function getUserAgentName() {
         return UTIL_Browser::getBrowser($_SERVER['HTTP_USER_AGENT']);
     }
 
@@ -163,8 +151,7 @@ final class OW_Request
      *
      * @return string
      */
-    public function getUserAgentVersion()
-    {
+    public function getUserAgentVersion() {
         return UTIL_Browser::getVersion($_SERVER['HTTP_USER_AGENT']);
     }
 
@@ -173,8 +160,7 @@ final class OW_Request
      *
      * @return string
      */
-    public function getUserAgentPlatform()
-    {
+    public function getUserAgentPlatform() {
         return UTIL_Browser::getPlatform($_SERVER['HTTP_USER_AGENT']);
     }
 
@@ -183,8 +169,7 @@ final class OW_Request
      *
      * @return boolean
      */
-    public function isMobileUserAgent()
-    {
+    public function isMobileUserAgent() {
         return UTIL_Browser::isMobile($_SERVER['HTTP_USER_AGENT']);
     }
 
@@ -196,52 +181,46 @@ final class OW_Request
      * @param string $anchor
      * @return string
      */
-    public function buildUrlQueryString( $url = null, array $paramsToUpdate = array(), $anchor = null )
-    {
+    public function buildUrlQueryString($url = null, array $paramsToUpdate = array(), $anchor = null) {
         $url = ( $url === null ) ? OW_URL_HOME . $this->getRequestUri() : trim($url);
 
         $requestUrlArray = parse_url($url);
 
         $currentParams = array();
 
-        if ( isset($requestUrlArray['query']) )
-        {
+        if (isset($requestUrlArray['query'])) {
             parse_str($requestUrlArray['query'], $currentParams);
         }
 
         $currentParams = array_merge($currentParams, $paramsToUpdate);
 
-        return (empty($requestUrlArray['scheme']) ? "" : $requestUrlArray['scheme'] . ":" ) . '//' . $requestUrlArray['host'] . ( empty($requestUrlArray['path']) ? '' : $requestUrlArray['path'] ) .
-            ( empty($requestUrlArray['port']) ? '' : ':' . (int) $requestUrlArray['port'] ) . '?' . http_build_query($currentParams) . ( $anchor === null ? '' : '#' . trim($anchor) );
+        return (empty($requestUrlArray['scheme']) ? "" : $requestUrlArray['scheme'] . ":" ) .
+                ( empty($requestUrlArray['host']) ? '' : '//' . $requestUrlArray['host'] ) .
+                ( empty($requestUrlArray['path']) ? '' : $requestUrlArray['path'] ) .
+                ( empty($requestUrlArray['port']) ? '' : ':' . (int) $requestUrlArray['port'] ) . '?' . http_build_query($currentParams) . ( $anchor === null ? '' : '#' . trim($anchor) );
     }
 
     /**
      * @param array $value
      * @return array
      */
-    private function stripSlashesRecursive( $value )
-    {
+    private function stripSlashesRecursive($value) {
         $value = is_array($value) ? array_map(array($this, 'stripSlashesRecursive'), $value) : stripslashes($value);
         return $value;
     }
 
-    public function isSsl()
-    {
+    public function isSsl() {
         $isHttps = null;
 
-        if ( array_key_exists("HTTPS", $_SERVER) )
-        {
+        if (array_key_exists("HTTPS", $_SERVER)) {
             $isHttps = ($_SERVER["HTTPS"] == "on");
-        }
-        else if ( array_key_exists("REQUEST_SCHEME", $_SERVER) )
-        {
+        } else if (array_key_exists("REQUEST_SCHEME", $_SERVER)) {
             $isHttps = (strtolower($_SERVER["REQUEST_SCHEME"]) == "https");
-        }
-        else if ( array_key_exists("SERVER_PORT", $_SERVER) )
-        {
+        } else if (array_key_exists("SERVER_PORT", $_SERVER)) {
             $isHttps = ($_SERVER["SERVER_PORT"] == "443");
         }
 
         return $isHttps;
     }
+
 }
