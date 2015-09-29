@@ -84,8 +84,7 @@ final class BOL_FileTemporaryService
         $tmpFile->order = $order;
         $this->fileTemporaryDao->save($tmpFile);
 
-        $storage = OW::getStorage();
-        $storage->copyFile($source, $this->getTemporaryFilePath($tmpFile->id));
+        copy($source, $this->getTemporaryFilePath($tmpFile->id));
 
         return $tmpFile->id;
     }
@@ -169,8 +168,7 @@ final class BOL_FileTemporaryService
 
         try
         {
-            $storage = OW::getStorage();
-            $storage->copyFile($tmpFilePath, $fileService->getFilePath($file->id));
+            copy($tmpFilePath, $fileService->getFilePath($file->id));
         }
         catch ( Exception $e )
         {
