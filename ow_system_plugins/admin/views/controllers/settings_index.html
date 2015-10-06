@@ -32,6 +32,17 @@
         <tr class="ow_tr_delimiter"><td></td></tr>
         <tr class="ow_tr_first">
             <th class="ow_name ow_txtleft" colspan="3">
+                <span class="ow_section_icon ow_ic_script">{text key='admin+captcha_settings'}</span>
+            </th>
+        </tr>
+        <tr class="{cycle name="install" values="ow_alt1,ow_alt2"}">
+            <td class="ow_label">{text key='admin+display_captcha_label'}</td>
+            <td class="ow_value">{input name='enableCaptcha'} {error name='enableCaptcha'}</td>
+            <td class="ow_desc"></td>
+        </tr>
+        <tr class="ow_tr_delimiter"><td></td></tr>
+        <tr class="ow_tr_first">
+            <th class="ow_name ow_txtleft" colspan="3">
                 <span class="ow_section_icon ow_ic_clock">{text key='admin+time_settings'}</span>
             </th>
         </tr>
