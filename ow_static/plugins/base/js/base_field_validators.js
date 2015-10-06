@@ -11,19 +11,19 @@ var OW_BaseFieldValidators = function($params, $emailPattern, $usernamePattern)
         
         this.errors = [];
         
-        var username = $("#" + this.formName + " input[name='username']");
-        var password = $("#" + this.formName + " input[name='password']");
-        var passwordRepeat = $("#" + this.formName + " input[name=repeatPassword]");
-        var email = $("#" + this.formName + " input[name='email']");
+        var username = $("form[name='" + this.formName + "'] input[name='username']");
+        var password = $("form[name='" + this.formName + "'] input[name='password']");
+        var passwordRepeat = $("form[name='" + this.formName + "'] input[name=repeatPassword]");
+        var email = $("form[name='" + this.formName + "'] input[name='email']");
 
         if( username.length == 0 )
         {
-            username = $("#" + this.formName + " input.ow_username_validator");
+            username = $("form[name='" + this.formName + "'] input.ow_username_validator");
         }
 
         if( email.length == 0 )
         {
-            email = $("#" + this.formName + " input.ow_email_validator");
+            email = $("form[name='" + this.formName + "'] input.ow_email_validator");
         }
         
         if( password )
