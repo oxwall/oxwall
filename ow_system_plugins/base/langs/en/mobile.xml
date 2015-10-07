@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<prefix name="mobile" label="Mobile" language_tag="en" language_label="English">
+    <key name="about">
+        <value>About</value>
+    </key>
+    <key name="admin_nav_adding_message">
+        <value>Adding...</value>
+    </key>
+    <key name="admin_nav_bottom_section_label">
+        <value>Bottom menu</value>
+    </key>
+    <key name="admin_nav_default_menu_name">
+        <value>New Menu item</value>
+    </key>
+    <key name="admin_nav_default_page_content">
+        <value>Content</value>
+    </key>
+    <key name="admin_nav_default_page_title">
+        <value>Page Title</value>
+    </key>
+    <key name="admin_nav_hidden_section_label">
+        <value>Hidden</value>
+    </key>
+    <key name="admin_nav_item_content_field">
+        <value>HTML Content</value>
+    </key>
+    <key name="admin_nav_item_label_field">
+        <value>Menu label</value>
+    </key>
+    <key name="admin_nav_item_title_field">
+        <value>Title</value>
+    </key>
+    <key name="admin_nav_item_type_external">
+        <value>External</value>
+    </key>
+    <key name="admin_nav_item_type_field">
+        <value>Page type</value>
+    </key>
+    <key name="admin_nav_item_type_local">
+        <value>Local</value>
+    </key>
+    <key name="admin_nav_item_url_field">
+        <value>Url</value>
+    </key>
+    <key name="admin_nav_new_item_label">
+        <value>New page</value>
+    </key>
+    <key name="admin_nav_settings_fb_title">
+        <value>Settings</value>
+    </key>
+    <key name="admin_nav_top_section_label">
+        <value>Top menu</value>
+    </key>
+    <key name="admin_widgets_hidden_section_label">
+        <value>Hidden</value>
+    </key>
+    <key name="admin_widgets_main_section_label">
+        <value>Content</value>
+    </key>
+    <key name="menu_item_dashboard">
+        <value>Dashboard</value>
+    </key>
+    <key name="mobile_admin_navigation">
+        <value>Menus</value>
+    </key>
+    <key name="mobile_admin_pages_dashboard">
+        <value>Dashboard</value>
+    </key>
+    <key name="mobile_admin_pages_index">
+        <value>Index</value>
+    </key>
+    <key name="mobile_admin_pages_profile">
+        <value>Profile</value>
+    </key>
+    <key name="mobile_admin_settings">
+        <value>Settings</value>
+    </key>
+    <key name="mobile_join_promo">
+        <value>Join our fast-growing community. Find new friends, date up, share photo and video.
+            Enjoy!</value>
+    </key>
+    <key name="mobile_pages_dashboard">
+        <value>My Dashboard</value>
+    </key>
+    <key name="page_default_heading">
+        <value>{$site_name}</value>
+    </key>
+    <key name="page_default_title">
+        <value>{$site_name}</value>
+    </key>
+    <key name="page_is_not_available">
+        <value>This page can not be opened in mobile version, please visit &lt;a href="{$url}"&gt;desktop version&lt;/a&gt; of this site</value>
+    </key>
+    <key name="right_sidebar_guest_heading">
+        <value>Please Sign In</value>
+    </key>
+    <key name="sign_out">
+        <value>Sign Out</value>
+    </key>
+    <key name="view_profile">
+        <value>View My Profile</value>
+    </key>
+    <key name="widgets_admin_dashboard_heading">
+        <value>Mobile dashboard page</value>
+    </key>
+    <key name="widgets_admin_index_heading">
+        <value>Mobile index page</value>
+    </key>
+    <key name="widgets_admin_profile_heading">
+        <value>Mobile profile page</value>
+    </key>
+</prefix>

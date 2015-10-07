@@ -99,3 +99,4 @@ OW::getConfig()->addConfig("base", "profile_question_edit_stamp", "", null);
 OW::getConfig()->addConfig("base", "install_complete", null, null);
 OW::getConfig()->addConfig("base", "users_on_page", "12", null);
 OW::getConfig()->addConfig("base", "avatar_max_upload_size", "1", "Enable file attachments");
+OW::getConfig()->addConfig('base', 'enable_captcha', 'true', 'is captcha enabled on join form?');

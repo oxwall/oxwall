@@ -838,9 +838,11 @@ class BOL_LanguageService
         }
     }
 
-    public function importPrefixFromDir( $path, $key, $refreshCache=true, $addLanuage=false )
+    public function importPrefixFromDir( $path, $refreshCache=true, $addLanuage=false )
     {
-        if ( !file_exists($path) )
+        $path = UTIL_File::removeLastDS($path) .DS;
+        
+        if ( !UTIL_File::checkDir($path) )
         {
             throw new InvalidArgumentException( "Directory not found : {$path}" );
         }
@@ -973,7 +975,7 @@ class BOL_LanguageService
             $langsDir = $importDir . 'langs' . DS;
         }
         
-        $this->importPrefixFromDir($langsDir, $key, $refreshCache, $addLanuage);
+        $this->importPrefixFromDir($langsDir, $refreshCache, $addLanuage);
 
         UTIL_File::removeDir($importDir);
     }
