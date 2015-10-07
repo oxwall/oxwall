@@ -142,7 +142,12 @@ class OW_Language
         BOL_LanguageService::getInstance()->importPrefixFromZip($path, $key, $refreshCache, $addLanguage);
     }
     
-    public function importPluginLangsFromDir( $path, $refreshCache = false, $addLanguage = false )
+    public function importLangsFromZip( $path, $refreshCache = false, $addLanguage = false )
+    {
+        BOL_LanguageService::getInstance()->importPrefixFromZip($path, uniqid(), $refreshCache, $addLanguage);
+    }
+    
+    public function importLangsFromDir( $path, $refreshCache = false, $addLanguage = false )
     {
         BOL_LanguageService::getInstance()->importPrefixFromDir($path, $refreshCache, $addLanguage);
     }
