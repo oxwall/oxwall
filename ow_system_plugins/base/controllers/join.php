@@ -876,7 +876,9 @@ class JoinForm extends BASE_CLASS_UserQuestionForm
 
         $displayCaptcha = false;
 
-        if ( !empty($captchaField) && $captchaField instanceof FormElement )
+        $enableCaptcha = OW::getConfig()->getValue('base', 'enable_captcha');
+        
+        if ( $enableCaptcha && !empty($captchaField) && $captchaField instanceof FormElement )
         {
             $captchaField->setName('captchaField');
             $this->addElement($captchaField);
