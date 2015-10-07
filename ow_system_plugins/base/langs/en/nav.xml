@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<prefix name="nav" label="Navigation" language_tag="en" language_label="English">
+    <key name="page_custom_title">
+        <value>{$title}</value>
+    </key>
+    <key name="page_default_description">
+        <value>{$site_name} community</value>
+    </key>
+    <key name="page_default_heading">
+        <value>{$site_name}</value>
+    </key>
+    <key name="page_default_keywords">
+        <value>openwack, free software, open source software, community software, open source community software, free community software, open source social networking software, free social networking software, php, mysql</value>
+    </key>
+    <key name="page_default_title">
+        <value>{$site_name} - social networking</value>
+    </key>
+</prefix>

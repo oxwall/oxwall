@@ -30,4 +30,4 @@ require_once __DIR__ . DS . "install" . DS . "widgets.php";
 require_once __DIR__ . DS . "install" . DS . "questions.php";
 
 // Langs
-OW::getLanguage()->importPluginLangs(dirname(__FILE__) . DS . "langs.zip", "base", false, true);
+OW::getLanguage()->importPrefixFromDir(dirname(__FILE__) . DS . "langs", false, true);
