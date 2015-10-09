@@ -870,7 +870,10 @@ function OW_FloatBox(options)
             fb_class = OW_FloatBox.detectMacXFF() ? 'floatbox_overlayMacFFBGHack' : 'floatbox_overlayBG';
             jQuery('#floatbox_overlay').addClass(fb_class).click(function()
             {
-                fl_box.close();
+                fl_box.close({
+                    sender: "overlay",
+                    overlay: this
+                });
             });
         }
     }
@@ -898,7 +901,10 @@ function OW_FloatBox(options)
         this.$canvas.addClass('floatbox_canvas_sub');
         this.parentBox.bind('close', function()
         {
-            fl_box.close();
+            fl_box.close({
+                sender: "parent",
+                parent: fl_box.parentBox
+            });
         });
     }
 
@@ -906,7 +912,10 @@ function OW_FloatBox(options)
     {
         if ( $(e.target).is(this) )
         {
-            fl_box.close();
+            fl_box.close({
+                sender: "canvas",
+                canvas: this
+            });
         }
     });
 
@@ -963,14 +972,19 @@ function OW_FloatBox(options)
     jQuery('.close', this.$header)
         .on('click', function()
         {
-            fl_box.close();
+            fl_box.close({
+                sender: "button",
+                button: this
+            });
             return false;
         });
 
     this.esc_listener =
     function(event) {
             if (event.keyCode == 27) {
-                    fl_box.close();
+                    fl_box.close({
+                        sender: "esc"
+                    });
                     return false;
             }
             return true;
@@ -1095,32 +1109,6 @@ OW_FloatBox.prototype = {
         });
     },
 
-    // OLD
-    /*showPreloader: function( preloaderContent )
-    {
-        var css = {};
-
-        if ( preloaderContent )
-        {
-            if ( typeof preloaderContent == 'string' )
-            {
-                preloaderContent = jQuery('<div class="floatbox_string_preloader"><span>' + preloaderContent + '</span></div>');
-            }
-
-            this.$preloader.html(preloaderContent);
-        }
-
-        this.$canvas.addClass('ow_floatbox_loading');
-
-
-        this.$preloader.css('visibility', 'hidden');
-
-        css.marginTop = ( jQuery(window).height() / 2 ) - ( this.$preloader.height() / 2 + 100);
-        css.visibility = 'visible';
-
-        this.$preloader.css(css);
-    },*/
-
     showPreloader: function( preloaderContent )
     {
         if ( preloaderContent )
@@ -1141,10 +1129,14 @@ OW_FloatBox.prototype = {
         this.$canvas.removeClass('ow_floatbox_loading');
     },
 
-    close: function()
+    close: function( options )
     {
-        if (this.trigger('close') === false) {
-                return false;
+        options = $.extend({
+            sender: "custom"
+        }, options || {});
+        
+        if (this.trigger('close', [options]) === false) {
+            return false;
         }
 
         jQuery(document).unbind('keydown', this.esc_listener);
@@ -1181,31 +1173,30 @@ OW_FloatBox.prototype = {
 
     bind: function(type, func)
     {
-            if (this.events[type] == undefined) {
-                    throw 'form error: unknown event type "'+type+'"';
-            }
+        if (this.events[type] == undefined) {
+            throw 'form error: unknown event type "'+type+'"';
+        }
 
-            this.events[type].push(func);
-
+        this.events[type].push(func);
     },
 
     trigger: function(type, params)
     {
-            if (this.events[type] == undefined) {
-                    throw 'form error: unknown event type "'+type+'"';
+        if (this.events[type] == undefined) {
+            throw 'form error: unknown event type "'+type+'"';
+        }
+
+        params = params || [];
+
+        for (var i = 0, func; func = this.events[type][i]; i++) {
+            if (func.apply(this, Array.prototype.slice.call(params)) === false) {
+                return false;
             }
+        }
 
-            params = params || [];
-
-            for (var i = 0, func; func = this.events[type][i]; i++) {
-                    if (func.apply(this, params) === false) {
-                            return false;
-                    }
-            }
-
-            return true;
+        return true;
     }
-}
+};
 
 
 /* OW Forms */
