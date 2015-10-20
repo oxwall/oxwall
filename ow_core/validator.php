@@ -638,6 +638,82 @@ class AlphaNumericValidator extends RegExpValidator
     }
 }
 
+/**
+ * In array validator
+ *
+ * @author Alex Ermashev <alexermashev@gmail.com>
+ * @package ow_core
+ * @since 8.1
+ */
+class InArrayValidator extends OW_Validator
+{
+    /**
+     * Predefined values
+     *
+     * @var array
+     */
+    protected $predefinedValues = array();
+
+    /**
+     * Class constructor
+     *
+     * @param array $predefinedValues
+     */
+    public function __construct( array $predefinedValues  = array() )
+    {
+        $this->predefinedValues = $predefinedValues;
+        $this->errorMessage = OW::getLanguage()->text('base', 'form_validator_in_array_error_message');
+    }
+
+    /**
+     * Set predefined values
+     *
+     * @param array $predefinedValues
+     * @return void
+     */
+    public function setPredefinedValues( array $predefinedValues = array() )
+    {
+        $this->predefinedValues = $predefinedValues;
+    }
+
+    /**
+     * Is data valid
+     *
+     * @param mixed $value
+     * @return boolean
+     */
+    public function isValid( $value )
+    {
+        return is_scalar($value) && in_array($value, $this->predefinedValues);
+    }
+
+    /**
+     * Get js validator
+     *
+     * @return string
+     */
+    public function getJsValidator()
+    {
+        $values = json_encode($this->predefinedValues);
+
+        $js = "{
+            validate : function( value )
+        	{
+        	    if ( $.inArray(value, {$values}) == -1 )
+        	    {
+        	        throw this.getErrorMessage();
+        	    }
+        	},
+
+        	getErrorMessage : function()
+        	{
+        		return " . json_encode($this->getError()) . "
+    		}
+        }";
+
+        return $js;
+    }
+}
 
 /**
  * IntValidator
