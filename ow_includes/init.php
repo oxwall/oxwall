@@ -60,6 +60,7 @@ $classesToAutoload = array(
     'UrlValidator' => OW_DIR_CORE . 'validator.php',
     'AlphaNumericValidator' => OW_DIR_CORE . 'validator.php',
     'IntValidator' => OW_DIR_CORE . 'validator.php',
+    'InArrayValidator' => OW_DIR_CORE . 'validator.php',
     'FloatValidator' => OW_DIR_CORE . 'validator.php',
     'DateValidator' => OW_DIR_CORE . 'validator.php',
     'CaptchaValidator' => OW_DIR_CORE . 'validator.php',
