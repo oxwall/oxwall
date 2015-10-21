@@ -662,7 +662,7 @@ class InArrayValidator extends OW_Validator
     public function __construct( array $predefinedValues  = array() )
     {
         $this->predefinedValues = $predefinedValues;
-        $this->errorMessage = OW::getLanguage()->text('base', 'form_validator_in_array_error_message');
+        $this->errorMessage = OW::getLanguage()->text('base', 'form_validate_common_error_message');
     }
 
     /**
