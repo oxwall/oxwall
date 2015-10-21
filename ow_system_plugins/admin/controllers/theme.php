@@ -159,8 +159,8 @@ class ADMIN_CTRL_Theme extends ADMIN_CTRL_Abstract
             'delUrl' => OW::getRouter()->urlFor(__CLASS__, 'deleteImage', array('image-id' => $image->getId())),
             'cssUrl' => $this->themeService->getUserfileImagesUrl() . $image->getFilename(),
             'id' => $image->getId(),
-            'dimensions' => getimagesize($this->themeService->getUserfileImagesDir() . $image->getFilename()),
-            'filesize' => filesize($this->themeService->getUserfileImagesDir() . $image->getFilename()),
+            'dimensions' => $image->dimensions,
+            'filesize' => $image->filesize,
             'title' => $image->title,
             'uploaddate' => UTIL_DateTime::formatSimpleDate($image->addDatetime, true)
         );
@@ -334,9 +334,6 @@ class ADMIN_CTRL_Theme extends ADMIN_CTRL_Abstract
         $photo->title = UTIL_HtmlTag::autoLink($photo->title);
         $photo->url = OW::getStorage()->getFileUrl($this->themeService->getUserfileImagesDir() . $photo->getFilename());
 
-        $dimensions = getimagesize($this->themeService->getUserfileImagesDir() . $photo->getFilename());
-        $photo->dimensions = "{$dimensions[0]}x{$dimensions[1]}";
-        $photo->filesize = UTIL_File::getFileSize($this->themeService->getUserfileImagesDir() . $photo->getFilename());
         $photo->addDatetime = UTIL_DateTime::formatSimpleDate($photo->addDatetime, true);
 
         $markup['photo'] = $photo;
@@ -437,12 +434,9 @@ class ADMIN_CTRL_Theme extends ADMIN_CTRL_Abstract
             foreach ( $photos as $key => $photo )
             {
                 $entityIdList[] = $photo->id;
-                $dimensions = getimagesize($this->themeService->getUserfileImagesDir() . $photos[$key]->getFilename());
-                $photos[$key]->title = UTIL_HtmlTag::autoLink($photos[$key]->title);
-                $photos[$key]->unique = $unique;
-                $photos[$key]->dimensions = "{$dimensions[0]}x{$dimensions[1]}";
-                $photos[$key]->filesize = UTIL_File::getFileSize($this->themeService->getUserfileImagesDir() . $photos[$key]->getFilename());
-                $photos[$key]->addDatetime = UTIL_DateTime::formatSimpleDate($photos[$key]->addDatetime, true);
+				$photos[$key]->title = UTIL_HtmlTag::autoLink($photos[$key]->title);
+				$photos[$key]->unique = $unique;
+				$photos[$key]->addDatetime = UTIL_DateTime::formatSimpleDate($photos[$key]->addDatetime, true);
             }
         }
 

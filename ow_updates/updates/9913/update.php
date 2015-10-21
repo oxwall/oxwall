@@ -22,53 +22,9 @@
  * which combines Covered Code or portions thereof with code not governed by the terms of the CPAL.
  */
 
-/**
- * Data Transfer Object for `base_theme_image` table.
- *
- * @author Sardar Madumarov <madumarov@gmail.com>
- * @package ow_system_plugins.base.bol
- * @since 1.0
- */
-class BOL_ThemeImage extends OW_Entity
+if ( !Updater::getConfigService()->configExists('base', 'enable_captcha') )
 {
-    /**
-     * @var string
-     */
-    public $filename;
-
-    /**
-     * @var integer
-     */
-    public $addDatetime;
-
-    /**
-     * @var string
-     */
-    public $dimensions;
-
-    /**
-     * @var string
-     */
-    public $filesize;
-
-    /**
-     * @var string
-     */
-    public $title;
-
-    public function getFilename()
-    {
-        return $this->filename;
-    }
-
-    /**
-     *
-     * @param string $filename
-     * @return BOL_ThemeImage
-     */
-    public function setFilename( $filename )
-    {
-        $this->filename = $filename;
-        return $this;
-    }
+    Updater::getConfigService()->addConfig('base', 'enable_captcha', 'true', 'is captcha enabled on join form?');
 }
+
+UPDATE_LanguageService::getInstance()->importPrefixFromZip(dirname(__FILE__) . DS . 'langs.zip', 'admin');

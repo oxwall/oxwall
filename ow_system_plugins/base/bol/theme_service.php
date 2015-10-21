@@ -821,12 +821,22 @@ class BOL_ThemeService
         $image = new BOL_ThemeImage();
         $image->addDatetime = time();
         $image->title = $title;
+        $dimensions = getimagesize($tmpPath);
+        $image->dimensions = "{$dimensions[0]}x{$dimensions[1]}";
+        $image->filesize = UTIL_File::getFileSize($tmpPath);
         $this->themeImageDao->save($image);
 
         $ext = UTIL_File::getExtension($tmp->filename);
         $imageName = 'theme_image_' . $image->getId() . '.' . $ext;
 
+        $newTempName = $tmp->filename . '.' . $ext;
+        rename($tmp->filename, $newTempName);
         OW::getStorage()->copyFile($tmpPath, $this->userfileImagesDir . $imageName);
+        if ( file_exists($newTempName) )
+        {
+            unlink($newTempName);
+        }
+
         BOL_FileTemporaryDao::getInstance()->deleteById($tmpId);
 
         $image->setFilename($imageName);
@@ -849,10 +859,11 @@ class BOL_ThemeService
      */
     public function filterCssImages($params)
     {
+        $storage = OW::getStorage();
         $images = $this->themeImageDao->filterGraphics($params);
         foreach ( $images as $key => $photo )
         {
-            $images[$key]->url = $this->getUserfileImagesUrl() . $photo->filename;
+            $images[$key]->url = $storage->getFileUrl($this->getUserfileImagesUrl() . $photo->filename);
         }
         return $images;
     }
@@ -1210,6 +1221,16 @@ class BOL_ThemeService
         OW::getConfig()->saveConfig("base", "master_page_theme_info", json_encode($curentValue));
 
         $this->updateCustomCssFile($themeId);
+    }
+	//TODO CHEEEEEEEEEEEEECK
+    private function unlinkControlValueImage( $controlValue )
+    {
+        $fileName = basename(str_replace(')', '', $controlValue));
+
+        if ( OW::getStorage()->fileExists($this->userfileImagesDir . $fileName) )
+        {
+            OW::getStorage()->removeFile($this->userfileImagesDir . $fileName);
+        }
     }
 
     /**

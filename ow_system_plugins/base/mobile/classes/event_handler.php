@@ -43,6 +43,11 @@ class BASE_MCLASS_EventHandler extends BASE_CLASS_EventHandler
         $eventManager->bind(BASE_MCMP_ProfileActionToolbar::EVENT_NAME, array($this, 'onActionToolbarAddUserApproveActionTool'));
         $eventManager->bind(BASE_MCMP_ProfileActionToolbar::EVENT_NAME, array($this, 'onActionToolbarAddUserFeatureActionTool'));
         $eventManager->bind(BASE_MCMP_ProfileActionToolbar::EVENT_NAME, array($this, 'onActionToolbarAddUserBlockActionTool'));
+        
+        $eventManager->bind('base.members_only_exceptions', array($this, 'onAddMembersOnlyException'));
+        $eventManager->bind('base.password_protected_exceptions', array($this, 'onAddPasswordProtectedExceptions'));
+        $eventManager->bind('base.maintenance_mode_exceptions', array($this, 'onAddMaintenanceModeExceptions'));
+        
         $eventManager->bind(OW_EventManager::ON_PLUGINS_INIT, array($this, 'onPluginsInitCheckUserStatus'));
         $eventManager->bind('mobile.notifications.on_item_render', array($this, 'onNotificationRender'));
         $eventManager->bind(BASE_MCMP_ConnectButtonList::HOOK_REMOTE_AUTH_BUTTON_LIST, array($this, "onCollectButtonList"));

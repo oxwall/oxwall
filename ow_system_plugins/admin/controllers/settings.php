@@ -93,6 +93,7 @@ class ADMIN_CTRL_Settings extends ADMIN_CTRL_Abstract
         $configSaveForm->getElement('relativeTime')->setValue($configs['site_use_relative_time'] === '1' ? true : false);
         $configSaveForm->getElement('militaryTime')->setValue($configs['military_time'] === '1' ? true : false);
         $configSaveForm->getElement('currency')->setValue($configs['billing_currency']);
+        $configSaveForm->getElement('enableCaptcha')->setValue($configs['enable_captcha']);
 
         $language->addKeyForJs('admin', 'verify_site_email');
 
@@ -577,6 +578,9 @@ class ConfigSaveForm extends Form
         $descriptionField = new Textarea('description');
         $descriptionField->setRequired(true);
         $this->addElement($descriptionField);
+        
+        $dispalyCaptcha = new CheckboxField('enableCaptcha');
+        $this->addElement($dispalyCaptcha);
 
         $timezoneField = new Selectbox('timezone');
         $timezoneField->setRequired(true);
@@ -685,6 +689,7 @@ class ConfigSaveForm extends Form
 
         $config->saveConfig('base', 'site_tagline', $values['tagline']);
         $config->saveConfig('base', 'site_description', $values['description']);
+        $config->saveConfig('base', 'enable_captcha', $values['enableCaptcha']);
         $config->saveConfig('base', 'site_timezone', $values['timezone']);
         $config->saveConfig('base', 'site_use_relative_time', $values['relativeTime'] ? '1' : '0');
         $config->saveConfig('base', 'military_time', $values['militaryTime'] ? '1' : '0');

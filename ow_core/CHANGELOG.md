@@ -1,4 +1,4 @@
-# Version 1.7.5 Build 9600:
+# Version 1.7.5 (9600)
 - update server SSL connection fixed;
 - floatbox language editing in the admin panel is now scrollable;
 - links processing within content now recognizes periods and other full-stop symbols in sentences; 
@@ -9,12 +9,3 @@
 - added mobile version of the WYSIWYG editor;
 - fixed SMTP connection settings test in the admin panel;
 - special symbols are no longer encoded in the Profile View page in the About Me widget;
-
-# Version 1.7.4 Build 9100:
-- avatar size limit can be changed in admin area now
-- fixed issues with responsive google ads displaying
-- fixed issues with robots.txt syntax 
-- Flag Content button shows only for loged in users now in mobile/desktop versions
-- fixed issues with Custom Page termination
-- fixed fatal error with Date field type on Search page
-- added User list component
