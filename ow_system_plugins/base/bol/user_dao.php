@@ -879,7 +879,7 @@ class BOL_UserDao extends OW_BaseDao
             case BOL_QuestionService::QUESTION_PRESENTATION_TEXT :
             case BOL_QuestionService::QUESTION_PRESENTATION_TEXTAREA :
                 
-                if ( !isset($value) || $value === "" )
+                if ( $value === null || $value === "" )
                 {
                     return;
                 }
