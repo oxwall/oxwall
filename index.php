@@ -52,7 +52,7 @@ if ( OW_PROFILER_ENABLE || OW_DEV_MODE )
 }
 
 $application->init();
-BOL_StorageService::getInstance()->checkUpdates();
+//BOL_StorageService::getInstance()->checkUpdates();
 if ( OW_PROFILER_ENABLE || OW_DEV_MODE )
 {
     UTIL_Profiler::getInstance()->mark('after_app_init');

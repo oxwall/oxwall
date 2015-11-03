@@ -194,7 +194,7 @@ class BOL_StorageService
 
         $data = array_merge($params, $this->triggerEventBeforeRequest($params));
         $requestUrl = OW::getRequest()->buildUrlQueryString($this->getStorageUrl(self::URI_GET_ITEM_INFO), $data);
-pv($requestUrl);
+
         return json_decode(file_get_contents($requestUrl), true);
     }
 

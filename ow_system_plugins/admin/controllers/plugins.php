@@ -60,15 +60,7 @@ class ADMIN_CTRL_Plugins extends ADMIN_CTRL_StorageAbstract
 
         usort($plugins, function( BOL_Plugin $a, BOL_Plugin $b )
         {
-            $aChar = substr($a->getTitle(), 0, 1);
-            $bChar = substr($b->getTitle(), 0, 1);
-
-            if ( $aChar == $bChar )
-            {
-                return 0;
-            }
-
-            return $aChar > $bChar;
+            return strcmp($a->getTitle(), $b->getTitle());
         });
 
         $arrayToAssign["active"] = array();
@@ -118,11 +110,16 @@ class ADMIN_CTRL_Plugins extends ADMIN_CTRL_StorageAbstract
         OW::getNavigation()->activateMenuItem(OW_Navigation::ADMIN_PLUGINS, "admin", "sidebar_menu_plugins_available");
 
         $language = OW::getLanguage();
-        $this->setPageTitle($language->text('admin', 'page_title_available_plugins'));
-        $this->setPageHeading($language->text('admin', 'page_title_available_plugins'));
+        $this->setPageTitle($language->text("admin", "page_title_available_plugins"));
+        $this->setPageHeading($language->text("admin", "page_title_available_plugins"));
 
         // read plugins dir and find available plugins
         $arrayToAssign = $this->pluginService->getAvailablePluginsList();
+
+        usort($arrayToAssign, function(array $a, array $b)
+        {
+            return strcmp($a["name"], $b["name"]);
+        });
 
         /* @var $plugin BOL_Plugin */
         foreach ( $arrayToAssign as $key => $plugin )
@@ -540,7 +537,7 @@ class ADMIN_CTRL_Plugins extends ADMIN_CTRL_StorageAbstract
         }
 
         $this->assign("text", $language->text("admin", "manage_plugins_manual_update_request", array("name" => $pluginDto->getTitle())));
-        $params = array("plugin" => $pluginDto->getKey(), "back-uri" => urlencode(OW::getRequest()->getRequestUri()));
+        $params = array("plugin" => $pluginDto->getKey(), "back-uri" => urlencode(OW::getRequest()->getRequestUri()), "addParam" => UTIL_String::getRandomString());
         $this->assign("redirectUrl", OW::getRequest()->buildUrlQueryString($this->storageService->getUpdaterUrl(), $params));
     }
 

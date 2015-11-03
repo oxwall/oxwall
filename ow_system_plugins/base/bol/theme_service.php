@@ -351,7 +351,7 @@ class BOL_ThemeService
             {
                 return false;
             }
-            
+
             if ( is_dir($itemPath) )
             {
                 return true;
@@ -857,7 +857,7 @@ class BOL_ThemeService
      * @param array $params
      * @return array
      */
-    public function filterCssImages($params)
+    public function filterCssImages( $params )
     {
         $storage = OW::getStorage();
         $images = $this->themeImageDao->filterGraphics($params);
@@ -883,10 +883,13 @@ class BOL_ThemeService
      * @param $params
      * @return array
      */
-    public function getPrevImageIdList($id, $params)
+    public function getPrevImageIdList( $id, $params )
     {
         $images = $this->themeImageDao->getPrevImageList($id, $params);
-        return array_map(function($i){return $i->id;}, $images);
+        return array_map(function($i)
+        {
+            return $i->id;
+        }, $images);
     }
 
     /**
@@ -894,12 +897,14 @@ class BOL_ThemeService
      * @param $params
      * @return array
      */
-    public function getNextImageIdList($id, $params)
+    public function getNextImageIdList( $id, $params )
     {
         $images = $this->themeImageDao->getNextImageList($id, $params);
-        return array_map(function($i){return $i->id;}, $images);
+        return array_map(function($i)
+        {
+            return $i->id;
+        }, $images);
     }
-
 
     /**
      *
@@ -1221,16 +1226,6 @@ class BOL_ThemeService
         OW::getConfig()->saveConfig("base", "master_page_theme_info", json_encode($curentValue));
 
         $this->updateCustomCssFile($themeId);
-    }
-	//TODO CHEEEEEEEEEEEEECK
-    private function unlinkControlValueImage( $controlValue )
-    {
-        $fileName = basename(str_replace(')', '', $controlValue));
-
-        if ( OW::getStorage()->fileExists($this->userfileImagesDir . $fileName) )
-        {
-            OW::getStorage()->removeFile($this->userfileImagesDir . $fileName);
-        }
     }
 
     /**
