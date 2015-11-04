@@ -1,4 +1,8 @@
-
+{style}
+    .anno_padding_left {
+        padding-left:45px;
+    }
+{/style}
 {literal}
 <script language="javascript" type="text/javascript">
     $(function(){
@@ -52,7 +56,7 @@
             
             {foreach from=$questions item='question' name='question'}
                 {cycle assign='alt' name=$section values='ow_alt1,ow_alt2'}
-                <tr class=" {if $smarty.foreach.question.last}ow_tr_last{/if}">
+                <tr class=" {if $smarty.foreach.question.last}ow_tr_last{/if} {if !empty($changeList[$question.name]) } ow_premoderation_high {/if}">
                     <td class="{$alt} ow_label">
                         {label name=$question.name}
                     </td>
@@ -75,7 +79,7 @@
         <tr class="ow_tr_first">
             <th colspan="3">{text key='base+questions_section_user_photo_label'}</th>
         </tr>
-        <tr>
+        <tr class="{if !empty($changeList['avatar']) } ow_premoderation_high {/if}">
             <td class="ow_alt1 ow_label">
                 {label name='avatar'}
             </td>
@@ -86,12 +90,36 @@
             <td class="ow_alt1 ow_desc ow_small"></td>
         </tr>
     </table>
+
+    {if !$adminMode && !$isAdmin}
+        <div class="ow_anno ow_std_margin anno_padding_left">{text key="base+edit_profile_warning"}</div>
+    {/if}
+
 	<div class="clearfix ow_stdmargin{if !$isAdmin} ow_btn_delimiter{/if}">
-	   <div class="ow_right">
-		   {if !$isAdmin }
-				{decorator name="button" class="unregister_profile_button ow_ic_delete ow_red ow_negative" langLabel='base+delete_profile'}
+           {if $adminMode}
+                {if !$isUserApproved && !$isEditedUserModerator}
+                    {submit name='deleteUser'}
+                {/if}
+
+                <div class="ow_right">
+                    {if !$isUserApproved}
+                        {if isMailboxActive}
+                            {decorator name="button" class="write_message_button ow_green ow_positive" langLabel='base+write_message'}
+                        {/if}
+                        {submit name='saveAndApprove'}
+                    {else}
+                        {submit name='editSubmit'}
+                    {/if}
+                </div>
+           {else}
+                 {if !$isAdmin}
+                    {decorator name="button" class="unregister_profile_button ow_ic_delete ow_red ow_negative" langLabel='base+delete_profile'}
+                 {/if}
+                 <div class="ow_right">
+                    {submit name='editSubmit'}
+                 </div>
 		   {/if}
-		   {submit name='editSubmit'}
+
 	   </div>
 	</div>
 

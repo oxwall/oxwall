@@ -32,6 +32,7 @@
 class BASE_CTRL_Edit extends OW_ActionController
 {
     const EDIT_SYNCHRONIZE_HOOK = 'edit_synchronize_hook';
+    const PREFERENCE_LIST_OF_CHANGES = 'base_questions_changes_list';
 
     private $questionService;
 
@@ -41,12 +42,25 @@ class BASE_CTRL_Edit extends OW_ActionController
 
         $this->questionService = BOL_QuestionService::getInstance();
         $this->userService = BOL_UserService::getInstance();
+
+        $preference = BOL_PreferenceService::getInstance()->findPreference(self::PREFERENCE_LIST_OF_CHANGES);
+
+        if ( empty($preference) )
+        {
+            $preference = new BOL_Preference();
+        }
+
+        $preference->key = self::PREFERENCE_LIST_OF_CHANGES;
+        $preference->defaultValue = json_encode(array());
+        $preference->sectionName = 'general';
+        $preference->sortOrder = 100;
+
+        BOL_PreferenceService::getInstance()->savePreference($preference);
     }
 
     public function index( $params )
     {
         $adminMode = false;
-        $oneAccountType = false;
         $viewerId = OW::getUser()->getId();
 
         if ( !OW::getUser()->isAuthenticated() || $viewerId === null )
@@ -89,6 +103,17 @@ class BASE_CTRL_Edit extends OW_ActionController
 
             $user = OW::getUser()->getUserObject(); //BOL_UserService::getInstance()->findUserById($editUserId);
         }
+
+        $changeList =  BOL_PreferenceService::getInstance()->getPreferenceValue(self::PREFERENCE_LIST_OF_CHANGES, $editUserId);
+
+        if ( empty($changeList) )
+        {
+            $changeList = '[]';
+        }
+
+        $this->assign( 'changeList', json_decode($changeList, true) );
+
+        $isEditedUserModerator = BOL_AuthorizationService::getInstance()->isModerator($editUserId) || BOL_AuthorizationService::getInstance()->isSuperModerator($editUserId);
         
         $accountType = $user->accountType;
         
@@ -178,13 +203,31 @@ class BASE_CTRL_Edit extends OW_ActionController
 
         $editForm->addElement($editAvatar);
 
+        $isUserApproved = BOL_UserService::getInstance()->isApproved($editUserId);
+        $this->assign('isUserApproved', $isUserApproved);
+
+        // add submit button
         $editSubmit = new Submit('editSubmit');
         $editSubmit->addAttribute('class', 'ow_button ow_ic_save');
 
         $editSubmit->setValue($language->text('base', 'edit_button'));
 
+        if ( $adminMode && !$isUserApproved ) {
+            $editSubmit->setName('saveAndApprove');
+            $editSubmit->setValue($language->text('base', 'save_and_approve'));
+
+            if (!$isEditedUserModerator) {
+                // add delete button
+                $deleteUser = new Submit('deleteUser');
+                $deleteUser->addAttribute('class', 'ow_button ow_ic_delete ow_red ow_negative');
+                $deleteUser->setValue($language->text('base', 'delete_profile'));
+                $editForm->addElement($deleteUser);
+            }
+        }
+
         $editForm->addElement($editSubmit);
 
+        // prepare question list
         $questions = $this->questionService->findEditQuestionsForAccountType($accountType);
 
         $section = null;
@@ -207,89 +250,34 @@ class BASE_CTRL_Edit extends OW_ActionController
         $questionData = $this->questionService->getQuestionData(array($editUserId), $questionNameList);
         
         $questionValues = $this->questionService->findQuestionsValuesByQuestionNameList($questionNameList);
-
+        // add question to form
         $editForm->addQuestions($questions, $questionValues, !empty($questionData[$editUserId]) ? $questionData[$editUserId]: array() );
 
-        if ( OW::getRequest()->isPost() && isset($_POST['editSubmit']) )
-        {
-            if ( $editForm->isValid($_POST) )
+        // process form
+        if ( OW::getRequest()->isPost()  ) {
+
+            if ( isset($_POST['editSubmit']) || isset($_POST['saveAndApprove']) ) {
+                $this->process($editForm, $user->id, $questionArray, $adminMode);
+            }
+
+            if ( isset($_POST['deleteUser']) )
             {
-                $data = $editForm->getValues();
-
-                foreach ( $questionArray as $section )
-                {
-                    foreach ( $section as $key => $question )
-                    {
-                        switch ( $question['presentation'] )
-                        {
-                            case 'multicheckbox':
-
-                                if ( is_array($data[$question['name']]) )
-                                {
-                                    $data[$question['name']] = array_sum($data[$question['name']]);
-                                }
-                                else
-                                {
-                                    $data[$question['name']] = 0;
-                                }
-
-                                break;
-                        }
-                    }
-                }
-
-                // save user data
-                if ( !empty($user->id) )
-                {
-                    if ( $this->questionService->saveQuestionsData($data, $user->id) )
-                    {
-                        // delete avatar
-                        if ( empty($data['avatar']) ) 
-                        {
-                            if ( empty($_POST['avatarPreloaded']) )
-                            {
-                                BOL_AvatarService::getInstance()->deleteUserAvatar($user->id);
-                            }
-                        }
-                        else 
-                        {
-                            // update user avatar
-                            BOL_AvatarService::getInstance()->createAvatar($user->id);
-                        }
-
-                        if ( !$adminMode )
-                        {
-                            $event = new OW_Event(OW_EventManager::ON_USER_EDIT, array('userId' => $user->id, 'method' => 'native',));
-                            OW::getEventManager()->trigger($event);
-
-                            OW::getFeedback()->info($language->text('base', 'edit_successfull_edit'));
-                            $this->redirect();
-                        }
-                        else
-                        {
-                            $event = new OW_Event(OW_EventManager::ON_USER_EDIT_BY_ADMIN, array('userId' => $user->id));
-                            OW::getEventManager()->trigger($event);
-
-                            OW::getFeedback()->info($language->text('base', 'edit_successfull_edit'));
-                            $this->redirect(OW::getRouter()->urlForRoute('base_user_profile', array('username' => BOL_UserService::getInstance()->getUserName($editUserId))));
-                        }
-                    }
-                    else
-                    {
-                        OW::getFeedback()->info($language->text('base', 'edit_edit_error'));
-                    }
-                }
-                else
-                {
-                    OW::getFeedback()->info($language->text('base', 'edit_edit_error'));
-                }
+                $this->deleteUser($editUserId);
             }
         }
 
         $this->addForm($editForm);
 
-        $this->assign('unregisterProfileUrl', OW::getRouter()->urlForRoute('base_delete_user'));
+        $deleteUrl = OW::getRouter()->urlForRoute('base_delete_user');
 
+        if ( $adminMode )
+        {
+            $deleteUrl = OW::getRouter()->urlForRoute('base_delete_user_by_id', array('userId' => $userId));
+        }
+
+        $this->assign('unregisterProfileUrl', $deleteUrl);
+
+        // add langs to js
         $language->addKeyForJs('base', 'join_error_username_not_valid');
         $language->addKeyForJs('base', 'join_error_username_already_exist');
         $language->addKeyForJs('base', 'join_error_email_not_valid');
@@ -305,7 +293,25 @@ class BASE_CTRL_Edit extends OW_ActionController
                 'responderUrl' => OW::getRouter()->urlFor("BASE_CTRL_Edit", "ajaxResponder"))) . ",
                                                         " . UTIL_Validator::EMAIL_PATTERN . ", " . UTIL_Validator::USER_NAME_PATTERN . ", " . $editUserId . " ); ";
 
-        $this->assign('isAdmin', OW::getUser()->isAdmin());
+        $this->assign('isAdmin', OW::getUser()->isAdmin() );
+        $this->assign('isEditedUserModerator', $isEditedUserModerator );
+        $this->assign('adminMode', $adminMode);
+        $this->assign('isMailboxActive', OW::getPluginManager()->isPluginActive('mailbox'));
+
+        OW::getDocument()->addOnloadScript( '
+            $("input[name=deleteUser]").click(
+                    function() { if( !confirm('.json_encode($language->text('base', 'delete_profile_by_admin_confirm')).') ) { return false; } }
+            );
+
+            $("input.write_message_button").click( function() {
+                    OW.ajaxFloatBox("BASE_CMP_SendMessageToEmail", ['.((int)$editUserId).'],
+                    {
+                        title: '.json_encode($language->text('base', 'send_message_to_email')).',
+                        width:600
+                    });
+                }
+            );
+        ' );
 
         OW::getDocument()->addOnloadScript($onLoadJs);
 
@@ -338,6 +344,185 @@ class BASE_CTRL_Edit extends OW_ActionController
                 }
             }
         }
+    }
+
+    private function deleteUser($userId)
+    {
+        if ( !OW::getUser()->isAdmin() || !OW::getUser()->isAuthorized('base') )
+        {
+            return;
+        }
+
+        if ( BOL_AuthorizationService::getInstance()->isModerator($userId) || BOL_AuthorizationService::getInstance()->isModerator($userId) )
+        {
+            return;
+        }
+
+        BOL_UserService::getInstance()->deleteUser($userId, true);
+        OW::getFeedback()->info(OW::getLanguage()->text('base', 'delete_user_feedback'));
+        $this->redirect( OW::getRouter()->urlForRoute('base_member_dashboard') );
+        exit;
+    }
+
+    private function process($editForm, $userId, $questionArray, $adminMode)
+    {
+        if ( $editForm->isValid($_POST) )
+        {
+            $language = OW::getLanguage();
+            $data = $editForm->getValues();
+
+            foreach ( $questionArray as $section )
+            {
+                foreach ( $section as $key => $question )
+                {
+                    switch ( $question['presentation'] )
+                    {
+                        case 'multicheckbox':
+
+                            if ( is_array($data[$question['name']]) )
+                            {
+                                $data[$question['name']] = array_sum($data[$question['name']]);
+                            }
+                            else
+                            {
+                                $data[$question['name']] = 0;
+                            }
+
+                            break;
+                    }
+                }
+            }
+
+            // save user data
+            if ( !empty($userId) )
+            {
+                $changesList = $this->getChanges($data, $userId);
+                if ( $this->questionService->saveQuestionsData($data, $userId) )
+                {
+                    // delete avatar
+                    if ( empty($data['avatar']) )
+                    {
+                        if ( empty($_POST['avatarPreloaded']) )
+                        {
+                            BOL_AvatarService::getInstance()->deleteUserAvatar($userId);
+                            $changesList['avatar'] = 'avatar';
+                        }
+                    }
+                    else
+                    {
+                        // update user avatar
+                        BOL_AvatarService::getInstance()->createAvatar($userId);
+                        $changesList['avatar'] = 'avatar';
+                    }
+
+                    if ( !$adminMode )
+                    {
+                        $isNeedToModerate = $this->isNeedToModerate($changesList);
+                        $event = new OW_Event(OW_EventManager::ON_USER_EDIT, array('userId' => $userId, 'method' => 'native', 'moderate' => $isNeedToModerate));
+                        OW::getEventManager()->trigger($event);
+
+                        // saving changed fields
+                        if ( !BOL_UserService::getInstance()->isApproved($userId) )
+                        {
+
+                            $oldChanges = BOL_PreferenceService::getInstance()->getPreferenceValue(self::PREFERENCE_LIST_OF_CHANGES, $userId);
+
+                            if ( !empty($oldChanges) )
+                            {
+                                $oldChanges = json_decode($oldChanges, true);
+                            }
+
+                            if ( empty($oldChanges) )
+                            {
+                                $oldChanges = array();
+                            }
+
+                            $changesList = array_merge($oldChanges, $changesList);
+                        }
+                        else
+                        {
+                            $changesList = array();
+                        }
+
+                        BOL_PreferenceService::getInstance()->savePreferenceValue(self::PREFERENCE_LIST_OF_CHANGES, json_encode($changesList), $userId);
+                        // ----
+
+                        OW::getFeedback()->info($language->text('base', 'edit_successfull_edit'));
+                        $this->redirect();
+                    }
+                    else
+                    {
+                        $event = new OW_Event(OW_EventManager::ON_USER_EDIT_BY_ADMIN, array('userId' => $userId));
+                        OW::getEventManager()->trigger($event);
+
+                        BOL_PreferenceService::getInstance()->savePreferenceValue(self::PREFERENCE_LIST_OF_CHANGES, json_encode(array()), $userId);
+
+                        if ( !BOL_UserService::getInstance()->isApproved($userId) )
+                        {
+                            BOL_UserService::getInstance()->approve($userId);
+                        }
+
+                        OW::getFeedback()->info($language->text('base', 'edit_successfull_edit'));
+                        $this->redirect(OW::getRouter()->urlForRoute('base_user_profile', array('username' => BOL_UserService::getInstance()->getUserName($userId))));
+                    }
+                }
+                else
+                {
+                    OW::getFeedback()->info($language->text('base', 'edit_edit_error'));
+                }
+            }
+            else
+            {
+                OW::getFeedback()->info($language->text('base', 'edit_edit_error'));
+            }
+        }
+    }
+
+    private function getChanges($data, $userId)
+    {
+        // get changes list
+        $fields = array_keys($data);
+        $questions = BOL_QuestionService::getInstance()->findQuestionByNameList($fields);
+        $oldData = BOL_QuestionService::getInstance()->getQuestionData(array($userId), $fields);
+        $changesList = array();
+
+        foreach ( $oldData[$userId] as $key => $value )
+        {
+            if ( empty($questions[$key]) ) {
+                return;
+            }
+
+            $value = BOL_QuestionService::getInstance()->prepareFieldValue($questions[$key]->presentation, $value);
+            $value1 = BOL_QuestionService::getInstance()->prepareFieldValue($questions[$key]->presentation, $data[$key]);
+
+            if ( $key == 'googlemap_location' && isset($value1['remove'])  )
+            {
+                unset($value1['remove']);
+            }
+
+            if ( $value != $value1 )
+            {
+                $changesList[$key] = $key;
+            }
+
+        }
+
+        return $changesList;
+    }
+
+    private function isNeedToModerate($changesList)
+    {
+        $questions = BOL_QuestionService::getInstance()->findQuestionByNameList($changesList);
+        $textFields = array(BOL_QuestionService::QUESTION_PRESENTATION_TEXT, BOL_QuestionService::QUESTION_PRESENTATION_TEXTAREA );
+
+        foreach ( $questions as $question )
+        {
+            if ( $question && in_array($question->presentation, $textFields) && $question->name != 'googlemap_location' ) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public function ajaxResponder()

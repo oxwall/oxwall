@@ -385,6 +385,32 @@ class BASE_CLASS_ContentProvider
         )));
     }
     
+    public function afterUserEdit( OW_Event $event )
+    {
+        $params = $event->getParams();
+        $userId = $params["userId"];
+
+        $user = BOL_UserService::getInstance()->findUserById($userId);
+
+        if ( empty($user) )
+        {
+            return;
+        }
+
+        $isModerate = !empty($params["moderate"]) ? $params["moderate"] : false;
+
+        if ( $isModerate ) {
+            $url = OW::getRouter()->uriForRoute('base_user_profile', array( 'username' => $user->username ) );
+
+            OW::getEventManager()->trigger(new OW_Event(BOL_ContentService::EVENT_AFTER_CHANGE, array(
+                "entityType" => self::ENTITY_TYPE_PROFILE,
+                "entityId" => $userId
+            ), array(
+                "string" => array('key' => 'base+moderation_user_update', array('profileUrl' => $url))
+            )));
+        }
+    }
+    
     public function onUserDeleted( OW_Event $event )
     {
         $params = $event->getParams();
@@ -444,6 +470,7 @@ class BASE_CLASS_ContentProvider
         OW::getEventManager()->bind('base.before_user_avatar_delete', array($this, "onAvatarDelete"));
         
         OW::getEventManager()->bind(OW_EventManager::ON_USER_APPROVE, array($this, "onUserApprove"));
+        OW::getEventManager()->bind(OW_EventManager::ON_USER_EDIT, array($this, "afterUserEdit"));
         
         OW::getEventManager()->bind(OW_EventManager::ON_USER_REGISTER, array($this, "onUserJoin"));
         OW::getEventManager()->bind(OW_EventManager::ON_USER_UNREGISTER, array($this, "onUserDeleted"));
