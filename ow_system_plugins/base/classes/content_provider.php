@@ -388,7 +388,7 @@ class BASE_CLASS_ContentProvider
     public function afterUserEdit( OW_Event $event )
     {
         $params = $event->getParams();
-        $userId = $params["userId"];
+        $userId = !empty($params["userId"]) ? $params["userId"] : 0 ;
 
         $user = BOL_UserService::getInstance()->findUserById($userId);
 
@@ -400,13 +400,13 @@ class BASE_CLASS_ContentProvider
         $isModerate = !empty($params["moderate"]) ? $params["moderate"] : false;
 
         if ( $isModerate ) {
-            $url = OW::getRouter()->uriForRoute('base_user_profile', array( 'username' => $user->username ) );
+            $url = OW::getRouter()->urlForRoute('base_edit_user_datails', array( 'userId' => $userId ) );
 
             OW::getEventManager()->trigger(new OW_Event(BOL_ContentService::EVENT_AFTER_CHANGE, array(
                 "entityType" => self::ENTITY_TYPE_PROFILE,
                 "entityId" => $userId
             ), array(
-                "string" => array('key' => 'base+moderation_user_update', array('profileUrl' => $url))
+                "string" => array('key' => 'base+moderation_user_update', "vars" => array('profileUrl' => $url))
             )));
         }
     }

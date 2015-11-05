@@ -405,14 +405,12 @@ class BASE_CTRL_Edit extends OW_ActionController
                         if ( empty($_POST['avatarPreloaded']) )
                         {
                             BOL_AvatarService::getInstance()->deleteUserAvatar($userId);
-                            $changesList['avatar'] = 'avatar';
                         }
                     }
                     else
                     {
                         // update user avatar
                         BOL_AvatarService::getInstance()->createAvatar($userId);
-                        $changesList['avatar'] = 'avatar';
                     }
 
                     if ( !$adminMode )
@@ -422,24 +420,7 @@ class BASE_CTRL_Edit extends OW_ActionController
                         OW::getEventManager()->trigger($event);
 
                         // saving changed fields
-                        if ( !BOL_UserService::getInstance()->isApproved($userId) )
-                        {
-
-                            $oldChanges = BOL_PreferenceService::getInstance()->getPreferenceValue(self::PREFERENCE_LIST_OF_CHANGES, $userId);
-
-                            if ( !empty($oldChanges) )
-                            {
-                                $oldChanges = json_decode($oldChanges, true);
-                            }
-
-                            if ( empty($oldChanges) )
-                            {
-                                $oldChanges = array();
-                            }
-
-                            $changesList = array_merge($oldChanges, $changesList);
-                        }
-                        else
+                        if ( BOL_UserService::getInstance()->isApproved($userId) )
                         {
                             $changesList = array();
                         }
@@ -486,14 +467,14 @@ class BASE_CTRL_Edit extends OW_ActionController
         $oldData = BOL_QuestionService::getInstance()->getQuestionData(array($userId), $fields);
         $changesList = array();
 
-        foreach ( $oldData[$userId] as $key => $value )
+        foreach ( $questions as $question )
         {
-            if ( empty($questions[$key]) ) {
-                return;
-            }
+            $key = $question->name;
 
-            $value = BOL_QuestionService::getInstance()->prepareFieldValue($questions[$key]->presentation, $value);
-            $value1 = BOL_QuestionService::getInstance()->prepareFieldValue($questions[$key]->presentation, $data[$key]);
+            $value = empty($oldData[$userId][$key]) ? null : $oldData[$userId][$key];
+
+            $value = BOL_QuestionService::getInstance()->prepareFieldValue($question->presentation, $value);
+            $value1 = BOL_QuestionService::getInstance()->prepareFieldValue($question->presentation, $data[$key]);
 
             if ( $key == 'googlemap_location' && isset($value1['remove'])  )
             {
@@ -504,9 +485,7 @@ class BASE_CTRL_Edit extends OW_ActionController
             {
                 $changesList[$key] = $key;
             }
-
         }
-
         return $changesList;
     }
 
