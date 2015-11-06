@@ -211,8 +211,7 @@ class BASE_CTRL_CompleteProfile extends OW_ActionController
             {
                 OW::getFeedback()->info(OW::getLanguage()->text('base', 'edit_successfull_edit'));
                 
-                $event = new OW_Event(OW_EventManager::ON_AFTER_USER_COMPLETE_ACCOUNT_TYPE, array(
-                       ), $data, $userId);
+                $event = new OW_Event(OW_EventManager::ON_AFTER_USER_COMPLETE_PROFILE, array( 'userId' => $userId ));
                     
                 OW::getEventManager()->trigger($event);
                 //BOL_PreferenceService::getInstance()->savePreferenceValue('profile_details_update_stamp', time(), $userId);
