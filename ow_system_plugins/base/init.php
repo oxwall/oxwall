@@ -94,7 +94,6 @@ $router->addRoute(new OW_Route('base_page_confirm', 'confirm-page', 'BASE_CTRL_B
 $router->addRoute(new OW_Route('base_page_install_completed', 'install/completed', 'BASE_CTRL_BaseDocument', 'installCompleted'));
 
 $router->addRoute(new OW_Route('base_delete_user', 'profile/delete', 'BASE_CTRL_DeleteUser', 'index'));
-$router->addRoute(new OW_Route('base_delete_user_by_id', 'profile/delete/:userId/', 'BASE_CTRL_DeleteUser', 'index'));
 $router->addRoute(new OW_Route('base.reset_user_password', 'reset-password/:code', 'BASE_CTRL_User', 'resetPassword'));
 $router->addRoute(new OW_Route('base.reset_user_password_request', 'reset-password-request', 'BASE_CTRL_User', 'resetPasswordRequest'));
 $router->addRoute(new OW_Route('base.reset_user_password_expired_code', 'reset-password-code-expired', 'BASE_CTRL_User', 'resetPasswordCodeExpired'));

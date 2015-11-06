@@ -63,34 +63,26 @@ class BASE_CTRL_Edit extends OW_ActionController
         $adminMode = false;
         $viewerId = OW::getUser()->getId();
 
-        if ( !OW::getUser()->isAuthenticated() || $viewerId === null )
-        {
+        if (!OW::getUser()->isAuthenticated() || $viewerId === null) {
             throw new AuthenticateException();
         }
 
-        if ( !empty($params['userId']) && $params['userId'] != $viewerId )
-        {
-            
-            if ( OW::getUser()->isAdmin() || OW::getUser()->isAuthorized('base') )
-            {
+        if (!empty($params['userId']) && $params['userId'] != $viewerId) {
+
+            if (OW::getUser()->isAdmin() || OW::getUser()->isAuthorized('base')) {
                 $adminMode = true;
-                $userId = (int) $params['userId'];
+                $userId = (int)$params['userId'];
                 $user = BOL_UserService::getInstance()->findUserById($userId);
 
-                if ( empty($user) || BOL_AuthorizationService::getInstance()->isSuperModerator($userId) )
-                {
+                if (empty($user) || BOL_AuthorizationService::getInstance()->isSuperModerator($userId)) {
                     throw new Redirect404Exception();
                 }
 
                 $editUserId = $userId;
-            }
-            else
-            {
+            } else {
                 throw new Redirect403Exception();
             }
-        }
-        else
-        {
+        } else {
             $editUserId = $viewerId;
 
             $changePassword = new BASE_CMP_ChangePassword();
@@ -104,62 +96,52 @@ class BASE_CTRL_Edit extends OW_ActionController
             $user = OW::getUser()->getUserObject(); //BOL_UserService::getInstance()->findUserById($editUserId);
         }
 
-        $changeList =  BOL_PreferenceService::getInstance()->getPreferenceValue(self::PREFERENCE_LIST_OF_CHANGES, $editUserId);
+        $changeList = BOL_PreferenceService::getInstance()->getPreferenceValue(self::PREFERENCE_LIST_OF_CHANGES, $editUserId);
 
-        if ( empty($changeList) )
-        {
+        if (empty($changeList)) {
             $changeList = '[]';
         }
 
-        $this->assign( 'changeList', json_decode($changeList, true) );
+        $this->assign('changeList', json_decode($changeList, true));
 
         $isEditedUserModerator = BOL_AuthorizationService::getInstance()->isModerator($editUserId) || BOL_AuthorizationService::getInstance()->isSuperModerator($editUserId);
-        
+
         $accountType = $user->accountType;
-        
+
         // dispaly account type
-        if ( OW::getUser()->isAdmin() || OW::getUser()->isAuthorized('base') )
-        {
-            $accountType = !empty( $_GET['accountType'] ) ? $_GET['accountType'] : $user->accountType;
-            
+        if (OW::getUser()->isAdmin() || OW::getUser()->isAuthorized('base')) {
+            $accountType = !empty($_GET['accountType']) ? $_GET['accountType'] : $user->accountType;
+
             // get available account types from DB
             $accountTypes = BOL_QuestionService::getInstance()->findAllAccountTypes();
 
             $accounts = array();
 
-            if ( count($accountTypes) > 1 )
-            {                
+            if (count($accountTypes) > 1) {
                 /* @var $value BOL_QuestionAccount */
-                foreach ( $accountTypes as $key => $value )
-                {
+                foreach ($accountTypes as $key => $value) {
                     $accounts[$value->name] = OW::getLanguage()->text('base', 'questions_account_type_' . $value->name);
                 }
 
-                if ( !in_array($accountType, array_keys($accounts) ) )
-                {
-                    if ( in_array($user->accountType, array_keys($accounts) ) )
-                    {
+                if (!in_array($accountType, array_keys($accounts))) {
+                    if (in_array($user->accountType, array_keys($accounts))) {
                         $accountType = $user->accountType;
-                    }
-                    else 
-                    {
+                    } else {
                         $accountType = BOL_QuestionService::getInstance()->getDefaultAccountType()->name;
                     }
                 }
-                
+
                 $editAccountType = new Selectbox('accountType');
                 $editAccountType->setId('accountType');
                 $editAccountType->setLabel(OW::getLanguage()->text('base', 'questions_question_account_type_label'));
                 $editAccountType->setRequired();
                 $editAccountType->setOptions($accounts);
                 $editAccountType->setHasInvitation(false);
-            }
-            else 
-            {
+            } else {
                 $accountType = BOL_QuestionService::getInstance()->getDefaultAccountType()->name;
             }
         }
-        
+
         $language = OW::getLanguage();
 
         $this->setPageHeading($language->text('base', 'edit_index'));
@@ -168,23 +150,22 @@ class BASE_CTRL_Edit extends OW_ActionController
 
         $editForm = new EditQuestionForm('editForm', $editUserId);
         $editForm->setId('editForm');
-        
+
         $this->assign('displayAccountType', false);
-        
+
         // dispaly account type
-        if ( !empty($editAccountType) )
-        {
+        if (!empty($editAccountType)) {
             $editAccountType->setValue($accountType);
             $editForm->addElement($editAccountType);
-            
-            OW::getDocument()->addOnloadScript( " $('#accountType').change(function() { 
+
+            OW::getDocument()->addOnloadScript(" $('#accountType').change(function() {
                 
                 var form = $(\"<form method='get'><input type='text' name='accountType' value='\" + $(this).val() + \"' /></form>\");
                 $('body').append(form);
                 $(form).submit();
 
-            }  ); " );
-            
+            }  ); ");
+
             $this->assign('displayAccountType', true);
         }
 
@@ -195,8 +176,7 @@ class BASE_CTRL_Edit extends OW_ActionController
         $displayPhotoUpload = OW::getConfig()->getValue('base', 'join_display_photo_upload');
 
         // add the required avatar validator
-        if ( $displayPhotoUpload == BOL_UserService::CONFIG_JOIN_DISPLAY_AND_SET_REQUIRED_PHOTO_UPLOAD ) 
-        {
+        if ($displayPhotoUpload == BOL_UserService::CONFIG_JOIN_DISPLAY_AND_SET_REQUIRED_PHOTO_UPLOAD) {
             $avatarValidator = OW::getClassInstance("BASE_CLASS_AvatarFieldValidator", true);
             $editAvatar->addValidator($avatarValidator);
         }
@@ -212,16 +192,16 @@ class BASE_CTRL_Edit extends OW_ActionController
 
         $editSubmit->setValue($language->text('base', 'edit_button'));
 
-        if ( $adminMode && !$isUserApproved ) {
+        if ($adminMode && !$isUserApproved) {
             $editSubmit->setName('saveAndApprove');
             $editSubmit->setValue($language->text('base', 'save_and_approve'));
 
+            // TODO: remove
             if (!$isEditedUserModerator) {
                 // add delete button
-                $deleteUser = new Submit('deleteUser');
-                $deleteUser->addAttribute('class', 'ow_button ow_ic_delete ow_red ow_negative');
-                $deleteUser->setValue($language->text('base', 'delete_profile'));
-                $editForm->addElement($deleteUser);
+                $script = UTIL_JsGenerator::newInstance()->jQueryEvent('input.delete_user_by_moderator', 'click', 'OW.Users.deleteUser(e.data.userId, e.data.callbackUrl, false);'
+                    , array('e'), array('userId' => $userId, 'callbackUrl' => OW::getRouter()->urlForRoute('base_member_dashboard')));
+                OW::getDocument()->addOnloadScript($script);
             }
         }
 
@@ -234,10 +214,8 @@ class BASE_CTRL_Edit extends OW_ActionController
         $questionArray = array();
         $questionNameList = array();
 
-        foreach ( $questions as $sort => $question )
-        {
-            if ( $section !== $question['sectionName'] )
-            {
+        foreach ($questions as $sort => $question) {
+            if ($section !== $question['sectionName']) {
                 $section = $question['sectionName'];
             }
 
@@ -248,32 +226,21 @@ class BASE_CTRL_Edit extends OW_ActionController
         $this->assign('questionArray', $questionArray);
 
         $questionData = $this->questionService->getQuestionData(array($editUserId), $questionNameList);
-        
+
         $questionValues = $this->questionService->findQuestionsValuesByQuestionNameList($questionNameList);
         // add question to form
-        $editForm->addQuestions($questions, $questionValues, !empty($questionData[$editUserId]) ? $questionData[$editUserId]: array() );
+        $editForm->addQuestions($questions, $questionValues, !empty($questionData[$editUserId]) ? $questionData[$editUserId] : array());
 
         // process form
-        if ( OW::getRequest()->isPost()  ) {
-
-            if ( isset($_POST['editSubmit']) || isset($_POST['saveAndApprove']) ) {
+        if (OW::getRequest()->isPost()) {
+            if (isset($_POST['editSubmit']) || isset($_POST['saveAndApprove'])) {
                 $this->process($editForm, $user->id, $questionArray, $adminMode);
-            }
-
-            if ( isset($_POST['deleteUser']) )
-            {
-                $this->deleteUser($editUserId);
             }
         }
 
         $this->addForm($editForm);
 
         $deleteUrl = OW::getRouter()->urlForRoute('base_delete_user');
-
-        if ( $adminMode )
-        {
-            $deleteUrl = OW::getRouter()->urlForRoute('base_delete_user_by_id', array('userId' => $userId));
-        }
 
         $this->assign('unregisterProfileUrl', $deleteUrl);
 
@@ -293,75 +260,47 @@ class BASE_CTRL_Edit extends OW_ActionController
                 'responderUrl' => OW::getRouter()->urlFor("BASE_CTRL_Edit", "ajaxResponder"))) . ",
                                                         " . UTIL_Validator::EMAIL_PATTERN . ", " . UTIL_Validator::USER_NAME_PATTERN . ", " . $editUserId . " ); ";
 
-        $this->assign('isAdmin', OW::getUser()->isAdmin() );
-        $this->assign('isEditedUserModerator', $isEditedUserModerator );
+        $this->assign('isAdmin', OW::getUser()->isAdmin());
+        $this->assign('isEditedUserModerator', $isEditedUserModerator);
         $this->assign('adminMode', $adminMode);
-        $this->assign('isMailboxActive', OW::getPluginManager()->isPluginActive('mailbox'));
 
-        OW::getDocument()->addOnloadScript( '
-            $("input[name=deleteUser]").click(
-                    function() { if( !confirm('.json_encode($language->text('base', 'delete_profile_by_admin_confirm')).') ) { return false; } }
-            );
-
+        OW::getDocument()->addOnloadScript('
             $("input.write_message_button").click( function() {
-                    OW.ajaxFloatBox("BASE_CMP_SendMessageToEmail", ['.((int)$editUserId).'],
+                    OW.ajaxFloatBox("BASE_CMP_SendMessageToEmail", [' . ((int)$editUserId) . '],
                     {
-                        title: '.json_encode($language->text('base', 'send_message_to_email')).',
+                        title: ' . json_encode($language->text('base', 'send_message_to_email')) . ',
                         width:600
                     });
                 }
             );
-        ' );
+        ');
 
         OW::getDocument()->addOnloadScript($onLoadJs);
 
         $jsDir = OW::getPluginManager()->getPlugin("base")->getStaticJsUrl();
         OW::getDocument()->addScript($jsDir . "base_field_validators.js");
 
-        if ( !$adminMode )
-        {
+        if (!$adminMode) {
             $editSynchronizeHook = OW::getRegistry()->getArray(self::EDIT_SYNCHRONIZE_HOOK);
 
-            if ( !empty($editSynchronizeHook) )
-            {
+            if (!empty($editSynchronizeHook)) {
                 $content = array();
 
-                foreach ( $editSynchronizeHook as $function )
-                {
+                foreach ($editSynchronizeHook as $function) {
                     $result = call_user_func($function);
 
-                    if ( trim($result) )
-                    {
+                    if (trim($result)) {
                         $content[] = $result;
                     }
                 }
 
                 $content = array_filter($content, 'trim');
 
-                if ( !empty($content) )
-                {
+                if (!empty($content)) {
                     $this->assign('editSynchronizeHook', $content);
                 }
             }
         }
-    }
-
-    private function deleteUser($userId)
-    {
-        if ( !OW::getUser()->isAdmin() || !OW::getUser()->isAuthorized('base') )
-        {
-            return;
-        }
-
-        if ( BOL_AuthorizationService::getInstance()->isModerator($userId) || BOL_AuthorizationService::getInstance()->isModerator($userId) )
-        {
-            return;
-        }
-
-        BOL_UserService::getInstance()->deleteUser($userId, true);
-        OW::getFeedback()->info(OW::getLanguage()->text('base', 'delete_user_feedback'));
-        $this->redirect( OW::getRouter()->urlForRoute('base_member_dashboard') );
-        exit;
     }
 
     private function process($editForm, $userId, $questionArray, $adminMode)

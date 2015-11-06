@@ -98,7 +98,7 @@
 	<div class="clearfix ow_stdmargin{if !$isAdmin} ow_btn_delimiter{/if}">
            {if $adminMode}
                 {if !$isUserApproved && !$isEditedUserModerator}
-                    {submit name='deleteUser'}
+                    {decorator name="button" class="delete_user_by_moderator ow_ic_delete ow_red ow_negative" langLabel='base+delete_profile'}
                 {/if}
 
                 <div class="ow_right">
