@@ -48,7 +48,7 @@ class BASE_CMP_SendMessageToEmail extends OW_Component
         $form->addElement($subject);
 
         $textarea = new WysiwygTextarea("message");
-        $textarea->setInvitation(OW::getLanguage()->text('mailbox', 'message_invitation'));
+        $textarea->setInvitation(OW::getLanguage()->text('base', 'message_invitation'));
         $requiredValidator = new WyswygRequiredValidator();
         $requiredValidator->setErrorMessage(OW::getLanguage()->text('base', 'message_empty'));
         $textarea->addValidator($requiredValidator);
