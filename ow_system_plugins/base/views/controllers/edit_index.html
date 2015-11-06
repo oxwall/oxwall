@@ -103,9 +103,7 @@
 
                 <div class="ow_right">
                     {if !$isUserApproved}
-                        {if isMailboxActive}
-                            {decorator name="button" class="write_message_button ow_green ow_positive" langLabel='base+write_message'}
-                        {/if}
+                        {decorator name="button" class="write_message_button ow_green ow_positive" langLabel='base+write_message'}
                         {submit name='saveAndApprove'}
                     {else}
                         {submit name='editSubmit'}
