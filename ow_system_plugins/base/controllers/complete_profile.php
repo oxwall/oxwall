@@ -90,9 +90,10 @@ class BASE_CTRL_CompleteProfile extends OW_ActionController
         {
             if ( $form->isValid($_POST) )
             {
-                $data = $form->getValues();
+                $data = $form->getValues();            
 
-                $this->saveRequiredQuestionsData($data, $user->id);
+                $this->saveRequiredQuestionsData($data, $user->id);            
+                
             }
         }
         else
@@ -209,6 +210,11 @@ class BASE_CTRL_CompleteProfile extends OW_ActionController
             if ( $this->questionService->saveQuestionsData($data, $userId) )
             {
                 OW::getFeedback()->info(OW::getLanguage()->text('base', 'edit_successfull_edit'));
+                
+                $event = new OW_Event(OW_EventManager::ON_AFTER_USER_COMPLETE_ACCOUNT_TYPE, array(
+                       ), $data, $userId);
+                    
+                OW::getEventManager()->trigger($event);
                 //BOL_PreferenceService::getInstance()->savePreferenceValue('profile_details_update_stamp', time(), $userId);
                 $this->redirect(OW::getRouter()->urlForRoute('base_default_index'));
             }
