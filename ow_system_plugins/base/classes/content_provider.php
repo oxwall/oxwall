@@ -35,8 +35,6 @@ class BASE_CLASS_ContentProvider
     
     public function onCollectTypes( BASE_CLASS_EventCollector $event )
     {
-        $mandatoryApprove = OW::getConfig()->getValue('base', 'mandatory_user_approve');
-        
         $event->add(array(
             "pluginKey" => "base",
             "authorizationGroup" => "base",
@@ -45,10 +43,7 @@ class BASE_CLASS_ContentProvider
             
             "groupLabel" => OW::getLanguage()->text("base", "content_profiles_label"),
             "entityLabel" => OW::getLanguage()->text("base", "content_profile_label"),
-            "displayFormat" => "empty",
-            "moderation" => $mandatoryApprove  
-                ? array(BOL_ContentService::MODERATION_TOOL_FLAG, BOL_ContentService::MODERATION_TOOL_APPROVE)
-                : array(BOL_ContentService::MODERATION_TOOL_FLAG)
+            "displayFormat" => "empty"
         ));
         
         $event->add(array(
