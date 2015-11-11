@@ -115,7 +115,9 @@ class OW_Application
         $this->userAutoLogin();
 
         // setting default time zone
-        date_default_timezone_set(OW::getConfig()->getValue('base', 'site_timezone'));
+        $userId = OW::getUser()->getId();
+        date_default_timezone_set(BOL_PreferenceService::getInstance()->getPreferenceValue('timeZoneSelect', $userId));
+
 
         // synchronize the db's time zone
         OW::getDbo()->setTimezone();

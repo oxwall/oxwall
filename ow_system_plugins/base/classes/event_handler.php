@@ -648,9 +648,16 @@ class BASE_CLASS_EventHandler
             $fromElement->setValue($values['mass_mailing_subscribe']);
         }
 
-        $fromElementList[] = $fromElement;
 
+        $timeZoneSelect = new Selectbox("timeZoneSelect");
+        $timeZoneSelect->setLabel($language->text('admin', 'timezone'));
+        $timeZoneSelect->addOptions(UTIL_DateTime::getTimezones());
+        $timeZoneSelect->setValue($values['timeZoneSelect']);
+
+        $fromElementList[] = $timeZoneSelect;
+        $fromElementList[] = $fromElement;
         $event->add($fromElementList);
+
     }
 
     public function onAddAuthLabels( BASE_CLASS_EventCollector $event )
