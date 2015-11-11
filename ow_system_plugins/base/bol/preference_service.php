@@ -247,11 +247,11 @@ class BOL_PreferenceService
 
         foreach( $usersBol as $user )
         {
-            if ( !empty( $this->preferenceData[$userId] ) )
+            if ( !empty( $this->preferenceData[$user->id] ) )
             {
                 foreach( $preferenceList as $key )
                 {
-                    if ( isset( $this->preferenceData[$userId][$key] ) && !isset( $notCachedPreferenceList[$key] ) )
+                    if ( isset( $this->preferenceData[$user->id][$key] ) && !isset( $notCachedPreferenceList[$key] ) )
                     {
                        $cachedPreferenceList[$key] = $key;
                     }
@@ -279,7 +279,7 @@ class BOL_PreferenceService
         if ( count($notCachedPreferenceList) > 0 )
         {
             /* @var $this->preferenceDataDao BOL_PreferenceDataDao */
-            $preferenceDtoList = $this->preferenceDao->findPreferenceList($preferenceList);
+            $preferenceDtoList = $this->preferenceDao->findPreferenceList( $notCachedPreferenceList );
             $preferenceData = $this->preferenceDataDao->findByPreferenceListForUserList( $notCachedPreferenceList, $issetUserList );
         }
 
@@ -288,18 +288,18 @@ class BOL_PreferenceService
             foreach( $preferenceDtoList as $dto )
             {
                 $key = $dto->key;
-                
+
                 if ( isset( $preferenceData[$userId][$key] ) )
                 {
                     $dataDto = $preferenceData[$userId][$key];
 
                     /* @var $dto BOL_PreferenceData */
-                    $this->preferenceData[$userId][$key] = json_decode($dataDto->value);
+                    $this->preferenceData[$userId][$key] = json_decode($dataDto->value, true);
                     $resultList[$userId][$key] = $this->preferenceData[$userId][$key];
                 }
                 else
                 {
-                    $this->preferenceData[$userId][$key] = json_decode($dto->defaultValue);
+                    $this->preferenceData[$userId][$key] = json_decode($dto->defaultValue, true);
                     $resultList[$userId][$key] = $this->preferenceData[$userId][$key];
                 }
             }
