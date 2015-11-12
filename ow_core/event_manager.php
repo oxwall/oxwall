@@ -66,6 +66,7 @@ class OW_EventManager
     const ON_USER_MARK_FEATURED = 'base.on_user_mark_featured';
     const ON_USER_UNMARK_FEATURED = 'base.on_user_unmark_featured';
     const ON_BEFORE_USER_COMPLETE_PROFILE = 'base.on_before_user_complete_profile';
+    const ON_AFTER_USER_COMPLETE_PROFILE = 'base.on_after_user_complete_profile';
     const ON_BEFORE_USER_COMPLETE_ACCOUNT_TYPE = 'base.on_before_user_complete_account_type';
 
     /**
