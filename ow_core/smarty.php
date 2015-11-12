@@ -21,7 +21,8 @@
  * Display of Attribution Information is required in Larger Works which are defined in the CPAL as a work
  * which combines Covered Code or portions thereof with code not governed by the terms of the CPAL.
  */
-require_once(OW_DIR_LIB . 'smarty3' . DS . 'Smarty.class.php');
+//require_once(OW_DIR_LIB . 'smarty3' . DS . 'Smarty.class.php');
+
 
 /**
  * Smarty class.

@@ -154,6 +154,20 @@ class UTIL_String
     /**
      * Returns random string of provided length and strength.
      * 
+     * @since 1.8.1
+     * @param string $prefix
+     * @param int $length
+     * @param int $strength
+     * @return string
+     */
+    public static function getRandomStringWithPrefix( $prefix, $length = 8, $strength = self::RND_STR_ALPHA_WITH_CAPS_NUMERIC )
+    {
+        return $prefix . self::getRandomString($length, $strength);
+    }
+
+    /**
+     * Returns random string of provided length and strength.
+     * 
      * @since 1.7
      * @param int $length
      * @param int $strength

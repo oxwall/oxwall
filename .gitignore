@@ -17,6 +17,10 @@ build
 .owr
 owr.sh
 owr.py
+composer.phar
+composer.lock
+
+ow_libraries/vendor
 
 ow_static/plugins/*
 !ow_static/plugins/admin

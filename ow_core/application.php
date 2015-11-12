@@ -729,7 +729,7 @@ class OW_Application
                         }
                     }
 
-                    $paramsData = var_export($eventItem['event']->getParams(), true);
+                    $paramsData = var_export($eventItem['event']->getOptions(), true);
                     $eventsDataToAssign['call'][] = array('type' => $eventItem['type'], 'name' => $eventItem['event']->getName(), 'listeners' => $listenersList, 'params' => $paramsData, 'start' => sprintf('%.3f', $eventItem['start']), 'exec' => sprintf('%.3f', $eventItem['exec']));
                 }
 

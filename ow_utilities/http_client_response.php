@@ -21,22 +21,70 @@
  * Display of Attribution Information is required in Larger Works which are defined in the CPAL as a work
  * which combines Covered Code or portions thereof with code not governed by the terms of the CPAL.
  */
-define('OW_DIR_STATIC_PLUGIN', OW_DIR_STATIC . 'plugins' . DS);
-define('OW_DIR_STATIC_THEME', OW_DIR_STATIC . 'themes' . DS);
-define('OW_DIR_PLUGIN_USERFILES', OW_DIR_USERFILES . 'plugins' . DS);
-define('OW_DIR_THEME_USERFILES', OW_DIR_USERFILES . 'themes' . DS);
-define('OW_DIR_LOG', OW_DIR_ROOT . 'ow_log' . DS);
 
-if ( defined('OW_URL_STATIC') )
+/**
+ * @author Sardar Madumarov <madumarov@gmail.com>
+ * @package ow_utilities
+ * @since 1.0
+ */
+class UTIL_HttpClientResponse
 {
-    define('OW_URL_STATIC_THEMES', OW_URL_STATIC . 'themes/');
-    define('OW_URL_STATIC_PLUGINS', OW_URL_STATIC . 'plugins/');
-}
+    private $resultBody;
 
-if ( defined('OW_URL_USERFILES') )
-{
-    define('OW_URL_PLUGIN_USERFILES', OW_URL_USERFILES . 'plugins/');
-    define('OW_URL_THEME_USERFILES', OW_URL_USERFILES . 'themes/');
-}
+    /**
+     * @var Psr\Http\Message\ResponseInterface
+     */
+    private $response;
 
-define("OW_DIR_LIB_VENDOR", OW_DIR_LIB . "vendor" . DS);
+    /**
+     * 
+     * @param Psr\Http\Message\ResponseInterface $response
+     */
+    public function __construct( $response )
+    {
+        $this->response = $response;
+        $this->resultBody = $this->response->getBody()->getContents();
+    }
+
+    /**
+     * @param string $name
+     * @return string
+     */
+    public function getHeader( $name )
+    {
+        return $this->response->getHeader($name);
+    }
+
+    /**
+     * @param string $name
+     * @return bool
+     */
+    public function hasHeader( $name )
+    {
+        return $this->response->hasHeader($name);
+    }
+
+    /**
+     * @return array
+     */
+    public function getHeaders()
+    {
+        return $this->response->getHeaders();
+    }
+
+    /**
+     * @return int
+     */
+    public function getStatusCode()
+    {
+        return $this->response->getStatusCode();
+    }
+
+    /**
+     * @return string
+     */
+    public function getBody()
+    {
+        return $this->resultBody;
+    }
+}
