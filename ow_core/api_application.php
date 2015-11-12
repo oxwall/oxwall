@@ -83,8 +83,16 @@ class OW_ApiApplication extends OW_Application
         if( OW::getUser()->isAuthenticated() )
         {
             $userId = OW::getUser()->getId();
+
+            $timeZone = BOL_PreferenceService::getInstance()->getPreferenceValue('timeZoneSelect', $userId);
+
+        }
+
+        if( !empty($timeZone) )
+        {
             date_default_timezone_set(BOL_PreferenceService::getInstance()->getPreferenceValue('timeZoneSelect', $userId));
         }
+
         else
         {
             date_default_timezone_set(OW::getConfig()->getValue('base', 'site_timezone'));

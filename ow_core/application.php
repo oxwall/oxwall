@@ -113,17 +113,26 @@ class OW_Application
         $this->urlHostRedirect();
         OW_Auth::getInstance()->setAuthenticator(new OW_SessionAuthenticator());
         $this->userAutoLogin();
+        $timeZone = null;
 
         // setting default time zone
         if( OW::getUser()->isAuthenticated() )
         {
             $userId = OW::getUser()->getId();
+            $timeZone = BOL_PreferenceService::getInstance()->getPreferenceValue('timeZoneSelect', $userId);
+
+        }
+
+        if( !empty($timeZone) )
+        {
             date_default_timezone_set(BOL_PreferenceService::getInstance()->getPreferenceValue('timeZoneSelect', $userId));
         }
+
         else
         {
             date_default_timezone_set(OW::getConfig()->getValue('base', 'site_timezone'));
         }
+
         // synchronize the db's time zone
         OW::getDbo()->setTimezone();
 
