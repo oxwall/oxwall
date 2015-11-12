@@ -346,12 +346,18 @@ class ADMIN_CTRL_Plugins extends ADMIN_CTRL_StorageAbstract
         $router = OW::getRouter();
 
         $remotePluginInfo = (array) $this->storageService->getItemInfoForUpdate($pluginDto->getKey(), $pluginDto->getDeveloperKey(), $pluginDto->getBuild());
-
-        $this->assign("backUrl", $router->urlFor(__CLASS__, "index"));
+        $this->assign("returnUrl", $router->urlForRoute("admin_plugins_installed"));
 
         if ( empty($remotePluginInfo) || !empty($remotePluginInfo["error"]) )
         {
+            //TODO edit lang to "plugin not found or network error"
             $this->assign("text", $language->text("admin", "plugin_update_request_error"));
+            return;
+        }
+
+        if ( $pluginDto->getBuild() == $remotePluginInfo["build"] )
+        {
+            $this->assign("text", $language->text("admin", "manage_plugins_up_to_date_message"));
             return;
         }
 
@@ -371,7 +377,6 @@ class ADMIN_CTRL_Plugins extends ADMIN_CTRL_StorageAbstract
 
         $this->assign("text", $language->text("admin", "free_plugin_request_text", array("releaseNotes" => "", "oldVersion" => $pluginDto->getBuild(), "newVersion" => $remotePluginInfo["build"], "name" => $pluginDto->getTitle())));
         $this->assign("updateUrl", $router->urlFor(__CLASS__, "update", $params));
-        $this->assign("returnUrl", $router->urlForRoute("admin_plugins_installed"));
     }
 
     /**

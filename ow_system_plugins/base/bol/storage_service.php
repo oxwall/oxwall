@@ -25,7 +25,7 @@
 /**
  * @author Sardar Madumarov <madumarov@gmail.com>
  * @package ow_system_plugins.base.bol
- * @since 1.7.6
+ * @since 1.8.1
  */
 class BOL_StorageService
 {
@@ -135,25 +135,28 @@ class BOL_StorageService
         }
 
         $data = $this->triggerEventBeforeRequest();
-        $requestUrl = OW::getRequest()->buildUrlQueryString($this->getStorageUrl(self::URI_CHECK_ITEMS_FOR_UPDATE));
+        $data["info"] = json_encode($requestArray);
 
-        $data["info"] = urlencode(json_encode($requestArray));
-        $postdata = http_build_query($data);
+        $params = new UTIL_HttpClientParams();
+        $params->addParams($data);
+        $response = UTIL_HttpClient::post($this->getStorageUrl(self::URI_CHECK_ITEMS_FOR_UPDATE), $params);
 
-        $options = array("http" =>
-            array(
-                "method" => "POST",
-                "header" => "Content-type: application/x-www-form-urlencoded",
-                "content" => $postdata
-            )
-        );
+        if ( $response->getStatusCode() != UTIL_HttpClient::HTTP_STATUS_OK )
+        {
+            OW::getLogger()->addEntry(__CLASS__ . "::" . __METHOD__ . "#" . __LINE__ . " storage request status is not OK", "core.update");
+            return;
+        }
 
-        $context = stream_context_create($options);
-        $resultArray = json_decode(file_get_contents($requestUrl, false, $context), true);
+        $resultArray = array();
+
+        if ( $response->getBody() )
+        {
+            $resultArray = json_decode($response->getBody(), true);
+        }
 
         if ( empty($resultArray) || !is_array($resultArray) )
         {
-            OW::getLogger()->addEntry(__CLASS__ . "::" . __METHOD__ . " remote request returned empty result", "core.update");
+            OW::getLogger()->addEntry(__CLASS__ . "::" . __METHOD__ . "#" . __LINE__ . " remote request returned empty result", "core.update");
             return;
         }
 
@@ -195,7 +198,7 @@ class BOL_StorageService
         $data = array_merge($params, $this->triggerEventBeforeRequest($params));
         $requestUrl = OW::getRequest()->buildUrlQueryString($this->getStorageUrl(self::URI_GET_ITEM_INFO), $data);
 
-        return json_decode(file_get_contents($requestUrl), true);
+        return $this->requestGetResultAsJson($this->getStorageUrl(self::URI_GET_ITEM_INFO), $data);
     }
 
     /**
@@ -206,8 +209,7 @@ class BOL_StorageService
     public function getPlatformInfoForUpdate()
     {
         $data = $this->triggerEventBeforeRequest();
-        $requestUrl = OW::getRequest()->buildUrlQueryString($this->getStorageUrl(self::URI_GET_PLATFORM_INFO), $data);
-        return json_decode(file_get_contents($requestUrl), true);
+        return $this->requestGetResultAsJson($this->getStorageUrl(self::URI_GET_PLATFORM_INFO), $data);
     }
 
     /**
@@ -226,16 +228,18 @@ class BOL_StorageService
         $data = array_merge($params, $this->triggerEventBeforeRequest($params));
         $requestUrl = OW::getRequest()->buildUrlQueryString($this->getStorageUrl(self::URI_DOWNLOAD_PLATFORM_ARCHIVE), $data);
 
-        $fileContents = file_get_contents($requestUrl);
+        $paramsObj = new UTIL_HttpClientParams();
+        $paramsObj->addParams($data);
+        $response = UTIL_HttpClient::get($this->getStorageUrl(self::URI_DOWNLOAD_PLATFORM_ARCHIVE), $paramsObj);
 
-        if ( empty($fileContents) )
+        if ( $response->getStatusCode() != UTIL_HttpClient::HTTP_STATUS_OK || empty($response->getBody()) )
         {
             throw new LogicException("Can't download file. Server returned empty file.");
         }
 
-        $fileName = "new-platform-" . UTIL_String::getRandomString(8, UTIL_String::RND_STR_NUMERIC) . ".zip";
-        $archivePath = OW_DIR_PLUGINFILES . "ow" . DS . $fileName;
-        file_put_contents($archivePath, $fileContents);
+        $fileName = UTIL_String::getRandomStringWithPrefix("platform_archive_", 8, UTIL_String::RND_STR_NUMERIC) . ".zip";
+        $archivePath = OW_DIR_PLUGINFILES . DS . $fileName;
+        file_put_contents($archivePath, $response->getBody());
 
         return $archivePath;
     }
@@ -258,17 +262,21 @@ class BOL_StorageService
         );
 
         $data = array_merge($params, $this->triggerEventBeforeRequest($params));
-        $requestUrl = OW::getRequest()->buildUrlQueryString($this->getStorageUrl(self::URI_DOWNLOAD_ITEM), $data);
-        $fileContents = file_get_contents($requestUrl);
 
-        if ( empty($fileContents) )
+        $paramsObj = new UTIL_HttpClientParams();
+        $paramsObj->addParams($data);
+        $response = UTIL_HttpClient::get($this->getStorageUrl(self::URI_DOWNLOAD_ITEM), $paramsObj);
+
+        if ( $response->getStatusCode() != UTIL_HttpClient::HTTP_STATUS_OK || empty($response->getBody()) )
         {
             throw new LogicException("Can't download file. Server returned empty file.");
         }
-        $fileName = "temp" . UTIL_String::getRandomString(8, UTIL_String::RND_STR_NUMERIC) . ".zip";
-        $filePath = OW_DIR_PLUGINFILES . "ow" . DS . $fileName;
-        file_put_contents($filePath, $fileContents);
-        return $filePath;
+
+        $fileName = UTIL_String::getRandomString("plugin_archive_", 8, UTIL_String::RND_STR_NUMERIC) . ".zip";
+        $archivePath = OW_DIR_PLUGINFILES . DS . $fileName;
+        file_put_contents($archivePath, $response->getBody());
+
+        return $archivePath;
     }
 
     /**
@@ -277,10 +285,15 @@ class BOL_StorageService
      * @param string $key
      * @param string $developerKey
      * @param string $licenseKey
-     * @return array
+     * @return bool
      */
     public function checkLicenseKey( $key, $devKey, $licenseKey )
     {
+        if ( empty($key) || empty($devKey) || empty($licenseKey) )
+        {
+            return null;
+        }
+
         $params = array(
             self::URI_VAR_KEY => trim($key),
             self::URI_VAR_DEV_KEY => trim($devKey),
@@ -288,9 +301,14 @@ class BOL_StorageService
         );
 
         $data = array_merge($params, $this->triggerEventBeforeRequest($params));
-        $requestUrl = OW::getRequest()->buildUrlQueryString($this->getStorageUrl(self::URI_CHECK_LECENSE_KEY), $data);
+        $result = $this->requestGetResultAsJson($this->getStorageUrl(self::URI_CHECK_LECENSE_KEY), $data);
 
-        return (bool) json_decode((file_get_contents($requestUrl)));
+        if ( $result === null )
+        {
+            return null;
+        }
+
+        return $result === true ? true : false;
     }
 
     /**
@@ -502,5 +520,19 @@ class BOL_StorageService
         $mail->setTextContent($language->text("base", "mail_template_admin_invalid_license_content_text", array("itemName" => $item["name"], "siteURL" => OW_URL_HOME)));
 
         OW::getMailer()->send($mail);
+    }
+
+    private function requestGetResultAsJson( $url, $data )
+    {
+        $params = new UTIL_HttpClientParams();
+        $params->addParams($data);
+        $response = UTIL_HttpClient::get($url, $params);
+
+        if ( $response->getStatusCode() != UTIL_HttpClient::HTTP_STATUS_OK || !$response->getBody() )
+        {
+            return null;
+        }
+
+        return json_decode($response->getBody(), true);
     }
 }

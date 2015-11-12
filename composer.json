@@ -1,0 +1,10 @@
+{
+    "config": {
+        "vendor-dir": "ow_libraries/vendor"
+    },
+    "require": {
+        "guzzlehttp/guzzle": "~6.1",
+        "smarty/smarty": "~3.1",
+        "phpmailer/phpmailer": "~5.2"
+    }
+}

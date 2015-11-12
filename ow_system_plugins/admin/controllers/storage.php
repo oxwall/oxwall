@@ -153,6 +153,12 @@ class ADMIN_CTRL_Storage extends ADMIN_CTRL_StorageAbstract
         }
 
         $newPlatformInfo = $this->storageService->getPlatformInfoForUpdate();
+
+        if ( !$newPlatformInfo )
+        {
+            return;
+        }
+
         $params = array(
             "oldVersion" => OW::getConfig()->getValue("base", "soft_version"),
             "newVersion" => $newPlatformInfo["version"],
