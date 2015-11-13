@@ -75,7 +75,7 @@ class ADMIN_CTRL_Themes extends ADMIN_CTRL_StorageAbstract
         $themesInfo = array();
 
         $activeTheme = OW::getThemeManager()->getSelectedTheme()->getDto()->getKey();
-
+        
         /* @var $theme BOL_Theme */
         foreach ( $themes as $theme )
         {
@@ -92,6 +92,17 @@ class ADMIN_CTRL_Themes extends ADMIN_CTRL_StorageAbstract
             if ( !in_array($theme->getKey(), array(BOL_ThemeService::DEFAULT_THEME, $activeTheme)) )
             {
                 $themesInfo[$theme->getKey()]["delete_url"] = $router->urlFor(__CLASS__, "deleteTheme", array("name" => $theme->getKey()));
+            }
+
+            if ( $theme->getLicenseCheckTimestamp() > 0 )
+            {
+                $params = array(
+                    BOL_StorageService::URI_VAR_BACK_URI => urlencode($router->uriForRoute("admin_themes_choose")),
+                    BOL_StorageService::URI_VAR_KEY => $theme->getKey(),
+                    BOL_StorageService::URI_VAR_ITEM_TYPE => BOL_StorageService::URI_VAR_ITEM_TYPE_VAL_THEME,
+                    BOL_StorageService::URI_VAR_DEV_KEY => $theme->getDeveloperKey()
+                );
+                $themesInfo[$theme->getKey()]["license_url"] = OW::getRequest()->buildUrlQueryString($router->urlFor("ADMIN_CTRL_Storage", "checkItemLicense"), $params);
             }
 
             $xmlInfo = $this->themeService->getThemeXmlInfoForKey($theme->getKey());

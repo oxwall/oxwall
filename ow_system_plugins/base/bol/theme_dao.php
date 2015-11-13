@@ -125,7 +125,7 @@ class BOL_ThemeDao extends OW_BaseDao
     /**
      * @return array
      */
-    public function findPluginsWithInvalidLicense()
+    public function findItemsWithInvalidLicense()
     {
         $example = new OW_Example();
         $example->andFieldGreaterThan(self::LICENSE_CHECK_STAMP, 0);

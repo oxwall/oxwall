@@ -120,16 +120,18 @@ class ADMIN_CTRL_Storage extends ADMIN_CTRL_StorageAbstract
                 {
                     $params[BOL_StorageService::URI_VAR_LICENSE_CHECK_RESULT] = 1;
                     $params[BOL_StorageService::URI_VAR_LICENSE_KEY] = urlencode($licenseKey);
-                    $pluginDto = $this->pluginService->findPluginByKey($key, $devKey);
 
-                    if ( $pluginDto != null )
+                    $dto = $this->storageService->findStoreItem($key, $devKey, $params[BOL_StorageService::URI_VAR_ITEM_TYPE]);
+
+                    if ( $dto != null )
                     {
-                        $pluginDto->setLicenseKey($licenseKey);
-                        $this->pluginService->savePlugin($pluginDto);
+                        $dto->setLicenseKey($licenseKey);
+                        $dto->setLicenseCheckTimestamp(null);
+                        $this->storageService->saveStoreItem($dto);
                     }
 
-                    $this->redirectToBackUri($params);
                     OW::getFeedback()->info($language->text("admin", "plugins_manage_license_key_check_success"));
+                    $this->redirectToBackUri($params);
                     $this->redirect();
                 }
                 else

@@ -25,24 +25,49 @@
 /**
  * @author Sardar Madumarov <madumarov@gmail.com>
  * @package ow_system_plugins.base.bol
- * @since 1.0
+ * @since 1.8.1
  */
-class BOL_Plugin extends BOL_StoreItem
+abstract class BOL_StoreItem extends OW_Entity
 {
     /**
      * @var string
      */
-    public $module;
+    public $key;
+
+    /**
+     * @var string
+     */
+    public $developerKey;
+
+    /**
+     * @var string
+     */
+    public $title;
+
+    /**
+     * @var string
+     */
+    public $description;
+
+    /**
+     * @var string
+     */
+    public $licenseKey;
+
+    /**
+     * @var int
+     */
+    public $licenseCheckTimestamp;
+
+    /**
+     * @var integer
+     */
+    public $build = 0;
 
     /**
      * @var boolean
      */
-    public $isSystem;
-
-    /**
-     * @var boolean
-     */
-    public $isActive;
+    public $update = 0;
 
     /**
      * @var string
@@ -55,88 +80,143 @@ class BOL_Plugin extends BOL_StoreItem
     public $uninstallRoute;
 
     /**
-     * @return boolean
+     * @return string
      */
-    public function isActive()
+    public function getDescription()
     {
-        return (bool) $this->isActive;
+        return $this->description;
     }
 
     /**
-     * @return boolean
+     * @return integer
      */
-    public function isSystem()
+    public function getId()
     {
-        return (bool) $this->isSystem;
+        return (int) $this->id;
     }
 
     /**
      * @return string
      */
-    public function getModule()
+    public function getKey()
     {
-        return $this->module;
-    }
-
-    /**
-     * @param boolean $isActive
-     * @return BOL_Plugin
-     */
-    public function setIsActive( $isActive )
-    {
-        $this->isActive = (boolean) $isActive;
-        return $this;
-    }
-
-    /**
-     * @param string $module
-     * @return BOL_Plugin
-     */
-    public function setModule( $module )
-    {
-        $this->module = trim($module);
-        return $this;
-    }
-
-    /**
-     * @param boolean $isSystem
-     * @return BOL_Plugin
-     */
-    public function setIsSystem( $isSystem )
-    {
-        $this->isSystem = $isSystem;
-        return $this;
+        return $this->key;
     }
 
     /**
      * @return string
      */
-    public function getAdminSettingsRoute()
+    public function getTitle()
     {
-        return $this->adminSettingsRoute;
+        return $this->title;
     }
 
     /**
-     * @param string $adminSettingsRoute
+     * @param string $description
      */
-    public function setAdminSettingsRoute( $adminSettingsRoute )
+    public function setDescription( $description )
     {
-        $this->adminSettingsRoute = $adminSettingsRoute;
+        $this->description = trim($description);
+        return $this;
+    }
+
+    /**
+     * @param string $key
+     * @return BOL_Plugin
+     */
+    public function setKey( $key )
+    {
+        $this->key = trim($key);
+        return $this;
+    }
+
+    /**
+     * @param string $title
+     * @return BOL_Plugin
+     */
+    public function setTitle( $title )
+    {
+        $this->title = trim($title);
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getBuild()
+    {
+        return $this->build;
+    }
+
+    /**
+     * @param int $build
+     */
+    public function setBuild( $build )
+    {
+        $this->build = (int) $build;
+    }
+
+    /**
+     * @return int
+     */
+    public function getUpdate()
+    {
+        return $this->update;
+    }
+
+    /**
+     * @param int $update
+     */
+    public function setUpdate( $update )
+    {
+        $this->update = (int) $update;
     }
 
     /**
      * @return string
      */
-    public function getUninstallRoute()
+    public function getLicenseKey()
     {
-        return $this->uninstallRoute;
+        return $this->licenseKey;
     }
 
     /**
-     * @param string $uninstallRoute
+     * @param string $licenseKey
      */
-    public function setUninstallRoute( $uninstallRoute )
+    public function setLicenseKey( $licenseKey )
     {
-        $this->uninstallRoute = $uninstallRoute;
+        $this->licenseKey = $licenseKey;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDeveloperKey()
+    {
+        return $this->developerKey;
+    }
+
+    /**
+     * @param string $developerKey
+     */
+    public function setDeveloperKey( $developerKey )
+    {
+        $this->developerKey = $developerKey;
+    }
+
+    /**
+     * @return int
+     */
+    public function getLicenseCheckTimestamp()
+    {
+        return $this->licenseCheckTimestamp;
+    }
+
+    /**
+     * @param int $licenseCheckTimestamp
+     */
+    public function setLicenseCheckTimestamp( $licenseCheckTimestamp )
+    {
+        $this->licenseCheckTimestamp = $licenseCheckTimestamp;
     }
 }

@@ -24,7 +24,8 @@
 $queryList = array(
     "ALTER TABLE `" . OW_DB_PREFIX . "base_plugin` ADD `licenseCheckTimestamp` INT UNSIGNED NULL DEFAULT NULL AFTER `licenseKey`, ADD INDEX `licenseCheckTimestamp` (`licenseCheckTimestamp`)",
     "ALTER TABLE `" . OW_DB_PREFIX . "base_theme` ADD `licenseCheckTimestamp` INT UNSIGNED NULL DEFAULT NULL AFTER `sidebarPosition`, ADD INDEX `licenseCheckTimestamp` (`licenseCheckTimestamp`)",
-    "ALTER TABLE  `" . OW_DB_PREFIX . "base_theme` CHANGE  `name`  `key` VARCHAR( 255 ) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL"
+    "ALTER TABLE `" . OW_DB_PREFIX . "base_theme` CHANGE  `name`  `key` VARCHAR( 255 ) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL",
+    "ALTER TABLE `" . OW_DB_PREFIX . "base_theme` DROP `isActive`"
 );
 
 foreach ( $queryList as $query )

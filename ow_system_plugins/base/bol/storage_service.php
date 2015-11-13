@@ -401,6 +401,51 @@ class BOL_StorageService
     {
         $plugins = $this->pluginService->findPluginsWithInvalidLicense();
     }
+
+    /**
+     * @param int $timeStamp
+     * @return bool
+     */
+    public function isItemLicenseCheckPeriodExpired( $timeStamp )
+    {
+        return (intval($plugin->getLicenseCheckTimestamp()) + self::ITEM_DEACTIVATE_TIMEOUT_IN_DAYS * 24 * 3600) <= time();
+    }
+
+    /**
+     * @param BOL_StoreItem $item
+     */
+    public function saveStoreItem( BOL_StoreItem $item )
+    {
+        if ( $item instanceof BOL_Plugin )
+        {
+            $this->pluginService->savePlugin($item);
+        }
+        else
+        {
+            $this->themeService->saveTheme($item);
+        }
+    }
+
+    /**
+     * @param string $key
+     * @param string $devKey
+     * @param string $type
+     * @return BOL_StoreItem
+     */
+    public function findStoreItem( $key, $devKey, $type )
+    {
+        if ( $type == self::URI_VAR_ITEM_TYPE_VAL_PLUGIN )
+        {
+            return $this->pluginService->findPluginByKey($key, $devKey);
+        }
+
+        if ( $type == self::URI_VAR_ITEM_TYPE_VAL_THEME )
+        {
+            return $this->themeService->findThemeByKey($key);
+        }
+
+        return null;
+    }
     /* ---------------------------------------------------------------------- */
 
     private function getStorageUrl( $uri )
@@ -457,7 +502,6 @@ class BOL_StorageService
             $invalidItems[$item[self::URI_VAR_ITEM_TYPE]][$item[self::URI_VAR_KEY]] = $item[self::URI_VAR_DEV_KEY];
         }
 
-        $licenseExpireTimeInSeconds = self::ITEM_DEACTIVATE_TIMEOUT_IN_DAYS * 24 * 5;
         $plugins = $this->pluginService->findActivePlugins();
 
         /* @var $plugin BOL_Plugin */
@@ -471,7 +515,7 @@ class BOL_StorageService
                     $this->pluginService->savePlugin($plugin);
                     $this->notifyAdminAboutInvalidItem(array("name" => $plugin->getTitle()));
                 }
-                else if ( (intval($plugin->getLicenseCheckTimestamp()) + $licenseExpireTimeInSeconds) <= time() )
+                else if ( $this->isItemLicenseCheckPeriodExpired($plugin->getLicenseCheckTimestamp()) )
                 {
                     $this->pluginService->deactivate($plugin->getKey());
                 }
@@ -496,7 +540,7 @@ class BOL_StorageService
                     $this->themeService->saveTheme($theme);
                     $this->notifyAdminAboutInvalidItem(array("name" => $theme->getTitle()));
                 }
-                else if ( (intval($theme->getLicenseCheckTimestamp()) + $licenseExpireTimeInSeconds) <= time() && $this->themeService->getSelectedThemeName() == $theme->getKey() )
+                else if ( $this->isItemLicenseCheckPeriodExpired($theme->getLicenseCheckTimestamp()) && $this->themeService->getSelectedThemeName() == $theme->getKey() )
                 {
                     $this->themeService->setSelectedThemeName(BOL_ThemeService::DEFAULT_THEME);
                 }

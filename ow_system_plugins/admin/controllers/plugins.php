@@ -76,6 +76,17 @@ class ADMIN_CTRL_Plugins extends ADMIN_CTRL_StorageAbstract
                 "update_url" => ((int) $plugin->getUpdate() == 1) ? $router->urlFor(__CLASS__, "updateRequest", array("key" => $plugin->getKey())) : false
             );
 
+            if ( $plugin->getLicenseCheckTimestamp() > 0 )
+            {
+                $params = array(
+                    BOL_StorageService::URI_VAR_BACK_URI => urlencode($router->uriForRoute("admin_plugins_installed")),
+                    BOL_StorageService::URI_VAR_KEY => $plugin->getKey(),
+                    BOL_StorageService::URI_VAR_ITEM_TYPE => BOL_StorageService::URI_VAR_ITEM_TYPE_VAL_PLUGIN,
+                    BOL_StorageService::URI_VAR_DEV_KEY => $plugin->getDeveloperKey()
+                );
+                $array["license_url"] = OW::getRequest()->buildUrlQueryString($router->urlFor("ADMIN_CTRL_Storage", "checkItemLicense"), $params);
+            }
+
             if ( $plugin->isActive() )
             {
                 $array["deact_url"] = $router->urlFor(__CLASS__, "deactivate", array("key" => $plugin->getKey()));
@@ -365,7 +376,12 @@ class ADMIN_CTRL_Plugins extends ADMIN_CTRL_StorageAbstract
         {
             if ( !isset($_GET[BOL_StorageService::URI_VAR_LICENSE_CHECK_COMPLETE]) )
             {
-                $get = array(BOL_StorageService::URI_VAR_BACK_URI => $router->uriFor(__CLASS__, "updateRequest", $params));
+                $get = array(
+                    BOL_StorageService::URI_VAR_BACK_URI => $router->uriFor(__CLASS__, "updateRequest", $params),
+                    BOL_StorageService::URI_VAR_KEY => $pluginDto->getKey(),
+                    BOL_StorageService::URI_VAR_ITEM_TYPE => BOL_StorageService::URI_VAR_ITEM_TYPE_VAL_PLUGIN,
+                    BOL_StorageService::URI_VAR_DEV_KEY => $pluginDto->getDeveloperKey()
+                );
                 $this->redirect(OW::getRequest()->buildUrlQueryString($router->urlFor("ADMIN_CTRL_Storage", "checkItemLicense"), $get));
             }
             else

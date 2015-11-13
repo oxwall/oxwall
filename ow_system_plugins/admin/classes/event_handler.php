@@ -95,7 +95,7 @@ class ADMIN_CLASS_EventHandler
             $coll->add($plugin->getTitle() . " <a href=\"{$request->buildUrlQueryString($licenseRequestUrl, $params)}\">aaa</a>", ADMIN_CLASS_NotificationCollector::NOTIFICATION_WARNING);
         }
 
-        $themes = $themeService->findPluginsWithInvalidLicense();
+        $themes = $themeService->findItemsWithInvalidLicense();
 
         /* @var $theme BOL_Theme */
         foreach ( $themes as $theme )

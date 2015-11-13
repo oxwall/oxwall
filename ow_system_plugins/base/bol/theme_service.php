@@ -1341,9 +1341,9 @@ class BOL_ThemeService
      * 
      * @return array
      */
-    public function findPluginsWithInvalidLicense()
+    public function findItemsWithInvalidLicense()
     {
-        return $this->themeDao->findPluginsWithInvalidLicense();
+        return $this->themeDao->findItemsWithInvalidLicense();
     }
 
     /**
@@ -1362,7 +1362,7 @@ class BOL_ThemeService
     {
         if ( !file_exists($themeXmlPath) )
         {
-            OW::getLogger()->addEntry(__CLASS__ . "::" . __METHOD__ . " - `" . $themeXmlPath . "` not found");
+            OW::getLogger()->addEntry(__CLASS__ . "::" . __FUNCTION__ . " - `" . $themeXmlPath . "` not found");
             return null;
         }
 
@@ -1371,7 +1371,7 @@ class BOL_ThemeService
 
         if ( !$xmlInfo )
         {
-            OW::getLogger()->addEntry(__CLASS__ . "::" . __METHOD__ . " - invalid `" . $themeXmlPath . "`");
+            OW::getLogger()->addEntry(__CLASS__ . "::" . __FUNCTION__ . " - invalid `" . $themeXmlPath . "`");
             return null;
         }
 
@@ -1379,7 +1379,7 @@ class BOL_ThemeService
         {
             if ( empty($xmlInfo[$prop]) )
             {
-                OW::getLogger()->addEntry(__CLASS__ . "::" . __METHOD__ . " - in `" . $themeXmlPath . "` property `" . $prop . "` not found");
+                OW::getLogger()->addEntry(__CLASS__ . "::" . __FUNCTION__ . " - in `" . $themeXmlPath . "` property `" . $prop . "` not found");
                 return null;
             }
         }

@@ -23,39 +23,12 @@
  */
 
 /**
- * Data Transfer Object for `theme` table.  
- * 
  * @author Sardar Madumarov <madumarov@gmail.com>
  * @package ow_system_plugins.base.bol
  * @since 1.0
  */
-class BOL_Theme extends OW_Entity
+class BOL_Theme extends BOL_StoreItem
 {
-    /**
-     * @var string
-     */
-    public $key;
-
-    /**
-     * @var string
-     */
-    public $developerKey;
-
-    /**
-     * @var string
-     */
-    public $title;
-
-    /**
-     * @var string
-     */
-    public $description;
-
-    /**
-     * @var boolean
-     */
-    public $isActive = 0;
-
     /**
      * @var string
      */
@@ -77,111 +50,11 @@ class BOL_Theme extends OW_Entity
     public $sidebarPosition;
 
     /**
-     * @var integer
-     */
-    public $build = 0;
-
-    /**
-     * @var boolean
-     */
-    public $update = 0;
-
-    /**
-     * @var string
-     */
-    public $licenseKey;
-
-    /**
-     * @var type 
-     */
-    public $licenseCheckTimestamp;
-
-    /**
-     * @return string
-     */
-    public function getDescription()
-    {
-        return $this->description;
-    }
-
-    /**
-     * @return int
-     */
-    public function getId()
-    {
-        return (int) $this->id;
-    }
-
-    /**
-     * @return boolean
-     */
-    public function getIsActive()
-    {
-        return (bool) $this->isActive;
-    }
-
-    /**
-     * @return string
-     */
-    public function getKey()
-    {
-        return $this->key;
-    }
-
-    /**
-     * @return string
-     */
-    public function getTitle()
-    {
-        return $this->title;
-    }
-
-    /**
      * @return string
      */
     public function getCustomCss()
     {
         return $this->customCss;
-    }
-
-    /**
-     * @param string $description
-     * @return BOL_Theme
-     */
-    public function setDescription( $description )
-    {
-        $this->description = trim($description);
-        return $this;
-    }
-
-    /**
-     * @param boolean $isActive
-     * @return BOL_Theme
-     */
-    public function setIsActive( $isActive )
-    {
-        $this->isActive = (boolean) $isActive;
-        return $this;
-    }
-
-    /**
-     * @param string $key
-     * @return BOL_Theme
-     */
-    public function setKey( $key )
-    {
-        $this->key = trim($key);
-        return $this;
-    }
-
-    /**
-     * @param string $title
-     * @return BOL_Theme
-     */
-    public function setTitle( $title )
-    {
-        $this->title = trim($title);
-        return $this;
     }
 
     /**
@@ -194,83 +67,51 @@ class BOL_Theme extends OW_Entity
         return $this;
     }
 
+    /**
+     * @return string
+     */
     public function getCustomCssFileName()
     {
         return $this->customCssFileName;
     }
 
+    /**
+     * @param string $customCssFileName
+     */
     public function setCustomCssFileName( $customCssFileName )
     {
         $this->customCssFileName = $customCssFileName;
     }
 
+    /**
+     * @return string
+     */
     public function getSidebarPosition()
     {
         return $this->sidebarPosition;
     }
 
+    /**
+     * @param string $sidebarPosition
+     */
     public function setSidebarPosition( $sidebarPosition )
     {
         $this->sidebarPosition = $sidebarPosition;
     }
 
-    public function getDeveloperKey()
-    {
-        return $this->developerKey;
-    }
-
-    public function setDeveloperKey( $developerKey )
-    {
-        $this->developerKey = $developerKey;
-    }
-
-    public function getBuild()
-    {
-        return $this->build;
-    }
-
-    public function setBuild( $build )
-    {
-        $this->build = $build;
-    }
-
-    public function getUpdate()
-    {
-        return $this->update;
-    }
-
-    public function setUpdate( $update )
-    {
-        $this->update = $update;
-    }
-
-    public function getLicenseKey()
-    {
-        return $this->licenseKey;
-    }
-
-    public function setLicenseKey( $licenseKey )
-    {
-        $this->licenseKey = $licenseKey;
-    }
-
+    /**
+     * @return string
+     */
     public function getMobileCustomCss()
     {
         return $this->mobileCustomCss;
     }
 
+    /**
+     * @param string $mobileCustomCss
+     */
     public function setMobileCustomCss( $mobileCustomCss )
     {
         $this->mobileCustomCss = $mobileCustomCss;
-    }
-
-    function getLicenseCheckTimestamp()
-    {
-        return intval($this->licenseCheckTimestamp);
-    }
-
-    function setLicenseCheckTimestamp( type $licenseCheckTimestamp )
-    {
-        $this->licenseCheckTimestamp = $licenseCheckTimestamp;
     }
 }
