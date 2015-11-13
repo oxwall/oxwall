@@ -2144,7 +2144,7 @@ class CaptchaField extends FormElement
             $this->addAttribute('value', str_replace('"', '&quot;', $this->value));
         }
 
-        $captchaUrl = OW::getRouter()->urlFor('BASE_CTRL_Captcha', 'index');
+        $captchaUrl = OW_URL_HOME.'captcha.php';
         $captchaResponderUrl = OW::getRouter()->urlFor('BASE_CTRL_Captcha', 'ajaxResponder');
         $captchaClass = $this->getName() . '_' . $this->getId();
         $uniqueId = md5(time());
