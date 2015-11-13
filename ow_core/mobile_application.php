@@ -79,6 +79,17 @@ class OW_MobileApplication extends OW_Application
         // setting default time zone
         date_default_timezone_set(OW::getConfig()->getValue('base', 'site_timezone'));
 
+        if( OW::getUser()->isAuthenticated() )
+        {
+            $userId = OW::getUser()->getId();
+            $timeZone = BOL_PreferenceService::getInstance()->getPreferenceValue('timeZoneSelect', $userId);
+
+            if(!empty($timeZone))
+            {
+                date_default_timezone_set($timeZone);
+            }
+        }
+
         // synchronize the db's time zone
         OW::getDbo()->setTimezone();
 

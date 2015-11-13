@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<prefix name="test_prefix" label="Test prefix" language_tag="en" language_label="English">
+<key name="test_key_1"><value>test1</value></key>
+<key name="test_key_2"><value>test2</value></key>
+<key name="test_key_3"><value>test3</value></key>
+</prefix>
