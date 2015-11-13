@@ -22,11 +22,9 @@
  * which combines Covered Code or portions thereof with code not governed by the terms of the CPAL.
  */
 /**
- * @author Nurlan Dzhumakaliev <nurlanj@live.com>
- * @package ow_cron
- * @since 1.0
+ * @author Podyachev Evgeny <joker.OW2@gmail.com>
+ * @since 1.8.1
  */
-ini_set('display_errors', 1);
 
 define('_OW_', true);
 
