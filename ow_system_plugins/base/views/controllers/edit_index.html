@@ -91,7 +91,7 @@
         </tr>
     </table>
 
-    {if !$adminMode && !$isAdmin}
+    {if !$adminMode && !$isAdmin && $approveEnabled}
         <div class="ow_anno ow_std_margin anno_padding_left">{text key="base+edit_profile_warning"}</div>
     {/if}
 

@@ -263,6 +263,8 @@ class BASE_CTRL_Edit extends OW_ActionController
         $this->assign('isAdmin', OW::getUser()->isAdmin());
         $this->assign('isEditedUserModerator', $isEditedUserModerator);
         $this->assign('adminMode', $adminMode);
+        $approveEnabled = OW::getConfig()->getValue('base', 'mandatory_user_approve');
+        $this->assign('approveEnabled', $approveEnabled);
 
         OW::getDocument()->addOnloadScript('
             $("input.write_message_button").click( function() {
@@ -489,23 +491,12 @@ class BASE_CTRL_Edit extends OW_ActionController
         {
             case 'isExistEmail':
 
-                $result = false;
-
                 $email = $_POST["value"];
 
-                $result = $this->userService->isExistEmail($email);
+                $validator = new editEmailValidator($editedUserId);
+                $result = $validator->isValid($email);
 
-                if ( $result )
-                {
-                    $user = $this->userService->findUserById($editedUserId);
-
-                    if ( isset($user) && $user->email === $email )
-                    {
-                        $result = false;
-                    }
-                }
-
-                echo json_encode(array('result' => !$result));
+                echo json_encode(array('result' => $result));
 
                 break;
 
@@ -527,7 +518,7 @@ class BASE_CTRL_Edit extends OW_ActionController
             case 'isExistUserName':
                 $username = $_POST["value"];
 
-                $validator = new editUserNameValidator();
+                $validator = new editUserNameValidator($editedUserId);
                 $result = $validator->isValid($username);
 
                 echo json_encode(array('result' => $result));
