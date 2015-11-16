@@ -46,6 +46,7 @@ class ADMIN_CLASS_EventHandler
         $language = OW::getLanguage();
         $pluginService = BOL_PluginService::getInstance();
         $themeService = BOL_ThemeService::getInstance();
+        $storageService = BOL_StorageService::getInstance();
         $request = OW::getRequest();
 
         // update soft
@@ -80,33 +81,28 @@ class ADMIN_CLASS_EventHandler
             $coll->add($language->text('admin', 'warning_url_fopen_disabled'), ADMIN_CLASS_NotificationCollector::NOTIFICATION_WARNING);
         }
 
-        $plugins = $pluginService->findPluginsWithInvalidLicense();
+        $items = $storageService->findItemsWithInvalidLicense();
         $licenseRequestUrl = OW::getRouter()->urlFor("ADMIN_CTRL_Storage", "checkItemLicense");
+        $backUri = OW::getRouter()->getUri();
 
-        /* @var $plugin BOL_Plugin */
-        foreach ( $plugins as $plugin )
+        /* @var $plugin BOL_StoreItem */
+        foreach ( $items as $item )
         {
+            $type = ($item instanceof BOL_Plugin) ? BOL_StorageService::URI_VAR_ITEM_TYPE_VAL_PLUGIN : BOL_StorageService::URI_VAR_ITEM_TYPE_VAL_THEME;
+
             $params = array(
-                BOL_StorageService::URI_VAR_ITEM_TYPE => BOL_StorageService::URI_VAR_ITEM_TYPE_VAL_PLUGIN,
-                BOL_StorageService::URI_VAR_KEY => $plugin->getKey(),
-                BOL_StorageService::URI_VAR_DEV_KEY => $plugin->getDeveloperKey(),
+                BOL_StorageService::URI_VAR_ITEM_TYPE => $type,
+                BOL_StorageService::URI_VAR_KEY => $item->getKey(),
+                BOL_StorageService::URI_VAR_DEV_KEY => $item->getDeveloperKey(),
+                BOL_StorageService::URI_VAR_BACK_URI => $backUri
             );
 
-            $coll->add($plugin->getTitle() . " <a href=\"{$request->buildUrlQueryString($licenseRequestUrl, $params)}\">aaa</a>", ADMIN_CLASS_NotificationCollector::NOTIFICATION_WARNING);
-        }
-
-        $themes = $themeService->findItemsWithInvalidLicense();
-
-        /* @var $theme BOL_Theme */
-        foreach ( $themes as $theme )
-        {
-            $params = array(
-                BOL_StorageService::URI_VAR_ITEM_TYPE => BOL_StorageService::URI_VAR_ITEM_TYPE_VAL_THEME,
-                BOL_StorageService::URI_VAR_KEY => $theme->getKey(),
-                BOL_StorageService::URI_VAR_DEV_KEY => $theme->getDeveloperKey(),
+            $langParams = array(
+                "name" => $item->getTitle(),
+                "url" => $request->buildUrlQueryString($licenseRequestUrl, $params)
             );
 
-            $coll->add($plugin->getTitle() . " <a href=\"{$request->buildUrlQueryString($licenseRequestUrl, $params)}\">aaa</a>", ADMIN_CLASS_NotificationCollector::NOTIFICATION_WARNING);
+            $coll->add($language->text("admin", "invalid _license_item_notification", $langParams), ADMIN_CLASS_NotificationCollector::NOTIFICATION_WARNING);
         }
     }
 
@@ -285,15 +281,14 @@ class ADMIN_CLASS_EventHandler
                     urlHome: {value: {$urlHome}, enumerable: true},
                     isDisabled: {value: {$isDisabled}, enumerable: true},
                     isEnableFullscreen: {value: {$isEnableFullscreen}, enumerable: true}
-                });',
-                array(
-                    'ajaxResponder' => OW::getRouter()->urlFor('ADMIN_CTRL_Theme', 'ajaxResponder'),
-                    'rateUserId' => OW::getUser()->getId(),
-                    'layout' => $layout,
-                    'isClassic' => (bool)OW::getConfig()->getValue('photo', 'photo_view_classic'),
-                    'urlHome' => OW_URL_HOME,
-                    'isDisabled' => false,
-                    'isEnableFullscreen' => (bool)OW::getConfig()->getValue('photo', 'store_fullsize')
+                });', array(
+                'ajaxResponder' => OW::getRouter()->urlFor('ADMIN_CTRL_Theme', 'ajaxResponder'),
+                'rateUserId' => OW::getUser()->getId(),
+                'layout' => $layout,
+                'isClassic' => (bool) OW::getConfig()->getValue('photo', 'photo_view_classic'),
+                'urlHome' => OW_URL_HOME,
+                'isDisabled' => false,
+                'isEnableFullscreen' => (bool) OW::getConfig()->getValue('photo', 'store_fullsize')
                 )
             )
         );

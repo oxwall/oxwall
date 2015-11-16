@@ -399,7 +399,7 @@ class BOL_StorageService
      */
     public function findItemsWithInvalidLicense()
     {
-        $plugins = $this->pluginService->findPluginsWithInvalidLicense();
+        return array_merge($this->pluginService->findPluginsWithInvalidLicense(), $this->themeService->findItemsWithInvalidLicense());
     }
 
     /**
@@ -408,7 +408,7 @@ class BOL_StorageService
      */
     public function isItemLicenseCheckPeriodExpired( $timeStamp )
     {
-        return (intval($plugin->getLicenseCheckTimestamp()) + self::ITEM_DEACTIVATE_TIMEOUT_IN_DAYS * 24 * 3600) <= time();
+        return (intval($timeStamp) + self::ITEM_DEACTIVATE_TIMEOUT_IN_DAYS * 24 * 3600) <= time();
     }
 
     /**
@@ -502,66 +502,61 @@ class BOL_StorageService
             $invalidItems[$item[self::URI_VAR_ITEM_TYPE]][$item[self::URI_VAR_KEY]] = $item[self::URI_VAR_DEV_KEY];
         }
 
-        $plugins = $this->pluginService->findActivePlugins();
+        $itemsToCheck = array_merge($this->pluginService->findAllPlugins(), $this->themeService->findAllThemes());
+        $dataForNotification = array();
 
-        /* @var $plugin BOL_Plugin */
-        foreach ( $plugins as $plugin )
+        /* @var $item BOL_StoreItem */
+        foreach ( $itemsToCheck as $item )
         {
-            if ( isset($invalidItems[self::URI_VAR_ITEM_TYPE_VAL_PLUGIN][$plugin->getKey()]) && $invalidItems[self::URI_VAR_ITEM_TYPE_VAL_PLUGIN][$plugin->getKey()] )
+            $type = ($item instanceof BOL_Plugin) ? self::URI_VAR_ITEM_TYPE_VAL_PLUGIN : self::URI_VAR_ITEM_TYPE_VAL_THEME;
+
+            // if the item is on DB
+            if ( isset($invalidItems[$type][$item->getKey()]) && $invalidItems[$type][$item->getKey()] == $item->getDeveloperKey() )
             {
-                if ( (int) $plugin->getLicenseCheckTimestamp() == 0 )
+                $dataForNotification[] = array("type" => $type, "title" => $item->getTitle());
+
+                if ( (int) $item->getLicenseCheckTimestamp() == 0 )
                 {
-                    $plugin->setLicenseCheckTimestamp(time());
-                    $this->pluginService->savePlugin($plugin);
-                    $this->notifyAdminAboutInvalidItem(array("name" => $plugin->getTitle()));
+                    $item->setLicenseCheckTimestamp(time());
+                    $this->saveStoreItem($item);
                 }
-                else if ( $this->isItemLicenseCheckPeriodExpired($plugin->getLicenseCheckTimestamp()) )
+                else if ( $this->isItemLicenseCheckPeriodExpired($item->getLicenseCheckTimestamp()) )
                 {
-                    $this->pluginService->deactivate($plugin->getKey());
+                    if ( $type == self::URI_VAR_ITEM_TYPE_VAL_THEME && $this->themeService->getSelectedThemeName() )
+                    {
+                        $this->themeService->setSelectedThemeName(BOL_ThemeService::DEFAULT_THEME);
+                    }
+                    else if ( $type == self::URI_VAR_ITEM_TYPE_VAL_PLUGIN && $item->isActive )
+                    {
+                        $this->pluginService->deactivate($item->getKey());
+                    }
                 }
             }
-            else if ( $plugin->getLicenseCheckTimestamp() != null && $plugin->getLicenseCheckTimestamp() > 0 )
+            else if ( $item->getLicenseCheckTimestamp() != null && $item->getLicenseCheckTimestamp() > 0 )
             {
-                $plugin->setLicenseCheckTimestamp(null);
-                $this->pluginService->savePlugin($plugin);
+                $item->setLicenseCheckTimestamp(null);
+                $this->pluginService->savePlugin($item);
             }
         }
 
-        $themes = $this->themeService->findAllThemes();
-
-        /* @var $theme BOL_Theme */
-        foreach ( $themes as $theme )
-        {
-            if ( isset($invalidItems[self::URI_VAR_ITEM_TYPE_VAL_THEME][$theme->getKey()]) && $invalidItems[self::URI_VAR_ITEM_TYPE_VAL_THEME][$theme->getKey()] )
-            {
-                if ( (int) $theme->getLicenseCheckTimestamp() == 0 )
-                {
-                    $theme->setLicenseCheckTimestamp(time());
-                    $this->themeService->saveTheme($theme);
-                    $this->notifyAdminAboutInvalidItem(array("name" => $theme->getTitle()));
-                }
-                else if ( $this->isItemLicenseCheckPeriodExpired($theme->getLicenseCheckTimestamp()) && $this->themeService->getSelectedThemeName() == $theme->getKey() )
-                {
-                    $this->themeService->setSelectedThemeName(BOL_ThemeService::DEFAULT_THEME);
-                }
-            }
-            else if ( $theme->getLicenseCheckTimestamp() != null && $theme->getLicenseCheckTimestamp() > 0 )
-            {
-                $theme->setLicenseCheckTimestamp(null);
-                $this->themeService->saveTheme($theme);
-            }
-        }
+        $this->notifyAdminAboutInvalidItems($dataForNotification);
     }
 
-    private function notifyAdminAboutInvalidItem( array $item )
+    private function notifyAdminAboutInvalidItems( array $items )
     {
+        $titleList = array();
+
+        foreach ( $items as $item )
+        {
+            $titleList[] = "\"" . $item["title"] . "\"";
+        }
+
         $language = OW::getLanguage();
         $mail = OW::getMailer()->createMail();
-        //$mail->addRecipientEmail(OW::getConfig()->getValue("base", "site_email"));
-        $mail->addRecipientEmail("madumarov@gmail.com");
-        $mail->setSubject($language->text("base", "mail_template_admin_invalid_license_subject"));
-        $mail->setHtmlContent($language->text("base", "mail_template_admin_invalid_license_content_html", array("itemName" => $item["name"], "siteURL" => OW_URL_HOME)));
-        $mail->setTextContent($language->text("base", "mail_template_admin_invalid_license_content_text", array("itemName" => $item["name"], "siteURL" => OW_URL_HOME)));
+        $mail->addRecipientEmail(OW::getConfig()->getValue("base", "site_email"));
+        $mail->setSubject($language->text("admin", "mail_template_admin_invalid_license_subject"));
+        $mail->setHtmlContent($language->text("admin", "mail_template_admin_invalid_license_content_html", array("itemList" => implode(", ", $titleList), "siteURL" => OW_URL_HOME)));
+        $mail->setTextContent($language->text("admin", "mail_template_admin_invalid_license_content_text", array("itemList" => implode(", ", $titleList), "siteURL" => OW_URL_HOME)));
 
         OW::getMailer()->send($mail);
     }

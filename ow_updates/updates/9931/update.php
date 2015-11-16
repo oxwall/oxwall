@@ -39,3 +39,5 @@ foreach ( $queryList as $query )
         Updater::getLogger()->addEntry(json_encode($e));
     }
 }
+
+Updater::getLanguageService()->importPrefixFromZip(dirname(__FILE__) . DS . "langs.zip", "admin");

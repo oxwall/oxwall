@@ -75,13 +75,24 @@ class ADMIN_CTRL_Storage extends ADMIN_CTRL_StorageAbstract
             return;
         }
 
+        // if item is freeware reset check ts and redirect to back uri
         if ( (bool) $data[BOL_StorageService::URI_VAR_FREEWARE] )
         {
             $params[BOL_StorageService::URI_VAR_LICENSE_CHECK_COMPLETE] = 1;
             $params[BOL_StorageService::URI_VAR_LICENSE_CHECK_RESULT] = 1;
             $params[BOL_StorageService::URI_VAR_FREEWARE] = 1;
-            $this->redirectToBackUri($params);
             $this->assign("message", $language->text("admin", "check_license_item_is_free_msg"));
+
+            $dto = $this->storageService->findStoreItem($key, $devKey, $params[BOL_StorageService::URI_VAR_ITEM_TYPE]);
+
+            if ( $dto != null )
+            {
+                $dto->setLicenseCheckTimestamp(null);
+                $this->storageService->saveStoreItem($dto);
+            }
+
+            $this->redirectToBackUri($params);
+
             return;
         }
 
@@ -116,6 +127,7 @@ class ADMIN_CTRL_Storage extends ADMIN_CTRL_StorageAbstract
                 $licenseKey = $data["key"];
                 $result = $this->storageService->checkLicenseKey($key, $devKey, $licenseKey);
                 $params[BOL_StorageService::URI_VAR_LICENSE_CHECK_COMPLETE] = 1;
+
                 if ( $result )
                 {
                     $params[BOL_StorageService::URI_VAR_LICENSE_CHECK_RESULT] = 1;
