@@ -9,7 +9,7 @@ if ( empty($preference) )
 
 $preference->key = 'timeZoneSelect';
 $preference->sectionName = 'general';
-$preference->defaultValue = OW::getConfig()->getValue('base', 'site_timezone');
+$preference->defaultValue = json_encode(null);
 $preference->sortOrder = 1;
 
 BOL_PreferenceService::getInstance()->savePreference($preference);
