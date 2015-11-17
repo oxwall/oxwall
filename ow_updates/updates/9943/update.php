@@ -4,13 +4,13 @@ $dbPrefix = OW_DB_PREFIX;
 $sql = array();
 
 $sql[] =
-    "CREATE TABLE IF NOT EXISTS `{$dbPrefix}geolocationdata_ipv4` (
+    "CREATE TABLE IF NOT EXISTS `{$dbPrefix}base_geolocationdata_ipv4` (
   `ipFrom` varchar(200) NOT NULL,
   `IpTo` varchar(200) DEFAULT NULL,
   `cc2` varchar(200) NOT NULL,
   `cc3` varchar(200) DEFAULT NULL,
   `name` varchar(200) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;";
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;";
 
 
 $sql[] = "CREATE TABLE IF NOT EXISTS `{$dbPrefix}base_geolocation_country` (
@@ -19,7 +19,7 @@ $sql[] = "CREATE TABLE IF NOT EXISTS `{$dbPrefix}base_geolocation_country` (
   `cc3` char(3) NOT NULL,
   `name` varchar(50) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=239 DEFAULT CHARSET=utf8;";
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8;";
 
 
 foreach ( $sql as $q )
