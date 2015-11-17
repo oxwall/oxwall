@@ -131,7 +131,7 @@ questionValuesField.prototype = {
                     valuesList.push(item);
                 }
             });
-            
+
             $.each(self.possibleValuesList, function( key, item )
             {
                 if ( valuesList.lenght >= first )
@@ -147,7 +147,7 @@ questionValuesField.prototype = {
                     first++;
                 }
             });
-            
+
             self.renderValues();
             OW.trigger('question.value.add', {values:addValues, node:self.tr});
             self.updateDataField();
@@ -247,6 +247,96 @@ questionValuesField.prototype = {
         });
     }
 }
+
+var infiniteQuestionValuesField = function( params )
+{
+    questionValuesField.call(this, params);
+};
+
+infiniteQuestionValuesField.prototype = Object.create(questionValuesField.prototype);
+
+infiniteQuestionValuesField.prototype.construct = function(params){
+    var self = this;
+    self.dataFieldId = params['dataFieldId'];
+    self.dataField = $('input#' + this.dataFieldId);
+
+    self.tagFieldId = params['tagFieldId'];
+    self.tagField = $('input#' + this.tagFieldId);
+
+    self.template = $(params['template']);
+
+    self.tr = self.dataField .parents('tr:eq(0)');
+
+    self.infiniteAddButton = self.tr.find('input[name=qst_infinite_possible_values_add_button]');
+    self.valuesArea = self.tr.find('.values_list');
+
+    self.infiniteAddButton.click(
+        function()
+        {
+            var value = self.tagField.val();
+            self.tagField.val('');
+            self.tr.find('.tagsinput span.tag').remove();
+
+            if ( value )
+            {
+                self.setValue(value);
+            }
+        }
+    );
+
+    if ( params['value'] && !$.isEmptyObject(params['value']) )
+    {
+        //self.value = params['value'];
+
+        $.each(params['value'], function( key, item )
+        {
+            self.order.push(key);
+            self.value[key] = item;
+        });
+    }
+
+    if ( params['order'] && !$.isEmptyObject(params['order']) )
+    {
+        self.order = params['order'];
+    }
+
+    self.renderValues();
+    self.sortable();
+};
+
+infiniteQuestionValuesField.prototype.setValue = function(values){
+    var self = this;
+
+    var list = values.split(',');
+    var valuesList = [];
+
+    if ( list )
+    {
+        var addValues = {};
+
+        $.each(list, function( key, item )
+        {
+            if ( item != undefined )
+            {
+                valuesList.push(item);
+            }
+        });
+
+        $.each(valuesList, function( key, item )
+        {
+            if ( self.value[item] == undefined && item != undefined )
+            {
+                self.value[key] = item;
+                addValues[key] = item;
+                self.order.push(key);
+            }
+        });
+
+        self.renderValues();
+        OW.trigger('question.value.add', {values:addValues, node:self.tr});
+        self.updateDataField();
+    }
+};
 
 var QuestionFormModel = function( params )
 {
