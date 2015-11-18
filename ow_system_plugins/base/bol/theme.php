@@ -64,6 +64,7 @@ class BOL_Theme extends BOL_StoreItem
     public function setCustomCss( $css )
     {
         $this->customCss = trim($css);
+
         return $this;
     }
 
@@ -77,10 +78,13 @@ class BOL_Theme extends BOL_StoreItem
 
     /**
      * @param string $customCssFileName
+     * @return BOL_Theme
      */
     public function setCustomCssFileName( $customCssFileName )
     {
         $this->customCssFileName = $customCssFileName;
+
+        return $this;
     }
 
     /**
@@ -93,10 +97,13 @@ class BOL_Theme extends BOL_StoreItem
 
     /**
      * @param string $sidebarPosition
+     * @return BOL_Theme
      */
     public function setSidebarPosition( $sidebarPosition )
     {
         $this->sidebarPosition = $sidebarPosition;
+
+        return $this;
     }
 
     /**
@@ -109,9 +116,12 @@ class BOL_Theme extends BOL_StoreItem
 
     /**
      * @param string $mobileCustomCss
+     * @return BOL_Theme
      */
     public function setMobileCustomCss( $mobileCustomCss )
     {
         $this->mobileCustomCss = $mobileCustomCss;
+
+        return $this;
     }
 }

@@ -144,6 +144,7 @@ class BOL_StorageService
         if ( $response->getStatusCode() != UTIL_HttpClient::HTTP_STATUS_OK )
         {
             OW::getLogger()->addEntry(__CLASS__ . "::" . __METHOD__ . "#" . __LINE__ . " storage request status is not OK", "core.update");
+            
             return;
         }
 
@@ -157,6 +158,7 @@ class BOL_StorageService
         if ( empty($resultArray) || !is_array($resultArray) )
         {
             OW::getLogger()->addEntry(__CLASS__ . "::" . __METHOD__ . "#" . __LINE__ . " remote request returned empty result", "core.update");
+            
             return;
         }
 
@@ -209,6 +211,7 @@ class BOL_StorageService
     public function getPlatformInfoForUpdate()
     {
         $data = $this->triggerEventBeforeRequest();
+        
         return $this->requestGetResultAsJson($this->getStorageUrl(self::URI_GET_PLATFORM_INFO), $data);
     }
 

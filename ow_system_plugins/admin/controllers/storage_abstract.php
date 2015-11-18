@@ -66,7 +66,9 @@ abstract class ADMIN_CTRL_StorageAbstract extends ADMIN_CTRL_Abstract
         catch ( LogicException $e )
         {
             OW::getFeedback()->error($e->getMessage());
-            $this->redirect(OW::getRequest()->buildUrlQueryString(OW::getRouter()->urlFor("ADMIN_CTRL_Storage", "ftpAttrs"), array(BOL_StorageService::URI_VAR_BACK_URI => urlencode(OW::getRequest()->getRequestUri()))));
+            $this->redirect(OW::getRequest()->buildUrlQueryString(OW::getRouter()->urlFor("ADMIN_CTRL_Storage",
+                        "ftpAttrs"),
+                    array(BOL_StorageService::URI_VAR_BACK_URI => urlencode(OW::getRequest()->getRequestUri()))));
         }
 
         return $ftp;
@@ -83,5 +85,10 @@ abstract class ADMIN_CTRL_StorageAbstract extends ADMIN_CTRL_Abstract
         unset($getParams[BOL_StorageService::URI_VAR_BACK_URI]);
 
         $this->redirect(OW::getRequest()->buildUrlQueryString(OW_URL_HOME . urldecode($backUri), $getParams));
+    }
+
+    protected function getTemDirPath()
+    {
+        return OW_DIR_PLUGINFILES . "ow" . DS;
     }
 }

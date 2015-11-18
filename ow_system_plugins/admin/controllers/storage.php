@@ -96,7 +96,8 @@ class ADMIN_CTRL_Storage extends ADMIN_CTRL_StorageAbstract
             return;
         }
 
-        $this->assign("text", $language->text("admin", "license_request_text", array("type" => $type, "title" => $data["title"])));
+        $this->assign("text",
+            $language->text("admin", "license_request_text", array("type" => $type, "title" => $data["title"])));
 
         $form = new Form("license-key");
         $licenseKey = new TextField("key");
@@ -112,7 +113,8 @@ class ADMIN_CTRL_Storage extends ADMIN_CTRL_StorageAbstract
         {
             $button = new Button("button");
             $button->setValue($language->text("admin", "license_form_back_label"));
-            $button->addAttribute("onclick", "window.location='" . OW_URL_HOME . urldecode($params[BOL_StorageService::URI_VAR_BACK_URI]) . "'");
+            $redirectUrl = json_encode(OW_URL_HOME . urldecode($params[BOL_StorageService::URI_VAR_BACK_URI]));
+            $button->addAttribute("onclick", "window.location={$redirectUrl}");
             $form->addElement($button);
             $this->assign("backButton", true);
         }
@@ -133,7 +135,8 @@ class ADMIN_CTRL_Storage extends ADMIN_CTRL_StorageAbstract
                     $params[BOL_StorageService::URI_VAR_LICENSE_CHECK_RESULT] = 1;
                     $params[BOL_StorageService::URI_VAR_LICENSE_KEY] = urlencode($licenseKey);
 
-                    $dto = $this->storageService->findStoreItem($key, $devKey, $params[BOL_StorageService::URI_VAR_ITEM_TYPE]);
+                    $dto = $this->storageService->findStoreItem($key, $devKey,
+                        $params[BOL_StorageService::URI_VAR_ITEM_TYPE]);
 
                     if ( $dto != null )
                     {
