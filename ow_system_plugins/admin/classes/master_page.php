@@ -40,7 +40,7 @@ class ADMIN_CLASS_MasterPage extends OW_MasterPage
     {
         $language = OW::getLanguage();
 
-        OW::getThemeManager()->setCurrentTheme(BOL_ThemeService::getInstance()->getThemeObjectByName(BOL_ThemeService::DEFAULT_THEME));
+        OW::getThemeManager()->setCurrentTheme(BOL_ThemeService::getInstance()->getThemeObjectByKey(BOL_ThemeService::DEFAULT_THEME));
 
         $menuTypes = array(
             BOL_NavigationService::MENU_TYPE_ADMIN, BOL_NavigationService::MENU_TYPE_APPEARANCE,
@@ -87,14 +87,14 @@ class ADMIN_CLASS_MasterPage extends OW_MasterPage
         // platform info        
         $event = new OW_Event('admin.get_soft_version_text');
         OW_EventManager::getInstance()->trigger($event);
-        
+
         $verString = $event->getData();
-        
+
         if ( empty($verString) )
         {
-            $verString = OW::getLanguage()->text('admin', 'soft_version', array('version' => OW::getConfig()->getValue('base', 'soft_version'), 'build' => OW::getConfig()->getValue('base', 'soft_build')) );
+            $verString = OW::getLanguage()->text('admin', 'soft_version', array('version' => OW::getConfig()->getValue('base', 'soft_version'), 'build' => OW::getConfig()->getValue('base', 'soft_build')));
         }
-        
+
         $this->assign('version', OW::getConfig()->getValue('base', 'soft_version'));
         $this->assign('build', OW::getConfig()->getValue('base', 'soft_build'));
         $this->assign('softVersion', $verString);
@@ -113,7 +113,13 @@ class ADMIN_CLASS_MasterPage extends OW_MasterPage
         /* @var $value ADMIN_CMP_AdminMenu */
         foreach ( $this->menuCmps as $key => $value )
         {
-            $id = 'mi' . rand(1, 10000);
+            //check if there are any items in the menu
+            if ( $value->getElementsCount() <= 0 )
+            {
+                continue;
+            }
+
+            $id = UTIL_HtmlTag::generateAutoId("mi");
 
             $value->setCategory($key);
             $value->onBeforeRender();

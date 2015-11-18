@@ -44,12 +44,17 @@ class UTIL_File
     private static $videoExtensions = array('avi', 'mpeg', 'wmv', 'flv', 'mov', 'mp4');
 
     /**
-     * Enter description here...
-     *
-     * @param unknown_type $sourcePath
-     * @param unknown_type $destPath
+     * Copies whole directory from source to destination folder. The destionation folder will be created if it doesn't exist.
+     * Array and callable can be passed as filter argument. Array should contain the list of file extensions to be copied.
+     * Callable is more flexible way for filtering, it should contain one parameter (file/dir to be copied) and return bool 
+     * value which indicates if the item should be copied.
+     * 
+     * @param string $sourcePath
+     * @param string $destPath
+     * @param mixed $filter
+     * @param int $level
      */
-    public static function copyDir( $sourcePath, $destPath, array $fileTypes = null, $level = -1 )
+    public static function copyDir( $sourcePath, $destPath, $filter = null, $level = -1 )
     {
         $sourcePath = self::removeLastDS($sourcePath);
 
@@ -71,7 +76,7 @@ class UTIL_File
         {
             while ( ($item = readdir($handle)) !== false )
             {
-                if ( $item === '.' || $item === '..' )
+                if ( $item === "." || $item === ".." )
                 {
                     continue;
                 }
@@ -79,13 +84,20 @@ class UTIL_File
                 $path = $sourcePath . DS . $item;
                 $dPath = $destPath . DS . $item;
 
-                if ( is_file($path) && ( $fileTypes === null || in_array(self::getExtension($item), $fileTypes) ) )
+                if ( is_callable($filter) && !call_user_func($filter, $path) )
+                {
+                    continue;
+                }
+
+                $copy = ($filter === null || (is_array($filter) && in_array(self::getExtension($item), $filter)) || is_callable($filter));
+
+                if ( is_file($path) && $copy )
                 {
                     copy($path, $dPath);
                 }
                 else if ( $level && is_dir($path) )
                 {
-                    self::copyDir($path, $dPath, $fileTypes, ($level - 1));
+                    self::copyDir($path, $dPath, $filter, ($level - 1));
                 }
             }
 
@@ -191,12 +203,13 @@ class UTIL_File
      * @param int $decimals
      * @return null|string
      */
-    public static function getFileSize($filename, $humanReadable = true, $decimals = 2) {
+    public static function getFileSize( $filename, $humanReadable = true, $decimals = 2 )
+    {
         try
         {
             $bytes = filesize($filename);
         }
-        catch(Exception $e)
+        catch ( Exception $e )
         {
             return null;
         }
@@ -204,12 +217,13 @@ class UTIL_File
         {
             return $bytes;
         }
-        $size = array('B','kB','MB','GB','TB','PB','EB','ZB','YB');
+        $size = array('B', 'kB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB');
         $factor = (int) floor((strlen($bytes) - 1) / 3);
         if ( isset($size[$factor]) )
         {
             return sprintf("%.{$decimals}f ", $bytes / pow(1024, $factor)) . $size[$factor];
         }
+
         return $bytes;
     }
 
@@ -338,64 +352,115 @@ class UTIL_File
             return false;
         }
 
-        $specialChars = array("?", "[", "]", "/", "\\", "=", "<", ">", ":", ";", ",", "'", "\"", "&", "$", "#", "*", "(", ")", "|", "~", "`", "!", "{", "}");
+        $specialChars = array("?", "[", "]", "/", "\\", "=", "<", ">", ":", ";", ",", "'", "\"", "&", "$", "#", "*", "(",
+            ")", "|", "~", "`", "!", "{", "}");
         $fileName = str_replace($specialChars, '', $fileName);
         $fileName = preg_replace('/[\s-]+/', '-', $fileName);
         $fileName = trim($fileName, '.-_');
 
         return $fileName;
     }
-    
+
     /**
-     *
-     * @param int $uploadErrorCode
-     * @return string
+     * Checks if uploaded file is valid, if not returns localized error string.
+     * 
+     * @param int $errorCode
+     * @return array
      */
-    public static function getErrorMessage( $uploadErrorCode )
+    public static function checkUploadedFile( array $filesItem, $fileSizeLimitInBytes = null )
     {
-        if ( !isset($uploadErrorCode) )
+        $language = OW::getLanguage();
+
+        if ( empty($filesItem) || !array_key_exists("tmp_name", $filesItem) || !array_key_exists("size", $filesItem) )
         {
-            return false;
+            return array("result" => false, "message" => $language->text("base", "upload_file_fail"));
         }
 
-        $message = '';
-        
-        if ( $uploadErrorCode != UPLOAD_ERR_OK )
+        if ( $fileSizeLimitInBytes == null )
         {
-            switch ( $uploadErrorCode )
+            $fileSizeLimitInBytes = self::getFileUploadServerLimitInBytes();
+        }
+
+        if ( $filesItem["error"] != UPLOAD_ERR_OK )
+        {
+            switch ( $filesItem["error"] )
             {
                 case UPLOAD_ERR_INI_SIZE:
-                    $error = $language->text('base', 'upload_file_max_upload_filesize_error');
+                    $errorString = $language->text("base", "upload_file_max_upload_filesize_error",
+                        array("limit" => ($fileSizeLimitInBytes / 1024 / 1024) . "MB"));
                     break;
 
                 case UPLOAD_ERR_PARTIAL:
-                    $error = $language->text('base', 'upload_file_file_partially_uploaded_error');
+                    $errorString = $language->text("base", "upload_file_file_partially_uploaded_error");
                     break;
 
                 case UPLOAD_ERR_NO_FILE:
-                    $error = $language->text('base', 'upload_file_no_file_error');
+                    $errorString = $language->text("base", "upload_file_no_file_error");
                     break;
 
                 case UPLOAD_ERR_NO_TMP_DIR:
-                    $error = $language->text('base', 'upload_file_no_tmp_dir_error');
+                    $errorString = $language->text("base", "upload_file_no_tmp_dir_error");
                     break;
 
                 case UPLOAD_ERR_CANT_WRITE:
-                    $error = $language->text('base', 'upload_file_cant_write_file_error');
+                    $errorString = $language->text("base", "upload_file_cant_write_file_error");
                     break;
 
                 case UPLOAD_ERR_EXTENSION:
-                    $error = $language->text('base', 'upload_file_invalid_extention_error');
+                    $errorString = $language->text("base", "upload_file_invalid_extention_error");
                     break;
 
                 default:
-                    $error = $language->text('base', 'upload_file_fail');
+                    $errorString = $language->text("base", "upload_file_fail");
             }
 
-            OW::getFeedback()->error($error);
-            $this->redirect();
+            return array("result" => false, "message" => $errorString);
         }
 
-        return $fileName;
+        if ( $filesItem['size'] > $fileSizeLimitInBytes )
+        {
+            return array("result" => false, "message" => $language->text("base",
+                    "upload_file_max_upload_filesize_error",
+                    array("limit" => ($fileSizeLimitInBytes / 1024 / 1024) . "MB")));
+        }
+
+        if ( !is_uploaded_file($filesItem["tmp_name"]) )
+        {
+            return array("result" => false, "message" => $language->text("base", "upload_file_fail"));
+        }
+
+        return array("result" => true);
+    }
+
+    /**
+     * Returns server file upload limit in bytes
+     * 
+     * @return int
+     */
+    public static function getFileUploadServerLimitInBytes()
+    {
+        $uploadMaxFilesize = self::convertToBytes(ini_get("upload_max_filesize"));
+        $postMaxSize = self::convertToBytes(ini_get("post_max_size"));
+
+        return $uploadMaxFilesize < $postMaxSize ? $uploadMaxFilesize : $postMaxSize;
+    }
+
+    private static function convertToBytes( $value )
+    {
+        $value = trim($value);
+        $lastChar = strtolower($value[strlen($value) - 1]);
+        $value = floatval($value);
+
+        switch ( $lastChar )
+        {
+            case 'g':
+                $value *= 1024;
+            case 'm':
+                $value *= 1024;
+            case 'k':
+                $value *= 1024;
+        }
+
+        return intval($value);
     }
 }

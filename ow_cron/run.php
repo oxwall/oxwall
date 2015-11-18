@@ -83,7 +83,7 @@ $activeThemeName = OW::getConfig()->getValue('base', 'selectedTheme');
 
 if ( $activeThemeName !== BOL_ThemeService::DEFAULT_THEME && OW::getThemeManager()->getThemeService()->themeExists($activeThemeName) )
 {
-    OW_ThemeManager::getInstance()->setCurrentTheme(BOL_ThemeService::getInstance()->getThemeObjectByName(trim($activeThemeName)));
+    OW_ThemeManager::getInstance()->setCurrentTheme(BOL_ThemeService::getInstance()->getThemeObjectByKey(trim($activeThemeName)));
 }
 
 $plugins = BOL_PluginService::getInstance()->findActivePlugins();

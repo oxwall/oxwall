@@ -1277,3 +1277,10 @@ html body .ow_admin_choose_theme .selected_theme_info_stick{
 	-o-animation: none;
 	}
 }
+
+.ow_plugin_invalid, 
+.ow_active_plugins .ow_plugin_invalid,
+.ow_inactive_plugins .ow_plugin_invalid {
+background: #fee5e3;
+border: 1px solid #ee3d32;
+}
