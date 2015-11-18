@@ -38,7 +38,6 @@ class ADMIN_CLASS_EventHandler
             array($this, 'onGetJoinStampDisableActionList'), 999);
 
         $eventManager->bind('admin.add_admin_notification', array($this, 'onAddAdminNotification'));
-        $eventManager->bind('admin.init_floatbox', array($this, 'initFloatbox'));
     }
 
     public function onAddAdminNotification( ADMIN_CLASS_NotificationCollector $coll )
@@ -246,71 +245,5 @@ class ADMIN_CLASS_EventHandler
 
             $e->setData($disableActionList);
         }
-    }
-
-    public function initFloatbox( OW_Event $event )
-    {
-        static $isInitialized = false;
-
-        if ( $isInitialized )
-        {
-            return;
-        }
-
-        $params = $event->getParams();
-        $layout = (!empty($params['layout']) && in_array($params['layout'], array('page', 'floatbox'))) ? $params['layout'] : 'floatbox';
-
-        $document = OW::getDocument();
-        $basePlugin = OW::getPluginManager()->getPlugin('base');
-
-        $document->addStyleSheet($basePlugin->getStaticCssUrl() . 'photo_floatbox.css');
-        $document->addScript($basePlugin->getStaticJsUrl() . 'jquery-ui.min.js');
-        $document->addScript($basePlugin->getStaticJsUrl() . 'slider.min.js', 'text/javascript', 1000000);
-        $document->addScript($basePlugin->getStaticJsUrl() . 'photo.js');
-
-        $language = OW::getLanguage();
-
-        $language->addKeyForJs('admin', 'tb_edit_photo');
-        $language->addKeyForJs('admin', 'confirm_delete');
-        $language->addKeyForJs('admin', 'mark_featured');
-        $language->addKeyForJs('admin', 'remove_from_featured');
-        $language->addKeyForJs('admin', 'rating_total');
-        $language->addKeyForJs('admin', 'rating_your');
-        $language->addKeyForJs('admin', 'of');
-        $language->addKeyForJs('admin', 'album');
-        $language->addKeyForJs('base', 'rate_cmp_owner_cant_rate_error_message');
-        $language->addKeyForJs('base', 'rate_cmp_auth_error_message');
-        $language->addKeyForJs('admin', 'slideshow_interval');
-        $language->addKeyForJs('admin', 'pending_approval');
-
-        $document->addScriptDeclarationBeforeIncludes(
-            UTIL_JsGenerator::composeJsString('
-                ;window.photoViewParams = Object.defineProperties({}, {
-                    ajaxResponder:{value: {$ajaxResponder}, enumerable: true},
-                    rateUserId: {value: {$rateUserId}, enumerable: true},
-                    layout: {value: {$layout}, enumerable: true},
-                    isClassic: {value: {$isClassic}, enumerable: true},
-                    urlHome: {value: {$urlHome}, enumerable: true},
-                    isDisabled: {value: {$isDisabled}, enumerable: true},
-                    isEnableFullscreen: {value: {$isEnableFullscreen}, enumerable: true}
-                });',
-                array(
-                'ajaxResponder' => OW::getRouter()->urlFor('ADMIN_CTRL_Theme', 'ajaxResponder'),
-                'rateUserId' => OW::getUser()->getId(),
-                'layout' => $layout,
-                'isClassic' => (bool) OW::getConfig()->getValue('photo', 'photo_view_classic'),
-                'urlHome' => OW_URL_HOME,
-                'isDisabled' => false,
-                'isEnableFullscreen' => (bool) OW::getConfig()->getValue('photo', 'store_fullsize')
-                )
-            )
-        );
-
-        $document->addOnloadScript(';window.photoView.init();');
-
-        $cmp = new ADMIN_CMP_UploadedFilesFloatbox($layout);
-        $document->appendBody($cmp->render());
-
-        $isInitialized = true;
     }
 }
