@@ -85,6 +85,7 @@ class BOL_Plugin extends BOL_StoreItem
     public function setIsActive( $isActive )
     {
         $this->isActive = (boolean) $isActive;
+
         return $this;
     }
 
@@ -95,6 +96,7 @@ class BOL_Plugin extends BOL_StoreItem
     public function setModule( $module )
     {
         $this->module = trim($module);
+
         return $this;
     }
 
@@ -105,6 +107,7 @@ class BOL_Plugin extends BOL_StoreItem
     public function setIsSystem( $isSystem )
     {
         $this->isSystem = $isSystem;
+
         return $this;
     }
 
@@ -118,10 +121,13 @@ class BOL_Plugin extends BOL_StoreItem
 
     /**
      * @param string $adminSettingsRoute
+     * @return BOL_Plugin
      */
     public function setAdminSettingsRoute( $adminSettingsRoute )
     {
         $this->adminSettingsRoute = $adminSettingsRoute;
+
+        return $this;
     }
 
     /**
@@ -134,9 +140,12 @@ class BOL_Plugin extends BOL_StoreItem
 
     /**
      * @param string $uninstallRoute
+     * @return BOL_Plugin
      */
     public function setUninstallRoute( $uninstallRoute )
     {
         $this->uninstallRoute = $uninstallRoute;
+
+        return $this;
     }
 }

@@ -100,7 +100,8 @@ final class OW_PluginManager
     {
         $plugins = $this->pluginService->findActivePlugins();
 
-        usort($plugins, function( BOL_Plugin $a, BOL_Plugin $b )
+        usort($plugins,
+            function( BOL_Plugin $a, BOL_Plugin $b )
         {
             if ( $a->getId() == $b->getId() )
             {
@@ -140,12 +141,13 @@ final class OW_PluginManager
             $initDirPath = $pluginObject->getApiDir();
         }
 
-        if( file_exists($initDirPath . BOL_PluginService::SCRIPT_INIT) )
-        {
-            OW::getEventManager()->trigger(new OW_Event("core.performance_test", array("key" => "plugin_init.start", "pluginKey" => $pluginObject->getKey())));
-            include $initDirPath . BOL_PluginService::SCRIPT_INIT;
-            OW::getEventManager()->trigger(new OW_Event("core.performance_test", array("key" => "plugin_init.end", "pluginKey" => $pluginObject->getKey())));
-        }
+        OW::getEventManager()->trigger(new OW_Event("core.performance_test",
+            array("key" => "plugin_init.start", "pluginKey" => $pluginObject->getKey())));
+
+        $this->pluginService->includeScript($initDirPath . BOL_PluginService::SCRIPT_INIT);
+
+        OW::getEventManager()->trigger(new OW_Event("core.performance_test",
+            array("key" => "plugin_init.end", "pluginKey" => $pluginObject->getKey())));
     }
 
     /**
@@ -275,6 +277,17 @@ final class OW_PluginManager
         {
             $plugin->setUninstallRoute($routName);
             $this->pluginService->savePlugin($plugin);
+        }
+    }
+
+    /**
+     * @param string $filePath
+     */
+    private function includeFile( $filePath )
+    {
+        if ( file_exists($filePath) )
+        {
+            include_once $filePath;
         }
     }
 }

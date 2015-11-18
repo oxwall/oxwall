@@ -34,7 +34,8 @@ class ADMIN_CLASS_EventHandler
     {
         $eventManager = OW::getEventManager();
         $eventManager->bind('admin.disable_fields_on_edit_profile_question', array($this, 'onGetDisableActionList'));
-        $eventManager->bind('admin.disable_fields_on_edit_profile_question', array($this, 'onGetJoinStampDisableActionList'), 999);
+        $eventManager->bind('admin.disable_fields_on_edit_profile_question',
+            array($this, 'onGetJoinStampDisableActionList'), 999);
 
         $eventManager->bind('admin.add_admin_notification', array($this, 'onAddAdminNotification'));
         $eventManager->bind('admin.init_floatbox', array($this, 'initFloatbox'));
@@ -52,7 +53,9 @@ class ADMIN_CLASS_EventHandler
         // update soft
         if ( OW::getConfig()->getValue("base", "update_soft") )
         {
-            $coll->add($language->text("admin", "notification_soft_update", array("link" => $router->urlForRoute("admin_core_update_request"))), ADMIN_CLASS_NotificationCollector::NOTIFICATION_UPDATE);
+            $coll->add($language->text("admin", "notification_soft_update",
+                    array("link" => $router->urlForRoute("admin_core_update_request"))),
+                ADMIN_CLASS_NotificationCollector::NOTIFICATION_UPDATE);
         }
 
         $pluginsToUpdateCount = $pluginService->getPluginsToUpdateCount();
@@ -60,7 +63,9 @@ class ADMIN_CLASS_EventHandler
         // plugins update
         if ( $pluginsToUpdateCount > 0 )
         {
-            $coll->add($language->text("admin", "notification_plugins_to_update", array("link" => $router->urlForRoute("admin_plugins_installed"), "count" => $pluginsToUpdateCount)), ADMIN_CLASS_NotificationCollector::NOTIFICATION_UPDATE);
+            $coll->add($language->text("admin", "notification_plugins_to_update",
+                    array("link" => $router->urlForRoute("admin_plugins_installed"), "count" => $pluginsToUpdateCount)),
+                ADMIN_CLASS_NotificationCollector::NOTIFICATION_UPDATE);
         }
 
         $themesToUpdateCount = $themeService->getThemesToUpdateCount();
@@ -68,17 +73,23 @@ class ADMIN_CLASS_EventHandler
         // themes update
         if ( $themesToUpdateCount > 0 )
         {
-            $coll->add($language->text("admin", "notification_themes_to_update", array("link" => $router->urlForRoute("admin_themes_choose"), "count" => $themesToUpdateCount)), ADMIN_CLASS_NotificationCollector::NOTIFICATION_UPDATE);
+            $coll->add($language->text("admin", "notification_themes_to_update",
+                    array("link" => $router->urlForRoute("admin_themes_choose"), "count" => $themesToUpdateCount)),
+                ADMIN_CLASS_NotificationCollector::NOTIFICATION_UPDATE);
         }
 
-        if ( OW::getConfig()->configExists("base", "cron_is_active") && (int) OW::getConfig()->getValue("base", "cron_is_active") == 0 )
+        if ( OW::getConfig()->configExists("base", "cron_is_active") && (int) OW::getConfig()->getValue("base",
+                "cron_is_active") == 0 )
         {
-            $coll->add($language->text("admin", "warning_cron_is_not_active", array("path" => OW_DIR_ROOT . "ow_cron" . DS . "run.php")), ADMIN_CLASS_NotificationCollector::NOTIFICATION_WARNING);
+            $coll->add($language->text("admin", "warning_cron_is_not_active",
+                    array("path" => OW_DIR_ROOT . "ow_cron" . DS . "run.php")),
+                ADMIN_CLASS_NotificationCollector::NOTIFICATION_WARNING);
         }
 
         if ( !ini_get("allow_url_fopen") )
         {
-            $coll->add($language->text('admin', 'warning_url_fopen_disabled'), ADMIN_CLASS_NotificationCollector::NOTIFICATION_WARNING);
+            $coll->add($language->text('admin', 'warning_url_fopen_disabled'),
+                ADMIN_CLASS_NotificationCollector::NOTIFICATION_WARNING);
         }
 
         $items = $storageService->findItemsWithInvalidLicense();
@@ -102,7 +113,8 @@ class ADMIN_CLASS_EventHandler
                 "url" => $request->buildUrlQueryString($licenseRequestUrl, $params)
             );
 
-            $coll->add($language->text("admin", "invalid _license_item_notification", $langParams), ADMIN_CLASS_NotificationCollector::NOTIFICATION_WARNING);
+            $coll->add($language->text("admin", "invalid _license_item_notification", $langParams),
+                ADMIN_CLASS_NotificationCollector::NOTIFICATION_WARNING);
         }
     }
 
@@ -281,7 +293,8 @@ class ADMIN_CLASS_EventHandler
                     urlHome: {value: {$urlHome}, enumerable: true},
                     isDisabled: {value: {$isDisabled}, enumerable: true},
                     isEnableFullscreen: {value: {$isEnableFullscreen}, enumerable: true}
-                });', array(
+                });',
+                array(
                 'ajaxResponder' => OW::getRouter()->urlFor('ADMIN_CTRL_Theme', 'ajaxResponder'),
                 'rateUserId' => OW::getUser()->getId(),
                 'layout' => $layout,

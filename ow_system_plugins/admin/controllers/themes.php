@@ -54,7 +54,8 @@ class ADMIN_CTRL_Themes extends ADMIN_CTRL_StorageAbstract
         foreach ( $pageActions as $key => $item )
         {
             $menuItem = new BASE_MenuItem();
-            $menuItem->setKey($item)->setLabel($language->text("admin", "themes_menu_item_" . $item))->setOrder($key)->setUrl(OW::getRouter()->urlFor(__CLASS__, $item));
+            $menuItem->setKey($item)->setLabel($language->text("admin", "themes_menu_item_" . $item))->setOrder($key)->setUrl(OW::getRouter()->urlFor(__CLASS__,
+                    $item));
             $menuItems[] = $menuItem;
         }
 
@@ -75,7 +76,7 @@ class ADMIN_CTRL_Themes extends ADMIN_CTRL_StorageAbstract
         $themesInfo = array();
 
         $activeTheme = OW::getThemeManager()->getSelectedTheme()->getDto()->getKey();
-        
+
         /* @var $theme BOL_Theme */
         foreach ( $themes as $theme )
         {
@@ -85,13 +86,16 @@ class ADMIN_CTRL_Themes extends ADMIN_CTRL_StorageAbstract
                 "iconUrl" => $this->themeService->getStaticUrl($theme->getKey()) . BOL_ThemeService::ICON_FILE,
                 "previewUrl" => $this->themeService->getStaticUrl($theme->getKey()) . BOL_ThemeService::PREVIEW_FILE,
                 "active" => ( $theme->getKey() == $activeTheme ),
-                "changeUrl" => OW::getRequest()->buildUrlQueryString($router->urlFor(__CLASS__, "changeTheme"), array("name" => $theme->getKey(), "devKey" => $theme->getDeveloperKey())),
-                "update_url" => ( ((int) $theme->getUpdate() == 1) ) ? $router->urlFor("ADMIN_CTRL_Themes", "updateRequest", array("name" => $theme->getKey())) : false,
+                "changeUrl" => OW::getRequest()->buildUrlQueryString($router->urlFor(__CLASS__, "changeTheme"),
+                    array("name" => $theme->getKey(), "devKey" => $theme->getDeveloperKey())),
+                "update_url" => ( ((int) $theme->getUpdate() == 1) ) ? $router->urlFor("ADMIN_CTRL_Themes",
+                        "updateRequest", array("name" => $theme->getKey())) : false,
             );
 
             if ( !in_array($theme->getKey(), array(BOL_ThemeService::DEFAULT_THEME, $activeTheme)) )
             {
-                $themesInfo[$theme->getKey()]["delete_url"] = $router->urlFor(__CLASS__, "deleteTheme", array("name" => $theme->getKey()));
+                $themesInfo[$theme->getKey()]["delete_url"] = $router->urlFor(__CLASS__, "deleteTheme",
+                    array("name" => $theme->getKey()));
             }
 
             if ( $theme->getLicenseCheckTimestamp() > 0 )
@@ -102,7 +106,8 @@ class ADMIN_CTRL_Themes extends ADMIN_CTRL_StorageAbstract
                     BOL_StorageService::URI_VAR_ITEM_TYPE => BOL_StorageService::URI_VAR_ITEM_TYPE_VAL_THEME,
                     BOL_StorageService::URI_VAR_DEV_KEY => $theme->getDeveloperKey()
                 );
-                $themesInfo[$theme->getKey()]["license_url"] = OW::getRequest()->buildUrlQueryString($router->urlFor("ADMIN_CTRL_Storage", "checkItemLicense"), $params);
+                $themesInfo[$theme->getKey()]["license_url"] = OW::getRequest()->buildUrlQueryString($router->urlFor("ADMIN_CTRL_Storage",
+                        "checkItemLicense"), $params);
             }
 
             $xmlInfo = $this->themeService->getThemeXmlInfoForKey($theme->getKey());
@@ -126,7 +131,8 @@ class ADMIN_CTRL_Themes extends ADMIN_CTRL_StorageAbstract
             $('.admin_themes_select a.theme_icon').click( function(){ $('.theme_info .theme_control_button').hide(); });"
         );
 
-        $this->assign("adminThemes", array(BOL_ThemeService::DEFAULT_THEME => $themesInfo[BOL_ThemeService::DEFAULT_THEME]));
+        $this->assign("adminThemes",
+            array(BOL_ThemeService::DEFAULT_THEME => $themesInfo[BOL_ThemeService::DEFAULT_THEME]));
         $this->assign("themeInfo", $themesInfo[$activeTheme]);
         $event = new OW_Event("admin.filter_themes_to_choose", array(), $themesInfo);
         OW::getEventManager()->trigger($event);
@@ -159,8 +165,8 @@ class ADMIN_CTRL_Themes extends ADMIN_CTRL_StorageAbstract
 
                 $pluginfilesDir = OW::getPluginManager()->getPlugin("base")->getPluginFilesDir();
 
-                $tempFile = $pluginfilesDir . UTIL_HtmlTag::generateAutoId("theme_add") . '.zip';
-                $tempDir = $pluginfilesDir . UTIL_HtmlTag::generateAutoId("theme_add") . DS;
+                $tempFile = $this->getTemDirPath() . UTIL_String::getRandomStringWithPrefix("theme_add") . ".zip";
+                $tempDirName = UTIL_String::getRandomStringWithPrefix("theme_add");
 
                 if ( !move_uploaded_file($_FILES["file"]["tmp_name"], $tempFile) )
                 {
@@ -172,7 +178,7 @@ class ADMIN_CTRL_Themes extends ADMIN_CTRL_StorageAbstract
 
                 if ( $zip->open($tempFile) === true )
                 {
-                    $zip->extractTo($tempDir);
+                    $zip->extractTo($this->getTemDirPath() . $tempDirName);
                     $zip->close();
                 }
                 else
@@ -182,7 +188,8 @@ class ADMIN_CTRL_Themes extends ADMIN_CTRL_StorageAbstract
                 }
 
                 unlink($tempFile);
-                $this->redirect(OW::getRequest()->buildUrlQueryString($router->urlFor(__CLASS__, "processAdd"), array('dir' => urlencode($tempDir))));
+                $this->redirect(OW::getRequest()->buildUrlQueryString($router->urlFor(__CLASS__, "processAdd"),
+                        array("dir" => $tempDirName)));
             }
         }
     }
@@ -192,13 +199,15 @@ class ADMIN_CTRL_Themes extends ADMIN_CTRL_StorageAbstract
         $language = OW::getLanguage();
         $router = OW::getRouter();
 
-        if ( empty($_GET["dir"]) || !file_exists(urldecode($_GET["dir"])) )
+        $tempDirName = empty($_GET["dir"]) ? null : str_replace(DS, "", $_GET["dir"]);
+
+        if ( empty($tempDirName) || !file_exists($this->getTemDirPath() . $tempDirName) )
         {
             OW::getFeedback()->error($language->text("admin", "manage_plugins_add_ftp_move_error"));
             $this->redirect($router->urlForRoute("admin_themes_choose"));
         }
 
-        $tempDirPath = urldecode($_GET["dir"]);
+        $tempDirPath = $this->getTemDirPath() . $tempDirName;
 
         // locate plugin.xml file to find plugin source root dir
         $result = UTIL_File::findFiles($tempDirPath, array("xml"));
@@ -220,7 +229,8 @@ class ADMIN_CTRL_Themes extends ADMIN_CTRL_StorageAbstract
 
         if ( file_exists($localThemeRootPath) )
         {
-            OW::getFeedback()->error(OW::getLanguage()->text("admin", "theme_add_duplicated_dir_error", array("dir" => $localThemeRootPath)));
+            OW::getFeedback()->error(OW::getLanguage()->text("admin", "theme_add_duplicated_dir_error",
+                    array("dir" => $localThemeRootPath)));
             $this->redirect($router->urlForRoute("admin_themes_choose"));
         }
 
@@ -252,7 +262,8 @@ class ADMIN_CTRL_Themes extends ADMIN_CTRL_StorageAbstract
         $activateTheme = false;
 
         // get remote info about the plugin
-        $itemData = $this->storageService->getItemInfoForUpdate($params[BOL_StorageService::URI_VAR_KEY], $params[BOL_StorageService::URI_VAR_DEV_KEY]);
+        $itemData = $this->storageService->getItemInfoForUpdate($params[BOL_StorageService::URI_VAR_KEY],
+            $params[BOL_StorageService::URI_VAR_DEV_KEY]);
 
         // check if it's free
         if ( isset($itemData[BOL_StorageService::URI_VAR_FREEWARE]) && (bool) $itemData[BOL_StorageService::URI_VAR_FREEWARE] )
@@ -264,12 +275,14 @@ class ADMIN_CTRL_Themes extends ADMIN_CTRL_StorageAbstract
             if ( !isset($params[BOL_StorageService::URI_VAR_LICENSE_CHECK_COMPLETE]) )
             {
                 $params[BOL_StorageService::URI_VAR_BACK_URI] = OW::getRouter()->uriFor(__CLASS__, "changeTheme");
-                $this->redirect(OW::getRequest()->buildUrlQueryString(OW::getRouter()->urlFor("ADMIN_CTRL_Storage", "checkItemLicense"), $params));
+                $this->redirect(OW::getRequest()->buildUrlQueryString(OW::getRouter()->urlFor("ADMIN_CTRL_Storage",
+                            "checkItemLicense"), $params));
             }
 
             if ( isset($params[BOL_StorageService::URI_VAR_LICENSE_CHECK_RESULT]) && (bool) $params[BOL_StorageService::URI_VAR_LICENSE_CHECK_RESULT] && isset($params[BOL_StorageService::URI_VAR_LICENSE_KEY]) )
             {
-                if ( $this->storageService->checkLicenseKey($params[BOL_StorageService::URI_VAR_KEY], $params[BOL_StorageService::URI_VAR_DEV_KEY], $params[BOL_StorageService::URI_VAR_LICENSE_KEY]) )
+                if ( $this->storageService->checkLicenseKey($params[BOL_StorageService::URI_VAR_KEY],
+                        $params[BOL_StorageService::URI_VAR_DEV_KEY], $params[BOL_StorageService::URI_VAR_LICENSE_KEY]) )
                 {
                     $activateTheme = true;
                 }
@@ -279,7 +292,8 @@ class ADMIN_CTRL_Themes extends ADMIN_CTRL_StorageAbstract
         if ( $activateTheme )
         {
             OW::getConfig()->saveConfig("base", "selectedTheme", $params[BOL_StorageService::URI_VAR_KEY]);
-            OW::getEventManager()->trigger(new OW_Event("base.change_theme", array("name" => $params[BOL_StorageService::URI_VAR_KEY])));
+            OW::getEventManager()->trigger(new OW_Event("base.change_theme",
+                array("name" => $params[BOL_StorageService::URI_VAR_KEY])));
             OW::getFeedback()->info(OW::getLanguage()->text("admin", "theme_change_success_message"));
         }
         else
@@ -292,11 +306,12 @@ class ADMIN_CTRL_Themes extends ADMIN_CTRL_StorageAbstract
 
     public function updateRequest( array $params )
     {
-        $themeDto = $this->getThemeDtoByKey($params);
+        $themeDto = $this->getThemeDtoByKeyInParamsArray($params);
         $language = OW::getLanguage();
         $router = OW::getRouter();
 
-        $remoteThemeInfo = (array) $this->storageService->getItemInfoForUpdate($themeDto->getKey(), $themeDto->getDeveloperKey(), $themeDto->getBuild());
+        $remoteThemeInfo = (array) $this->storageService->getItemInfoForUpdate($themeDto->getKey(),
+                $themeDto->getDeveloperKey(), $themeDto->getBuild());
 
         if ( empty($remoteThemeInfo) || !empty($remoteThemeInfo["error"]) )
         {
@@ -304,12 +319,14 @@ class ADMIN_CTRL_Themes extends ADMIN_CTRL_StorageAbstract
             return;
         }
 
-        if ( !(bool) $remoteThemeInfo["freeware"] && ($themeDto->getLicenseKey() == null || !$this->storageService->checkLicenseKey($themeDto->getKey(), $themeDto->getDeveloperKey(), $themeDto->getLicenseKey())) )
+        if ( !(bool) $remoteThemeInfo["freeware"] && ($themeDto->getLicenseKey() == null || !$this->storageService->checkLicenseKey($themeDto->getKey(),
+                $themeDto->getDeveloperKey(), $themeDto->getLicenseKey())) )
         {
             if ( !isset($_GET[BOL_StorageService::URI_VAR_LICENSE_CHECK_COMPLETE]) )
             {
                 $get = array(BOL_StorageService::URI_VAR_BACK_URI => $router->uriFor(__CLASS__, "updateRequest", $params));
-                $this->redirect(OW::getRequest()->buildUrlQueryString($router->urlFor("ADMIN_CTRL_Storage", "checkItemLicense"), $get));
+                $this->redirect(OW::getRequest()->buildUrlQueryString($router->urlFor("ADMIN_CTRL_Storage",
+                            "checkItemLicense"), $get));
             }
             else
             {
@@ -318,14 +335,21 @@ class ADMIN_CTRL_Themes extends ADMIN_CTRL_StorageAbstract
             }
         }
 
-        $this->assign("text", $language->text("admin", "free_plugin_request_text", array("oldVersion" => $themeDto->getBuild(), "newVersion" => $remoteThemeInfo["build"], "name" => $themeDto->getTitle())));
-        $this->assign("updateUrl", $router->urlFor(__CLASS__, "update", $params));
-        $this->assign("returnUrl", $router->urlForRoute("admin_themes_choose"));
+        $this->assign("text",
+            $language->text("admin", "free_plugin_request_text",
+                array("oldVersion" => $themeDto->getBuild(), "newVersion" => $remoteThemeInfo["build"], "name" => $themeDto->getTitle())));
+        $this->assign("updateUrl", json_encode($router->urlFor(__CLASS__, "update", $params)));
+        $this->assign("returnUrl", json_encode($router->urlForRoute("admin_themes_choose")));
+
+        if ( OW::getConfig()->getValue("base", "update_soft") )
+        {
+            $this->assign("platformUpdateAvail", true);
+        }
     }
 
     public function update( array $params )
     {
-        $themeDto = $this->getThemeDtoByKey($params);
+        $themeDto = $this->getThemeDtoByKeyInParamsArray($params);
         $language = OW::getLanguage();
         $router = OW::getRouter();
         $feedback = OW::getFeedback();
@@ -350,7 +374,8 @@ class ADMIN_CTRL_Themes extends ADMIN_CTRL_StorageAbstract
             $this->redirect($router->urlForRoute("admin_themes_choose"));
         }
 
-        $remoteThemeInfo = (array) $this->storageService->getItemInfoForUpdate($themeDto->getKey(), $themeDto->getDeveloperKey(), $themeDto->getBuild());
+        $remoteThemeInfo = (array) $this->storageService->getItemInfoForUpdate($themeDto->getKey(),
+                $themeDto->getDeveloperKey(), $themeDto->getBuild());
 
         if ( empty($remoteThemeInfo) || !empty($remoteThemeInfo["error"]) )
         {
@@ -358,7 +383,8 @@ class ADMIN_CTRL_Themes extends ADMIN_CTRL_StorageAbstract
             $this->redirect($router->urlForRoute("admin_themes_choose"));
         }
 
-        if ( !(bool) $remoteThemeInfo["freeware"] && ($themeDto->getLicenseKey() == null || !$this->storageService->checkLicenseKey($themeDto->getKey(), $themeDto->getDeveloperKey(), $themeDto->getLicenseKey())) )
+        if ( !(bool) $remoteThemeInfo["freeware"] && ($themeDto->getLicenseKey() == null || !$this->storageService->checkLicenseKey($themeDto->getKey(),
+                $themeDto->getDeveloperKey(), $themeDto->getLicenseKey())) )
         {
             $feedback->error($language->text("admin", "manage_plugins_update_invalid_key_error"));
             $this->redirect($router->urlForRoute("admin_themes_choose"));
@@ -368,7 +394,8 @@ class ADMIN_CTRL_Themes extends ADMIN_CTRL_StorageAbstract
 
         try
         {
-            $archivePath = $this->storageService->downloadItem($themeDto->getKey(), $themeDto->getDeveloperKey(), $themeDto->getLicenseKey());
+            $archivePath = $this->storageService->downloadItem($themeDto->getKey(), $themeDto->getDeveloperKey(),
+                $themeDto->getLicenseKey());
         }
         catch ( Exception $e )
         {
@@ -433,7 +460,7 @@ class ADMIN_CTRL_Themes extends ADMIN_CTRL_StorageAbstract
     public function deleteTheme( $params )
     {
         $language = OW::getLanguage();
-        $themeDto = $this->getThemeDtoByKey($params);
+        $themeDto = $this->getThemeDtoByKeyInParamsArray($params);
 
         if ( OW::getThemeManager()->getDefaultTheme()->getDto()->getKey() == $themeDto->getKey() )
         {
@@ -455,7 +482,7 @@ class ADMIN_CTRL_Themes extends ADMIN_CTRL_StorageAbstract
         $this->redirect(OW::getRouter()->urlForRoute("admin_themes_choose"));
     }
 
-    private function getThemeDtoByKey( $params )
+    private function getThemeDtoByKeyInParamsArray( $params )
     {
         if ( !empty($params["key"]) )
         {

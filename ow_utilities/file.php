@@ -203,12 +203,13 @@ class UTIL_File
      * @param int $decimals
      * @return null|string
      */
-    public static function getFileSize($filename, $humanReadable = true, $decimals = 2) {
+    public static function getFileSize( $filename, $humanReadable = true, $decimals = 2 )
+    {
         try
         {
             $bytes = filesize($filename);
         }
-        catch(Exception $e)
+        catch ( Exception $e )
         {
             return null;
         }
@@ -216,12 +217,13 @@ class UTIL_File
         {
             return $bytes;
         }
-        $size = array('B','kB','MB','GB','TB','PB','EB','ZB','YB');
+        $size = array('B', 'kB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB');
         $factor = (int) floor((strlen($bytes) - 1) / 3);
         if ( isset($size[$factor]) )
         {
             return sprintf("%.{$decimals}f ", $bytes / pow(1024, $factor)) . $size[$factor];
         }
+
         return $bytes;
     }
 
@@ -350,7 +352,8 @@ class UTIL_File
             return false;
         }
 
-        $specialChars = array("?", "[", "]", "/", "\\", "=", "<", ">", ":", ";", ",", "'", "\"", "&", "$", "#", "*", "(", ")", "|", "~", "`", "!", "{", "}");
+        $specialChars = array("?", "[", "]", "/", "\\", "=", "<", ">", ":", ";", ",", "'", "\"", "&", "$", "#", "*", "(",
+            ")", "|", "~", "`", "!", "{", "}");
         $fileName = str_replace($specialChars, '', $fileName);
         $fileName = preg_replace('/[\s-]+/', '-', $fileName);
         $fileName = trim($fileName, '.-_');
@@ -383,7 +386,8 @@ class UTIL_File
             switch ( $filesItem["error"] )
             {
                 case UPLOAD_ERR_INI_SIZE:
-                    $errorString = $language->text("base", "upload_file_max_upload_filesize_error", array("limit" => ($fileSizeLimitInBytes / 1024 / 1024) . "MB"));
+                    $errorString = $language->text("base", "upload_file_max_upload_filesize_error",
+                        array("limit" => ($fileSizeLimitInBytes / 1024 / 1024) . "MB"));
                     break;
 
                 case UPLOAD_ERR_PARTIAL:
@@ -415,7 +419,9 @@ class UTIL_File
 
         if ( $filesItem['size'] > $fileSizeLimitInBytes )
         {
-            return array("result" => false, "message" => $language->text("base", "upload_file_max_upload_filesize_error", array("limit" => ($fileSizeLimitInBytes / 1024 / 1024) . "MB")));
+            return array("result" => false, "message" => $language->text("base",
+                    "upload_file_max_upload_filesize_error",
+                    array("limit" => ($fileSizeLimitInBytes / 1024 / 1024) . "MB")));
         }
 
         if ( !is_uploaded_file($filesItem["tmp_name"]) )
@@ -435,6 +441,7 @@ class UTIL_File
     {
         $uploadMaxFilesize = self::convertToBytes(ini_get("upload_max_filesize"));
         $postMaxSize = self::convertToBytes(ini_get("post_max_size"));
+
         return $uploadMaxFilesize < $postMaxSize ? $uploadMaxFilesize : $postMaxSize;
     }
 

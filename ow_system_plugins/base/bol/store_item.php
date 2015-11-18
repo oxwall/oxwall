@@ -113,30 +113,34 @@ abstract class BOL_StoreItem extends OW_Entity
 
     /**
      * @param string $description
+     * @return BOL_StoreItem
      */
     public function setDescription( $description )
     {
         $this->description = trim($description);
+
         return $this;
     }
 
     /**
      * @param string $key
-     * @return BOL_Plugin
+     * @return BOL_StoreItem
      */
     public function setKey( $key )
     {
         $this->key = trim($key);
+
         return $this;
     }
 
     /**
      * @param string $title
-     * @return BOL_Plugin
+     * @return BOL_StoreItem
      */
     public function setTitle( $title )
     {
         $this->title = trim($title);
+
         return $this;
     }
 
@@ -150,10 +154,13 @@ abstract class BOL_StoreItem extends OW_Entity
 
     /**
      * @param int $build
+     * @return BOL_StoreItem
      */
     public function setBuild( $build )
     {
         $this->build = (int) $build;
+
+        return $this;
     }
 
     /**
@@ -166,10 +173,13 @@ abstract class BOL_StoreItem extends OW_Entity
 
     /**
      * @param int $update
+     * @return BOL_StoreItem
      */
     public function setUpdate( $update )
     {
         $this->update = (int) $update;
+
+        return $this;
     }
 
     /**
@@ -182,10 +192,13 @@ abstract class BOL_StoreItem extends OW_Entity
 
     /**
      * @param string $licenseKey
+     * @return BOL_StoreItem
      */
     public function setLicenseKey( $licenseKey )
     {
         $this->licenseKey = $licenseKey;
+
+        return $this;
     }
 
     /**
@@ -198,10 +211,13 @@ abstract class BOL_StoreItem extends OW_Entity
 
     /**
      * @param string $developerKey
+     * @return BOL_StoreItem
      */
     public function setDeveloperKey( $developerKey )
     {
         $this->developerKey = $developerKey;
+
+        return $this;
     }
 
     /**
@@ -214,9 +230,12 @@ abstract class BOL_StoreItem extends OW_Entity
 
     /**
      * @param int $licenseCheckTimestamp
+     * @return BOL_StoreItem
      */
     public function setLicenseCheckTimestamp( $licenseCheckTimestamp )
     {
         $this->licenseCheckTimestamp = $licenseCheckTimestamp;
+
+        return $this;
     }
 }

@@ -299,7 +299,7 @@ class BOL_PluginService
         $pluginData = array();
         $tempPluginData = array();
 
-        // first element should be BASE plugin
+// first element should be BASE plugin
         foreach ( $files as $file )
         {
             $tempArr = $this->readPluginXmlInfo($file);
@@ -326,7 +326,7 @@ class BOL_PluginService
             throw new LogicException("Base plugin is not found in `{$basePluginRootDir}`!");
         }
 
-        // install plugins list
+// install plugins list
         foreach ( $pluginData as $pluginInfo )
         {
             $pluginDto = new BOL_Plugin();
@@ -347,10 +347,7 @@ class BOL_PluginService
 
             $plugin = new OW_Plugin($pluginDto);
 
-            if ( file_exists($plugin->getRootDir() . self::SCRIPT_INSTALL) )
-            {
-                include_once $plugin->getRootDir() . self::SCRIPT_INSTALL;
-            }
+            $this->includeScript($plugin->getRootDir() . BOL_PluginService::SCRIPT_INSTALL);
 
             $this->pluginDao->save($pluginDto);
             $this->updatePluginListCache();
@@ -398,8 +395,8 @@ class BOL_PluginService
 
         $plugin = new OW_Plugin($pluginDto);
 
-        include_once $plugin->getRootDir() . self::SCRIPT_INSTALL;
-        include_once $plugin->getRootDir() . self::SCRIPT_ACTIVATE;
+        $this->includeScript($plugin->getRootDir() . BOL_PluginService::SCRIPT_INSTALL);
+        $this->includeScript($plugin->getRootDir() . BOL_PluginService::SCRIPT_ACTIVATE);
 
         if ( $generateCache )
         {
@@ -407,7 +404,8 @@ class BOL_PluginService
         }
 
         // trigger event
-        OW::getEventManager()->trigger(new OW_Event(OW_EventManager::ON_AFTER_PLUGIN_INSTALL, array("pluginKey" => $pluginDto->getKey())));
+        OW::getEventManager()->trigger(new OW_Event(OW_EventManager::ON_AFTER_PLUGIN_INSTALL,
+            array("pluginKey" => $pluginDto->getKey())));
         return $pluginDto;
     }
 
@@ -474,12 +472,11 @@ class BOL_PluginService
         $plugin = new OW_Plugin($pluginDto);
 
         // trigger event
-        OW::getEventManager()->trigger(new OW_Event(OW_EventManager::ON_BEFORE_PLUGIN_UNINSTALL, array("pluginKey" => $pluginDto->getKey())));
+        OW::getEventManager()->trigger(new OW_Event(OW_EventManager::ON_BEFORE_PLUGIN_UNINSTALL,
+            array("pluginKey" => $pluginDto->getKey())));
 
-        include $plugin->getRootDir() . self::SCRIPT_DEACTIVATE;
-
-        // include plugin custom uninstall script
-        include $plugin->getRootDir() . self::SCRIPT_UNINSTALL;
+        $this->includeScript($plugin->getRootDir() . BOL_PluginService::SCRIPT_DEACTIVATE);
+        $this->includeScript($plugin->getRootDir() . BOL_PluginService::SCRIPT_UNINSTALL);
 
         // delete plugin work dirs
         $dirsToRemove = array(
@@ -544,7 +541,9 @@ class BOL_PluginService
         $pluginDto->setIsActive(true);
         $this->pluginDao->save($pluginDto);
         OW::getPluginManager()->addPackagePointers($pluginDto);
-        include OW_DIR_PLUGIN . $pluginDto->getModule() . DS . self::SCRIPT_ACTIVATE;
+
+        $this->includeScript(OW_DIR_PLUGIN . $pluginDto->getModule() . DS . self::SCRIPT_ACTIVATE);
+
         $this->updatePluginListCache();
     }
 
@@ -559,7 +558,9 @@ class BOL_PluginService
 
         $pluginDto->setIsActive(false);
         $this->pluginDao->save($pluginDto);
-        include OW::getPluginManager()->getPlugin($pluginDto->getKey())->getRootDir() . self::SCRIPT_DEACTIVATE;
+
+        $this->includeScript(OW::getPluginManager()->getPlugin($pluginDto->getKey())->getRootDir() . self::SCRIPT_DEACTIVATE);
+
         $this->updatePluginListCache();
     }
 
@@ -644,5 +645,16 @@ class BOL_PluginService
         }
 
         return $this->pluginListCache;
+    }
+
+    /**
+     * @param string $scriptPath
+     */
+    public function includeScript( $scriptPath )
+    {
+        if ( file_exists($scriptPath) )
+        {
+            include_once $scriptPath;
+        }
     }
 }
