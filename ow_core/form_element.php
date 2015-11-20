@@ -3532,7 +3532,7 @@ var formElement = new OwFormElement('" . $this->getId() . "', '" . $this->getNam
 
         if ( $this->value )
         {
-            $js .= "$('#" . $this->getId() . "').importTags('" . implode(',', $this->value) . "');";
+            $js .= "$('#" . $this->getId() . "').importTags('" . str_replace("'", "", implode(',', $this->value)) . "');";
         }
 
         return $js;
