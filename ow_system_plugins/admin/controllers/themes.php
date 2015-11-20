@@ -86,7 +86,7 @@ class ADMIN_CTRL_Themes extends ADMIN_CTRL_StorageAbstract
                 "iconUrl" => $this->themeService->getStaticUrl($theme->getKey()) . BOL_ThemeService::ICON_FILE,
                 "previewUrl" => $this->themeService->getStaticUrl($theme->getKey()) . BOL_ThemeService::PREVIEW_FILE,
                 "active" => ( $theme->getKey() == $activeTheme ),
-                "changeUrl" => OW::getRequest()->buildUrlQueryString($router->urlFor(__CLASS__, "changeTheme"),
+                "changeUrl" => $router->urlFor(__CLASS__, "changeTheme",
                     array("name" => $theme->getKey(), "devKey" => $theme->getDeveloperKey())),
                 "update_url" => ( ((int) $theme->getUpdate() == 1) ) ? $router->urlFor("ADMIN_CTRL_Themes",
                         "updateRequest", array("name" => $theme->getKey())) : false,
