@@ -73,7 +73,8 @@ class UTIL_HtmlTag
     /**
      * @return Jevix
      */
-    private static function getJevix( $tagList = null, $attrList = null, $blackListMode = false, $mediaSrcValidate = true )
+    private static function getJevix( $tagList = null, $attrList = null, $blackListMode = false,
+        $mediaSrcValidate = true )
     {
         if ( self::$jevix === null )
         {
@@ -178,7 +179,8 @@ class UTIL_HtmlTag
      *
      * @return string
      */
-    public static function stripTags( $text, array $tagList = null, array $attributeList = null, $blackListMode = false, $mediaSrcValidate = true )
+    public static function stripTags( $text, array $tagList = null, array $attributeList = null, $blackListMode = false,
+        $mediaSrcValidate = true )
     {
         // style remove fix
         if ( $blackListMode )
@@ -282,5 +284,17 @@ class UTIL_HtmlTag
         $jevix->isAutoLinkMode = true;
 
         return $jevix->parse($text);
+    }
+
+    /**
+     * Escapes chars to make sure that string doesn't contain valid JS code
+     * 
+     * @param string $string
+     * @return string
+     */
+    public static function escapeJs( $string )
+    {
+        return strtr($string,
+            array('\\' => '\\\\', "'" => "\\'", '"' => '\\"', "\r" => '\\r', "\n" => '\\n', '</' => '<\/'));
     }
 }
