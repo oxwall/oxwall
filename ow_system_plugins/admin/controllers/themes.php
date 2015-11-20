@@ -338,8 +338,8 @@ class ADMIN_CTRL_Themes extends ADMIN_CTRL_StorageAbstract
         $this->assign("text",
             $language->text("admin", "free_plugin_request_text",
                 array("oldVersion" => $themeDto->getBuild(), "newVersion" => $remoteThemeInfo["build"], "name" => $themeDto->getTitle())));
-        $this->assign("updateUrl", json_encode($router->urlFor(__CLASS__, "update", $params)));
-        $this->assign("returnUrl", json_encode($router->urlForRoute("admin_themes_choose")));
+        $this->assign("updateUrl", $router->urlFor(__CLASS__, "update", $params));
+        $this->assign("returnUrl", $router->urlForRoute("admin_themes_choose"));
 
         if ( OW::getConfig()->getValue("base", "update_soft") )
         {

@@ -4,16 +4,16 @@
         {if !empty($platformUpdateAvail)}
             <div class="ow_anno">{text key="admin+item_update_request_platform_update_warning"}</div>
         {/if}
-        {if !empty($text}
+        {if !empty($text)}
             {$text}<br /><br />
         {/if}
         {if !empty($updateUrl)}
             {* TODO CSRF  *}
-            {decorator name='button' langLabel='admin+plugin_update_yes_button_label' onclick="window.location=`$redirectUrl`"}
+            {decorator name='button' langLabel='admin+plugin_update_yes_button_label' onclick="window.location='`$updateUrl|escape:javascript`'"}
         {/if}
         {if !empty($returnUrl)}
             {* TODO CSRF  *}
-            {decorator name='button' langLabel='admin+license_form_leave_label' onclick="window.location=`$returnUrl`"}
+            {decorator name='button' langLabel='admin+license_form_leave_label' onclick="window.location='`$returnUrl|escape:javascript`'"}
         {/if}
     </div>
     {/block_decorator}

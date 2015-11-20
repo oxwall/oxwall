@@ -68,7 +68,7 @@ class ADMIN_CTRL_Storage extends ADMIN_CTRL_StorageAbstract
         if ( !$data )
         {
             $this->assign("backButton", true);
-            $errMsg = $language->text("admin", "check_license_invalid_servr_responce_err_msg");
+            $errMsg = $language->text("admin", "check_license_invalid_server_responce_err_msg");
             OW::getFeedback()->error($errMsg);
             $this->redirectToBackUri($params);
             $this->assign("message", $errMsg);
@@ -113,8 +113,8 @@ class ADMIN_CTRL_Storage extends ADMIN_CTRL_StorageAbstract
         {
             $button = new Button("button");
             $button->setValue($language->text("admin", "license_form_back_label"));
-            $redirectUrl = json_encode(OW_URL_HOME . urldecode($params[BOL_StorageService::URI_VAR_BACK_URI]));
-            $button->addAttribute("onclick", "window.location={$redirectUrl}");
+            $redirectUrl = UTIL_HtmlTag::escapeJs(OW_URL_HOME . urldecode($params[BOL_StorageService::URI_VAR_BACK_URI]));
+            $button->addAttribute("onclick", "window.location='{$redirectUrl}'");
             $form->addElement($button);
             $this->assign("backButton", true);
         }

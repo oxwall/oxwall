@@ -370,7 +370,7 @@ class ADMIN_CTRL_Plugins extends ADMIN_CTRL_StorageAbstract
 
         $remotePluginInfo = (array) $this->storageService->getItemInfoForUpdate($pluginDto->getKey(),
                 $pluginDto->getDeveloperKey(), $pluginDto->getBuild());
-        $this->assign("returnUrl", json_encode($router->urlForRoute("admin_plugins_installed")));
+        $this->assign("returnUrl", $router->urlForRoute("admin_plugins_installed"));
 
         if ( empty($remotePluginInfo) || !empty($remotePluginInfo["error"]) )
         {
@@ -410,7 +410,7 @@ class ADMIN_CTRL_Plugins extends ADMIN_CTRL_StorageAbstract
             $language->text("admin", "free_plugin_request_text",
                 array("releaseNotes" => "", "oldVersion" => $pluginDto->getBuild(), "newVersion" => $remotePluginInfo["build"],
                 "name" => $pluginDto->getTitle())));
-        $this->assign("updateUrl", json_encode($router->urlFor(__CLASS__, "update", $params)));
+        $this->assign("updateUrl", $router->urlFor(__CLASS__, "update", $params));
 
         if ( OW::getConfig()->getValue("base", "update_soft") )
         {
