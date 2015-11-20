@@ -1,0 +1,52 @@
+<div class="ow_hidden">
+    <div id="ow-photo-view" class="ow_photoview_wrap clearfix ow_bg_color">
+        {if !empty($authError)}
+        <div id="ow-photo-view-error" style="padding: 45px 10px 65px">
+            <div class="ow_anno ow_nocontent">{$authError}</div>
+        </div>
+        {else}
+        <div class="ow_photoview_stage_wrap">
+            <img src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs%3D" class="ow_photo_img ow_photo_view" />
+            <div class="ow_photo_context_action" style="display: none"></div>
+            <a class="ow_photoview_arrow_left" href="javascript://"><i></i></a>
+            <a class="ow_photoview_arrow_right" href="javascript://"><i></i></a>
+        </div>
+        <div class="ow_photoview_info_wrap">
+            <div class="ow_photoview_info">
+                <div class="ow_photo_scroll_cont">
+                    <input type="hidden" class="ow_photoview_id" name="photo_id" />
+                    <div class="ow_photoview_title ow_small ow_smallmargin">
+                        <h5>{text key="admin+title"}:</h5>
+                        <input type="text" name="title" />
+                    </div>
+
+                    <div class="ow_photoview_url ow_small ow_smallmargin">
+                        <h5>{text key="admin+url"}:</h5>
+                        <input type="text" name="url" disabled="disabled" class="ow_disabled" />
+                        <a href="#">Copy</a>
+                    </div>
+
+                    <div class="ow_photoview_date ow_small">
+                        {text key="admin+date"}: <b><span id="photo-date"></span></b>
+                    </div>
+                    <div class="ow_photoview_size ow_small">
+                        {text key="admin+size"}: <b><span id="photo-size"></span></b>
+                    </div>
+                    <div class="ow_photoview_filesize ow_small">
+                        {text key="admin+filesize"}: <b><span id="photo-filesize"></span></b>
+                    </div>
+
+                    <div class="ow_photoview_save ow_small ow_right">
+                        <span class="ow_button">
+                            <span class=" ow_positive ow_btn_delimiter">
+                                <input type="submit" name="save" value="Save" class="ow_positive ow_btn_delimiter image_save_data" name="submit" />
+                            </span>
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <div class="ow_feed_comments_input_sticky"></div>
+        </div>
+        {/if}
+    </div>
+</div>

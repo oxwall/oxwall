@@ -43,6 +43,7 @@ UPDATE_ErrorManager::getInstance(true);
 
 $autoloader = UPDATE_Autoload::getInstance();
 $autoloader->addPackagePointer('BOL', OW_DIR_SYSTEM_PLUGIN . 'base' . DS . 'bol' . DS);
+$autoloader->addPackagePointer('BASE_CLASS', OW_DIR_SYSTEM_PLUGIN . 'base' . DS . 'classes' . DS);
 $autoloader->addPackagePointer('OW', OW_DIR_CORE);
 $autoloader->addPackagePointer('UTIL', OW_DIR_UTIL);
 $autoloader->addPackagePointer('UPDATE', UPDATE_DIR_ROOT . 'classes' . DS);

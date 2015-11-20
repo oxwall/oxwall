@@ -40,6 +40,8 @@ class BOL_UserDao extends OW_BaseDao
     const CACHE_TAG_FEATURED_LIST = 'base.featured_list';
     const CACHE_TAG_LATEST_LIST = 'base.latest_list';
     const CACHE_LIFE_TIME = 86400; //24 hour
+    
+    const EVENT_QUERY_FILTER = "base.query.user_filter";
 
     /**
      * Singleton instance.
@@ -89,9 +91,31 @@ class BOL_UserDao extends OW_BaseDao
         return OW_DB_PREFIX . 'base_user';
     }
 
-    public function getUserQueryFilter( $tableAlias, $keyField, $params = array() )
+    
+    /**
+     * Returns query parts for filtering users ( by default: suspended, not approved, not verified ). 
+     * Result array includes strings: join, where, order
+     * 
+     * @param array $tables
+     * @param array $fields
+     * @param array $options
+     * @return array
+     */
+    public function getQueryFilter( array $tables, array $fields, $options = array() )
     {
-        $event = new BASE_CLASS_QueryBuilderEvent("base.query.user_filter", $params);
+        if ( empty($tables[BASE_CLASS_QueryBuilderEvent::TABLE_USER]) 
+                || empty($fields[BASE_CLASS_QueryBuilderEvent::FIELD_USER_ID]) )
+        {
+            throw new InvalidArgumentException("User table name or key field were not provided.");
+        }
+        
+        $tableAlias = $tables[BASE_CLASS_QueryBuilderEvent::TABLE_USER];
+        $keyField = $fields[BASE_CLASS_QueryBuilderEvent::FIELD_USER_ID];
+        
+        $event = new BASE_CLASS_QueryBuilderEvent(self::EVENT_QUERY_FILTER, array_merge(array(
+            "tables" => $tables,
+            "fields" => $fields
+        ), $options));
 
         $userTable = "base_user_table_alias";
         $event->addJoin("INNER JOIN `" . $this->getTableName() . "` $userTable ON $userTable.`id` = `$tableAlias`.`$keyField`");
@@ -121,6 +145,26 @@ class BOL_UserDao extends OW_BaseDao
         );
     }
 
+    /**
+     * Returns query parts for filtering users ( by default: suspended, not approved, not verified ). 
+     * Result array includes strings: join, where, order
+     * 
+     * @deprecated since version 1.8.1; use getQueryFilter instead
+     * 
+     * @param string $tableAlias
+     * @param string $keyField
+     * @param array $params
+     * @return array
+     */
+    public function getUserQueryFilter( $tableAlias, $keyField, $params = array() )
+    {
+        return $this->getQueryFilter(array(
+            BASE_CLASS_QueryBuilderEvent::TABLE_USER => $tableAlias
+        ), array(
+            BASE_CLASS_QueryBuilderEvent::FIELD_USER_ID => $keyField
+        ), $params);
+    }
+    
     /**
      * Returns user for provided username/email.
      *
@@ -807,7 +851,7 @@ class BOL_UserDao extends OW_BaseDao
         return $this->dbo->queryForObjectList($sql, $this->getDtoClassName());
     }
 
-    private function getQuestionWhereString( BOL_Question $question, $value, $prefix = '' )
+    public function getQuestionWhereString( BOL_Question $question, $value, $prefix = '' )
     {
         $result = '';
         $prefix = $this->dbo->escapeString($prefix);
@@ -834,6 +878,12 @@ class BOL_UserDao extends OW_BaseDao
             case BOL_QuestionService::QUESTION_PRESENTATION_URL :
             case BOL_QuestionService::QUESTION_PRESENTATION_TEXT :
             case BOL_QuestionService::QUESTION_PRESENTATION_TEXTAREA :
+                
+                if ( $value === null || $value === "" )
+                {
+                    return;
+                }
+                
                 $result = " LCASE(`" . $prefix . "`.`textValue`) LIKE '" . $this->dbo->escapeString(strtolower($value)) . "%'";
                 break;
 
@@ -920,7 +970,7 @@ class BOL_UserDao extends OW_BaseDao
         return $result;
     }
 
-    public function findUserIdListByPreferenceValues( $preferenceValues )
+    public function findUserIdListByPreferenceValues( $preferenceValues, $start = 0, $count = 1000 )
     {
         if ( empty($preferenceValues) || !is_array($preferenceValues) )
         {
@@ -933,13 +983,15 @@ class BOL_UserDao extends OW_BaseDao
         {
             $sqlList[$key] = " SELECT d.userId FROM " . (BOL_PreferenceDao::getInstance()->getTableName()) . " p
                 LEFT JOIN " . (BOL_PreferenceDataDao::getInstance()->getTableName()) . " d ON ( d.`key` = p.`key` )
-                WHERE p.`key` = '" . $this->dbo->escapeString($key) . "' AND ( d.value = '" . $this->dbo->escapeString($value) . "' OR d.value IS NULL AND p.defaultValue = '" . $this->dbo->escapeString($value) . "' ) ";
+                WHERE p.`key` = '" . $this->dbo->escapeString($key) . "' AND ( d.value = '" . $this->dbo->escapeString($value) . "' OR d.value IS NULL AND p.defaultValue = '" . $this->dbo->escapeString($value) . "' ) "
+                    . " LIMIT :start, :count ";
 
             if ( !empty($value) && is_array($value) )
             {
                 $sqlList[$key] = " SELECT d.userId FROM " . (BOL_PreferenceDao::getInstance()->getTableName()) . " p
                     LEFT JOIN " . (BOL_PreferenceDataDao::getInstance()->getTableName()) . " d ON ( d.`key` = p.`key` )
-                    WHERE p.`key` = '" . $this->dbo->escapeString($key) . "' AND ( d.value IN " . $this->dbo->mergeInClause($value) . " OR d.value IS NULL AND p.defaultValue IN " . $this->dbo->mergeInClause($value) . " ) ";
+                    WHERE p.`key` = '" . $this->dbo->escapeString($key) . "' AND ( d.value IN " . $this->dbo->mergeInClause($value) . " OR d.value IS NULL AND p.defaultValue IN " . $this->dbo->mergeInClause($value) . " ) "
+                        . " LIMIT :start, :count ";
             }
         }
 
@@ -958,7 +1010,7 @@ class BOL_UserDao extends OW_BaseDao
             $sqlString .= $sql;
         }
 
-        return $this->dbo->queryForColumnList($sqlString);
+        return $this->dbo->queryForColumnList($sqlString, array('start' => $start, 'count' => $count));
     }
     protected $cachedItems = array();
 

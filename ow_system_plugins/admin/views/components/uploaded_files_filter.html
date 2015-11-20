@@ -1,0 +1,18 @@
+<div id="{$id}" style="float: left;" class="ow_context_action_block ow_context_action_value_block clearfix">
+    <div class="ow_context_action">
+        <a class="ow_context_action_value">{text key="admin+period"}: <span>{text key="admin+all_time"}</span></a><span class="ow_context_more"></span>
+        <div style="opacity: 1; top: 18px;" class="ow_tooltip ow_small ow_tooltip_top_right">
+            <div class="ow_tooltip_tail">
+                <span></span>
+            </div>
+            <div class="ow_tooltip_body">
+                <ul class="ow_context_action_list ow_border">
+                    <li><a href="#" data-date="">{text key="admin+all_time"}</a></li>
+                    {foreach from=$dates key=k item=v}
+                    <li><a href="#" data-date="{$k}">{$v}</a></li>
+                    {/foreach}
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>

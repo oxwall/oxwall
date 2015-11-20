@@ -29,69 +29,91 @@
  */
 class ADMIN_CLASS_EventHandler
 {
+
     public function init()
     {
         $eventManager = OW::getEventManager();
         $eventManager->bind('admin.disable_fields_on_edit_profile_question', array($this, 'onGetDisableActionList'));
-        $eventManager->bind('admin.disable_fields_on_edit_profile_question', array($this, 'onGetJoinStampDisableActionList'), 999);
-        $eventManager->bind('admin.add_admin_notification', array($this, 'addAdminNotification'));
+        $eventManager->bind('admin.disable_fields_on_edit_profile_question',
+            array($this, 'onGetJoinStampDisableActionList'), 999);
+
+        $eventManager->bind('admin.add_admin_notification', array($this, 'onAddAdminNotification'));
     }
 
-    public function addAdminNotification( ADMIN_CLASS_NotificationCollector $coll )
+    public function onAddAdminNotification( ADMIN_CLASS_NotificationCollector $coll )
     {
-        // update soft
-        if ( OW::getConfig()->getValue('base', 'update_soft') )
-        {
-            $coll->add(
-                OW::getLanguage()->text('admin', 'notification_soft_update', 
-                        array('link' => OW::getRouter()->urlForRoute('admin_core_update_request'))),
+        $router = OW::getRouter();
+        $language = OW::getLanguage();
+        $pluginService = BOL_PluginService::getInstance();
+        $themeService = BOL_ThemeService::getInstance();
+        $storageService = BOL_StorageService::getInstance();
+        $request = OW::getRequest();
 
-                ADMIN_CLASS_NotificationCollector::NOTIFICATION_UPDATE
-            );
+        // update soft
+        if ( OW::getConfig()->getValue("base", "update_soft") )
+        {
+            $coll->add($language->text("admin", "notification_soft_update",
+                    array("link" => $router->urlForRoute("admin_core_update_request"))),
+                ADMIN_CLASS_NotificationCollector::NOTIFICATION_UPDATE);
         }
 
-        $pluginsCount = BOL_PluginService::getInstance()->getPluginsToUpdateCount();
+        $pluginsToUpdateCount = $pluginService->getPluginsToUpdateCount();
 
         // plugins update
-        if ( $pluginsCount > 0 )
+        if ( $pluginsToUpdateCount > 0 )
         {
-            $coll->add(
-                OW::getLanguage()->text('admin', 'notification_plugins_to_update', 
-                        array('link' => OW::getRouter()->urlForRoute('admin_plugins_installed'), 'count' => $pluginsCount)),
-
-                ADMIN_CLASS_NotificationCollector::NOTIFICATION_UPDATE
-            );
+            $coll->add($language->text("admin", "notification_plugins_to_update",
+                    array("link" => $router->urlForRoute("admin_plugins_installed"), "count" => $pluginsToUpdateCount)),
+                ADMIN_CLASS_NotificationCollector::NOTIFICATION_UPDATE);
         }
 
-        $themesCount = BOL_ThemeService::getInstance()->getThemesToUpdateCount();
+        $themesToUpdateCount = $themeService->getThemesToUpdateCount();
 
         // themes update
-        if ( $themesCount > 0 )
+        if ( $themesToUpdateCount > 0 )
         {
-            $coll->add(
-                OW::getLanguage()->text('admin', 'notification_themes_to_update', 
-                        array('link' => OW::getRouter()->urlForRoute('admin_themes_choose'), 'count' => $themesCount)),
-
-                ADMIN_CLASS_NotificationCollector::NOTIFICATION_UPDATE
-            );
+            $coll->add($language->text("admin", "notification_themes_to_update",
+                    array("link" => $router->urlForRoute("admin_themes_choose"), "count" => $themesToUpdateCount)),
+                ADMIN_CLASS_NotificationCollector::NOTIFICATION_UPDATE);
         }
 
-        if ( OW::getConfig()->configExists('base', 'cron_is_active') && (int) OW::getConfig()->getValue('base', 'cron_is_active') === 0 )
+        if ( OW::getConfig()->configExists("base", "cron_is_active") && (int) OW::getConfig()->getValue("base",
+                "cron_is_active") == 0 )
         {
-            $coll->add(
-                OW::getLanguage()->text('admin', 'warning_cron_is_not_active', 
-                        array('path' => OW_DIR_ROOT . 'ow_cron' . DS . 'run.php')),
-
-                ADMIN_CLASS_NotificationCollector::NOTIFICATION_WARNING
-            );
+            $coll->add($language->text("admin", "warning_cron_is_not_active",
+                    array("path" => OW_DIR_ROOT . "ow_cron" . DS . "run.php")),
+                ADMIN_CLASS_NotificationCollector::NOTIFICATION_WARNING);
         }
 
-        if ( !ini_get('allow_url_fopen') )
+        if ( !ini_get("allow_url_fopen") )
         {
-            $coll->add(
-                OW::getLanguage()->text('admin', 'warning_url_fopen_disabled'),
-                ADMIN_CLASS_NotificationCollector::NOTIFICATION_WARNING
+            $coll->add($language->text('admin', 'warning_url_fopen_disabled'),
+                ADMIN_CLASS_NotificationCollector::NOTIFICATION_WARNING);
+        }
+
+        $items = $storageService->findItemsWithInvalidLicense();
+        $licenseRequestUrl = OW::getRouter()->urlFor("ADMIN_CTRL_Storage", "checkItemLicense");
+        $backUri = OW::getRouter()->getUri();
+
+        /* @var $plugin BOL_StoreItem */
+        foreach ( $items as $item )
+        {
+            $type = ($item instanceof BOL_Plugin) ? BOL_StorageService::URI_VAR_ITEM_TYPE_VAL_PLUGIN : BOL_StorageService::URI_VAR_ITEM_TYPE_VAL_THEME;
+
+            $params = array(
+                BOL_StorageService::URI_VAR_ITEM_TYPE => $type,
+                BOL_StorageService::URI_VAR_KEY => $item->getKey(),
+                BOL_StorageService::URI_VAR_DEV_KEY => $item->getDeveloperKey(),
+                BOL_StorageService::URI_VAR_BACK_URI => $backUri
             );
+
+            $langParams = array(
+                "name" => $item->getTitle(),
+                "url" => $request->buildUrlQueryString($licenseRequestUrl, $params)
+            );
+
+            $coll->add($language->text("admin", "invalid _license_item_notification", $langParams),
+                ADMIN_CLASS_NotificationCollector::NOTIFICATION_WARNING);
         }
     }
 
@@ -106,15 +128,15 @@ class ADMIN_CLASS_EventHandler
 
             foreach ( $data as $key => $value )
             {
-                switch($key)
+                switch ( $key )
                 {
                     case 'disable_account_type' :
-                        
+
                         if ( $dto->base == 1 )
                         {
                             $data['disable_account_type'] = true;
                         }
-                        
+
                         break;
                     case 'disable_answer_type' :
 
@@ -122,7 +144,7 @@ class ADMIN_CLASS_EventHandler
                         {
                             $data['disable_answer_type'] = true;
                         }
-                        
+
                         break;
                     case 'disable_presentation' :
 
@@ -130,26 +152,26 @@ class ADMIN_CLASS_EventHandler
                         {
                             $data['disable_presentation'] = true;
                         }
-                        
+
                         break;
                     case 'disable_column_count' :
-                                                
+
                         if ( !empty($dto->parent) )
                         {
                             $data['disable_column_count'] = true;
                         }
-                        
+
                         break;
-                        
+
                     case 'disable_possible_values' :
-                        
+
                         if ( !empty($dto->parent) )
                         {
                             $data['disable_possible_values'] = true;
                         }
-                        
+
                         break;
-                    
+
                     case 'disable_display_config' :
 
                         if ( $dto->name == 'joinStamp' )
@@ -159,36 +181,36 @@ class ADMIN_CLASS_EventHandler
 
                         break;
                     case 'disable_required' :
-                        
+
                         if ( $dto->base == 1 )
                         {
                             $data['disable_required'] = true;
                         }
 
-                        
+
                         break;
                     case 'disable_on_join' :
 
-                        if ( in_array($dto->name, array('password') ) || $dto->base == 1 )
+                        if ( in_array($dto->name, array('password')) || $dto->base == 1 )
                         {
                             $data['disable_on_join'] = true;
                         }
 
                         break;
                     case 'disable_on_view' :
-                        if ( in_array($dto->name, array('password') ) )
+                        if ( in_array($dto->name, array('password')) )
                         {
                             $data['disable_on_view'] = true;
                         }
                         break;
                     case 'disable_on_search' :
-                        if ( in_array($dto->name, array('password') ) )
+                        if ( in_array($dto->name, array('password')) )
                         {
                             $data['disable_on_search'] = true;
                         }
                         break;
                     case 'disable_on_edit' :
-                        if ( in_array($dto->name, array('password') ) )
+                        if ( in_array($dto->name, array('password')) )
                         {
                             $data['disable_on_edit'] = true;
                         }
@@ -199,8 +221,8 @@ class ADMIN_CLASS_EventHandler
 
         $e->setData($data);
     }
-    
-    function onGetJoinStampDisableActionList( OW_Event $e )
+
+    public function onGetJoinStampDisableActionList( OW_Event $e )
     {
         $params = $e->getParams();
         $data = $e->getData();

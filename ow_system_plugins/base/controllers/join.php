@@ -310,10 +310,10 @@ class BASE_CTRL_Join extends OW_ActionController
 
                 // authenticate user
                 OW::getUser()->login($user->id);
-
+                
                 // create Avatar
-                BOL_AvatarService::getInstance()->createAvatar($user->id, false, false);
-
+                $this->createAvatar($user->id);
+                
                 $event = new OW_Event(OW_EventManager::ON_USER_REGISTER, array('userId' => $user->id, 'method' => 'native', 'params' => $params));
                 OW::getEventManager()->trigger($event);
 
@@ -333,6 +333,11 @@ class BASE_CTRL_Join extends OW_ActionController
         {
             OW::getFeedback()->error($language->text('base', 'join_join_error'));
         }
+    }
+    
+    protected function createAvatar($userId)
+    {
+         BOL_AvatarService::getInstance()->createAvatar($userId, false, false);
     }
 }
 
@@ -620,7 +625,7 @@ class JoinForm extends BASE_CLASS_UserQuestionForm
 
                     $addFakes = $event->getData();
 
-                    if ( !$addFakes || $this->questions[$sort]['presentation'] == 'password' )
+                    if ( !$addFakes || in_array( $this->questions[$sort]['presentation'], array('password', 'range') ) )
                     {
                         $this->questions[$sort]['fake'] = false;
                         $this->questions[$sort]['realName'] = $question['name'];
@@ -871,7 +876,9 @@ class JoinForm extends BASE_CLASS_UserQuestionForm
 
         $displayCaptcha = false;
 
-        if ( !empty($captchaField) && $captchaField instanceof FormElement )
+        $enableCaptcha = OW::getConfig()->getValue('base', 'enable_captcha');
+        
+        if ( $enableCaptcha && !empty($captchaField) && $captchaField instanceof FormElement )
         {
             $captchaField->setName('captchaField');
             $this->addElement($captchaField);

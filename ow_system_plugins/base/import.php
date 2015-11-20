@@ -142,7 +142,7 @@ class BASE_Import extends DATAIMPORTER_CLASS_Import
 
         BOL_ThemeService::getInstance()->processAllThemes();
         
-        $oldTheme = BOL_ThemeService::getInstance()->findThemeByName($theme->name);        
+        $oldTheme = BOL_ThemeService::getInstance()->findThemeByKey($theme->name);        
         $theme->id = $oldTheme->id;
         
         BOL_ThemeService::getInstance()->saveTheme($theme);

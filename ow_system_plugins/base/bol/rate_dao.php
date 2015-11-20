@@ -140,14 +140,26 @@ class BOL_RateDao extends OW_BaseDao
 
     public function findMostRatedEntityList( $entityType, $first, $count, $exclude )
     {
+        $queryParts = BOL_ContentService::getInstance()->getQueryFilter(array(
+            BASE_CLASS_QueryBuilderEvent::TABLE_USER => 'r',
+            BASE_CLASS_QueryBuilderEvent::TABLE_CONTENT => 'r'
+        ), array(
+            BASE_CLASS_QueryBuilderEvent::FIELD_USER_ID => 'userId',
+            BASE_CLASS_QueryBuilderEvent::FIELD_CONTENT_ID => 'id'
+        ), array(
+            BASE_CLASS_QueryBuilderEvent::OPTION_METHOD => __METHOD__,
+            BASE_CLASS_QueryBuilderEvent::OPTION_TYPE => $entityType
+        ));
+
         $excludeCond = $exclude ? ' AND `' . self::ENTITY_ID . '` NOT IN (' . $this->dbo->mergeInClause($exclude) . ')' : '';
 
-        $query = "SELECT `" . self::ENTITY_ID . "` AS `id`, COUNT(*) as `ratesCount`, AVG(`score`) as `avgScore`
-			FROM " . $this->getTableName() . "
-                        WHERE `" . self::ENTITY_TYPE . "` = :entityType AND `" . self::ACTIVE . "` = 1 " . $excludeCond . "
-			GROUP BY `" . self::ENTITY_ID . "`
-                        ORDER BY `avgScore` DESC, `ratesCount` DESC, MAX(`timeStamp`) DESC
-                        LIMIT :first, :count";
+        $query = 'SELECT `' . self::ENTITY_ID . '` AS `id`, COUNT(*) as `ratesCount`, AVG(`score`) as `avgScore`
+            FROM `' . $this->getTableName() . '` AS `r`
+            ' . $queryParts['join'] . '
+            WHERE `' . self::ENTITY_TYPE . '` = :entityType AND `' . self::ACTIVE . '` = 1 ' . $excludeCond . ' AND ' . $queryParts['where'] . '
+            GROUP BY `' . self::ENTITY_ID . '`
+            ORDER BY `avgScore` DESC, `ratesCount` DESC, MAX(`timeStamp`) DESC
+            LIMIT :first, :count';
 
         return $this->dbo->queryForList($query, array('entityType' => $entityType, 'first' => (int) $first, 'count' => (int) $count));
     }

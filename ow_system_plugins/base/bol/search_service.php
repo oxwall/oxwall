@@ -114,6 +114,7 @@ class BOL_SearchService
 
     public function deleteExpireSearchResult()
     {
+
         $list = $this->searchDao->findExpireSearchId();
 
         if ( !empty($list) )

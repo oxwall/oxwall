@@ -94,6 +94,20 @@ class ADMIN_CTRL_Languages extends ADMIN_CTRL_Abstract
         return new BASE_CMP_ContentMenu($items);
     }
 
+    private function getImportFilePatch($tag, $prefix)
+    {
+        $path = BOL_LanguageService::getInstance()->getImportDirPath();
+
+        $filepath = $path . "language_{$tag}" . DS . "{$prefix}.xml";
+
+        if ( file_exists($path . 'langs' . DS) )
+        {
+            $filepath = $path . 'langs' . DS . "{$tag}" . DS . "{$prefix}.xml";
+        }
+
+        return $filepath;
+    }
+
     public function import()
     {
         $service = BOL_LanguageService::getInstance();
@@ -110,8 +124,7 @@ class ADMIN_CTRL_Languages extends ADMIN_CTRL_Abstract
 
                         foreach ( $value as $prefix )
                         {
-                            $xml = simplexml_load_file($service->getImportDirPath() . "language_{$tag}" . DS . "{$prefix}.xml");
-
+                            $xml = simplexml_load_file($this->getImportFilePatch($tag, $prefix));
                             $service->importPrefix($xml, false, true);
                         }
 
@@ -128,7 +141,7 @@ class ADMIN_CTRL_Languages extends ADMIN_CTRL_Abstract
                     $tag = str_replace('lang_', '', $keys[0]);
 
                     $prefix = $_POST['set']['lang']["lang_{$tag}"][0];
-                    $xml = simplexml_load_file($service->getImportDirPath() . "{$prefix}.xml");
+                    $xml = simplexml_load_file($service->getImportPath() . "{$prefix}.xml");
 
                     $service->importPrefix($xml, true, true);
 
@@ -169,7 +182,7 @@ class ADMIN_CTRL_Languages extends ADMIN_CTRL_Abstract
         $this->assign('section_switch_url', OW::getRequest()->buildUrlQueryString(null, array('prefix' => null, 'page' => null)));
 
         $this->assign('searchFormActionUrl', OW::getRequest()->buildUrlQueryString(null,
-                array('prefix' => ((!empty($_GET['prefix'])) ? $_GET['prefix'] : null), 'language' => ((!empty($_GET['language'])) ? $_GET['language'] : null), 'search' => null, 'page' => null, 'in_keys' => null))
+            array('prefix' => ((!empty($_GET['prefix'])) ? $_GET['prefix'] : null), 'language' => ((!empty($_GET['language'])) ? $_GET['language'] : null), 'search' => null, 'page' => null, 'in_keys' => null))
         );
 
         $this->assign('langs', $languageService->getLanguages());
@@ -262,8 +275,8 @@ class ADMIN_CTRL_Languages extends ADMIN_CTRL_Abstract
                 case 'missing-text':
 
                     $list = $this->getReordered(
-                            $languageService->findMissingKeys($language->getId(), $first, $count),
-                            $language->getId());
+                        $languageService->findMissingKeys($language->getId(), $first, $count),
+                        $language->getId());
 
                     $item_count = $languageService->findMissingKeyCount($language->getId());
 
@@ -272,8 +285,8 @@ class ADMIN_CTRL_Languages extends ADMIN_CTRL_Abstract
                 case 'all':
 
                     $list = $this->getReordered(
-                            $languageService->findLastKeyList($first, $count),
-                            $language->getId());
+                        $languageService->findLastKeyList($first, $count),
+                        $language->getId());
 
                     $item_count = $languageService->countAllKeys();
 
@@ -290,8 +303,8 @@ class ADMIN_CTRL_Languages extends ADMIN_CTRL_Abstract
         else
         {
             $list = $this->getReordered(
-                    $languageService->findLastKeyList($first, $count),
-                    $language->getId());
+                $languageService->findLastKeyList($first, $count),
+                $language->getId());
 
             $item_count = $languageService->countAllKeys();
         }
@@ -356,6 +369,18 @@ class ADMIN_CTRL_Languages extends ADMIN_CTRL_Abstract
         return $result;
     }
 
+    private function getImportPath()
+    {
+        $path = BOL_LanguageService::getInstance()->getImportDirPath();
+
+        if ( file_exists($path . 'langs' . DS) )
+        {
+            $path = $path . 'langs' . DS;
+        }
+
+        return $path;
+    }
+
     private function setImportInfo()
     {
         $service = BOL_LanguageService::getInstance();
@@ -363,7 +388,9 @@ class ADMIN_CTRL_Languages extends ADMIN_CTRL_Abstract
         $langsToImport = array();
         $prefixesToImport = array();
 
-        $arr = glob("{$service->getImportDirPath()}language_*");
+        $path = $this->getImportPath();
+
+        $arr = glob("{$path}*");
         $type = '';
 
         if ( !empty($arr) )
@@ -410,21 +437,21 @@ class ADMIN_CTRL_Languages extends ADMIN_CTRL_Abstract
                         $arr = $xmlElement->xpath('/prefix/key');
                         $tmp = $xmlElement->xpath('/prefix');
 
-                        $prefixElement = $tmp[0];                        
-                        
-                        $prefix = strval($prefixElement->attributes()->name);                         
-                        
+                        $prefixElement = $tmp[0];
+
+                        $prefix = strval($prefixElement->attributes()->name);
+
                         if(!in_array($prefix, BOL_LanguageService::getInstance()->getExceptionPrefixes()))
                         {
                             $plugin = BOL_PluginService::getInstance()->findPluginByKey($prefix);
-                            
+
                             if ( empty($plugin) )
                             {
                                 continue;
                             }
                         }
 
-                        $p = array('label' => strval($prefixElement->attributes()->label), 'prefix' => $prefix);                            
+                        $p = array('label' => strval($prefixElement->attributes()->label), 'prefix' => $prefix);
                         if ( !in_array($p, $prefixesToImport) )
                             $prefixesToImport[] = $p;
                     }
@@ -441,7 +468,7 @@ class ADMIN_CTRL_Languages extends ADMIN_CTRL_Abstract
         else
         {
             $type = "single-xml";
-            $arr = glob("{$service->getImportDirPath()}*.xml");
+            $arr = glob("{$path}*.xml");
 
             if ( empty($arr) || !file_exists($arr[0]) )
             {
@@ -458,7 +485,7 @@ class ADMIN_CTRL_Languages extends ADMIN_CTRL_Abstract
             $tmp = $xmlElement->xpath('/prefix');
 
             $prefixElement = $tmp[0];
-            
+
             $plugin = BOL_PluginService::getInstance()->findPluginByKey(strval($prefixElement->attributes()->name));
 
             if ( !empty($plugin) )
@@ -581,15 +608,14 @@ class ADMIN_CTRL_Languages extends ADMIN_CTRL_Abstract
                 OW::getFeedback()->error(OW::getLanguage()->text('admin', 'add_language_pack_empty_file_error_message'));
                 $this->redirect();
             }
-            
+
             $this->cleanImportDir($languageService->getImportDirPath());
 
             $tmpName = $_FILES['file']['tmp_name'];
 
             $uploadFilePath = $languageService->getImportDirPath() . $_FILES['file']['name'];
-
             move_uploaded_file($tmpName, $uploadFilePath);
-            
+
             if ( file_exists($tmpName) )
             {
                 unlink($tmpName);
@@ -615,7 +641,6 @@ class ADMIN_CTRL_Languages extends ADMIN_CTRL_Abstract
                     }
 
                     $zip->extractTo($languageService->getImportDirPath());
-
                     $zip->close();
 
                     @unlink($uploadFilePath);
@@ -660,15 +685,15 @@ class ADMIN_CTRL_Languages extends ADMIN_CTRL_Abstract
 
                 $langDto = $languageService->findById($langId); /* @var $langDto BOL_Language */
 
-
-
-                $langDir = "language_{$langDto->getTag()}/";
+                $langDir = 'langs' . DS . $langDto->getTag() . DS;
                 $za->addEmptyDir($langDir);
 
                 $dir = "{$languageService->getExportDirPath()}{$langDir}";
 
                 if ( !is_dir($dir) )
-                    mkdir($dir);
+                {
+                    mkdir($dir, 0777, true);
+                }
 
                 $file = $dir . "{$langDto->getTag()}.xml";
                 $fd = fopen($file, 'w');
@@ -689,7 +714,7 @@ class ADMIN_CTRL_Languages extends ADMIN_CTRL_Abstract
                     $za->addFile($file, $langDir . "{$prefixDto->getPrefix()}.xml");
                 }
             }
-            
+
             $za->close();
 
             if ( file_exists($archivePath) )
@@ -768,7 +793,7 @@ class ADMIN_CTRL_Languages extends ADMIN_CTRL_Abstract
         $importLangForm = new ImportLangForm();
         $importLangForm->setAction(OW::getRouter()->urlForRoute('admin_settings_language_mod'). "#lang_import");
         $this->addForm($importLangForm);
-        
+
         $this->addForm(new CloneForm());
     }
 
@@ -784,7 +809,7 @@ class ADMIN_CTRL_Languages extends ADMIN_CTRL_Abstract
 
         $languageService->save($language);
         $url = OW::getRouter()->urlForRoute('admin_settings_language_mod');
- 
+
         OW::getFeedback()->info(OW::getLanguage()->text('admin', 'language_activated'));
 
         header("location: {$url}#lang_list");
@@ -811,7 +836,7 @@ class ADMIN_CTRL_Languages extends ADMIN_CTRL_Abstract
         $languageService->save($language);
 
         OW::getFeedback()->info(OW::getLanguage()->text('admin', 'language_deactivated'));
-        
+
         $url = OW::getRouter()->urlForRoute('admin_settings_language_mod');
         header("location: {$url}#lang_list");
         exit();
@@ -886,7 +911,7 @@ class ADMIN_CTRL_Languages extends ADMIN_CTRL_Abstract
             $keyDto = new BOL_LanguageKey();
 
             $languageService->saveKey(
-                    $keyDto->setKey($key)
+                $keyDto->setKey($key)
                     ->setPrefixId($prefixId)
             );
 
@@ -998,13 +1023,13 @@ class ADMIN_CTRL_Languages extends ADMIN_CTRL_Abstract
         $cmp = new BASE_CMP_LanguageValueEdit($_GET['prefix'], $_GET['key']);
 
         exit(
-            json_encode(
-                array(
-                    'markup' => $cmp->render(),
-                    'js' => OW::getDocument()->getOnloadScript(),
-                    'include_js' => OW::getDocument()->getScripts()
-                )
+        json_encode(
+            array(
+                'markup' => $cmp->render(),
+                'js' => OW::getDocument()->getOnloadScript(),
+                'include_js' => OW::getDocument()->getScripts()
             )
+        )
         );
     }
 
@@ -1130,7 +1155,7 @@ class CloneForm extends Form
         $labelTextField = new TextField('label');
 
         $labelTextField->setLabel(OW::getLanguage()->text('admin', 'clone_form_lbl_label'))->setDescription(OW::getLanguage()->text('admin', 'clone_form_descr_label'));
-        
+
         $this->addElement($labelTextField);
 
         $tagTextField = new TextField('tag');
@@ -1161,14 +1186,14 @@ class LanguageTagValidator extends RequiredValidator
     {
         $this->setErrorMessage(OW::getLanguage()->text('admin', 'msg_lang_invalid_language_tag'));
     }
-    
+
     public function isValid( $value )
     {
         if ( empty($value) )
         {
             return false;
         }
-        
+
         $languageService = BOL_LanguageService::getInstance();
         $language = $languageService->findByTag($value);
 

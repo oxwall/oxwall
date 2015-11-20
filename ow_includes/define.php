@@ -39,3 +39,4 @@ if ( defined('OW_URL_USERFILES') )
     define('OW_URL_THEME_USERFILES', OW_URL_USERFILES . 'themes/');
 }
 
+define("OW_DIR_LIB_VENDOR", OW_DIR_LIB . "vendor" . DS);

@@ -87,12 +87,14 @@ class ADMIN_CTRL_Settings extends ADMIN_CTRL_Abstract
             $configSaveForm->getElement('siteEmail')->setValue($configs['site_email']);
         }
 
+
         $configSaveForm->getElement('tagline')->setValue($configs['site_tagline']);
         $configSaveForm->getElement('description')->setValue($configs['site_description']);
         $configSaveForm->getElement('timezone')->setValue($configs['site_timezone']);
         $configSaveForm->getElement('relativeTime')->setValue($configs['site_use_relative_time'] === '1' ? true : false);
         $configSaveForm->getElement('militaryTime')->setValue($configs['military_time'] === '1' ? true : false);
         $configSaveForm->getElement('currency')->setValue($configs['billing_currency']);
+        $configSaveForm->getElement('enableCaptcha')->setValue($configs['enable_captcha']);
 
         $language->addKeyForJs('admin', 'verify_site_email');
 
@@ -272,17 +274,20 @@ class ADMIN_CTRL_Settings extends ADMIN_CTRL_Abstract
             }
 
             $values = $userSettingsForm->getValues();
+            $guestPassword = OW_Config::getInstance()->getValue('base', 'guests_can_view_password');
 
-            if ( (int) $values['guests_can_view'] === 3 && empty($values['password']) )
+            if ( (int) $values['guests_can_view'] === 3 && empty($values['password']) && is_null($guestPassword) )
             {
                 OW::getFeedback()->error($language->text('admin', 'permission_global_privacy_empty_pass_error_message'));
                 $this->redirect();
             }
-            else if ( (int) $values['guests_can_view'] === 3 && strlen(trim($values['password'])) < 4 )
+            else if ( (int) $values['guests_can_view'] === 3 && strlen(trim($values['password'])) < 4 && strlen(trim($values['password'])) > 0 )
             {
                 OW::getFeedback()->error($language->text('admin', 'permission_global_privacy_pass_length_error_message'));
                 $this->redirect();
             }
+            
+        
 
             $res = $userSettingsForm->process();
             OW::getFeedback()->info($language->text('admin', 'user_settings_updated'));
@@ -574,10 +579,13 @@ class ConfigSaveForm extends Form
         $descriptionField = new Textarea('description');
         $descriptionField->setRequired(true);
         $this->addElement($descriptionField);
+        
+        $dispalyCaptcha = new CheckboxField('enableCaptcha');
+        $this->addElement($dispalyCaptcha);
 
         $timezoneField = new Selectbox('timezone');
         $timezoneField->setRequired(true);
-        $timezoneField->setOptions($this->getTimezones());
+        $timezoneField->setOptions(UTIL_DateTime::getTimezones());
         $this->addElement($timezoneField);
 
         $relativeTimeField = new CheckboxField('relativeTime');
@@ -682,6 +690,7 @@ class ConfigSaveForm extends Form
 
         $config->saveConfig('base', 'site_tagline', $values['tagline']);
         $config->saveConfig('base', 'site_description', $values['description']);
+        $config->saveConfig('base', 'enable_captcha', $values['enableCaptcha']);
         $config->saveConfig('base', 'site_timezone', $values['timezone']);
         $config->saveConfig('base', 'site_use_relative_time', $values['relativeTime'] ? '1' : '0');
         $config->saveConfig('base', 'military_time', $values['militaryTime'] ? '1' : '0');
@@ -693,110 +702,6 @@ class ConfigSaveForm extends Form
         return array('result' => true);
     }
 
-    private function getTimezones()
-    {
-        $zones = array(
-            "Australia/West", "Australia/Victoria", "Australia/Tasmania", "Australia/Sydney", "Australia/South",
-            "Australia/Queensland", "Australia/Perth", "Australia/North", "Australia/NSW", "Australia/Melbourne",
-            "Australia/Lord_Howe", "Australia/Lindeman", "Australia/LHI", "Australia/Hobart", "Australia/Darwin",
-            "Australia/Currie", "Australia/Canberra", "Australia/Broken_Hill", "Australia/Brisbane", "Australia/Adelaide",
-            "Australia/ACT", "Atlantic/Stanley", "Atlantic/St_Helena", "Atlantic/South_Georgia", "Atlantic/Reykjavik",
-            "Atlantic/Madeira", "Atlantic/Jan_Mayen", "Atlantic/Faeroe", "Atlantic/Cape_Verde", "Atlantic/Canary",
-            "Atlantic/Bermuda", "Atlantic/Azores", "Asia/Yerevan", "Asia/Yekaterinburg", "Asia/Yakutsk",
-            "Asia/Vladivostok", "Asia/Vientiane", "Asia/Urumqi", "Asia/Ulan_Bator", "Asia/Ulaanbaatar",
-            "Asia/Ujung_Pandang", "Asia/Tokyo", "Asia/Thimphu", "Asia/Thimbu", "Asia/Tel_Aviv",
-            "Asia/Tehran", "Asia/Tbilisi", "Asia/Tashkent", "Asia/Taipei", "Asia/Singapore",
-            "Asia/Shanghai", "Asia/Seoul", "Asia/Samarkand", "Asia/Sakhalin", "Asia/Saigon",
-            "Asia/Riyadh", "Asia/Rangoon", "Asia/Qyzylorda", "Asia/Qatar", "Asia/Pyongyang",
-            "Asia/Pontianak", "Asia/Phnom_Penh", "Asia/Oral", "Asia/Omsk", "Asia/Novosibirsk",
-            "Asia/Nicosia", "Asia/Muscat", "Asia/Manila", "Asia/Makassar", "Asia/Magadan",
-            "Asia/Macau", "Asia/Macao", "Asia/Kuwait", "Asia/Kuching", "Asia/Kuala_Lumpur",
-            "Asia/Krasnoyarsk", "Asia/Katmandu", "Asia/Kashgar", "Asia/Karachi", "Asia/Kamchatka",
-            "Asia/Kabul", "Asia/Jerusalem", "Asia/Jayapura", "Asia/Jakarta", "Asia/Istanbul",
-            "Asia/Irkutsk", "Asia/Hovd", "Asia/Hong_Kong", "Asia/Harbin", "Asia/Gaza",
-            "Asia/Dushanbe", "Asia/Dubai", "Asia/Dili", "Asia/Dhaka", "Asia/Damascus",
-            "Asia/Dacca", "Asia/Colombo", "Asia/Chungking", "Asia/Chongqing", "Asia/Choibalsan",
-            "Asia/Calcutta", "Asia/Brunei", "Asia/Bishkek", "Asia/Beirut", "Asia/Bangkok",
-            "Asia/Baku", "Asia/Bahrain", "Asia/Baghdad", "Asia/Ashkhabad", "Asia/Ashgabat",
-            "Asia/Aqtobe", "Asia/Aqtau", "Asia/Anadyr", "Asia/Amman", "Asia/Almaty",
-            "Asia/Aden", "Antarctica/Vostok", "Antarctica/Syowa", "Antarctica/South_Pole", "Antarctica/Rothera",
-            "Antarctica/Palmer", "Antarctica/McMurdo", "Antarctica/Mawson", "Antarctica/DumontDUrville",
-            "Antarctica/Davis", "Antarctica/Casey", "America/Yellowknife", "America/Yakutat", "America/Winnipeg",
-            "America/Whitehorse", "America/Virgin", "America/Vancouver", "America/Tortola", "America/Toronto",
-            "America/Tijuana", "America/Thunder_Bay", "America/Thule", "America/Tegucigalpa", "America/Swift_Current",
-            "America/St_Vincent", "America/St_Thomas", "America/St_Lucia", "America/St_Kitts", "America/St_Johns",
-            "America/Shiprock", "America/Scoresbysund", "America/Sao_Paulo", "America/Santo_Domingo", "America/Santiago",
-            "America/Rosario", "America/Rio_Branco", "America/Regina", "America/Recife", "America/Rankin_Inlet",
-            "America/Rainy_River", "America/Puerto_Rico", "America/Porto_Velho", "America/Porto_Acre", "America/Port_of_Spain",
-            "America/Port-au-Prince", "America/Phoenix", "America/Paramaribo", "America/Pangnirtung", "America/Panama",
-            "America/North_Dakota/Center", "America/Noronha", "America/Nome", "America/Nipigon", "America/New_York",
-            "America/Nassau", "America/Montserrat", "America/Montreal", "America/Montevideo", "America/Monterrey",
-            "America/Miquelon", "America/Mexico_City", "America/Merida", "America/Menominee", "America/Mendoza",
-            "America/Mazatlan", "America/Martinique", "America/Manaus", "America/Managua", "America/Maceio",
-            "America/Louisville", "America/Los_Angeles", "America/Lima", "America/La_Paz", "America/Knox_IN",
-            "America/Kentucky/Monticello", "America/Kentucky/Louisville", "America/Juneau", "America/Jujuy", "America/Jamaica",
-            "America/Iqaluit", "America/Inuvik", "America/Indianapolis", "America/Indiana/Vevay", "America/Indiana/Marengo",
-            "America/Indiana/Knox", "America/Indiana/Indianapolis", "America/Hermosillo", "America/Havana", "America/Halifax",
-            "America/Guyana", "America/Guayaquil", "America/Guatemala", "America/Guadeloupe", "America/Grenada",
-            "America/Grand_Turk", "America/Goose_Bay", "America/Godthab", "America/Glace_Bay", "America/Fortaleza",
-            "America/Fort_Wayne", "America/Ensenada", "America/El_Salvador", "America/Eirunepe", "America/Edmonton",
-            "America/Dominica", "America/Detroit", "America/Denver", "America/Dawson_Creek", "America/Dawson",
-            "America/Danmarkshavn", "America/Curacao", "America/Cuiaba", "America/Costa_Rica", "America/Cordoba",
-            "America/Coral_Harbour", "America/Chihuahua", "America/Chicago", "America/Cayman", "America/Cayenne",
-            "America/Catamarca", "America/Caracas", "America/Cancun", "America/Campo_Grande", "America/Cambridge_Bay",
-            "America/Buenos_Aires", "America/Boise", "America/Bogota", "America/Boa_Vista", "America/Belize",
-            "America/Belem", "America/Barbados", "America/Bahia", "America/Atka", "America/Asuncion",
-            "America/Aruba", "America/Argentina/Ushuaia", "America/Argentina/Tucuman", "America/Argentina/San_Juan", "America/Argentina/Rio_Gallegos",
-            "America/Argentina/Mendoza", "America/Argentina/La_Rioja", "America/Argentina/Jujuy", "America/Argentina/Cordoba", "America/Argentina/ComodRivadavia",
-            "America/Argentina/Catamarca", "America/Argentina/Buenos_Aires", "America/Araguaina", "America/Antigua", "America/Anguilla",
-            "America/Anchorage", "America/Adak", "Africa/Windhoek", "Africa/Tunis", "Africa/Tripoli",
-            "Africa/Timbuktu", "Africa/Sao_Tome", "Africa/Porto-Novo", "Africa/Ouagadougou", "Africa/Nouakchott",
-            "Africa/Niamey", "Africa/Ndjamena", "Africa/Nairobi", "Africa/Monrovia", "Africa/Mogadishu",
-            "Africa/Mbabane", "Africa/Maseru", "Africa/Maputo", "Africa/Malabo", "Africa/Lusaka",
-            "Africa/Lubumbashi", "Africa/Luanda", "Africa/Lome", "Africa/Libreville", "Africa/Lagos",
-            "Africa/Kinshasa", "Africa/Kigali", "Africa/Khartoum", "Africa/Kampala", "Africa/Johannesburg",
-            "Africa/Harare", "Africa/Gaborone", "Africa/Freetown", "Africa/El_Aaiun", "Africa/Douala",
-            "Africa/Djibouti", "Africa/Dar_es_Salaam", "Africa/Dakar", "Africa/Conakry", "Africa/Ceuta",
-            "Africa/Casablanca", "Africa/Cairo", "Africa/Bujumbura", "Africa/Brazzaville", "Africa/Blantyre",
-            "Africa/Bissau", "Africa/Banjul", "Africa/Bangui", "Africa/Bamako", "Africa/Asmera",
-            "Africa/Algiers", "Africa/Addis_Ababa", "Africa/Accra", "Africa/Abidjan", "Australia/Yancowinna",
-            "Brazil/Acre", "Brazil/DeNoronha", "Brazil/East", "Brazil/West", "Canada/Atlantic",
-            "Canada/Central", "Canada/East-Saskatchewan", "Canada/Eastern", "Canada/Mountain", "Canada/Newfoundland",
-            "Canada/Pacific", "Canada/Saskatchewan", "Canada/Yukon", "Chile/Continental", "Chile/EasterIsland",
-            "Europe/Amsterdam", "Europe/Andorra", "Europe/Athens", "Europe/Belfast", "Europe/Belgrade",
-            "Europe/Berlin", "Europe/Bratislava", "Europe/Brussels", "Europe/Bucharest", "Europe/Budapest",
-            "Europe/Chisinau", "Europe/Copenhagen", "Europe/Dublin", "Europe/Gibraltar", "Europe/Helsinki",
-            "Europe/Istanbul", "Europe/Kaliningrad", "Europe/Kiev", "Europe/Lisbon", "Europe/Ljubljana",
-            "Europe/London", "Europe/Luxembourg", "Europe/Madrid", "Europe/Malta", "Europe/Mariehamn",
-            "Europe/Minsk", "Europe/Monaco", "Europe/Moscow", "Europe/Nicosia", "Europe/Oslo",
-            "Europe/Paris", "Europe/Prague", "Europe/Riga", "Europe/Rome", "Europe/Samara",
-            "Europe/San_Marino", "Europe/Sarajevo", "Europe/Simferopol", "Europe/Skopje", "Europe/Sofia",
-            "Europe/Stockholm", "Europe/Tallinn", "Europe/Tirane", "Europe/Tiraspol", "Europe/Uzhgorod",
-            "Europe/Vaduz", "Europe/Vatican", "Europe/Vienna", "Europe/Vilnius", "Europe/Warsaw",
-            "Europe/Zagreb", "Europe/Zaporozhye", "Europe/Zurich", "Indian/Antananarivo", "Indian/Chagos",
-            "Indian/Christmas", "Indian/Cocos", "Indian/Comoro", "Indian/Kerguelen", "Indian/Mahe",
-            "Indian/Maldives", "Indian/Mauritius", "Indian/Mayotte", "Indian/Reunion", "Mexico/BajaNorte",
-            "Mexico/BajaSur", "Mexico/General", "Pacific/Apia", "Pacific/Auckland", "Pacific/Chatham",
-            "Pacific/Easter", "Pacific/Efate", "Pacific/Enderbury", "Pacific/Fakaofo", "Pacific/Fiji",
-            "Pacific/Funafuti", "Pacific/Galapagos", "Pacific/Gambier", "Pacific/Guadalcanal", "Pacific/Guam",
-            "Pacific/Honolulu", "Pacific/Johnston", "Pacific/Kiritimati", "Pacific/Kosrae", "Pacific/Kwajalein",
-            "Pacific/Majuro", "Pacific/Marquesas", "Pacific/Midway", "Pacific/Nauru", "Pacific/Niue",
-            "Pacific/Norfolk", "Pacific/Noumea", "Pacific/Pago_Pago", "Pacific/Palau", "Pacific/Pitcairn",
-            "Pacific/Ponape", "Pacific/Port_Moresby", "Pacific/Rarotonga", "Pacific/Saipan", "Pacific/Samoa",
-            "Pacific/Tahiti", "Pacific/Tarawa", "Pacific/Tongatapu", "Pacific/Truk", "Pacific/Wake",
-            "Pacific/Wallis", "Pacific/Yap", "US/Alaska", "US/Aleutian", "US/Arizona",
-            "US/Central", "US/East-Indiana", "US/Eastern", "US/Hawaii", "US/Indiana-Starke",
-            "US/Michigan", "US/Mountain", "US/Pacific", "US/Pacific-New", "US/Samoa"
-        );
-
-        $timezones = array();
-        foreach ( $zones as $z )
-        {
-            $timezones[$z] = $z;
-        }
-
-        return $timezones;
-    }
 }
 
 /**
@@ -985,9 +890,40 @@ class UserSettingsForm extends Form
         $config->saveConfig('base', 'who_can_invite', (int) $values['who_can_invite']);
         $config->saveConfig('base', 'mandatory_user_approve', ((bool) $values['user_approve'] ? 1 : 0));
 
-        $values['password'] = crypt($values['password'], OW_PASSWORD_SALT);
+        
+        
+        if((int) $values['guests_can_view'] == 3)
+        {
+            $adminEmail = OW::getUser()->getEmail();
+            $senderMail = $config->getValue('base', 'site_email');
+            $mail = OW::getMailer()->createMail();
+            $mail->addRecipientEmail($adminEmail);
+            $mail->setSender($senderMail);
+            $mail->setSenderSuffix(false);
+            $mail->setSubject(OW::getLanguage()->text( 'admin', 'site_password_letter_subject', array()));
+            $mail->setTextContent( OW::getLanguage()->text( 'admin', 'site_password_letter_template_text', array('password' => $values['password'])));
+            $mail->setHtmlContent( OW::getLanguage()->text( 'admin', 'site_password_letter_template_html', array('password' => $values['password'])));
+            try
+            {
+                OW::getMailer()->send($mail);
+            }
+            catch (Exception $e)
+            {
+                $logger = OW::getLogger('admin.send_password_message');
+                $logger->addEntry($e->getMessage());
+                $logger->writeLog();
+            }
+            
+            $values['password'] = crypt($values['password'], OW_PASSWORD_SALT);            
+            $config->saveConfig('base', 'guests_can_view_password', $values['password']);
+        }
+        else
+        {
+            $config->saveConfig('base', 'guests_can_view_password', null);
+
+        }
+        
         $config->saveConfig('base', 'guests_can_view', (int) $values['guests_can_view']);
-        $config->saveConfig('base', 'guests_can_view_password', $values['password']);
 
         // profile questions 
         isset($_POST['user_view_presentation'])

@@ -39,6 +39,7 @@ if ( OW_DEBUG_MODE )
 }
 
 spl_autoload_register(array('OW_Autoload', 'autoload'));
+require_once OW_DIR_LIB_VENDOR . "autoload.php";
 
 // adding standard package pointers
 $autoloader = OW::getAutoloader();
@@ -60,6 +61,7 @@ $classesToAutoload = array(
     'UrlValidator' => OW_DIR_CORE . 'validator.php',
     'AlphaNumericValidator' => OW_DIR_CORE . 'validator.php',
     'IntValidator' => OW_DIR_CORE . 'validator.php',
+    'InArrayValidator' => OW_DIR_CORE . 'validator.php',
     'FloatValidator' => OW_DIR_CORE . 'validator.php',
     'DateValidator' => OW_DIR_CORE . 'validator.php',
     'CaptchaValidator' => OW_DIR_CORE . 'validator.php',

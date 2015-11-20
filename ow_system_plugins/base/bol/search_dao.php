@@ -80,11 +80,11 @@ class BOL_SearchDao extends OW_BaseDao
         return OW_DB_PREFIX . 'base_search';
     }
 
-    public function findExpireSearchId()
+    public function findExpireSearchId( $limit = 500 )
     {
         $expirationTime = 60 * 60 * 24; // 1 day
-        $query = "SELECT id FROM " . $this->getTableName() . " WHERE (" . $this->dbo->escapeString(time()) . " - timeStamp) > " . $this->dbo->escapeString($expirationTime);
+        $query = "SELECT id FROM " . $this->getTableName() . " WHERE (" . $this->dbo->escapeString(time()) . " - timeStamp) > " . $this->dbo->escapeString($expirationTime) . " LIMIT :count";
 
-        return $this->dbo->queryForColumnList($query);
+        return $this->dbo->queryForColumnList($query, array('count' => $limit));
     }
 }

@@ -31,16 +31,20 @@
  */
 class BOL_PluginDao extends OW_BaseDao
 {
-    const ID = 'id';
-    const TITLE = 'title';
-    const DESCRIPTION = 'description';
-    const MODULE = 'module';
-    const KEY = 'key';
-    const IS_SYSTEM = 'isSystem';
-    const IS_ACTIVE = 'isActive';
-    const VERSION = 'version';
-    const UPDATE = 'update';
-    const LICENSE_KEY = 'licenseKey';
+    const ID = "id";
+    const TITLE = "title";
+    const DESCRIPTION = "description";
+    const MODULE = "module";
+    const KEY = "key";
+    const IS_SYSTEM = "isSystem";
+    const IS_ACTIVE = "isActive";
+    const VERSION = "version";
+    const UPDATE = "update";
+    const LICENSE_KEY = "licenseKey";
+    const LICENSE_CHECK_STAMP = "licenseCheckTimestamp";
+    const UPDATE_VAL_UP_TO_DATE = 0;
+    const UPDATE_VAL_UPDATE = 1;
+    const UPDATE_VAL_MANUAL_UPDATE = 2;
 
     /**
      * Constructor.
@@ -77,7 +81,7 @@ class BOL_PluginDao extends OW_BaseDao
      */
     public function getDtoClassName()
     {
-        return 'BOL_Plugin';
+        return "BOL_Plugin";
     }
 
     /**
@@ -86,7 +90,7 @@ class BOL_PluginDao extends OW_BaseDao
      */
     public function getTableName()
     {
-        return OW_DB_PREFIX . 'base_plugin';
+        return OW_DB_PREFIX . "base_plugin";
     }
 
     /**
@@ -144,7 +148,7 @@ class BOL_PluginDao extends OW_BaseDao
     public function findPluginsForUpdateCount()
     {
         $example = new OW_Example();
-        $example->andFieldEqual(self::UPDATE, 1);
+        $example->andFieldEqual(self::UPDATE, self::UPDATE_VAL_UPDATE);
 
         return $this->countByExample($example);
     }
@@ -155,10 +159,21 @@ class BOL_PluginDao extends OW_BaseDao
     public function findPluginForManualUpdate()
     {
         $example = new OW_Example();
-        $example->andFieldEqual(self::UPDATE, 2);
+        $example->andFieldEqual(self::UPDATE, self::UPDATE_VAL_MANUAL_UPDATE);
         $example->andFieldEqual(self::IS_ACTIVE, 1);
         $example->setLimitClause(0, 1);
 
         return $this->findObjectByExample($example);
+    }
+
+    /**
+     * @return array 
+     */
+    public function findPluginsWithInvalidLicense()
+    {
+        $example = new OW_Example();
+        $example->andFieldGreaterThan(self::LICENSE_CHECK_STAMP, 0);
+
+        return $this->findListByExample($example);
     }
 }

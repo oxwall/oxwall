@@ -32,9 +32,12 @@ class BASE_MCMP_UserListWidget extends BASE_CMP_UserListWidget
     public function __construct( BASE_CLASS_WidgetParameter $params )
     {
         parent::__construct( $params );
-        //$this->setSettingValue('capContent',  );
-        //printVar($this->getComponent('menu')->render());
-        $params->standartParamList->capContent = $this->getComponent('menu')->render();
+        
+        if ( $this->getComponent('menu') )
+        {
+            $params->standartParamList->capContent = $this->getComponent('menu')->render();
+        }
+        
         $this->setTemplate(OW::getPluginManager()->getPlugin('base')->getMobileCmpViewDir() . 'user_list_widget.html');
     }
 

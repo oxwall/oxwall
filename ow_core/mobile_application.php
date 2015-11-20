@@ -79,6 +79,17 @@ class OW_MobileApplication extends OW_Application
         // setting default time zone
         date_default_timezone_set(OW::getConfig()->getValue('base', 'site_timezone'));
 
+        if( OW::getUser()->isAuthenticated() )
+        {
+            $userId = OW::getUser()->getId();
+            $timeZone = BOL_PreferenceService::getInstance()->getPreferenceValue('timeZoneSelect', $userId);
+
+            if(!empty($timeZone))
+            {
+                date_default_timezone_set($timeZone);
+            }
+        }
+
         // synchronize the db's time zone
         OW::getDbo()->setTimezone();
 
@@ -130,7 +141,7 @@ class OW_MobileApplication extends OW_Application
 
         if ( $activeThemeName !== BOL_ThemeService::DEFAULT_THEME && OW::getThemeManager()->getThemeService()->themeExists($activeThemeName) )
         {
-            OW_ThemeManager::getInstance()->setCurrentTheme(BOL_ThemeService::getInstance()->getThemeObjectByName(trim($activeThemeName), true));
+            OW_ThemeManager::getInstance()->setCurrentTheme(BOL_ThemeService::getInstance()->getThemeObjectByKey(trim($activeThemeName), true));
         }
 
         // adding static document routes
@@ -337,7 +348,7 @@ class OW_MobileApplication extends OW_Application
 
         if ( OW::getThemeManager()->getCurrentTheme()->getDto()->getCustomCssFileName() !== null )
         {
-            $document->addStyleSheet(OW::getThemeManager()->getThemeService()->getCustomCssFileUrl(OW::getThemeManager()->getCurrentTheme()->getDto()->getName(), true));
+            $document->addStyleSheet(OW::getThemeManager()->getThemeService()->getCustomCssFileUrl(OW::getThemeManager()->getCurrentTheme()->getDto()->getKey(), true));
         }
 
         $language = OW::getLanguage();
