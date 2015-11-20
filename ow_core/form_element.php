@@ -729,17 +729,13 @@ class DateField extends FormElement
 
         $language = OW::getLanguage();
 
-        $yearOptionsString = UTIL_HtmlTag::generateTag('option', array('value' => ''), true,
-                $language->text('base', 'year'));
-        $mounthOptionsString = UTIL_HtmlTag::generateTag('option', array('value' => ''), true,
-                $language->text('base', 'month'));
-        $dayOptionsString = UTIL_HtmlTag::generateTag('option', array('value' => ''), true,
-                $language->text('base', 'day'));
+        $yearOptionsString = UTIL_HtmlTag::generateTag('option', array('value' => ''), true, $language->text('base', 'year'));
+        $mounthOptionsString = UTIL_HtmlTag::generateTag('option', array('value' => ''), true, $language->text('base', 'month'));
+        $dayOptionsString = UTIL_HtmlTag::generateTag('option', array('value' => ''), true, $language->text('base', 'day'));
 
         for ( $i = $this->maxYear; $i >= $this->minYear; $i-- )
         {
-            $attrs = (isset($this->defaultDate['year']) && (string) $i === (string) $this->defaultDate['year']) ? array(
-                'selected' => 'selected') : array();
+            $attrs = (isset($this->defaultDate['year']) && (string) $i === (string) $this->defaultDate['year']) ? array('selected' => 'selected') : array();
 
             $attrs['value'] = $i;
 
@@ -748,13 +744,11 @@ class DateField extends FormElement
 
         for ( $i = 1; $i <= 12; $i++ )
         {
-            $attrs = (isset($this->defaultDate['month']) && (string) $i === (string) $this->defaultDate['month']) ? array(
-                'selected' => 'selected') : array();
+            $attrs = (isset($this->defaultDate['month']) && (string) $i === (string) $this->defaultDate['month']) ? array('selected' => 'selected') : array();
 
             $attrs['value'] = $i;
 
-            $mounthOptionsString .= UTIL_HtmlTag::generateTag('option', $attrs, true,
-                    $language->text('base', 'date_time_month_short_' . $i));
+            $mounthOptionsString .= UTIL_HtmlTag::generateTag('option', $attrs, true, $language->text('base', 'date_time_month_short_' . $i));
         }
 
         $lastDay = 31;
@@ -816,24 +810,18 @@ class DateField extends FormElement
         {
             $result = '<div class="' . $this->getAttribute('name') . '">
                             ' . UTIL_HtmlTag::generateTag('input', $attributes) . '
-                            <div class="ow_inline owm_inline">' . UTIL_HtmlTag::generateTag('select', $dayAttributes,
-                    true, $dayOptionsString) . '</div>
-                            <div class="ow_inline owm_inline">' . UTIL_HtmlTag::generateTag('select', $monthAttributes,
-                    true, $mounthOptionsString) . '</div>
-                            <div class="ow_inline owm_inline">' . UTIL_HtmlTag::generateTag('select', $yearAttributes,
-                    true, $yearOptionsString) . '</div>
+                            <div class="ow_inline owm_inline">' . UTIL_HtmlTag::generateTag('select', $dayAttributes, true, $dayOptionsString) . '</div>
+                            <div class="ow_inline owm_inline">' . UTIL_HtmlTag::generateTag('select', $monthAttributes, true, $mounthOptionsString) . '</div>
+                            <div class="ow_inline owm_inline">' . UTIL_HtmlTag::generateTag('select', $yearAttributes, true, $yearOptionsString) . '</div>
                         </div>';
         }
         else
         {
             $result = '<div class="' . $this->getAttribute('name') . '">
                             ' . UTIL_HtmlTag::generateTag('input', $attributes) . '
-                            <div class="ow_inline owm_inline">' . UTIL_HtmlTag::generateTag('select', $monthAttributes,
-                    true, $mounthOptionsString) . '</div>
-                            <div class="ow_inline owm_inline">' . UTIL_HtmlTag::generateTag('select', $dayAttributes,
-                    true, $dayOptionsString) . '</div>
-                            <div class="ow_inline owm_inline">' . UTIL_HtmlTag::generateTag('select', $yearAttributes,
-                    true, $yearOptionsString) . '</div>
+                            <div class="ow_inline owm_inline">' . UTIL_HtmlTag::generateTag('select', $monthAttributes, true, $mounthOptionsString) . '</div>
+                            <div class="ow_inline owm_inline">' . UTIL_HtmlTag::generateTag('select', $dayAttributes, true, $dayOptionsString) . '</div>
+                            <div class="ow_inline owm_inline">' . UTIL_HtmlTag::generateTag('select', $yearAttributes, true, $yearOptionsString) . '</div>
                         </div>';
         }
 
@@ -1233,8 +1221,7 @@ class RadioField extends FormElement
 
             $this->addAttribute('value', $key);
 
-            $renderedString .= '<li style="width:' . $columnWidth . '%">' . UTIL_HtmlTag::generateTag('input',
-                    $this->attributes) . '&nbsp;<label for="' . $this->getId() . '">' . $value . '</label></li>';
+            $renderedString .= '<li style="width:' . $columnWidth . '%">' . UTIL_HtmlTag::generateTag('input', $this->attributes) . '&nbsp;<label for="' . $this->getId() . '">' . $value . '</label></li>';
 
             $this->removeAttribute(FormElement::ATTR_CHECKED);
         }
@@ -1434,8 +1421,7 @@ class CheckboxGroup extends FormElement
 
             $this->addAttribute('value', $key);
 
-            $renderedString .= '<li style="width:' . $columnWidth . '%">' . UTIL_HtmlTag::generateTag('input',
-                    $this->attributes) . '&nbsp;<label for="' . $this->getId() . '">' . $value . '</label></li>';
+            $renderedString .= '<li style="width:' . $columnWidth . '%">' . UTIL_HtmlTag::generateTag('input', $this->attributes) . '&nbsp;<label for="' . $this->getId() . '">' . $value . '</label></li>';
 
             $this->removeAttribute(FormElement::ATTR_CHECKED);
         }
@@ -2158,7 +2144,7 @@ class CaptchaField extends FormElement
             $this->addAttribute('value', str_replace('"', '&quot;', $this->value));
         }
 
-        $captchaUrl = OW_URL_HOME . 'captcha.php';
+        $captchaUrl = OW_URL_HOME.'captcha.php';
         $captchaResponderUrl = OW::getRouter()->urlFor('BASE_CTRL_Captcha', 'ajaxResponder');
         $captchaClass = $this->getName() . '_' . $this->getId();
         $uniqueId = md5(time());
@@ -2266,7 +2252,7 @@ class AgeRange extends FormElement implements DateRangeInterface
 
         return $this;
     }
-
+    
     public function getMaxYear()
     {
         return (int) date("Y") - (int) $this->minAge;
@@ -2284,8 +2270,8 @@ class AgeRange extends FormElement implements DateRangeInterface
         OW::getDocument()->addScript(OW::getPluginManager()->getPlugin("base")->getStaticJsUrl() . 'age_range_field.js');
         OW::getDocument()->addOnloadScript(" window." . $this->getName() . " = new AgeRangeField( " . json_encode($this->getName()) . ", " . json_encode($this->minAge) . ", " . ( $this->maxAge ) . " ); ");
 
-        $fromAgeOptionsString = ""; //UTIL_HtmlTag::generateTag('option', array('value' => ''), true);
-        $toAgeOptionsString = ""; //UTIL_HtmlTag::generateTag('option', array('value' => ''), true);
+        $fromAgeOptionsString = "";//UTIL_HtmlTag::generateTag('option', array('value' => ''), true);
+        $toAgeOptionsString = "";//UTIL_HtmlTag::generateTag('option', array('value' => ''), true);
 
         $defaultAgeFrom = isset($this->value['from']) ? (int) $this->value['from'] : $this->minAge;
         $defaultAgeTo = isset($this->value['to']) ? (int) $this->value['to'] : $this->maxAge;
@@ -2322,11 +2308,9 @@ class AgeRange extends FormElement implements DateRangeInterface
 
         $result = '<div id="' . $this->getAttribute('id') . '"class="' . $this->getAttribute('name') . '">
                         <div class="ow_range_from ow_inline ">' . $language->text('base', 'form_element_from') . '</div>
-                        <div class="ow_inline">' . UTIL_HtmlTag::generateTag('select', $fromAgeAttrs, true,
-                $fromAgeOptionsString) . '</div>
+                        <div class="ow_inline">' . UTIL_HtmlTag::generateTag('select', $fromAgeAttrs, true, $fromAgeOptionsString) . '</div>
                         <div class="ow_range_to ow_inline">' . $language->text('base', 'form_element_to') . '</div>
-                        <div class="ow_inline">' . UTIL_HtmlTag::generateTag('select', $toAgeAttrs, true,
-                $toAgeOptionsString) . '</div>
+                        <div class="ow_inline">' . UTIL_HtmlTag::generateTag('select', $toAgeAttrs, true, $toAgeOptionsString) . '</div>
                         <div class="ow_range_label ow_inline">' . $language->text('base', 'form_element_age_range') . '</div>
                     </div>';
 
@@ -2354,6 +2338,7 @@ class AgeRange extends FormElement implements DateRangeInterface
 
         return $js;
     }
+
 }
 
 class MatchAgeRange extends AgeRange
@@ -2528,8 +2513,8 @@ class Range extends FormElement
         OW::getDocument()->addScript(OW::getPluginManager()->getPlugin("base")->getStaticJsUrl() . 'range_field.js');
         OW::getDocument()->addOnloadScript(" window." . $this->getName() . " = new RangeField( '" . ( $this->getName() ) . "', " . ( $this->minValue ) . ", " . ( $this->maxValue ) . " ); ");
 
-        $fromValueOptionsString = ""; //UTIL_HtmlTag::generateTag('option', array('value' => ''), true);
-        $toValueOptionsString = ""; //UTIL_HtmlTag::generateTag('option', array('value' => ''), true);
+        $fromValueOptionsString = "";//UTIL_HtmlTag::generateTag('option', array('value' => ''), true);
+        $toValueOptionsString = "";//UTIL_HtmlTag::generateTag('option', array('value' => ''), true);
 
         $defaultValueFrom = isset($this->value['from']) ? (int) $this->value['from'] : $this->minValue;
         $defaultValueTo = isset($this->value['to']) ? (int) $this->value['to'] : $this->maxValue;
@@ -2565,14 +2550,10 @@ class Range extends FormElement
         $language = OW::getLanguage();
 
         $result = '<div id="' . $this->getAttribute('id') . '"class="' . $this->getAttribute('name') . '">
-                        <div style="display:inline;padding-left:5px;padding-right:5px;">' . $language->text('base',
-                'form_element_from') . '</div>
-                        <div style="display:inline;">' . UTIL_HtmlTag::generateTag('select', $fromValueAttrs, true,
-                $fromValueOptionsString) . '</div>
-                        <div style="display:inline;padding-left:5px;padding-right:5px;">' . $language->text('base',
-                'form_element_to') . '</div>
-                        <div style="display:inline;">' . UTIL_HtmlTag::generateTag('select', $toValueAttrs, true,
-                $toValueOptionsString) . '</div>
+                        <div style="display:inline;padding-left:5px;padding-right:5px;">' . $language->text('base', 'form_element_from') . '</div>
+                        <div style="display:inline;">' . UTIL_HtmlTag::generateTag('select', $fromValueAttrs, true, $fromValueOptionsString) . '</div>
+                        <div style="display:inline;padding-left:5px;padding-right:5px;">' . $language->text('base', 'form_element_to') . '</div>
+                        <div style="display:inline;">' . UTIL_HtmlTag::generateTag('select', $toValueAttrs, true, $toValueOptionsString) . '</div>
                         <div style="display:inline;padding-left:5px;">&nbsp;</div>
                     </div>';
 
@@ -2593,7 +2574,7 @@ class Range extends FormElement
     }
 }
 
-class DateRange extends FormElement implements DateRangeInterface
+class DateRange extends FormElement  implements DateRangeInterface
 {
     protected $minDate;
     protected $maxDate;
@@ -2777,10 +2758,8 @@ class BillingGatewaySelectionField extends FormElement
 
                 if ( $gatewaysNumber == 1 )
                 {
-                    $renderedString .= '<li style="display: inline-block; padding-right: 20px;">' . OW::getLanguage()->text('base',
-                            'billing_pay_with') . '</li>';
-                    $field = UTIL_HtmlTag::generateTag('input',
-                            array(
+                    $renderedString .= '<li style="display: inline-block; padding-right: 20px;">' . OW::getLanguage()->text('base', 'billing_pay_with') . '</li>';
+                    $field = UTIL_HtmlTag::generateTag('input', array(
                             'type' => 'hidden',
                             'id' => 'url-' . $id,
                             'value' => $option['dto']->gatewayKey,
@@ -2907,7 +2886,7 @@ class YearRange extends FormElement implements DateRangeInterface
     {
         return $this->minYear;
     }
-
+    
     public function renderInput( $params = null )
     {
         parent::renderInput($params);
@@ -2915,8 +2894,8 @@ class YearRange extends FormElement implements DateRangeInterface
         OW::getDocument()->addScript(OW::getPluginManager()->getPlugin("base")->getStaticJsUrl() . 'age_range_field.js');
         OW::getDocument()->addOnloadScript(" window." . $this->getName() . " = new AgeRangeField( " . json_encode($this->getName()) . ", " . json_encode($this->minYear) . ", " . json_encode($this->maxYear) . " ); ");
 
-        $fromAgeOptionsString = ""; //UTIL_HtmlTag::generateTag('option', array('value' => ''), true);
-        $toAgeOptionsString = ""; //UTIL_HtmlTag::generateTag('option', array('value' => ''), true);
+        $fromAgeOptionsString = "";//UTIL_HtmlTag::generateTag('option', array('value' => ''), true);
+        $toAgeOptionsString = "";//UTIL_HtmlTag::generateTag('option', array('value' => ''), true);
 
         $defaultYearFrom = isset($this->value['from']) ? (int) $this->value['from'] : $this->minYear;
         $defaultYearTo = isset($this->value['to']) ? (int) $this->value['to'] : $this->maxYear;
@@ -2952,11 +2931,9 @@ class YearRange extends FormElement implements DateRangeInterface
 
         $result = '<div id="' . $this->getAttribute('id') . '"class="' . $this->getAttribute('name') . '">
                         <div class="ow_range_from ow_inline">' . $language->text('base', 'form_element_from') . '</div>
-                        <div class="ow_inline">' . UTIL_HtmlTag::generateTag('select', $fromYearAttrs, true,
-                $fromAgeOptionsString) . '</div>
+                        <div class="ow_inline">' . UTIL_HtmlTag::generateTag('select', $fromYearAttrs, true, $fromAgeOptionsString) . '</div>
                         <div class="ow_range_to ow_inline">' . $language->text('base', 'form_element_to') . '</div>
-                        <div class="ow_inline">' . UTIL_HtmlTag::generateTag('select', $toYearAttrs, true,
-                $toAgeOptionsString) . '</div>
+                        <div class="ow_inline">' . UTIL_HtmlTag::generateTag('select', $toYearAttrs, true, $toAgeOptionsString) . '</div>
                         <div class="ow_range_label ow_inline">' . $language->text('base', 'form_element_year_range') . '</div>
                     </div>';
 
@@ -3024,22 +3001,21 @@ class MobileWysiwygTextarea extends Textarea
         {
             $imageIndex = array_search(BOL_TextFormatService::WS_BTN_IMAGE, $this->buttons);
 
-            if ( $imageIndex !== false )
+            if ( $imageIndex !== false)
             {
                 unset($this->buttons[$imageIndex]);
             }
 
             $videoIndex = array_search(BOL_TextFormatService::WS_BTN_VIDEO, $this->buttons);
 
-            if ( $videoIndex !== false )
+            if ( $videoIndex !== false)
             {
                 unset($this->buttons[$videoIndex]);
             }
         }
 
         $stringValidator = new StringValidator(0, 50000);
-        $stringValidator->setErrorMessage(OW::getLanguage()->text('base', 'text_is_too_long',
-                array('max_symbols_count' => 50000)));
+        $stringValidator->setErrorMessage(OW::getLanguage()->text('base', 'text_is_too_long', array('max_symbols_count' => 50000)));
 
         $this->addValidator($stringValidator);
     }
@@ -3052,8 +3028,8 @@ class MobileWysiwygTextarea extends Textarea
      */
     public function renderInput( $params = null )
     {
-
-        if ( OW::getRegistry()->get('baseWsInit') === null )
+        
+	if ( OW::getRegistry()->get('baseWsInit') === null )
         {
             if ( in_array(BOL_TextFormatService::WS_BTN_IMAGE, $this->buttons) )
             {
@@ -3074,12 +3050,10 @@ class MobileWysiwygTextarea extends Textarea
         $this->addAttribute('class', 'owm_suitup_wyswyg');
         $js = UTIL_JsGenerator::newInstance();
 
-        $js->addScript('$("#" + {$uniqId}).suitUp({$buttons}, {$imageUploadUrl}, {$embedUrl}).show();',
-            array(
+        $js->addScript('$("#" + {$uniqId}).suitUp({$buttons}, {$imageUploadUrl}, {$embedUrl}).show();', array(
             'buttons' => $this->buttons,
             'uniqId' => $this->getId(),
-            'imageUploadUrl' => OW::getRouter()->urlFor('BASE_CTRL_MediaPanel', 'ajaxUpload',
-                array(
+            'imageUploadUrl' => OW::getRouter()->urlFor('BASE_CTRL_MediaPanel', 'ajaxUpload', array(
                 'pluginKey' => $this->pluginKey
             )),
             'embedUrl' => OW::getRouter()->urlFor('BASE_MCTRL_Oembed', 'getAjaxEmbedCode')
@@ -3176,8 +3150,7 @@ class WysiwygTextarea extends InvitationFormElement
 
         if ( !empty($buttons) )
         {
-            $buttons = array_unique(array_merge($buttons,
-                    array(
+            $buttons = array_unique(array_merge($buttons, array(
                 BOL_TextFormatService::WS_BTN_BOLD,
                 BOL_TextFormatService::WS_BTN_ITALIC,
                 BOL_TextFormatService::WS_BTN_UNDERLINE,
@@ -3207,8 +3180,7 @@ class WysiwygTextarea extends InvitationFormElement
         }
 
         $stringValidator = new StringValidator(0, 50000);
-        $stringValidator->setErrorMessage(OW::getLanguage()->text('base', 'text_is_too_long',
-                array('max_symbols_count' => 50000)));
+        $stringValidator->setErrorMessage(OW::getLanguage()->text('base', 'text_is_too_long', array('max_symbols_count' => 50000)));
 
         $this->addValidator($stringValidator);
     }
@@ -3290,8 +3262,7 @@ class WysiwygTextarea extends InvitationFormElement
             $array = array(
                 'editorCss' => OW::getPluginManager()->getPlugin('base')->getStaticCssUrl() . 'htmlarea_editor.css',
                 'themeImagesUrl' => OW::getThemeManager()->getCurrentTheme()->getStaticImagesUrl(),
-                'imagesUrl' => OW::getRouter()->urlFor('BASE_CTRL_MediaPanel', 'index',
-                    array('pluginKey' => 'blog', 'id' => '__id__')),
+                'imagesUrl' => OW::getRouter()->urlFor('BASE_CTRL_MediaPanel', 'index', array('pluginKey' => 'blog', 'id' => '__id__')),
                 'labels' => array(
                     'buttons' => array(
                         'bold' => $language->text('base', 'ws_button_label_bold'),
@@ -3323,8 +3294,7 @@ class WysiwygTextarea extends InvitationFormElement
                         'videoEmptyField' => $language->text('base', 'ws_video_empty_field')
                     )
                 ),
-                'buttonCode' => OW::getThemeManager()->processDecorator('button',
-                    array('label' => '#label#', 'class' => 'ow_ic_add mn_submit')),
+                'buttonCode' => OW::getThemeManager()->processDecorator('button', array('label' => '#label#', 'class' => 'ow_ic_add mn_submit')),
                 'rtl' => ( ( $languageDto !== null && (bool) $languageDto->getRtl() ) ? true : false )
             );
 
@@ -3369,9 +3339,7 @@ class WysiwygTextarea extends InvitationFormElement
         }
         else
         {
-            $markup = UTIL_HtmlTag::generateTag('textarea', $this->attributes, true,
-                    htmlspecialchars(BOL_TextFormatService::getInstance()->processWsForInput($this->value,
-                            array('buttons' => $this->buttons))));
+            $markup = UTIL_HtmlTag::generateTag('textarea', $this->attributes, true, htmlspecialchars(BOL_TextFormatService::getInstance()->processWsForInput($this->value, array('buttons' => $this->buttons))));
         }
 
 
@@ -3469,7 +3437,7 @@ class WysiwygTextarea extends InvitationFormElement
     }
 }
 
-class TagsInputField extends FormElement
+class TagsInputField extends FormElement 
 {
     private $invLabel;
     private $delimiterChars;
@@ -3599,9 +3567,8 @@ var formElement = new OwFormElement('" . $this->getId() . "', '" . $this->getNam
     }
 }
 
-interface DateRangeInterface
+interface DateRangeInterface 
 {
-
     public function getMinYear();
 
     public function getMaxYear();
