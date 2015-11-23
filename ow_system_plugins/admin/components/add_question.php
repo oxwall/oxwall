@@ -77,11 +77,14 @@ class ADMIN_CMP_AddQuestion extends OW_Component
                         if ( langId == ' . json_encode(OW::getLanguage()->getCurrentId()) . ' )
                         {
                             var formElement = window.addQuestionValues['.json_encode($addForm->getElement('qst_possible_values')->getId()).'];
-                            
                             formElement.value[data.value] = value;
-                            
                             formElement.updateDataField();
                             formElement.renderValues();
+
+                            var infiniteFormElement = window.addInfiniteQuestionValues['.json_encode($addForm->getElement('qst_infinite_possible_values')->getId()).'];
+                            infiniteFormElement.value[data.value] = value;
+                            infiniteFormElement.updateDataField();
+                            infiniteFormElement.renderValues();
                         }
                     }
                     

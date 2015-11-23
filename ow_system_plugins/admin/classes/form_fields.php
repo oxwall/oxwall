@@ -209,18 +209,6 @@ class addValueField extends FormElement
                                 </span>
                         </div>';
 
-        $values = '';
-
-        if ( !empty($this->value) && is_array($this->value) )
-        {
-            foreach ( $this->value as $value => $label )
-            {
-                $data = $template;
-
-                $values .= UTIL_String::replaceVars($data, array('label' => $label, 'value' => $value));
-            }
-        }
-
         $template = UTIL_String::replaceVars($template, array('label' => '', 'value' => 0));
         
         $addButtonName = $this->getName() . '_add_button';
@@ -265,4 +253,70 @@ class addValueField extends FormElement
                 
         return $html;
     }
+}
+
+class infiniteValueField extends addValueField
+{
+    protected function setArrayValue( $value )
+    {
+        $values = array();
+
+        if ( !empty($value) )
+        {
+            $count = 0;
+
+            foreach ( $value as $key => $label )
+            {
+                if ( isset($label) )
+                {
+                    $values[$key] = $label;
+                    $count++;
+                }
+            }
+        }
+        $this->value = $values;
+    }
+
+    /**
+     * @see FormElement::renderInput()
+     *
+     * @param array $params
+     * @return string
+     */
+    public function renderInput( $params = null )
+    {
+        $html = parent::renderInput($params);
+
+        $template = '
+                        <div class="clearfix question_value_block" style="cursor:move;">
+                                <span class="tag">
+                                    <input type="hidden" value="{$value}">
+                                    <span class="label" style="max-width:250px;overflow:hidden;">{$label}</span>
+                                    <a title='.json_encode(OW::getLanguage()->text('admin', 'remove_value')).' class="remove" href="javascript://"></a>
+                                </span>
+                        </div>';
+
+        $template = UTIL_String::replaceVars($template, array('label' => '', 'value' => 0));
+
+        $json = json_encode(
+            array(
+                'tagFieldId' => $this->tag->getId(),
+                'dataFieldId' => $this->getId(),
+                'value' =>  $this->value,
+                'order' =>  array_keys($this->value),
+                'template' => $template
+            )
+        );
+
+        OW::getDocument()->addOnloadScript("
+            if ( !window.addInfiniteQuestionValues )
+            {
+                window.addInfiniteQuestionValues = {};
+            }
+
+            window.addInfiniteQuestionValues[".json_encode($this->getId())."] = new infiniteQuestionValuesField(" . $json . "); ");
+
+        return $html;
+    }
+
 }
