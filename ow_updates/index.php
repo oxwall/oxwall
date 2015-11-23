@@ -92,7 +92,7 @@ if ( (int) $currentXmlInfo['build'] > $currentBuild )
             include($owpUpdateDir . $item . DS . 'update.php');
         }
 
-        $updateXmlInfo = (array) simplexml_load_file($owpUpdateDir . $item . DS . 'update.xml');
+//        $updateXmlInfo = (array) simplexml_load_file($owpUpdateDir . $item . DS . 'update.xml');
 
         $db->query("UPDATE `" . OW_DB_PREFIX . "base_config` SET `value` = :build WHERE `key` = 'base' AND `name` = 'soft_build'", array('build' => $currentXmlInfo['build']));
         $db->query("UPDATE `" . OW_DB_PREFIX . "base_config` SET `value` = :version WHERE `key` = 'base' AND `name` = 'soft_version'", array('version' => $currentXmlInfo['version']));
