@@ -25,7 +25,13 @@ class UPDATE_LanguageService
         $this->service->importPrefixFromZip($path, $key, false);
     }
 
-    public function getCurrent()
+
+    public function importPrefixFromDir($path, $key)
+    {
+        $this->service->importPrefixFromDir($path, $key, false);
+    }
+
+        public function getCurrent()
     {
         return $this->service->getCurrent();
     }

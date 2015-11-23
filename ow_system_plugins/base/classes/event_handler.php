@@ -70,7 +70,7 @@ class BASE_CLASS_EventHandler
         $eventManager->bind('base.maintenance_mode_exceptions', array($this, 'onAddMaintenanceModeExceptions'));
         $eventManager->bind(OW_EventManager::ON_USER_LOGIN, array($this, 'onUserLoginSetAdminCookie'));
         $eventManager->bind('core.emergency_exit', array($this, 'onEmergencyExit'));
-        
+
         $eventManager->bind('admin.add_auth_labels', array($this, 'onAddAuthLabels'));
 
         $eventManager->bind(OW_EventManager::ON_USER_UNREGISTER, array($this, 'onUserUnregisterClearMailQueue'));
@@ -82,17 +82,17 @@ class BASE_CLASS_EventHandler
         $eventManager->bind('base.before_save_user', array($this, 'setUserRoleOnChangeAccountType'));
 
         $eventManager->bind('base.questions_field_add_fake_questions', array($this, 'addFakeQuestions'));
-        
+
         $eventManager->bind(OW_EventManager::ON_JOIN_FORM_RENDER, array($this, 'onInviteMembersProcessJoinForm'));
-        
+
         $eventManager->bind(BASE_CMP_ModerationToolsWidget::EVENT_COLLECT_CONTENTS, array($this, 'onCollectModerationWidgetContent'));
         $eventManager->bind("base.moderation_tools.collect_menu", array($this, 'onCollectModerationToolsMenu'));
-        
+
         $eventManager->bind(BOL_ContentService::EVENT_BEFORE_DELETE, array($this, 'deleteEntityFlags'));
-        
+
         BASE_CLASS_ContentProvider::getInstance()->init();
         $eventManager->bind('base.after_avatar_update', array($this, 'onAfterAvatarUpdate'));
-        
+
         $eventManager->bind("base.user_list.get_displayed_fields", array($this, 'onGetUserListFields'));
         $eventManager->bind("base.user_list.get_questions", array($this, 'onGetUserListQuestions'));
         $eventManager->bind("base.user_list.get_field_data", array($this, 'onGetUserListFieldValue'));
@@ -104,7 +104,7 @@ class BASE_CLASS_EventHandler
         $eventManager = OW::getEventManager();
         $eventManager->bind(BASE_CMP_ProfileActionToolbar::EVENT_NAME, array($this, 'onActionToolbarAddDeleteActionTool'));
         $eventManager->bind(BASE_CMP_ProfileActionToolbar::EVENT_NAME, array($this, 'onActionToolbarAddFlagActionTool'));
-        
+
         $eventManager->bind(BASE_CMP_ProfileActionToolbar::EVENT_NAME, array($this, 'onActionToolbarAddSuspendActionTool'));
         $eventManager->bind(BASE_CMP_ProfileActionToolbar::EVENT_NAME, array($this, 'onActionToolbarAddAuthActionTool'));
         $eventManager->bind(BASE_CMP_ProfileActionToolbar::EVENT_NAME, array($this, 'onActionToolbarAddUserApproveActionTool'));
@@ -117,7 +117,7 @@ class BASE_CLASS_EventHandler
         $eventManager->bind('admin.add_admin_notification', array($this, 'addAdminNotification'));
         $eventManager->bind('ads.enabled_plugins', array($this, 'onAddAdsEnabled'));
         $eventManager->bind(OW_EventManager::ON_BEFORE_PLUGIN_UNINSTALL, array($this, 'onPluginUninstallDeleteComments'));
-        
+
         $eventManager->bind(BOL_PreferenceService::PREFERENCE_ADD_FORM_ELEMENT_EVENT, array($this, 'onPreferenceAddFormElement'));
         $eventManager->bind(BOL_PreferenceService::PREFERENCE_SECTION_LABEL_EVENT, array($this, 'onAddPreferenceSectionLabels'));
         $eventManager->bind('feed.collect_configurable_activity', array($this, 'onFeedCollectConfigurableActivity'));
@@ -131,7 +131,7 @@ class BASE_CLASS_EventHandler
         $eventManager->bind(OW_EventManager::ON_AFTER_ROUTE, array($this, 'onPluginsInitCheckUserStatus'));
 
         $eventManager->bind('class.get_instance', array($this, 'onGetClassInstance'));
-        
+
         if ( defined('OW_ADS_XP_TOP') )
         {
             $eventManager->bind('base.add_page_content', array($this, 'addPageBanner'));
@@ -142,7 +142,7 @@ class BASE_CLASS_EventHandler
     {
         $params = $event->getParams();
         $entityTypes = explode(',',
-                OW::getConfig()->getValue('base', 'site_statistics_disallowed_entity_types'));
+            OW::getConfig()->getValue('base', 'site_statistics_disallowed_entity_types'));
 
         if ( !in_array($params['entityType'], $entityTypes) )
         {
@@ -153,56 +153,56 @@ class BASE_CLASS_EventHandler
     public function onGetClassInstance( OW_Event $event )
     {
         $params = $event->getParams();
-        
+
         if ( !empty($params['className']) && $params['className'] == 'BASE_CLASS_JoinUploadPhotoField' )
         {
             $rClass = new ReflectionClass('BASE_CLASS_AvatarField');
-            
+
             $arguments = array();
-            
+
             if ( !empty($params['arguments']) )
             {
                 $arguments = $params['arguments'];
             }
-            
+
             $event->setData($rClass->newInstanceArgs($arguments));
         }
     }
-    
+
     public function deleteEntityFlags( OW_Event $event )
     {
         $params = $event->getParams();
-        
+
         BOL_FlagService::getInstance()->deleteEntityFlags($params["entityType"], $params["entityId"]);
     }
-    
+
     public function onCollectModerationWidgetContent( BASE_CLASS_EventCollector $event )
     {
         $flagGroups = BOL_FlagService::getInstance()->getContentGroupsWithCount();
-        
-        if ( empty($flagGroups) ) 
+
+        if ( empty($flagGroups) )
         {
             return;
         }
-        
+
         $flagsCmp = new BASE_CMP_ModerationPanelList($flagGroups);
-                
+
         $event->add(array(
             "name" => "flags",
             "label" => OW::getLanguage()->text("base", "flagged_content"),
             "content" => $flagsCmp->render()
         ));
     }
-    
+
     public function onCollectModerationToolsMenu( BASE_CLASS_EventCollector $event )
     {
         $flagGroups = BOL_FlagService::getInstance()->getContentGroupsWithCount();
-        
-        if ( empty($flagGroups) ) 
+
+        if ( empty($flagGroups) )
         {
             return;
         }
-        
+
         $event->add(array(
             "url" => OW::getRouter()->urlForRoute("base.moderation_flags_index"),
             "label" => OW::getLanguage()->text("base", "flagged_content"),
@@ -214,14 +214,14 @@ class BASE_CLASS_EventHandler
     public function deleteInviteCode( OW_Event $e )
     {
         $params = $e->getParams();
-        
+
         if( !empty($params['params']['code']) )
         {
             BOL_UserService::getInstance()->deleteInvitationCode($params['params']['code']);
         }
     }
 
-    
+
     public function onEmergencyExit( OW_Event $e )
     {
         if ( !empty($_COOKIE['adminToken']) && trim($_COOKIE['adminToken']) == OW::getConfig()->getValue('base', 'admin_cookie') )
@@ -458,7 +458,7 @@ class BASE_CLASS_EventHandler
 
         $email = $user->email;
         $displayName = $userService->getDisplayName($userId);
-        
+
         $txt = OW::getLanguage()->text('base', 'suspend_notification_text', array('realName' => $displayName, 'suspendReason' => $message));
         $html = OW::getLanguage()->text('base', 'suspend_notification_html', array('realName' => $displayName, 'suspendReason' => $message));
 
@@ -480,7 +480,7 @@ class BASE_CLASS_EventHandler
             //Skip invalid notification
         }
     }
-    
+
     public function onDeleteUserAttachments( OW_Event $event )
     {
         $params = $event->getParams();
@@ -648,9 +648,18 @@ class BASE_CLASS_EventHandler
             $fromElement->setValue($values['mass_mailing_subscribe']);
         }
 
-        $fromElementList[] = $fromElement;
 
+        $timeZoneSelect = new Selectbox("timeZoneSelect");
+        $timeZoneSelect->setLabel($language->text('admin', 'timezone'));
+        $timeZoneSelect->addOptions(UTIL_DateTime::getTimezones());
+        $timeZoneSelect->setRequired();  
+
+        $timeZoneSelect->setValue($values['timeZoneSelect']);
+
+        $fromElementList[] = $timeZoneSelect;
+        $fromElementList[] = $fromElement;
         $event->add($fromElementList);
+
     }
 
     public function onAddAuthLabels( BASE_CLASS_EventCollector $event )
@@ -694,7 +703,7 @@ class BASE_CLASS_EventHandler
         }
 
         $coll->add(OW::getLanguage()->text('admin', 'cron_configuration_required_notice', array(
-                'helpUrl' => 'http://docs.oxwall.org/install:cron'
+            'helpUrl' => 'http://docs.oxwall.org/install:cron'
         )));
     }
 
@@ -718,7 +727,7 @@ class BASE_CLASS_EventHandler
 
         //UsersApi
         $scriptGen->newObject(array('OW', 'Users'), 'OW_UsersApi', array(array(
-                "rsp" => OW::getRouter()->urlFor('BASE_CTRL_AjaxUsersApi', 'rsp')
+            "rsp" => OW::getRouter()->urlFor('BASE_CTRL_AjaxUsersApi', 'rsp')
         )));
 
         OW::getDocument()->addScriptDeclaration($scriptGen->generateJs());
@@ -729,11 +738,11 @@ class BASE_CLASS_EventHandler
         if ( !$cronReady && !defined('OW_PLUGIN_XP') )
         {
             OW::getDocument()->addOnloadScript(UTIL_JsGenerator::composeJsString(
-                    '$.get({$cron});'
-                    , array(
-                    'cron' => OW::getRequest()->buildUrlQueryString(OW_URL_HOME . 'ow_cron/run.php', array(
-                        'ow-light-cron' => 1
-                    ))
+                '$.get({$cron});'
+                , array(
+                'cron' => OW::getRequest()->buildUrlQueryString(OW_URL_HOME . 'ow_cron/run.php', array(
+                    'ow-light-cron' => 1
+                ))
             )));
         }
     }
@@ -789,7 +798,7 @@ class BASE_CLASS_EventHandler
             'entityId' => $commentId,
             'action' => 'base_add_user_comment',
             'userId' => $user->getId(),
-            ), array(
+        ), array(
             'avatar' => $avatar,
             'string' => array(
                 'key' => 'base+profile_comment_notification',
@@ -1016,11 +1025,11 @@ class BASE_CLASS_EventHandler
             toggle();
         }'
             , array("e"), array(
-            "userId" => $userId,
-            "toggleText" => $toggleText,
-            "toggleCommand" => $toggleCommand,
-            "toggleClass" => $toggleClass
-        ));
+                "userId" => $userId,
+                "toggleText" => $toggleText,
+                "toggleCommand" => $toggleCommand,
+                "toggleClass" => $toggleClass
+            ));
 
         OW::getDocument()->addOnloadScript($js);
 
@@ -1072,10 +1081,10 @@ class BASE_CLASS_EventHandler
          OW.Utils.toggleText(this, e.data.toggleText);
          OW.Utils.toggleAttr(this, "data-command", e.data.toggleCommand);'
             , array("e"), array(
-            "userId" => $userId,
-            "toggleText" => $toggleText,
-            "toggleCommand" => $toggleCommand
-        ));
+                "userId" => $userId,
+                "toggleText" => $toggleText,
+                "toggleCommand" => $toggleCommand
+            ));
 
         OW::getDocument()->addOnloadScript($js);
 
@@ -1209,11 +1218,11 @@ class BASE_CLASS_EventHandler
         $rsp = OW::getRequest()->buildUrlQueryString($rsp, array(
             "userId" => $userId
         ));
-        
+
         OW::getLanguage()->addKeyForJs('base', 'suspend_floatbox_title');
-        
+
         $displayName = BOL_UserService::getInstance()->getDisplayName($userId);
-        
+
         $js = UTIL_JsGenerator::newInstance();
         $js->jQueryEvent("#" . $uniqId, "click", ' 
             
@@ -1226,12 +1235,12 @@ class BASE_CLASS_EventHandler
                 OW.trigger("base.on_suspend_command", ["unsuspend"])
             } '
             , array("e"), array(
-            "userId" => $userId,
-            "toggleText" => $toggleText,
-            "toggleCommand" => $toggleCommand,
-            "toggleClass" => $toggleClass,
-            "displayName" => $displayName
-        ));
+                "userId" => $userId,
+                "toggleText" => $toggleText,
+                "toggleCommand" => $toggleCommand,
+                "toggleClass" => $toggleClass,
+                "displayName" => $displayName
+            ));
 
         $js->addScript( ' OW.bind("base.on_suspend_command", function( command, message ) {
                 var element = $("#"+{$uniqId});
@@ -1247,7 +1256,7 @@ class BASE_CLASS_EventHandler
             "toggleText" => $toggleText,
             "toggleCommand" => $toggleCommand,
             "toggleClass" => $toggleClass ) );
-        
+
         OW::getDocument()->addOnloadScript($js);
 
         $action[BASE_CMP_ProfileActionToolbar::DATA_KEY_ITEM_KEY] = "base.suspend_user";
@@ -1263,9 +1272,9 @@ class BASE_CLASS_EventHandler
         {
             return;
         }
-        
-        if ( BOL_AuthorizationService::getInstance()->isSuperModerator($params['userId']) 
-                || $params['userId'] == OW::getUser()->getId() )
+
+        if ( BOL_AuthorizationService::getInstance()->isSuperModerator($params['userId'])
+            || $params['userId'] == OW::getUser()->getId() )
         {
             return;
         }
@@ -1277,7 +1286,7 @@ class BASE_CLASS_EventHandler
             , array('e'), array(
                 'entityType' => BASE_CLASS_ContentProvider::ENTITY_TYPE_PROFILE,
                 'entityId' => $userId
-        ));
+            ));
 
         OW::getDocument()->addOnloadScript($script);
 
@@ -1291,7 +1300,7 @@ class BASE_CLASS_EventHandler
 
         $event->add($resultArray);
     }
-    
+
     public function onActionToolbarAddDeleteActionTool( BASE_CLASS_EventCollector $event )
     {
         if ( !OW::getUser()->isAuthorized('base') )
@@ -1393,7 +1402,7 @@ class BASE_CLASS_EventHandler
             'entityType' => $params['entityType'],
             'userId' => $params['userId'],
             'pluginKey' => 'base'
-            ), array(
+        ), array(
             'string' => $string
         )));
     }
@@ -1442,7 +1451,7 @@ class BASE_CLASS_EventHandler
             'entityType' => $params['entityType'],
             'userId' => $params['userId'],
             'pluginKey' => 'base'
-            ), array(
+        ), array(
             'string' => $string
         )));
     }
@@ -1469,7 +1478,7 @@ class BASE_CLASS_EventHandler
             'entityType' => $params['entityType'],
             'userId' => $params['userId'],
             'pluginKey' => 'base'
-            ), array(
+        ), array(
             'string' => array(
                 'key' => 'base+feed_activity_join_profile_string_like',
                 'vars' => array('user' => $userEmbed)
@@ -1499,7 +1508,7 @@ class BASE_CLASS_EventHandler
             'entityType' => $params['entityType'],
             'userId' => $params['userId'],
             'pluginKey' => 'base'
-            ), array(
+        ), array(
             'string' => array(
                 'key' => 'base+feed_activity_join_profile_string',
                 'vars' => array('user' => $userEmbed)
@@ -1524,7 +1533,7 @@ class BASE_CLASS_EventHandler
             'entityId' => $userId,
             'userId' => $userId,
             'replace' => true
-            ), array(
+        ), array(
             'string' => array('key' => 'base+feed_user_join'),
             'view' => array(
                 'iconClass' => 'ow_ic_user'
@@ -1550,7 +1559,7 @@ class BASE_CLASS_EventHandler
             'entityId' => $userId,
             'userId' => $userId,
             'replace' => true
-            ), array(
+        ), array(
             'string' => array('key' => 'base+feed_user_edit_profile'),
             'data' => array(
                 'userId' => $userId
@@ -1769,11 +1778,11 @@ class BASE_CLASS_EventHandler
             $e->setData(false);
         }
     }
-    
+
     public function onAfterAvatarUpdate( OW_Event $e )
     {
         $params = $e->getParams();
-        
+
         if ( !empty($params['trackAction']) && $params['trackAction'] == true )
         {
             if ( !empty($params['avatarId']) && !empty($params['userId']) )

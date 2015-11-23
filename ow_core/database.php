@@ -192,7 +192,8 @@ final class OW_Database
             }
             $dsn .= "dbname={$params['dbname']}";
 
-            $this->connection = new PDO($dsn, $params['username'], $params['password'], array(PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES UTF8',
+            $this->connection = new PDO($dsn, $params['username'], $params['password'],
+                array(PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES UTF8',
                 PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => true));
 
             if ( !$this->isMysqlValidVersion() )
@@ -740,7 +741,7 @@ final class OW_Database
     private function isMysqlValidVersion()
     {
         $verArray = explode('.', $this->connection->getAttribute(PDO::ATTR_SERVER_VERSION));
-        return $verArray[0] == 5;
+        return intval($verArray[0]) >= 5;
     }
 
     private function getCacheKeyForQuery( $query, $params )
@@ -792,6 +793,7 @@ final class OW_Database
             $this->getCacheManager()->save(serialize($result), $cacheKey, $tags, $cacheLifeTime);
         }
 
-        OW::getEventManager()->trigger(new OW_Event("core.sql.set_query_result", array("sql" => $sql, "params" => $params, "result" => $result)));
+        OW::getEventManager()->trigger(new OW_Event("core.sql.set_query_result",
+            array("sql" => $sql, "params" => $params, "result" => $result)));
     }
 }
