@@ -2144,7 +2144,7 @@ class CaptchaField extends FormElement
             $this->addAttribute('value', str_replace('"', '&quot;', $this->value));
         }
 
-        $captchaUrl = OW::getRouter()->urlFor('BASE_CTRL_Captcha', 'index');
+        $captchaUrl = OW_URL_HOME.'captcha.php';
         $captchaResponderUrl = OW::getRouter()->urlFor('BASE_CTRL_Captcha', 'ajaxResponder');
         $captchaClass = $this->getName() . '_' . $this->getId();
         $uniqueId = md5(time());
@@ -3532,7 +3532,7 @@ var formElement = new OwFormElement('" . $this->getId() . "', '" . $this->getNam
 
         if ( $this->value )
         {
-            $js .= "$('#" . $this->getId() . "').importTags('" . implode(',', $this->value) . "');";
+            $js .= "$('#" . $this->getId() . "').importTags('" . str_replace("'", "", implode(',', $this->value)) . "');";
         }
 
         return $js;
