@@ -3013,3 +3013,7 @@ body .ow_photo_context_action a.ow_context_action_divider {
     margin: 200px auto;
     width:400px;
 }
+
+tr.ow_premoderation_high td {
+    background: #f9f6a9;
+}
