@@ -2996,7 +2996,8 @@ body .ow_photo_context_action a.ow_context_action_divider {
 .ow_pending_approval_list ul.ow_console_dropdown .ow_console_dropdown_cont a .ow_count_wrap {
     margin-right: -24px;
 }
-.ow_pending_approval_list ul.ow_console_dropdown {
+.ow_pending_approval_list ul.ow_console_dropdown,
+.ow_for_approval_list ul.ow_console_dropdown {
     overflow-x: visible;
 }
 /*Video iframe*/
@@ -3011,4 +3012,8 @@ body .ow_photo_context_action a.ow_context_action_divider {
 .pass_protection_cont {
     margin: 200px auto;
     width:400px;
+}
+
+tr.ow_premoderation_high td {
+    background: #f9f6a9;
 }

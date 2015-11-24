@@ -35,8 +35,6 @@ class BASE_CLASS_ContentProvider
     
     public function onCollectTypes( BASE_CLASS_EventCollector $event )
     {
-        $mandatoryApprove = OW::getConfig()->getValue('base', 'mandatory_user_approve');
-        
         $event->add(array(
             "pluginKey" => "base",
             "authorizationGroup" => "base",
@@ -45,10 +43,7 @@ class BASE_CLASS_ContentProvider
             
             "groupLabel" => OW::getLanguage()->text("base", "content_profiles_label"),
             "entityLabel" => OW::getLanguage()->text("base", "content_profile_label"),
-            "displayFormat" => "empty",
-            "moderation" => $mandatoryApprove  
-                ? array(BOL_ContentService::MODERATION_TOOL_FLAG, BOL_ContentService::MODERATION_TOOL_APPROVE)
-                : array(BOL_ContentService::MODERATION_TOOL_FLAG)
+            "displayFormat" => "empty"
         ));
         
         $event->add(array(
@@ -385,6 +380,32 @@ class BASE_CLASS_ContentProvider
         )));
     }
     
+    public function afterUserEdit( OW_Event $event )
+    {
+        $params = $event->getParams();
+        $userId = !empty($params["userId"]) ? $params["userId"] : 0 ;
+
+        $user = BOL_UserService::getInstance()->findUserById($userId);
+
+        if ( empty($user) )
+        {
+            return;
+        }
+
+        $isModerate = !empty($params["moderate"]) ? $params["moderate"] : false;
+
+        if ( $isModerate ) {
+            $url = OW::getRouter()->urlForRoute('base_edit_user_datails', array( 'userId' => $userId ) );
+
+            OW::getEventManager()->trigger(new OW_Event(BOL_ContentService::EVENT_AFTER_CHANGE, array(
+                "entityType" => self::ENTITY_TYPE_PROFILE,
+                "entityId" => $userId
+            ), array(
+                "string" => array('key' => 'base+moderation_user_update', "vars" => array('profileUrl' => $url))
+            )));
+        }
+    }
+    
     public function onUserDeleted( OW_Event $event )
     {
         $params = $event->getParams();
@@ -444,6 +465,7 @@ class BASE_CLASS_ContentProvider
         OW::getEventManager()->bind('base.before_user_avatar_delete', array($this, "onAvatarDelete"));
         
         OW::getEventManager()->bind(OW_EventManager::ON_USER_APPROVE, array($this, "onUserApprove"));
+        OW::getEventManager()->bind(OW_EventManager::ON_USER_EDIT, array($this, "afterUserEdit"));
         
         OW::getEventManager()->bind(OW_EventManager::ON_USER_REGISTER, array($this, "onUserJoin"));
         OW::getEventManager()->bind(OW_EventManager::ON_USER_UNREGISTER, array($this, "onUserDeleted"));
