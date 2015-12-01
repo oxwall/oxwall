@@ -337,7 +337,7 @@ class BASE_CTRL_Edit extends OW_ActionController
             // save user data
             if ( !empty($userId) )
             {
-                $changesList = $this->questionService->getChanges($data, $userId);
+                $changesList = $this->questionService->getChangedQuestionList($data, $userId);
                 if ( $this->questionService->saveQuestionsData($data, $userId) )
                 {
                     // delete avatar

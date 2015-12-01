@@ -2676,7 +2676,7 @@ class BOL_QuestionService
         return $stringValue;
     }
 
-    public function getChanges($data, $userId)
+    public function getChangedQuestionList($data, $userId)
     {
         // get changes list
         $fields = array_keys($data);
