@@ -337,7 +337,7 @@ class BASE_CTRL_Edit extends OW_ActionController
             // save user data
             if ( !empty($userId) )
             {
-                $changesList = $this->getChanges($data, $userId);
+                $changesList = $this->questionService->getChanges($data, $userId);
                 if ( $this->questionService->saveQuestionsData($data, $userId) )
                 {
                     // delete avatar
@@ -356,7 +356,7 @@ class BASE_CTRL_Edit extends OW_ActionController
 
                     if ( !$adminMode )
                     {
-                        $isNeedToModerate = $this->isNeedToModerate($changesList);
+                        $isNeedToModerate = $this->questionService->isNeedToModerate($changesList);
                         $event = new OW_Event(OW_EventManager::ON_USER_EDIT, array('userId' => $userId, 'method' => 'native', 'moderate' => $isNeedToModerate));
                         OW::getEventManager()->trigger($event);
 
@@ -398,51 +398,6 @@ class BASE_CTRL_Edit extends OW_ActionController
                 OW::getFeedback()->info($language->text('base', 'edit_edit_error'));
             }
         }
-    }
-
-    private function getChanges($data, $userId)
-    {
-        // get changes list
-        $fields = array_keys($data);
-        $questions = BOL_QuestionService::getInstance()->findQuestionByNameList($fields);
-        $oldData = BOL_QuestionService::getInstance()->getQuestionData(array($userId), $fields);
-        $changesList = array();
-
-        foreach ( $questions as $question )
-        {
-            $key = $question->name;
-
-            $value = empty($oldData[$userId][$key]) ? null : $oldData[$userId][$key];
-
-            $value = BOL_QuestionService::getInstance()->prepareFieldValue($question->presentation, $value);
-            $value1 = BOL_QuestionService::getInstance()->prepareFieldValue($question->presentation, $data[$key]);
-
-            if ( $key == 'googlemap_location' && isset($value1['remove'])  )
-            {
-                unset($value1['remove']);
-            }
-
-            if ( $value != $value1 )
-            {
-                $changesList[$key] = $key;
-            }
-        }
-        return $changesList;
-    }
-
-    private function isNeedToModerate($changesList)
-    {
-        $questions = BOL_QuestionService::getInstance()->findQuestionByNameList($changesList);
-        $textFields = array(BOL_QuestionService::QUESTION_PRESENTATION_TEXT, BOL_QuestionService::QUESTION_PRESENTATION_TEXTAREA );
-
-        foreach ( $questions as $question )
-        {
-            if ( $question && in_array($question->presentation, $textFields) && $question->name != 'googlemap_location' ) {
-                return true;
-            }
-        }
-
-        return false;
     }
 
     public function ajaxResponder()

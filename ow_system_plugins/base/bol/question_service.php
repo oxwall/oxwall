@@ -2675,4 +2675,49 @@ class BOL_QuestionService
         
         return $stringValue;
     }
+
+    public function getChanges($data, $userId)
+    {
+        // get changes list
+        $fields = array_keys($data);
+        $questions = $this->findQuestionByNameList($fields);
+        $oldData = $this->getQuestionData(array($userId), $fields);
+        $changesList = array();
+
+        foreach ( $questions as $question )
+        {
+            $key = $question->name;
+
+            $value = empty($oldData[$userId][$key]) ? null : $oldData[$userId][$key];
+
+            $value = $this->prepareFieldValue($question->presentation, $value);
+            $value1 = $this->prepareFieldValue($question->presentation, $data[$key]);
+
+            if ( $key == 'googlemap_location' && isset($value1['remove'])  )
+            {
+                unset($value1['remove']);
+            }
+
+            if ( $value != $value1 )
+            {
+                $changesList[$key] = $key;
+            }
+        }
+        return $changesList;
+    }
+
+    public function isNeedToModerate($changesList)
+    {
+        $questions = $this->findQuestionByNameList($changesList);
+        $textFields = array(self::QUESTION_PRESENTATION_TEXT, self::QUESTION_PRESENTATION_TEXTAREA );
+
+        foreach ( $questions as $question )
+        {
+            if ( $question && in_array($question->presentation, $textFields) && $question->name != 'googlemap_location' ) {
+                return true;
+            }
+        }
+
+        return false;
+    }
 }
