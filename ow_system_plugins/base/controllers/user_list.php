@@ -45,15 +45,20 @@ class BASE_CTRL_UserList extends OW_ActionController
     public function index( $params )
     {
         $listType = empty($params['list']) ? 'latest' : strtolower(trim($params['list']));
-        $language = OW::getLanguage();
         $this->addComponent('menu', self::getMenu($listType));
 
         $page = (!empty($_GET['page']) && intval($_GET['page']) > 0 ) ? intval($_GET['page']) : 1;
         list($list, $itemCount) = $this->getData($listType, (($page - 1) * $this->usersPerPage), $this->usersPerPage);
 
-        //$cmp = new BASE_Members($list, $itemCount, $this->usersPerPage, true, $listType);
-        $cmp = OW::getClassInstance("BASE_Members", $list, $itemCount, $this->usersPerPage, true, $listType);
-        
+        $userIdlist = array();
+        foreach ( $list as $id )
+        {
+            $userIdlist[$id] = $id;
+        }
+
+        //$cmp = OW::getClassInstance("BASE_Members", $list, $itemCount, $this->usersPerPage, true, $listType);
+        $cmp = OW::getClassInstance("BASE_CMP_AdvancedUserList", 'base-'.$listType, $userIdlist, true);
+
         $this->addComponent('cmp', $cmp);
 
         $this->assign('listType', $listType);
