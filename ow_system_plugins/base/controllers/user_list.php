@@ -51,9 +51,9 @@ class BASE_CTRL_UserList extends OW_ActionController
         list($list, $itemCount) = $this->getData($listType, (($page - 1) * $this->usersPerPage), $this->usersPerPage);
 
         $userIdlist = array();
-        foreach ( $list as $id )
+        foreach ( $list as $dto )
         {
-            $userIdlist[$id] = $id;
+            $userIdlist[$dto->id] = $dto->id;
         }
 
         //$cmp = OW::getClassInstance("BASE_Members", $list, $itemCount, $this->usersPerPage, true, $listType);

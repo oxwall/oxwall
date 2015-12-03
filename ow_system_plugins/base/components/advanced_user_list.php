@@ -18,41 +18,107 @@
  */
 class BASE_CMP_AdvancedUserList extends OW_Component
 {
-    const EVENT_GET_FIELDS = "base.user_list.get_fields";
+    const EVENT_GET_VISIBLE_FIELDS = "base.user_list.get_visible_fields";
+    const EVENT_GET_HIDDEN_FIELDS = "base.user_list.get_hidden_fields";
 
+    protected $items;
     protected $listKey;
+    protected $enableActions;
 
     public function __construct($listKey, $list, $actions = false)
     {
         $this->listKey = $listKey;
+        $this->items = $list;
+        $this->enableActions = $actions;
+        parent::__construct();
+    }
 
-        if ( $this->listKey == 'birthdays' )
+    protected function getOnlineInfo($userIdList)
+    {
+        if ( empty($userIdList) )
         {
-            $showOnline = false;
+            return array();
         }
 
-        parent::__construct($list, $showOnline);
+        $service = BOL_UserService::getInstance();
+        $onlineInfo = $service->findOnlineStatusForUserList($userIdList);
+        $ownerIdList = array();
+
+        foreach ( $onlineInfo as $userId => $isOnline )
+        {
+            $ownerIdList[$userId] = $userId;
+        }
+
+        $eventParams = array(
+            'action' => 'base_view_my_presence_on_site',
+            'ownerIdList' => $ownerIdList,
+            'viewerId' => OW::getUser()->getId()
+        );
+
+        $permissions = OW::getEventManager()->getInstance()->call('privacy_check_permission_for_user_list', $eventParams);
+
+        foreach ( $onlineInfo as $userId => $isOnline )
+        {
+            $onlineInfo[$userId] = true;
+
+            // Check privacy permissions
+            if ( isset($permissions[$userId]['blocked']) && $permissions[$userId]['blocked'] == true )
+            {
+                $onlineInfo[$userId] = false;
+            }
+        }
+
+        return $onlineInfo;
     }
 
     public function getFields( $userIdList )
     {
         $fields = array();
-        BOL_UserService::getInstance()->getDisplayNamesForList($userIdList);
+        $visible = array();
+        $hidden = array();
+
+        $service = BOL_UserService::getInstance();
+
+        $displayNameList = $service->getDisplayNamesForList($userIdList);
+        $onlineInfo = $this->getOnlineInfo($userIdList);
 
         foreach ( $userIdList as $id )
         {
-            $fields[$id] = array();
+            $visible[$id] = array();
+            $hidden[$id] = array();
+
+            if ( !empty($onlineInfo[$id]) ) {
+                $visible[$id]['onlineInfo'] = "<div style=\"display: inline-block;\" class=\"ow_miniic_live\">
+                             <span class=\"ow_live_on\"></span>
+                          </div>";
+            }
+
+            if ( isset($displayNameList[$id]) ) {
+
+                $visible[$id]['displayName'] = "<b class=\"ow_usearch_display_name\">{$displayNameList[$id]}</b>";
+            }
         }
 
         $params = array(
             'list' => $this->listKey,
             'userIdList' => $userIdList  );
 
-        $event = new OW_Event( self::EVENT_GET_FIELDS, $params, $fields);
+        // get visible fields
+        $event = new OW_Event(self::EVENT_GET_VISIBLE_FIELDS, $params, $visible);
         OW::getEventManager()->trigger($event);
-        $data = $event->getData();
+        $visible = $event->getData();
 
-        return $data;
+        //get hidden fields
+        $event = new OW_Event( self::EVENT_GET_HIDDEN_FIELDS, $params, $hidden);
+        OW::getEventManager()->trigger($event);
+        $hidden = $event->getData();
+
+        foreach ( $userIdList as $id )
+        {
+            $fields[$id] = array('visible' =>  !empty($visible[$id]) ? $visible[$id] : array(), 'hidden' => !empty($hidden[$id]) ? $hidden[$id] : array() );
+        }
+
+        return $fields;
     }
 
     private function process( $list )
@@ -60,15 +126,15 @@ class BASE_CMP_AdvancedUserList extends OW_Component
         $service = BOL_UserService::getInstance();
 
         $idList = array();
-        $userList = array();
 
-        foreach ( $list as $dto )
+        foreach ( $list as $id )
         {
-            $userList[$dto->getId()] = $dto;
-            $idList[$dto->getId()] = $dto->getId();
+            $idList[$id] = $id;
         }
 
         $displayNameList = array();
+        $userNameList = array();
+        $userList = array();
 
         if ( !empty($idList) )
         {
@@ -80,7 +146,11 @@ class BASE_CMP_AdvancedUserList extends OW_Component
                 $avatars[$userId]['src'] = $avtarsSrc[$userId];
             }
 
-            $usernameList = $service->getUserNamesForList($idList);
+            $userNameList = $service->getUserNamesForList($idList);
+
+            $userList = $service->findUserListByIdList($idList);
+
+
 //            $onlineInfo = $service->findOnlineStatusForUserList($idList);
 //            $ownerIdList = array();
 //
@@ -109,14 +179,15 @@ class BASE_CMP_AdvancedUserList extends OW_Component
 //                $showPresenceList[$userId] = true;
 //            }
 
-            if ( $this->actions )
+            if ( $this->enableActions )
             {
-                $actions = USEARCH_CLASS_EventHandler::getInstance()->collectUserListActions($idList);
-                $this->assign('actions', $actions);
+                //$actions = USEARCH_CLASS_EventHandler::getInstance()->collectUserListActions($idList);
+                //$this->assign('actions', $actions);
             }
-
+            printVar($this->getFields($idList));
             $this->assign('fields', $this->getFields($idList));
-            $this->assign('usernameList', $usernameList);
+            $this->assign('usernameList', $userNameList);
+            $this->assign('displayNameList', $displayNameList);
             $this->assign('avatars', $avatars);
         }
 
