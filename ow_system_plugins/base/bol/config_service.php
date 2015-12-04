@@ -31,6 +31,12 @@
  */
 final class BOL_ConfigService
 {
+    const EVENT_BEFORE_SAVE = "base.before_config_save";
+    const EVENT_AFTER_SAVE = "base.after_config_save";
+    
+    const EVENT_BEFORE_REMOVE = "base.before_config_remove";
+    const EVENT_AFTER_REMOVE = "base.after_config_remove";
+    
     /**
      * @var BOL_ConfigDao
      */
@@ -131,6 +137,16 @@ final class BOL_ConfigService
 
         $newConfig = new BOL_Config();
         $newConfig->setKey($key)->setName($name)->setValue($value)->setDescription($description);
+        
+        $event = OW::getEventManager()->trigger(new OW_Event(self::EVENT_BEFORE_SAVE, array(
+            "key" => $key,
+            "name" => $name,
+            "value" => $value,
+            "oldValue" => null
+        ), $value));
+        
+        $newConfig->setValue($event->getData());
+        
         $this->configDao->save($newConfig);
     }
 
@@ -151,7 +167,21 @@ final class BOL_ConfigService
             throw new InvalidArgumentException("Can't find config `" . $name . "` in section `" . $key . "`!");
         }
 
-        $this->configDao->save($config->setValue($value));
+        $event = OW::getEventManager()->trigger(new OW_Event(self::EVENT_BEFORE_SAVE, array(
+            "key" => $key,
+            "name" => $name,
+            "value" => $value,
+            "oldValue" => $config->getValue()
+        ), $value));
+        
+        $this->configDao->save($config->setValue($event->getData()));
+        
+        OW::getEventManager()->trigger(new OW_Event(self::EVENT_AFTER_SAVE, array(
+            "key" => $key,
+            "name" => $name,
+            "value" => $value,
+            "oldValue" => $config->getValue()
+        )));
     }
 
     /**
@@ -162,7 +192,20 @@ final class BOL_ConfigService
      */
     public function removeConfig( $key, $name )
     {
-        $this->configDao->removeConfig($key, $name);
+        $event = OW::getEventManager()->trigger(new OW_Event(self::EVENT_BEFORE_REMOVE, array(
+            "key" => $key,
+            "name" => $name
+        )));
+        
+        if ( $event->getData() !== false )
+        {
+            $this->configDao->removeConfig($key, $name);
+            
+            OW::getEventManager()->trigger(new OW_Event(self::EVENT_BEFORE_REMOVE, array(
+                "key" => $key,
+                "name" => $name
+            )));
+        }
     }
 
     /**

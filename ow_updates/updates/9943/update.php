@@ -13,7 +13,7 @@ $sql[] =
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;";
 
 
-$sql[] = "CREATE TABLE IF NOT EXISTS `{$dbPrefix}base_geolocation_country` (
+$sql[] = "CREATE TABLE IF NOT EXISTS `{$dbPrefix}base_geolocation_ip_to_country` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `cc2` char(2) NOT NULL,
   `cc3` char(3) NOT NULL,

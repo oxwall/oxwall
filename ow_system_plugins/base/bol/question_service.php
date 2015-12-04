@@ -1533,7 +1533,7 @@ class BOL_QuestionService
                 }
             }
         }
-        //printVar($user);
+
         $this->userService->saveOrUpdate($user);
 
         if ( count($questionDataArray) > 0 )
@@ -1755,13 +1755,6 @@ class BOL_QuestionService
 
             unset($questionsBolArray);
 
-            if ( count($notBaseFields) === 0 && count($baseFields) === 0 )
-            {
-                return array();
-            }
-
-            // -------------------- --
-
             if ( count($notBaseFields) > 0 )
             {
                 //get not base question values
@@ -1854,7 +1847,6 @@ class BOL_QuestionService
         $event = new OW_Event('base.questions_get_data', array('userIdList' => $userIdList, 'fieldsList' => $fieldsList), $result);
 
         OW::getEventManager()->trigger($event);
-
         return $event->getData();
     }
 
@@ -2573,7 +2565,9 @@ class BOL_QuestionService
     public function getQuestionValueForUserList( BOL_Question $question, $value )
     {
         $stringValue = "";
-        
+
+        $language = OW::getLanguage();
+
         switch ( $question->presentation )
         {
             case BOL_QuestionService::QUESTION_PRESENTATION_CHECKBOX:
@@ -2631,7 +2625,7 @@ class BOL_QuestionService
 
             case BOL_QuestionService::QUESTION_PRESENTATION_AGE:
 
-                $date = UTIL_DateTime::parseDate($alue, UTIL_DateTime::MYSQL_DATETIME_DATE_FORMAT);
+                $date = UTIL_DateTime::parseDate($value, UTIL_DateTime::MYSQL_DATETIME_DATE_FORMAT);
                 $stringValue = UTIL_DateTime::getAge($date['year'], $date['month'], $date['day']) . " " . $language->text('base', 'questions_age_year_old');
 
                 break;
@@ -2699,5 +2693,50 @@ class BOL_QuestionService
         }
         
         return $stringValue;
+    }
+
+    public function getChangedQuestionList($data, $userId)
+    {
+        // get changes list
+        $fields = array_keys($data);
+        $questions = $this->findQuestionByNameList($fields);
+        $oldData = $this->getQuestionData(array($userId), $fields);
+        $changesList = array();
+
+        foreach ( $questions as $question )
+        {
+            $key = $question->name;
+
+            $value = empty($oldData[$userId][$key]) ? null : $oldData[$userId][$key];
+
+            $value = $this->prepareFieldValue($question->presentation, $value);
+            $value1 = $this->prepareFieldValue($question->presentation, $data[$key]);
+
+            if ( $key == 'googlemap_location' && isset($value1['remove'])  )
+            {
+                unset($value1['remove']);
+            }
+
+            if ( $value != $value1 )
+            {
+                $changesList[$key] = $key;
+            }
+        }
+        return $changesList;
+    }
+
+    public function isNeedToModerate($changesList)
+    {
+        $questions = $this->findQuestionByNameList($changesList);
+        $textFields = array(self::QUESTION_PRESENTATION_TEXT, self::QUESTION_PRESENTATION_TEXTAREA );
+
+        foreach ( $questions as $question )
+        {
+            if ( $question && in_array($question->presentation, $textFields) && $question->name != 'googlemap_location' ) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
