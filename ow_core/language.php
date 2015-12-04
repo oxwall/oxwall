@@ -88,6 +88,19 @@ class OW_Language
             return $prefix . '+' . $key;
         }
 
+        if ( !empty($vars) && is_array($vars) ) {
+            foreach ($vars as $key => &$value) {
+                if (UTIL_Serialize::isSerializedObject($value)) {
+                    $object = UTIL_Serialize::unserialize($value);
+                    if (empty($object) || !($object instanceof BASE_CLASS_LanguageParams)) {
+                        $value = '';
+                    }
+
+                    $value = $object->fetch();
+                }
+            }
+        }
+
         $event = new OW_Event("core.get_text", array("prefix" => $prefix, "key" => $key, "vars" => $vars));
         $this->eventManager->trigger($event);
 
