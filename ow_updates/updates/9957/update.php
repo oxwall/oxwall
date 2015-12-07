@@ -59,8 +59,8 @@ if ($langId !== null)
 
 
 $queryList = array(
-    "ALTER TABLE `{$tblPrefix}_question` CHANGE `type` `type` ENUM('text','select','datetime','boolean','multiselect','fselect')",
-    "ALTER TABLE `{$tblPrefix}_question` CHANGE `presentation` `presentation` ENUM('text','textarea','select','date','location','checkbox','multicheckbox','radio','url','password','age','birthdate','range','fselect')"
+    "ALTER TABLE `{$tblPrefix}question` CHANGE `type` `type` ENUM('text','select','datetime','boolean','multiselect','fselect')",
+    "ALTER TABLE `{$tblPrefix}question` CHANGE `presentation` `presentation` ENUM('text','textarea','select','date','location','checkbox','multicheckbox','radio','url','password','age','birthdate','range','fselect')"
 );
 
 foreach ( $queryList as $query )
