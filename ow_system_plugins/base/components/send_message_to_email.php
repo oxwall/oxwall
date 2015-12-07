@@ -45,6 +45,7 @@ class BASE_CMP_SendMessageToEmail extends OW_Component
 
         $subject = new TextField('subject');
         $subject->setInvitation(OW::getLanguage()->text('base', 'subject'));
+        $subject->setRequired(true);
         $form->addElement($subject);
 
         $textarea = new WysiwygTextarea("message");
