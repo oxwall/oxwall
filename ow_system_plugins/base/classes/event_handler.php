@@ -652,7 +652,6 @@ class BASE_CLASS_EventHandler
         $timeZoneSelect = new Selectbox("timeZoneSelect");
         $timeZoneSelect->setLabel($language->text('admin', 'timezone'));
         $timeZoneSelect->addOptions(UTIL_DateTime::getTimezones());
-        $timeZoneSelect->setRequired();  
 
         $timeZoneSelect->setValue($values['timeZoneSelect']);
 
