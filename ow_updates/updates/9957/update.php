@@ -22,6 +22,11 @@
  * which combines Covered Code or portions thereof with code not governed by the terms of the CPAL.
  */
 
+$tblPrefix = OW_DB_PREFIX;
+$dbo = Updater::getDbo();
+
+$logger = Updater::getLogger();
+
 $languageService = Updater::getLanguageService();
 
 $languages = $languageService->getLanguages();
@@ -50,4 +55,22 @@ if ($langId !== null)
     $languageService->addOrUpdateValue($langId, 'admin', 'questions_infinite_possible_values_label',
         'Possible values');
 
+}
+
+
+$queryList = array(
+    "ALTER TABLE `{$tblPrefix}_question` CHANGE `type` `type` ENUM('text','select','datetime','boolean','multiselect','fselect')",
+    "ALTER TABLE `{$tblPrefix}_question` CHANGE `presentation` `presentation` ENUM('text','textarea','select','date','location','checkbox','multicheckbox','radio','url','password','age','birthdate','range','fselect')"
+);
+
+foreach ( $queryList as $query )
+{
+    try
+    {
+        $dbo->query($query);
+    }
+    catch (Exception $e)
+    {
+        $logger->addEntry(json_encode($e));
+    }
 }
