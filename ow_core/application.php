@@ -179,7 +179,7 @@ class OW_Application
 
         if ( $activeThemeName !== BOL_ThemeService::DEFAULT_THEME && OW::getThemeManager()->getThemeService()->themeExists($activeThemeName) )
         {
-            OW_ThemeManager::getInstance()->setCurrentTheme(BOL_ThemeService::getInstance()->getThemeObjectByName(trim($activeThemeName)));
+            OW_ThemeManager::getInstance()->setCurrentTheme(BOL_ThemeService::getInstance()->getThemeObjectByKey(trim($activeThemeName)));
         }
 
         // adding static document routes
@@ -399,7 +399,7 @@ class OW_Application
         {
             if ( OW::getThemeManager()->getCurrentTheme()->getDto()->getCustomCssFileName() !== null )
             {
-                $document->addStyleSheet(OW::getThemeManager()->getThemeService()->getCustomCssFileUrl(OW::getThemeManager()->getCurrentTheme()->getDto()->getName()));
+                $document->addStyleSheet(OW::getThemeManager()->getThemeService()->getCustomCssFileUrl(OW::getThemeManager()->getCurrentTheme()->getDto()->getKey()));
             }
 
             if ( $this->getDocumentKey() !== 'base.sign_in' )
@@ -740,7 +740,7 @@ class OW_Application
                         }
                     }
 
-                    $paramsData = var_export($eventItem['event']->getParams(), true);
+                    $paramsData = var_export($eventItem['event']->getOptions(), true);
                     $eventsDataToAssign['call'][] = array('type' => $eventItem['type'], 'name' => $eventItem['event']->getName(), 'listeners' => $listenersList, 'params' => $paramsData, 'start' => sprintf('%.3f', $eventItem['start']), 'exec' => sprintf('%.3f', $eventItem['exec']));
                 }
 
@@ -775,11 +775,11 @@ class OW_Application
 
         if ( isset($_GET['set-theme']) )
         {
-            $theme = BOL_ThemeService::getInstance()->findThemeByName(trim($_GET['theme']));
+            $theme = BOL_ThemeService::getInstance()->findThemeByKey(trim($_GET['theme']));
 
             if ( $theme !== null )
             {
-                OW::getConfig()->saveConfig('base', 'selectedTheme', $theme->getName());
+                OW::getConfig()->saveConfig('base', 'selectedTheme', $theme->getKey());
             }
 
             $this->redirect(OW::getRequest()->buildUrlQueryString(null, array('theme' => null)));
