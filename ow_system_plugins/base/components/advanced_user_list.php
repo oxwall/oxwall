@@ -24,12 +24,14 @@ class BASE_CMP_AdvancedUserList extends OW_Component
     protected $items;
     protected $listKey;
     protected $enableActions;
+    protected $params;
 
-    public function __construct($listKey, $list, $actions = false)
+    public function __construct($listKey, $list, $actions = false, $aditionalParams = array())
     {
         $this->listKey = $listKey;
         $this->items = $list;
         $this->enableActions = $actions;
+        $this->params = $aditionalParams;
         parent::__construct();
     }
 
@@ -101,7 +103,8 @@ class BASE_CMP_AdvancedUserList extends OW_Component
 
         $params = array(
             'list' => $this->listKey,
-            'userIdList' => $userIdList  );
+            'userIdList' => $userIdList,
+            'aditionalParams' => $this->params );
 
         // get visible fields
         $event = new OW_Event(self::EVENT_GET_VISIBLE_FIELDS, $params, $visible);
@@ -184,7 +187,7 @@ class BASE_CMP_AdvancedUserList extends OW_Component
                 //$actions = USEARCH_CLASS_EventHandler::getInstance()->collectUserListActions($idList);
                 //$this->assign('actions', $actions);
             }
-            printVar($this->getFields($idList));
+
             $this->assign('fields', $this->getFields($idList));
             $this->assign('usernameList', $userNameList);
             $this->assign('displayNameList', $displayNameList);
