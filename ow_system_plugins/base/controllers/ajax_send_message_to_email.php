@@ -69,6 +69,7 @@ class BASE_CTRL_AjaxSendMessageToEmail extends OW_ActionController
         $mail->addRecipientEmail($user->getEmail());
         $mail->setSubject($subject);
         $mail->setHtmlContent($message);
+        $mail->setTextContent(strip_tags(preg_replace('/\<br(\s*)?\/?\>/i', PHP_EOL, $message)));
 
         OW::getMailer()->send($mail);
 
