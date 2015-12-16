@@ -29,6 +29,11 @@
  */
 class BOL_PluginService
 {
+    /**
+     * @deprecated since version 1.8.1
+     */
+    const UPDATE_SERVER = BOL_StorageService::UPDATE_SERVER;
+
     /* list of plugin scripts */
     const SCRIPT_INIT = "init.php";
     const SCRIPT_INSTALL = "install.php";
