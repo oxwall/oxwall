@@ -198,6 +198,7 @@ class ADMIN_CTRL_Themes extends ADMIN_CTRL_StorageAbstract
     {
         $language = OW::getLanguage();
         $router = OW::getRouter();
+        $feedback = OW::getFeedback();
 
         $tempDirName = empty($_GET["dir"]) ? null : str_replace(DS, "", $_GET["dir"]);
 

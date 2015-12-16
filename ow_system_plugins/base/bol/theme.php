@@ -124,4 +124,25 @@ class BOL_Theme extends BOL_StoreItem
 
         return $this;
     }
+
+    /**
+     * @deprecated since version 1.8.1
+     * @return string
+     */
+    public function getName()
+    {
+        return $this->key;
+    }
+
+    /**
+     * @deprecated since version 1.8.1
+     * 
+     * @param string $name
+     * @return BOL_Theme
+     */
+    public function setName( $name )
+    {
+        $this->key = trim($name);
+        return $this;
+    }
 }
