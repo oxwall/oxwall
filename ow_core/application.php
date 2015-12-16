@@ -500,7 +500,7 @@ class OW_Application
      *
      * @var BOL_MenuItem
      */
-    private $indexMenuItem;
+    protected $indexMenuItem;
 
     public function activateMenuItem()
     {
@@ -867,6 +867,11 @@ class OW_Application
 
     protected function httpVsHttpsRedirect()
     {
+        if( OW::getRequest()->isAjax() )
+        {
+            return;
+        }
+
         $isSsl = OW::getRequest()->isSsl();
 
         if ( $isSsl === null )
