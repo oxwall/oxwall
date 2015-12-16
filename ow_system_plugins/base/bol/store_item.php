@@ -70,16 +70,6 @@ abstract class BOL_StoreItem extends OW_Entity
     public $update = 0;
 
     /**
-     * @var string
-     */
-    public $adminSettingsRoute;
-
-    /**
-     * @var string
-     */
-    public $uninstallRoute;
-
-    /**
      * @return string
      */
     public function getDescription()

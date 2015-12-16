@@ -662,4 +662,12 @@ class BOL_PluginService
             include_once $scriptPath;
         }
     }
+
+    /**
+     * @deprecated since version 1.8.1
+     */
+    public function checkUpdates()
+    {
+        BOL_StorageService::getInstance()->checkUpdates();
+    }
 }

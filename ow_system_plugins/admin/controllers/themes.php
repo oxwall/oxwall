@@ -37,12 +37,19 @@ class ADMIN_CTRL_Themes extends ADMIN_CTRL_StorageAbstract
     protected $menu;
 
     /**
+     * @var OW_Feedback
+     */
+    protected $feedback;
+
+
+    /**
      * Constructor.
      */
     public function __construct()
     {
         parent::__construct();
         $this->setDefaultAction("chooseTheme");
+        $this->feedback = OW::getFeedback();
     }
 
     public function init()
@@ -67,8 +74,7 @@ class ADMIN_CTRL_Themes extends ADMIN_CTRL_StorageAbstract
     public function chooseTheme()
     {
         $language = OW::getLanguage();
-        $router = OW::getRouter();
-        $feedback = OW::getFeedback();
+        $router = OW::getRouter();        
 
         $this->themeService->updateThemeList();
         $this->themeService->updateThemesInfo();
@@ -203,7 +209,7 @@ class ADMIN_CTRL_Themes extends ADMIN_CTRL_StorageAbstract
 
         if ( empty($tempDirName) || !file_exists($this->getTemDirPath() . $tempDirName) )
         {
-            OW::getFeedback()->error($language->text("admin", "manage_plugins_add_ftp_move_error"));
+            $this->feedback->error($language->text("admin", "manage_plugins_add_ftp_move_error"));
             $this->redirect($router->urlForRoute("admin_themes_choose"));
         }
 
@@ -229,7 +235,7 @@ class ADMIN_CTRL_Themes extends ADMIN_CTRL_StorageAbstract
 
         if ( file_exists($localThemeRootPath) )
         {
-            OW::getFeedback()->error(OW::getLanguage()->text("admin", "theme_add_duplicated_dir_error",
+            $this->feedback->error(OW::getLanguage()->text("admin", "theme_add_duplicated_dir_error",
                     array("dir" => $localThemeRootPath)));
             $this->redirect($router->urlForRoute("admin_themes_choose"));
         }
@@ -239,7 +245,7 @@ class ADMIN_CTRL_Themes extends ADMIN_CTRL_StorageAbstract
         $ftp = $this->getFtpConnection();
         $ftp->uploadDir($localThemeRootPath, $remoteDir);
         UTIL_File::removeDir($tempDirPath);
-        OW::getFeedback()->info($language->text("base", "themes_item_add_success_message"));
+        $this->feedback->info($language->text("base", "themes_item_add_success_message"));
         $this->redirect($router->urlForRoute("admin_themes_choose"));
     }
 
@@ -250,7 +256,7 @@ class ADMIN_CTRL_Themes extends ADMIN_CTRL_StorageAbstract
 
         if ( empty($params["name"]) || empty($params["devKey"]) )
         {
-            OW::getFeedback()->error($language->text("admin", "theme_manage_empty_key_error_msg"));
+            $this->feedback->error($language->text("admin", "theme_manage_empty_key_error_msg"));
             $this->redirect($backUrl);
         }
 
@@ -295,11 +301,11 @@ class ADMIN_CTRL_Themes extends ADMIN_CTRL_StorageAbstract
             OW::getConfig()->saveConfig("base", "selectedTheme", $params[BOL_StorageService::URI_VAR_KEY]);
             OW::getEventManager()->trigger(new OW_Event("base.change_theme",
                 array("name" => $params[BOL_StorageService::URI_VAR_KEY])));
-            OW::getFeedback()->info(OW::getLanguage()->text("admin", "theme_change_success_message"));
+            $this->feedback->info(OW::getLanguage()->text("admin", "theme_change_success_message"));
         }
         else
         {
-            OW::getFeedback()->error($language->text("admin", "manage_theme_activate_invalid_license_key"));
+            $this->feedback->error($language->text("admin", "manage_theme_activate_invalid_license_key"));
         }
 
         $this->redirect($backUrl);
@@ -353,22 +359,21 @@ class ADMIN_CTRL_Themes extends ADMIN_CTRL_StorageAbstract
         $themeDto = $this->getThemeDtoByKeyInParamsArray($params);
         $language = OW::getLanguage();
         $router = OW::getRouter();
-        $feedback = OW::getFeedback();
 
         if ( !empty($_GET["mode"]) )
         {
             switch ( trim($_GET["mode"]) )
             {
                 case "theme_up_to_date":
-                    $feedback->warning($language->text("admin", "manage_themes_up_to_date_message"));
+                    $this->feedback->warning($language->text("admin", "manage_themes_up_to_date_message"));
                     break;
 
                 case "theme_update_success":
-                    $feedback->info($language->text("admin", "manage_themes_update_success_message"));
+                    $this->feedback->info($language->text("admin", "manage_themes_update_success_message"));
                     break;
 
                 default :
-                    $feedback->error($language->text("admin", "manage_themes_update_process_error"));
+                    $this->feedback->error($language->text("admin", "manage_themes_update_process_error"));
                     break;
             }
 
@@ -380,14 +385,14 @@ class ADMIN_CTRL_Themes extends ADMIN_CTRL_StorageAbstract
 
         if ( empty($remoteThemeInfo) || !empty($remoteThemeInfo["error"]) )
         {
-            $feedback->error($language->text("admin", "manage_themes_update_process_error"));
+            $this->feedback->error($language->text("admin", "manage_themes_update_process_error"));
             $this->redirect($router->urlForRoute("admin_themes_choose"));
         }
 
         if ( !(bool) $remoteThemeInfo["freeware"] && ($themeDto->getLicenseKey() == null || !$this->storageService->checkLicenseKey($themeDto->getKey(),
                 $themeDto->getDeveloperKey(), $themeDto->getLicenseKey())) )
         {
-            $feedback->error($language->text("admin", "manage_plugins_update_invalid_key_error"));
+            $this->feedback->error($language->text("admin", "manage_plugins_update_invalid_key_error"));
             $this->redirect($router->urlForRoute("admin_themes_choose"));
         }
 
@@ -400,13 +405,13 @@ class ADMIN_CTRL_Themes extends ADMIN_CTRL_StorageAbstract
         }
         catch ( Exception $e )
         {
-            $feedback->error($e->getMessage());
+            $this->feedback->error($e->getMessage());
             $this->redirect($router->urlForRoute("admin_themes_choose"));
         }
 
         if ( !file_exists($archivePath) )
         {
-            $feedback->error($language->text("admin", "theme_update_download_error"));
+            $this->feedback->error($language->text("admin", "theme_update_download_error"));
             $this->redirect($router->urlForRoute("admin_themes_choose"));
         }
 
@@ -422,7 +427,7 @@ class ADMIN_CTRL_Themes extends ADMIN_CTRL_StorageAbstract
         }
         else
         {
-            $feedback->error($language->text("admin", "theme_update_download_error"));
+            $this->feedback->error($language->text("admin", "theme_update_download_error"));
             $this->redirect($router->urlForRoute("admin_themes_choose"));
         }
 
@@ -439,7 +444,7 @@ class ADMIN_CTRL_Themes extends ADMIN_CTRL_StorageAbstract
 
         if ( $localThemeRootPath == null )
         {
-            $feedback->error($language->text("admin", "manage_theme_update_extract_error"));
+            $this->feedback->error($language->text("admin", "manage_theme_update_extract_error"));
             $this->redirect($router->urlForRoute("admin_themes_choose"));
         }
 
@@ -447,7 +452,7 @@ class ADMIN_CTRL_Themes extends ADMIN_CTRL_StorageAbstract
 
         if ( !file_exists($remoteDir) )
         {
-            $feedback->error($language->text("admin", "manage_theme_update_theme_not_found"));
+            $this->feedback->error($language->text("admin", "manage_theme_update_theme_not_found"));
             $this->redirect($router->urlForRoute("admin_themes_choose"));
         }
 
@@ -465,13 +470,13 @@ class ADMIN_CTRL_Themes extends ADMIN_CTRL_StorageAbstract
 
         if ( OW::getThemeManager()->getDefaultTheme()->getDto()->getKey() == $themeDto->getKey() )
         {
-            OW::getFeedback()->error($language->text("admin", "themes_cant_delete_default_theme"));
+            $this->feedback->error($language->text("admin", "themes_cant_delete_default_theme"));
             $this->redirect(OW::getRouter()->urlForRoute("admin_themes_choose"));
         }
 
         if ( OW::getThemeManager()->getCurrentTheme()->getDto()->getKey() == $themeDto->getKey() )
         {
-            OW::getFeedback()->error($language->text("admin", "themes_cant_delete_active_theme"));
+            $this->feedback->error($language->text("admin", "themes_cant_delete_active_theme"));
             $this->redirect(OW::getRouter()->urlForRoute("admin_themes_choose"));
         }
 
@@ -479,7 +484,7 @@ class ADMIN_CTRL_Themes extends ADMIN_CTRL_StorageAbstract
         $this->themeService->deleteTheme($themeDto->getId(), true);
         $ftp->rmDir($this->themeService->getRootDir($themeDto->getKey()));
 
-        OW::getFeedback()->info($language->text("admin", "themes_delete_success_message"));
+        $this->feedback->info($language->text("admin", "themes_delete_success_message"));
         $this->redirect(OW::getRouter()->urlForRoute("admin_themes_choose"));
     }
 
@@ -495,7 +500,7 @@ class ADMIN_CTRL_Themes extends ADMIN_CTRL_StorageAbstract
             return $themeDto;
         }
 
-        OW::getFeedback()->error(OW::getLanguage()->text("admin", "manage_themes_theme_not_found"));
+        $this->feedback->error(OW::getLanguage()->text("admin", "manage_themes_theme_not_found"));
         $this->redirect(OW::getRouter()->urlForRoute("admin_themes_choose"));
     }
 }
