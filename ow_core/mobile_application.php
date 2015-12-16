@@ -221,25 +221,6 @@ class OW_MobileApplication extends OW_Application
     }
 
     /**
-     * Finds controller and action for current request.
-     */
-    public function route()
-    {
-        try
-        {
-            OW::getRequestHandler()->setHandlerAttributes(OW::getRouter()->route());
-        }
-        catch ( RedirectException $e )
-        {
-            $this->redirect($e->getUrl(), $e->getRedirectCode());
-        }
-        catch ( InterceptException $e )
-        {
-            OW::getRequestHandler()->setHandlerAttributes($e->getHandlerAttrs());
-        }
-    }
-
-    /**
      * ---------
      */
     public function handleRequest()
