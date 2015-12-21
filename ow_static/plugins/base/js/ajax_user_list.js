@@ -7,17 +7,16 @@
  * Full text of this license can be found at http://www.skadate.com/sel.pdf
  */
 
-
 var AjaxUserList = (function($)
 {
     var excludeList = [];
     var contentNode = undefined;
-    var preloader = $('<div class="ow_left ow_base_preloader_box"><div class="ow_fw_menu ow_preloader"></div></div>');
+    var preloader = $('<div class="ow_left ow_user_list_preloader_box"><div class="ow_fw_menu ow_preloader"></div></div>');
     
     var respunderUrl = undefined;
-    
-    var orderType = undefined;
-    var listId = undefined;
+
+    var listKey = undefined;
+    var additionalParams = undefined;
     
     var startPage = 1; 
     var endPage = 1; 
@@ -51,12 +50,18 @@ var AjaxUserList = (function($)
             excludeList = params['excludeList'];
             contentNode = node;
             respunderUrl = params['respunderUrl'];
-            orderType = params['orderType'];
-            listId = params['listId'];
+            listKey = params['listKey'];
+            additionalParams = params['additionalParams'];
             
             if ( params['page'] )
             {
-                startPage = +params['page'];
+                startPage = params['page'];
+
+                if ( startPage < 1 )
+                {
+                    startPage = 1;
+                }
+
                 endPage = startPage;
                 
                 if ( startPage > 1 )
@@ -70,7 +75,7 @@ var AjaxUserList = (function($)
                 count = params['count'];
             }
             
-            prevLinkNode = $('.base_load_earlier_profiles');
+            prevLinkNode = $('.ow_user_list_load_earlier_profiles');
             prevLinkNode.find('a').click( function() { self.loadPrevious(); } );
             
             var timerId;
@@ -82,12 +87,12 @@ var AjaxUserList = (function($)
             });
             
             $(document).on('mouseover', '.ow_photo_item_wrap', function(event){
-                $(this).find('.ow_usearch_user_info').show();
+                $(this).find('.ow_user_list_user_info').show();
 
             });
             
             $(document).on('mouseout', '.ow_photo_item_wrap', function(event){
-                $(this).find('.ow_usearch_user_info').hide();
+                $(this).find('.ow_user_list_user_info').hide();
             });
         },
         
@@ -115,7 +120,6 @@ var AjaxUserList = (function($)
             }
 
             utils.setNextProsessStatus(true);
-            
             var ajaxOptions = {
                 
                 url: respunderUrl,
@@ -124,12 +128,11 @@ var AjaxUserList = (function($)
                 
                 data: {
                     command: 'getNext',
-                    listId: listId,
-                    orderType: orderType,
+                    listKey: listKey,
+                    additionalParams:additionalParams,
                     excludeList: excludeList,
                     count: count,
-                    startFrom: startPage,
-                    page: endPage + 1
+                    startFrom: endPage
                 },
                 
                 beforeSend: function()
@@ -186,12 +189,11 @@ var AjaxUserList = (function($)
                 
                 data: {
                     command: 'getPrev',
-                    listId: listId,
-                    orderType: orderType,
+                    listKey: listKey,
+                    additionalParams:additionalParams,
                     excludeList: excludeList,
                     count: count,
-                    startFrom: startPage - 1,
-                    page: startPage - 1
+                    startFrom: startPage - 1
                 },
                 
                 beforeSend: function()
@@ -283,7 +285,7 @@ var AjaxUserList = (function($)
         {
             var self = this;
             
-            var list = $('.base_search_result_page');
+            var list = $('.ow_user_list_page');
 
             list.sort(function( a, b ) {  
                 var p1 = $(a).data('page');
