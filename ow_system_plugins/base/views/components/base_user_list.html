@@ -1,5 +1,7 @@
 {if !empty($list)}
-    {* <div class="usearch_search_result_page ow_left" data-page="{$page}" style="width:100%;height:0px;"></div> *}
+    {if !empty($page) && $page > 0}
+        <div class="ow_user_list_page ow_left" data-page="{$page}" style="width:100%;height:0px;"></div>
+    {/if}
     {foreach from=$list item='dto' name='user_list'}
         {assign var='id' value=$dto->id}
 
@@ -12,11 +14,11 @@
                             {$vfield}
                         {/foreach}
 
-                        {* if !empty($bookmarkList.$id)}
+                        {if !empty($bookmarkList.$id)}
                             <div id="bookmark-user-{$id}" class="ow_ic_bookmark ow_bookmark_icon_ulist"></div>
-                        {/if *}
+                        {/if}
 
-                        <div class="ow_usearch_user_info" style="display:none;">
+                        <div class="ow_userlist_user_info" style="display:none;">
                             <div class="ow_photo_userlist_info">
                                 {foreach from=$fields[$id].hidden item="hfield"}
                                     {$hfield}

@@ -45,10 +45,12 @@ class BASE_CTRL_UserList extends OW_ActionController
     public function index( $params )
     {
         $listType = empty($params['list']) ? 'latest' : strtolower(trim($params['list']));
-        $this->addComponent('menu', self::getMenu($listType));
+        $mainMenuActiveItem = empty($params['activeMenu']) ? 'browse' : strtolower(trim($params['activeMenu']));
+        $this->addComponent('mainMenu', self::getMainMenu($mainMenuActiveItem));
+        $this->addComponent('menu', self::getMenu($listType, $mainMenuActiveItem));
 
         $page = (!empty($_GET['page']) && intval($_GET['page']) > 0 ) ? intval($_GET['page']) : 1;
-        list($list, $itemCount) = $this->getData($listType, (($page - 1) * $this->usersPerPage), $this->usersPerPage);
+        list($list, $itemCount) = $this->getData($listType, (($page - 1) * $this->usersPerPage), $this->usersPerPage, array(), $params);
 
         $userIdlist = array();
         foreach ( $list as $dto )
@@ -56,8 +58,12 @@ class BASE_CTRL_UserList extends OW_ActionController
             $userIdlist[$dto->id] = $dto->id;
         }
 
+        $page = (!empty($_GET['page']) && intval($_GET['page']) > 0 ) ? $_GET['page'] : 1;
+
         //$cmp = OW::getClassInstance("BASE_Members", $list, $itemCount, $this->usersPerPage, true, $listType);
-        $cmp = OW::getClassInstance("BASE_CMP_AdvancedUserList", 'base-'.$listType, $userIdlist, true);
+        //$cmp = OW::getClassInstance("BASE_CMP_AjaxBaseUserList", 'base-'.$listType, $userIdlist, $page, $this->usersPerPage, true, $params);
+
+        $cmp = OW::getClassInstance("BASE_CMP_PaginationBaseUserList", 'base-'.$listType, $userIdlist, $page, $itemCount, $this->usersPerPage, true, $params);
 
         $this->addComponent('cmp', $cmp);
 
@@ -83,12 +89,9 @@ class BASE_CTRL_UserList extends OW_ActionController
     {
         $this->setTemplate(OW::getPluginManager()->getPlugin('base')->getCtrlViewDir() . 'user_list_index.html');
 
-        $language = OW::getLanguage();
-
         $page = (!empty($_GET['page']) && intval($_GET['page']) > 0 ) ? $_GET['page'] : 1;
         list($list, $itemCount) = $this->getData('waiting-for-approval', (($page - 1) * $this->usersPerPage), $this->usersPerPage);
 
-        //$cmp = new BASE_Members($list, $itemCount, $this->usersPerPage, false, 'waiting-for-approval');
         $cmp = OW::getClassInstance("BASE_Members", $list, $itemCount, $this->usersPerPage, false, 'waiting-for-approval');
         
         $this->addComponent('cmp', $cmp);
@@ -96,52 +99,34 @@ class BASE_CTRL_UserList extends OW_ActionController
         $this->assign('listType', 'waiting-for-approval');
     }
 
-    private function getData( $listKey, $first, $count )
+    private function getData( $listKey, $first, $count, $excludeList = array(), $additionalParams = array() )
     {
         $service = BOL_UserService::getInstance();
-        return $service->getDataForUsersList($listKey, $first, $count);
+        return $service->getDataForUsersList($listKey, $first, $count, $excludeList, $additionalParams);
     }
 
-    public static function getMenu( $activeListType )
+    public static function getMainMenu($activeMenu = 'browse')
     {
         $language = OW::getLanguage();
 
         $menuArray = array(
             array(
-                'label' => $language->text('base', 'user_list_menu_item_latest'),
+                'label' => $language->text('base', 'user_list_main_menu_item_browse'),
                 'url' => OW::getRouter()->urlForRoute('base_user_lists', array('list' => 'latest')),
                 'iconClass' => 'ow_ic_clock',
-                'key' => 'latest',
+                'key' => 'browse',
                 'order' => 1
             ),
             array(
-                'label' => $language->text('base', 'user_list_menu_item_online'),
-                'url' => OW::getRouter()->urlForRoute('base_user_lists', array('list' => 'online')),
+                'label' => $language->text('base', 'user_list_main_menu_item_search'),
+                'url' => OW::getRouter()->urlForRoute('base_members_list', array('list' => 'online', 'activeMenu' => 'search')),
                 'iconClass' => 'ow_ic_push_pin',
-                'key' => 'online',
-                'order' => 3
-            ),
-            array(
-                'label' => $language->text('base', 'user_search_menu_item_label'),
-                'url' => OW::getRouter()->urlForRoute('users-search'),
-                'iconClass' => 'ow_ic_lens',
                 'key' => 'search',
-                'order' => 4
+                'order' => 2
             )
         );
 
-        if ( BOL_UserService::getInstance()->countFeatured() > 0 )
-        {
-            $menuArray[] =  array(
-                'label' => $language->text('base', 'user_list_menu_item_featured'),
-                'url' => OW::getRouter()->urlForRoute('base_user_lists', array('list' => 'featured')),
-                'iconClass' => 'ow_ic_push_pin',
-                'key' => 'featured',
-                'order' => 2
-            );
-        }
-
-        $event = new BASE_CLASS_EventCollector('base.add_user_list');
+        $event = new BASE_CLASS_EventCollector('base.add_user_list_main_menu');
         OW::getEventManager()->trigger($event);
         $data = $event->getData();
 
@@ -160,12 +145,87 @@ class BASE_CTRL_UserList extends OW_ActionController
             $menuItem->setUrl($item['url']);
             $menuItem->setKey($item['key']);
             $menuItem->setOrder(empty($item['order']) ? 999 : $item['order']);
-            $menu->addElement($menuItem);
+            $menuItem->setActive(false);
 
-            if ( $activeListType == $item['key'] )
+            if ( $activeMenu === $item['key'] )
             {
                 $menuItem->setActive(true);
             }
+
+            $menu->addElement($menuItem);
+        }
+
+        return $menu;
+    }
+
+    public static function getMenu( $activeListType, $mainMenuActiveKey = 'browse' )
+    {
+        $language = OW::getLanguage();
+
+        $menuArray = array(
+            array(
+                'mainKey' => 'browse',
+                'label' => $language->text('base', 'user_list_menu_item_latest'),
+                'url' => OW::getRouter()->urlForRoute('base_user_lists', array('list' => 'latest')),
+                'iconClass' => 'ow_ic_clock',
+                'key' => 'latest',
+                'order' => 1
+            ),
+            array(
+                'mainKey' => 'browse',
+                'label' => $language->text('base', 'user_list_menu_item_online'),
+                'url' => OW::getRouter()->urlForRoute('base_user_lists', array('list' => 'online')),
+                'iconClass' => 'ow_ic_push_pin',
+                'key' => 'online',
+                'order' => 3
+            ),
+            array(
+                'mainKey' => 'search',
+                'label' => $language->text('base', 'user_search_menu_item_label'),
+                'url' => OW::getRouter()->urlForRoute('users-search'),
+                'iconClass' => 'ow_ic_lens',
+                'key' => 'search',
+                'order' => 4
+            )
+        );
+
+        if ( BOL_UserService::getInstance()->countFeatured() > 0 )
+        {
+            $menuArray[] =  array(
+                'mainKey' => 'browse',
+                'label' => $language->text('base', 'user_list_menu_item_featured'),
+                'url' => OW::getRouter()->urlForRoute('base_user_lists', array('list' => 'featured')),
+                'iconClass' => 'ow_ic_push_pin',
+                'key' => 'featured',
+                'order' => 2
+            );
+        }
+
+        $event = new BASE_CLASS_EventCollector('base.add_user_list');
+        OW::getEventManager()->trigger($event);
+        $data = $event->getData();
+
+        if ( !empty($data) )
+        {
+            $menuArray = array_merge($menuArray, $data);
+        }
+
+        $menu = new BASE_CMP_SortControl();
+
+        $count = 0;
+
+        foreach ( $menuArray as $item )
+        {
+            if ( empty($item['mainKey']) && $mainMenuActiveKey == 'browse' || !empty($item['mainKey']) && $item['mainKey'] == $mainMenuActiveKey )
+            {
+                $menu->addItem(empty($item['order']) ? 999 : $item['order'], $item['label'], $item['url'], ($activeListType == $item['key']) );
+                $count++;
+            }
+        }
+
+        if ( $count == 0 )
+        {
+            $menu->setVisible(false);
         }
 
         return $menu;

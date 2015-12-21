@@ -1,8 +1,168 @@
+{style}
+.ow_user_list_photo_gallery_container { }
+.ow_view_mode_user_list_photo_gallery { float: right; }
+.ow_user_list_photo_gallery_item {
+float:left;
+width:25%;
+}
+.ow_user_list_photo_gallery_item_fix {
+position: relative;
+overflow: hidden;
+width:180px;
+height: 226px;
+margin:0px auto 20px auto;
+}
+.ow_user_list_avatar {
+width: 180px;
+height: 180px;
+position: relative;
+background-position: 0 0;
+background-repeat: no-repeat;
+background-size:cover;
+}
+
+.ow_user_list_avatar:hover {
+-moz-box-shadow: inset 0 0 200px #000;
+-webkit-box-shadow: inset 0 0 200px #000;
+box-shadow: inset 0 0 150px #000;
+}
+
+.ow_user_list_photo_gallery_avatar_shadow {
+height: 180px;
+display: block;
+}
+
+.ow_user_list_photo_gallery_info {
+display:none;
+color:#fff;
+}
+.ow_user_list_photo_gallery_info_name {
+margin:4px 0 0 7px;
+}
+
+.ow_user_list_photo_gallery_user_data {
+margin-top: 4px;
+}
+
+.ow_user_list_avatar:hover .ow_user_list_photo_gallery_info {
+display: block;
+position: absolute;
+top: 3px;
+left: 3px;
+}
+
+.ow_user_list_photo_gallery_activity {
+clear: left;
+}
+
+.ow_user_list_profile_details_item {
+padding: 6px;
+border-width: 1px;
+}
+.ow_user_list_profile_details_item .ow_user_list_avatar {
+float: left;
+width: 180px;
+margin-right:-180px;
+}
+.ow_user_list_profile_details_info {
+position: relative;
+height: 180px;
+overflow-y:hidden;
+margin-right: 151px;
+margin-left: 186px;
+}
+.ow_user_list_profile_details_info_name {
+margin-bottom: 4px;
+font-weight: bold;
+}
+.ow_user_list_profile_details_user_data {
+margin-bottom: 16px;
+}
+.ow_user_list_photo_gallery_user_data_gender {
+float: left;
+}
+
+.ow_user_list_profile_details_aboutme {
+max-height: 90px;
+padding:4px 7px;
+overflow: hidden;
+}
+.ow_user_list_profile_details_activity {
+position: absolute;
+bottom: 0px;
+}
+.ow_user_list_profile_details_action {
+float: right;
+width: 145px;
+height: 164px;
+padding: 8px 2px;
+}
+.ow_user_list_profile_details_action div {
+display: none;
+padding-bottom: 8px;
+}
+.ow_user_list_profile_details_item:hover .ow_user_list_profile_details_action div {
+display: block;
+}
+.ow_user_list_profile_details_action a {
+background-repeat: no-repeat;
+padding: 0px 0px 0px 22px;
+display: inline-block;
+line-height: 16px;
+}
+.ow_user_list_photo_gallery_item .ow_miniic_live { float: left; }
+.ow_miniic_live .ow_live_on {
+background-repeat:  no-repeat;
+}
+.ow_user_list_photo_gallery_item .ow_miniic_live .ow_lbutton,
+.ow_user_list_photo_gallery_item .ow_miniic_live .ow_live_on {
+vertical-align: top;
+margin-right: 0;
+}
+
+.ow_user_list__userlist_menu .ow_ulist_big_avatar_bookmark {
+	position: static;
+	display: block;
+}
+
+.ow_user_list_preloader_box
+{
+	width:100%;
+	margin-top: 15px;
+	margin-bottom: 15px;
+}
+
+.ow_user_list_photo_gallery_container .ow_context_action_block .ow_context_more
+{
+	visibility:hidden;
+}
+
+.ow_user_list__visuallyhidden {
+	opacity:0;
+	height: 0px;
+	overflow: hidden;
+}
+
+.ow_user_list__transition {
+	-webkit-transition:opacity .5s linear, height .5s linear;
+	transition:opacity .5s linear, height .5s linear;
+}
+
+.ow_user_list_preloader {
+	width: 100%;
+	height: 20px;
+}
+
+{/style}
+
+{if isset($mainMenu)}
+	{$mainMenu}
+{/if}
+
 {if isset($menu)}
 	{$menu}	
 {/if}
 
 {if !empty($listType)}{add_content key="base.content.user_list_top" listType=$listType}{/if}
-<div class="ow_search_results_photo_gallery_container ow_photo_list_wrap ow_photo_userlist">
-	{$cmp}
-</div>
+
+{$cmp}

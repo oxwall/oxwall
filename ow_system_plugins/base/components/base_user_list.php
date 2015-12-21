@@ -16,8 +16,9 @@
  * @package ow.ow_plugins.usearch.components
  * @since 1.5.3
  */
-class BASE_CMP_AdvancedUserList extends OW_Component
+class BASE_CMP_BaseUserList extends OW_Component
 {
+    const EVENT_COLLECT_USER_ACTIONS = 'base.user_list.collect_user_actions';
     const EVENT_GET_VISIBLE_FIELDS = "base.user_list.get_visible_fields";
     const EVENT_GET_HIDDEN_FIELDS = "base.user_list.get_hidden_fields";
 
@@ -26,12 +27,12 @@ class BASE_CMP_AdvancedUserList extends OW_Component
     protected $enableActions;
     protected $params;
 
-    public function __construct($listKey, $list, $actions = false, $aditionalParams = array())
+    public function __construct($listKey, $list, $actions = false, $additionalParams = array())
     {
         $this->listKey = $listKey;
         $this->items = $list;
         $this->enableActions = $actions;
-        $this->params = $aditionalParams;
+        $this->params = $additionalParams;
         parent::__construct();
     }
 
@@ -82,6 +83,7 @@ class BASE_CMP_AdvancedUserList extends OW_Component
         $service = BOL_UserService::getInstance();
 
         $displayNameList = $service->getDisplayNamesForList($userIdList);
+
         $onlineInfo = $this->getOnlineInfo($userIdList);
 
         foreach ( $userIdList as $id )
@@ -96,7 +98,6 @@ class BASE_CMP_AdvancedUserList extends OW_Component
             }
 
             if ( isset($displayNameList[$id]) ) {
-
                 $visible[$id]['displayName'] = "<b class=\"ow_usearch_display_name\">{$displayNameList[$id]}</b>";
             }
         }
@@ -104,7 +105,7 @@ class BASE_CMP_AdvancedUserList extends OW_Component
         $params = array(
             'list' => $this->listKey,
             'userIdList' => $userIdList,
-            'aditionalParams' => $this->params );
+            'additionalParams' => $this->params );
 
         // get visible fields
         $event = new OW_Event(self::EVENT_GET_VISIBLE_FIELDS, $params, $visible);
@@ -115,10 +116,10 @@ class BASE_CMP_AdvancedUserList extends OW_Component
         $event = new OW_Event( self::EVENT_GET_HIDDEN_FIELDS, $params, $hidden);
         OW::getEventManager()->trigger($event);
         $hidden = $event->getData();
-
+        printVar($hidden);
         foreach ( $userIdList as $id )
         {
-            $fields[$id] = array('visible' =>  !empty($visible[$id]) ? $visible[$id] : array(), 'hidden' => !empty($hidden[$id]) ? $hidden[$id] : array() );
+            $fields[$id] = array( 'visible' =>  !empty($visible[$id]) ? $visible[$id] : array(), 'hidden' => !empty($hidden[$id]) ? $hidden[$id] : array() );
         }
 
         return $fields;
@@ -153,45 +154,17 @@ class BASE_CMP_AdvancedUserList extends OW_Component
 
             $userList = $service->findUserListByIdList($idList);
 
-
-//            $onlineInfo = $service->findOnlineStatusForUserList($idList);
-//            $ownerIdList = array();
-//
-//            foreach ( $onlineInfo as $userId => $isOnline )
-//            {
-//                $ownerIdList[$userId] = $userId;
-//            }
-//
-//            $eventParams = array(
-//                'action' => 'base_view_my_presence_on_site',
-//                'ownerIdList' => $ownerIdList,
-//                'viewerId' => OW::getUser()->getId()
-//            );
-//
-//            $permissions = OW::getEventManager()->getInstance()->call('privacy_check_permission_for_user_list', $eventParams);
-//
-//            foreach ( $onlineInfo as $userId => $isOnline )
-//            {
-//                // Check privacy permissions
-//                if ( isset($permissions[$userId]['blocked']) && $permissions[$userId]['blocked'] == true )
-//                {
-//                    $showPresenceList[$userId] = false;
-//                    continue;
-//                }
-//
-//                $showPresenceList[$userId] = true;
-//            }
-
             if ( $this->enableActions )
             {
-                //$actions = USEARCH_CLASS_EventHandler::getInstance()->collectUserListActions($idList);
-                //$this->assign('actions', $actions);
+                $contextActionList = $this->prepareActionList($idList);
+                $this->assign('itemMenu', $contextActionList);
             }
 
             $this->assign('fields', $this->getFields($idList));
             $this->assign('usernameList', $userNameList);
             $this->assign('displayNameList', $displayNameList);
             $this->assign('avatars', $avatars);
+            $this->assign('page', !empty($this->params['page']) ? $this->params['page'] : 1 );
         }
 
         $this->assign('list', $userList);
@@ -202,5 +175,66 @@ class BASE_CMP_AdvancedUserList extends OW_Component
         parent::onBeforeRender();
 
         $this->process($this->items);
+    }
+
+    protected function collectUserListActions($userIdList)
+    {
+        if ( !OW::getUser()->isAuthenticated() || empty($userIdList) )
+        {
+            return null;
+        }
+
+        $event = new BASE_CLASS_EventCollector(self::EVENT_COLLECT_USER_ACTIONS, array('userIdList' => $userIdList));
+        OW::getEventManager()-> trigger($event);
+
+        return $event->getData();
+    }
+
+    protected function prepareActionList($idList)
+    {
+        $actions = $this->collectUserListActions($idList);
+
+        $contextActionList = array();
+
+        foreach ( $idList as $id )
+        {
+            foreach($actions as $order => $actionItem)
+            {
+                if ( empty($actionItem[$id]) )
+                {
+                    continue;
+                }
+
+                $contextAction = new BASE_CMP_ContextAction();
+
+                $contextParentAction = new BASE_ContextAction();
+                $contextParentAction->setKey('user_list_menu');
+                $contextParentAction->setClass('ow_user_list_actions_menu ow_newsfeed_context ');
+                $contextAction->addAction($contextParentAction);
+
+                $action = new BASE_ContextAction();
+                $action->setKey($actionItem[$id]['key']);
+                $action->setLabel($actionItem[$id]['label']);
+                $action->addAttribute('data-user-id', $id);
+                $action->setClass('ow_ulist_big_avatar_bookmark ow_base_bookmark download');
+                $action->setUrl('javascript://');
+                $action->setParentKey($contextParentAction->getKey());
+
+                if ( !empty($actionItem[$id]['attributes']) && is_array($actionItem[$id]['attributes']) )
+                {
+                    foreach ( $actionItem[$id]['attributes'] as $key => $value ) {
+                        $action->addAttribute($key, $value);
+                    }
+                }
+
+                $action->setOrder($order);
+
+                $contextAction->addAction($action);
+
+                $contextActionList[$id] = $contextAction->render();
+            }
+        }
+
+        return $contextActionList;
     }
 }

@@ -1,0 +1,12 @@
+
+{if !empty($page) && $page > 1}
+<div class="ow_fw_menu ow_center ow_user_list_load_earlier_profiles">
+    <a href="javascript://">{text key="usearch+load_earlier_profiles"}</a>
+</div>
+{/if}
+
+<div class="ow_user_list_photo_gallery_container ow_photo_list_wrap ow_photo_userlist">
+{if !empty($list)}
+    {$userList}
+{/if}
+</div>

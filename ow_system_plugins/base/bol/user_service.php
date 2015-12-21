@@ -376,9 +376,9 @@ final class BOL_UserService
         return $this->loginCookieDao->findByUserId($userId);
     }
 
-    public function findList( $first, $count, $isAdmin = false )
+    public function findList( $first, $count, $isAdmin = false, $excludeList = array() )
     {
-        return $this->userDao->findList($first, $count, $isAdmin);
+        return $this->userDao->findList($first, $count, $isAdmin, $excludeList);
     }
 
     public function findRecentlyActiveList( $first, $count, $isAdmin = false )
@@ -391,9 +391,9 @@ final class BOL_UserService
         return $this->userDao->getRecentlyActiveOrderedIdList($userIdList);
     }
 
-    public function findOnlineList( $first, $count )
+    public function findOnlineList( $first, $count, $excludeList = array() )
     {
-        $onlineList = $this->userDao->findOnlineList($first, $count);
+        $onlineList = $this->userDao->findOnlineList($first, $count, $excludeList);
         $list = array();
 
         $userIdList = array();
@@ -636,9 +636,9 @@ final class BOL_UserService
         return $blockList;
     }
 
-    public function findFeaturedList( $first, $count )
+    public function findFeaturedList( $first, $count, $excludeList = array() )
     {
-        return $this->userDao->findFeaturedList($first, $count);
+        return $this->userDao->findFeaturedList($first, $count, $excludeList);
     }
 
     public function countFeatured()
@@ -1098,9 +1098,9 @@ final class BOL_UserService
         return null === $this->approveDao->findByUserId($userId);
     }
 
-    public function findDisapprovedList( $first, $count )
+    public function findDisapprovedList( $first, $count, $excludeList = array() )
     {
-        return $this->userDao->findDisapprovedList($first, $count);
+        return $this->userDao->findDisapprovedList($first, $count, $excludeList);
     }
 
     public function countDisapproved()
@@ -1162,7 +1162,7 @@ final class BOL_UserService
         return $resultArray;
     }
 
-    public function findUserIdListByQuestionValues( $questionValues, $first, $count, $isAdmin = false, $aditionalParams = array() )
+    public function findUserIdListByQuestionValues( $questionValues, $first, $count, $isAdmin = false, $additionalParams = array() )
     {
         $first = (int) $first;
         $count = (int) $count;
@@ -1172,7 +1172,7 @@ final class BOL_UserService
             'first' => $first,
             'count' => $count,
             'isAdmin' => $isAdmin,
-            'aditionalParams' => $aditionalParams
+            'additionalParams' => $additionalParams
         );
 
         $event = new OW_Event("base.question.before_user_search", $data, $data);
@@ -1181,7 +1181,7 @@ final class BOL_UserService
 
         $data = $event->getData();
 
-        return $this->userDao->findUserIdListByQuestionValues($data['data'], $data['first'], $data['count'], $data['isAdmin'], $data['aditionalParams']);
+        return $this->userDao->findUserIdListByQuestionValues($data['data'], $data['first'], $data['count'], $data['isAdmin'], $data['additionalParams']);
     }
 
     public function findSearchResultList( $listId, $first, $count )
@@ -1518,32 +1518,31 @@ final class BOL_UserService
         $this->deleteResetCode($resetCode->getId());
     }
 
-    public function getDataForUsersList( $listKey, $first, $count )
+    public function getDataForUsersList( $listKey, $first, $count, $excludeList = array(), $additionalParams = array() )
     {
         switch ( $listKey )
         {
             case 'latest':
                 return array(
-                    $this->findList($first, $count),
+                    $this->findList($first, $count, false, $excludeList),
                     $this->count()
                 );
 
             case 'online':
                 return array(
-                    $this->findOnlineList($first, $count),
+                    $this->findOnlineList($first, $count, $excludeList),
                     $this->countOnline()
                 );
 
             case 'featured':
-
                 return array(
-                    $this->findFeaturedList($first, $count),
+                    $this->findFeaturedList($first, $count, $excludeList),
                     $this->countFeatured()
                 );
 
             case 'waiting-for-approval':
                 return array(
-                    $this->findDisapprovedList($first, $count),
+                    $this->findDisapprovedList($first, $count, $excludeList),
                     $this->countDisapproved()
                 );
 
@@ -1556,7 +1555,7 @@ final class BOL_UserService
                 {
                     if ( $value['key'] == $listKey )
                     {
-                        return call_user_func_array($value['dataProvider'], array($first, $count));
+                        return call_user_func_array($value['dataProvider'], array($first, $count, $excludeList, $additionalParams));
                     }
                 }
 

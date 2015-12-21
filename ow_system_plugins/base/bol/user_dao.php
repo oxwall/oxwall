@@ -208,13 +208,18 @@ class BOL_UserDao extends OW_BaseDao
         return $this->findObjectByExample($ex);
     }
 
-    public function findList( $first, $count, $admin = false )
+    public function findList( $first, $count, $admin = false, $excludeList = array() )
     {
         if ( $admin === true )
         {
             $ex = new OW_Example();
             $ex->setOrder('joinStamp DESC')
                 ->setLimitClause($first, $count);
+
+            if ( !empty($excludeList) )
+            {
+                $ex->andFieldNotInArray($excludeList);
+            }
 
             return $this->findListByExample($ex);
         }
@@ -223,11 +228,17 @@ class BOL_UserDao extends OW_BaseDao
             "method" => "BOL_UserDao::findList"
         ));
 
+        $where = "";
+        if ( !empty($excludeList) )
+        {
+            $where = (!empty($queryParts["where"]) ? " AND " : "") . " `u`. id NOT IN (". $this->dbo->mergeInClause($excludeList).") ";
+        }
+
         $query = "SELECT `u`.*
     		FROM `{$this->getTableName()}` as `u`
     		{$queryParts["join"]}
 
-            WHERE {$queryParts["where"]}
+            WHERE {$queryParts["where"]} {$where}
     		ORDER BY " . ( !empty($queryParts["order"]) ? $queryParts["order"] . ", " : "" ) . " `u`.`joinStamp` DESC
     		LIMIT ?,? ";
 
@@ -306,17 +317,23 @@ class BOL_UserDao extends OW_BaseDao
         return $this->dbo->queryForColumn($query, null, $cacheLifeTime, $tag);
     }
 
-    public function findFeaturedList( $first, $count )
+    public function findFeaturedList( $first, $count, $excludeList = array() )
     {
         $queryParts = $this->getUserQueryFilter("u", "id", array(
             "method" => "BOL_UserDao::findFeaturedList"
         ));
 
+        $where = "";
+        if ( !empty($excludeList) )
+        {
+            $where = (!empty($queryParts["where"]) ? " AND " : "") . " `u`. id NOT IN (". $this->dbo->mergeInClause($excludeList).") ";
+        }
+
         $query = "SELECT `u`.* FROM `{$this->getTableName()}` AS `u`
             {$queryParts["join"]}
             INNER JOIN `" . BOL_UserFeaturedDao::getInstance()->getTableName() . "` AS `f`
                 ON( `u`.`id` = `f`.`userId` )
-            WHERE {$queryParts["where"]}
+            WHERE {$queryParts["where"]} {$where}
             " . ( !empty($queryParts["order"]) ? " ORDER BY " . $queryParts["order"] : "" ) . "
             LIMIT ?,?";
 
@@ -354,17 +371,23 @@ class BOL_UserDao extends OW_BaseDao
         return $this->dbo->queryForColumn($query, null, $cacheLifeTime, $tag);
     }
 
-    public function findOnlineList( $first, $count )
+    public function findOnlineList( $first, $count, $excludeList = array() )
     {
         $queryParts = $this->getUserQueryFilter("u", "id", array(
             "method" => "BOL_UserDao::findOnlineList"
         ));
 
+        $where = "";
+        if ( !empty($excludeList) )
+        {
+            $where = (!empty($queryParts["where"]) ? " AND " : "") . " `u`. id NOT IN (". $this->dbo->mergeInClause($excludeList).") ";
+        }
+
         $query = "SELECT `u`.* FROM `{$this->getTableName()}` AS `u`
             {$queryParts["join"]}
             INNER JOIN `" . BOL_UserOnlineDao::getInstance()->getTableName() . "` AS `o`
                 ON(`u`.`id` = `o`.`userId`)
-            WHERE {$queryParts["where"]}
+            WHERE {$queryParts["where"]} {$where}
             ORDER BY " . ( !empty($queryParts["order"]) ? $queryParts["order"] . ", " : "" ) . " `o`.`activityStamp` DESC
             LIMIT ?, ?";
 
@@ -586,11 +609,17 @@ class BOL_UserDao extends OW_BaseDao
         return $this->findListByExample($ex);
     }
 
-    public function findDisapprovedList( $first, $count )
+    public function findDisapprovedList( $first, $count, $excludeList )
     {
+        $where = "";
+        if ( !empty($excludeList) )
+        {
+            $where = (!empty($queryParts["where"]) ? " AND " : "") . " `u`. id NOT IN (". $this->dbo->mergeInClause($excludeList).") ";
+        }
+
         $q = "SELECT `u`.* FROM `{$this->getTableName()}` as `u`
     		INNER JOIN `" . BOL_UserApproveDao::getInstance()->getTableName() . '` as `ud`
-    			ON(`u`.`id` = `ud`.`userId`)
+    			ON(`u`.`id` = `ud`.`userId`) {$where}
     		LIMIT ?, ?
     		';
 
@@ -616,9 +645,9 @@ class BOL_UserDao extends OW_BaseDao
         return $this->dbo->queryForColumnList($query);
     }
 
-    public function findUserListByQuestionValues( $questionValues, $first, $count, $isAdmin = false, $aditionalParams = array() )
+    public function findUserListByQuestionValues( $questionValues, $first, $count, $isAdmin = false, $additionalParams = array() )
     {
-        $userIdList = $this->findUserIdListByQuestionValues($questionValues, $first, $count, $isAdmin, $aditionalParams);
+        $userIdList = $this->findUserIdListByQuestionValues($questionValues, $first, $count, $isAdmin, $additionalParams);
 
         if ( count($userIdList) === 0 )
         {
@@ -631,7 +660,7 @@ class BOL_UserDao extends OW_BaseDao
         return $this->findListByExample($ex);
     }
 
-    public function countUsersByQuestionValues( $questionValues, $isAdmin = false, $aditionalParams = array() )
+    public function countUsersByQuestionValues( $questionValues, $isAdmin = false, $additionalParams = array() )
     {
         $questionNameList = array_keys($questionValues);
 
@@ -685,14 +714,14 @@ class BOL_UserDao extends OW_BaseDao
             }
         }
 
-        if ( !empty($aditionalParams['join']) )
+        if ( !empty($additionalParams['join']) )
         {
-            $innerJoin .= $aditionalParams['join'];
+            $innerJoin .= $additionalParams['join'];
         }
 
-        if ( !empty($aditionalParams['where']) )
+        if ( !empty($additionalParams['where']) )
         {
-            $where .= $aditionalParams['where'];
+            $where .= $additionalParams['where'];
         }
 
         if ( !empty($questionValues['accountType']) )
@@ -731,7 +760,7 @@ class BOL_UserDao extends OW_BaseDao
      *
      * @return BOL_User
      */
-    public function findUserIdListByQuestionValues( $questionValues, $first, $count, $isAdmin = false, $aditionalParams = array() )
+    public function findUserIdListByQuestionValues( $questionValues, $first, $count, $isAdmin = false, $additionalParams = array() )
     {
         $questionNameList = array_keys($questionValues);
 
@@ -784,14 +813,14 @@ class BOL_UserDao extends OW_BaseDao
             }
         }
 
-        if ( !empty($aditionalParams['join']) )
+        if ( !empty($additionalParams['join']) )
         {
-            $innerJoin .= $aditionalParams['join'];
+            $innerJoin .= $additionalParams['join'];
         }
 
-        if ( !empty($aditionalParams['where']) )
+        if ( !empty($additionalParams['where']) )
         {
-            $where = $aditionalParams['where'];
+            $where = $additionalParams['where'];
         }
 
         if ( !empty($questionValues['accountType']) )
@@ -805,9 +834,9 @@ class BOL_UserDao extends OW_BaseDao
 
         $order = '`user`.`activityStamp` DESC';
 
-        if ( !empty($aditionalParams['order']) )
+        if ( !empty($additionalParams['order']) )
         {
-            $order = $aditionalParams['order'];
+            $order = $additionalParams['order'];
         }
 
         $query = "SELECT DISTINCT `user`.id, `user`.`activityStamp` FROM `" . $this->getTableName() . "` `user`

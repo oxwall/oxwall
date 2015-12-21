@@ -48,8 +48,9 @@ $router->addRoute(new OW_Route('base_forgot_password', 'forgot-password', 'BASE_
 $router->addRoute(new OW_Route('base_sign_out', 'sign-out', 'BASE_CTRL_User', 'signOut'));
 $router->addRoute(new OW_Route('ajax-form', 'ajax-form', 'BASE_CTRL_AjaxForm', 'index'));
 
-$router->addRoute(new OW_Route('users', 'users', 'BASE_CTRL_UserList', 'index', array('list' => array(OW_Route::PARAM_OPTION_HIDDEN_VAR => 'latest'))));
-$router->addRoute(new OW_Route('base_user_lists', 'users/:list', 'BASE_CTRL_UserList', 'index'));
+$router->addRoute(new OW_Route('users', 'users', 'BASE_CTRL_UserList', 'index', array('list' => array(OW_Route::PARAM_OPTION_HIDDEN_VAR => 'latest', 'activeMenu' => array(OW_Route::PARAM_OPTION_HIDDEN_VAR => 'browse')))));
+$router->addRoute(new OW_Route('base_user_lists', 'users/:list', 'BASE_CTRL_UserList', 'index', array('activeMenu' => array(OW_Route::PARAM_OPTION_HIDDEN_VAR => 'browse'))));
+$router->addRoute(new OW_Route('base_members_list', 'users/:activeMenu/:list', 'BASE_CTRL_UserList', 'index'));
 
 $router->addRoute(new OW_Route('users-waiting-for-approval', 'users/waiting-for-approval', 'BASE_CTRL_UserList', 'forApproval'));
 
@@ -117,6 +118,10 @@ $router->addRoute(new OW_Route('base.complete_required_questions', 'fill/profile
 $router->addRoute(new OW_Route('base.moderation_flags', 'moderation/flags/:group', 'BASE_CTRL_Moderation', 'flags'));
 $router->addRoute(new OW_Route('base.moderation_flags_index', 'moderation/flags', 'BASE_CTRL_Moderation', 'flags'));
 $router->addRoute(new OW_Route('base.moderation_tools', 'moderation', 'BASE_CTRL_Moderation', 'index'));
+
+
+//ajax user list
+$router->addRoute(new OW_Route('base.ajax_user_list', 'ajax/user-list', 'BASE_CTRL_AjaxUserList', 'loadList'));
 
 
 OW_ViewRenderer::getInstance()->registerFunction('display_rate', array('BASE_CTRL_Rate', 'displayRate'));

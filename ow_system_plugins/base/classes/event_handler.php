@@ -1791,4 +1791,43 @@ class BASE_CLASS_EventHandler
             }
         }
     }
+
+    public function getUserListHiddenFields( OW_Event $event )
+    {
+        $params = $event->getParams();
+        $data = $event->getData();
+        $userIdList = !empty($params['userIdList']) ? $params['userIdList'] : array();
+
+        if ( empty($userIdList) )
+        {
+            return;
+        }
+
+        // get activity stamp
+        $dtoList = BOL_UserService::getInstance()->findUserListByIdList($userIdList);
+        $activityStamp = array();
+        foreach ( $dtoList as $dto )
+        {
+            /* @var $dto BOL_User */
+            $activityStamp[$dto->id] = $dto->activityStamp;
+        }
+
+        $onlineUsers = BOL_UserService::getInstance()->findOnlineStatusForUserList($userIdList);
+
+        $activityShowLimit = OW::getConfig()->getValue('usearch', 'hide_user_activity_after');
+        $activityShowLimit = time() - ((int)$activityShowLimit)*24*60*60;
+
+        foreach( $userIdList as $id ) {
+            if ( !empty($markList[$id]) ) {
+                if ( empty($onlineUsers[$id] && !empty($activityStamp[$id]) && $activityStamp[$id] > $activityShowLimit ) )
+                {
+                    $data[$id]['activityStamp'] = "<div class=\"ow_photo_userlist_info\">
+                        ".OW::getLanguage()->text('base', 'user_list_activity').": <span class=\"\">".UTIL_DateTime::formatDate($activityStamp[$id])."</span>
+                    </div>";
+                }
+            }
+        }
+
+        $event->setData($data);
+    }
 }

@@ -1,0 +1,18 @@
+{style}
+    div.ow_pagination_center {
+        text-align: center;
+        width:100%;
+    }
+{/style}
+
+<div class="ow_user_list_photo_gallery_container ow_photo_list_wrap ow_photo_userlist ow_smallmargin">
+{if !empty($list)}
+    {$userList}
+{/if}
+</div>
+
+<div class="ow_pagination_center clearfix ow_left">
+    {if !empty($pagination)}
+        {$pagination}
+    {/if}
+</div>
