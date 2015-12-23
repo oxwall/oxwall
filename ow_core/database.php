@@ -193,7 +193,7 @@ final class OW_Database
             $dsn .= "dbname={$params['dbname']}";
 
             $this->connection = new PDO($dsn, $params['username'], $params['password'],
-                array(PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES UTF8',
+                array(PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES UTF8; SET SESSION sql_mode = "TRADITIONAL";',
                 PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => true));
 
             if ( !$this->isMysqlValidVersion() )
