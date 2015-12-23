@@ -192,7 +192,7 @@ class OW_Application
             OW::getRouter()->addRoute(new OW_Route($value->getKey(), $value->getUri(), $staticPageDispatchAttrs['controller'], $staticPageDispatchAttrs['action'], array('documentKey' => array(OW_Route::PARAM_OPTION_HIDDEN_VAR => $value->getKey()))));
 
             // TODO refactor - hotfix for TOS page
-            if ( UTIL_String::removeFirstAndLastSlashes($value->getUri()) == 'terms-of-use' )
+            if ( in_array(UTIL_String::removeFirstAndLastSlashes($value->getUri()), array("terms-of-use", "privacy")) )
             {
                 OW::getRequestHandler()->addCatchAllRequestsExclude('base.members_only', $staticPageDispatchAttrs['controller'], $staticPageDispatchAttrs['action'], array('documentKey' => $value->getKey()));
             }
@@ -500,7 +500,7 @@ class OW_Application
      *
      * @var BOL_MenuItem
      */
-    private $indexMenuItem;
+    protected $indexMenuItem;
 
     public function activateMenuItem()
     {
@@ -867,6 +867,11 @@ class OW_Application
 
     protected function httpVsHttpsRedirect()
     {
+        if( OW::getRequest()->isAjax() )
+        {
+            return;
+        }
+
         $isSsl = OW::getRequest()->isSsl();
 
         if ( $isSsl === null )

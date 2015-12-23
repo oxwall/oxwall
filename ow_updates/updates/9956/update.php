@@ -22,38 +22,4 @@
  * which combines Covered Code or portions thereof with code not governed by the terms of the CPAL.
  */
 
-/**
- * Database log writer.
- *
- * @author Sardar Madumarov <madumarov@gmail.com>
- * @package ow_system_plugins.base.class
- * @since 1.0
- */
-class BASE_CLASS_PropertyEvent extends OW_Event
-{
-    protected $props;
-
-    /**
-     * Constructor.
-     */
-    public function __construct( $name, array $properties, array $params = array() )
-    {
-        parent::__construct($name, $params);
-        $this->props = $properties;
-    }
-
-    public function getProperties()
-    {
-        return $this->props;
-    }
-
-    public function getProperty( $name )
-    {
-        return array_key_exists($name, $this->props) ? $this->props[$name] : null;
-    }
-
-    public function setProperty( $name, $val )
-    {
-        $this->props[$name] = $val;
-    }
-}
+UPDATE_LanguageService::getInstance()->importPrefixFromZip(dirname(__FILE__) . DS . 'langs.zip', 'base');
