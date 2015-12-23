@@ -286,8 +286,6 @@ infiniteQuestionValuesField.prototype.construct = function(params){
 
     if ( params['value'] && !$.isEmptyObject(params['value']) )
     {
-        //self.value = params['value'];
-
         $.each(params['value'], function( key, item )
         {
             self.order.push(key);
@@ -299,6 +297,13 @@ infiniteQuestionValuesField.prototype.construct = function(params){
     {
         self.order = params['order'];
     }
+
+    self.valuesArea.off('click', '.remove').on( 'click', '.remove', function() {
+        if( confirm(OW.getLanguageText('admin', 'questions_edit_delete_value_confirm_message')) )
+        {
+            self.deleteValue($(this));
+        }
+    } );
 
     self.renderValues();
     self.sortable();
@@ -322,13 +327,20 @@ infiniteQuestionValuesField.prototype.setValue = function(values){
             }
         });
 
+        var max_index = 1;
+        if (Object.keys(self.value).length > 0)
+        {
+            max_index = Math.max.apply(null, (Object.keys(self.value).map(function(v){return parseInt(v);}))) + 1;
+        }
+
         $.each(valuesList, function( key, item )
         {
-            if ( self.value[item] == undefined && item != undefined )
+            var index = key + max_index;
+            if ( self.value[index] == undefined && item != undefined )
             {
-                self.value[key] = item;
-                addValues[key] = item;
-                self.order.push(key);
+                self.value[index] = item;
+                addValues[index] = item;
+                self.order.push(index);
             }
         });
 
@@ -337,6 +349,34 @@ infiniteQuestionValuesField.prototype.setValue = function(values){
         self.updateDataField();
     }
 };
+
+infiniteQuestionValuesField.prototype.deleteValue = function ( element )
+{
+    var self = this;
+    var div = element.parents("div.question_value_block:eq(0)");
+    var item = div.find( 'input[type=hidden]' ).val();
+
+    if ( item )
+    {
+        $.each(self.value, function (key, value){
+            if (value == item)
+            {
+                self.value[key] = undefined;
+            }
+        });
+
+        $.each(self.order, function ( key, value ) {
+            if ( value == item )
+            {
+                self.order[key] = undefined;
+            }
+        });
+    }
+
+    div.remove();
+    OW.trigger('question.value.delete', {value:item, node:self.tr});
+    self.updateDataField();
+}
 
 var QuestionFormModel = function( params )
 {
