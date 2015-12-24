@@ -532,6 +532,10 @@ class BOL_PluginService
         //remove entry in DB
         $this->deletePluginById($pluginDto->getId());
         $this->updatePluginListCache();
+
+        // trigger event
+        OW::getEventManager()->trigger(new OW_Event(OW_EventManager::ON_AFTER_PLUGIN_UNINSTALL,
+            array("pluginKey" => $pluginDto->getKey())));
     }
 
     /**

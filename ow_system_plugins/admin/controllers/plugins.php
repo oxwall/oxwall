@@ -331,9 +331,10 @@ class ADMIN_CTRL_Plugins extends ADMIN_CTRL_StorageAbstract
         OW::getEventManager()->trigger($event);
 
         $this->pluginService->deactivate($pluginDto->getKey());
-        OW::getFeedback()->info($language->text("admin", "manage_plugins_deactivate_success_message",
-                array("plugin" => $pluginDto->getTitle())));
-        $this->redirect(OW::getRouter()->urlForRoute("admin_plugins_installed"));
+        $event = new OW_Event(OW_EventManager::ON_AFTER_PLUGIN_DEACTIVATE, array('pluginKey' => $pluginDto->getKey()));
+        OW::getEventManager()->trigger($event);
+        OW::getFeedback()->info($language->text('admin', 'manage_plugins_deactivate_success_message', array('plugin' => $pluginDto->getTitle())));
+        $this->redirectToAction('index');
     }
 
     /**
