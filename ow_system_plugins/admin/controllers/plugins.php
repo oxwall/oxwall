@@ -349,6 +349,8 @@ class ADMIN_CTRL_Plugins extends ADMIN_CTRL_Abstract
         $event = new OW_Event(OW_EventManager::ON_BEFORE_PLUGIN_DEACTIVATE, array('pluginKey' => $pluginDto->getKey()));
         OW::getEventManager()->trigger($event);
         $this->pluginService->deactivate($pluginDto->getKey());
+        $event = new OW_Event(OW_EventManager::ON_AFTER_PLUGIN_DEACTIVATE, array('pluginKey' => $pluginDto->getKey()));
+        OW::getEventManager()->trigger($event);
         OW::getFeedback()->info($language->text('admin', 'manage_plugins_deactivate_success_message', array('plugin' => $pluginDto->getTitle())));
         $this->redirectToAction('index');
     }
