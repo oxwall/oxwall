@@ -29,7 +29,7 @@
  */
 class BOL_StorageService
 {
-    const UPDATE_SERVER = "https://storage.oxwall.org";
+    const UPDATE_SERVER = "https://storage.oxwall.org/"; 
     /* ---------------------------------------------------------------------- */
     const URI_CHECK_ITEMS_FOR_UPDATE = "get-items-update-info";
     const URI_GET_ITEM_INFO = "get-item-info";
@@ -118,7 +118,7 @@ class BOL_StorageService
             );
         }
 
-        //check all manual updates before reading builds in DB
+        //check all manual updates before reading builds in DB 
         $this->themeService->checkManualUpdates();
         $themes = $this->themeService->findAllThemes();
 
@@ -144,7 +144,7 @@ class BOL_StorageService
         if ( $response->getStatusCode() != UTIL_HttpClient::HTTP_STATUS_OK )
         {
             OW::getLogger()->addEntry(__CLASS__ . "::" . __METHOD__ . "#" . __LINE__ . " storage request status is not OK", "core.update");
-            
+
             return;
         }
 
@@ -158,7 +158,7 @@ class BOL_StorageService
         if ( empty($resultArray) || !is_array($resultArray) )
         {
             OW::getLogger()->addEntry(__CLASS__ . "::" . __METHOD__ . "#" . __LINE__ . " remote request returned empty result", "core.update");
-            
+
             return;
         }
 
@@ -211,7 +211,7 @@ class BOL_StorageService
     public function getPlatformInfoForUpdate()
     {
         $data = $this->triggerEventBeforeRequest();
-        
+
         return $this->requestGetResultAsJson($this->getStorageUrl(self::URI_GET_PLATFORM_INFO), $data);
     }
 
@@ -235,7 +235,7 @@ class BOL_StorageService
         $paramsObj->addParams($data);
         $response = UTIL_HttpClient::get($this->getStorageUrl(self::URI_DOWNLOAD_PLATFORM_ARCHIVE), $paramsObj);
 
-        if ( $response->getStatusCode() != UTIL_HttpClient::HTTP_STATUS_OK || empty($response->getBody()) )
+        if ( $response->getStatusCode() != UTIL_HttpClient::HTTP_STATUS_OK || !$response->getBody() )
         {
             throw new LogicException("Can't download file. Server returned empty file.");
         }
@@ -270,7 +270,7 @@ class BOL_StorageService
         $paramsObj->addParams($data);
         $response = UTIL_HttpClient::get($this->getStorageUrl(self::URI_DOWNLOAD_ITEM), $paramsObj);
 
-        if ( $response->getStatusCode() != UTIL_HttpClient::HTTP_STATUS_OK || empty($response->getBody()) )
+        if ( $response->getStatusCode() != UTIL_HttpClient::HTTP_STATUS_OK || !$response->getBody() )
         {
             throw new LogicException("Can't download file. Server returned empty file.");
         }
@@ -453,7 +453,7 @@ class BOL_StorageService
 
     private function getStorageUrl( $uri )
     {
-        return UTIL_String::removeFirstAndLastSlashes(self::UPDATE_SERVER) . "/" . UTIL_String::removeFirstAndLastSlashes($uri) . "/";
+        return self::UPDATE_SERVER . UTIL_String::removeFirstAndLastSlashes($uri) . "/";
     }
 
     private function triggerEventBeforeRequest( $params = array() )

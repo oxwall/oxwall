@@ -73,13 +73,18 @@ class UTIL_HttpClient
 
         return self::request("POST", $url, $options);
     }
-    /* --------------------------------------------------------------------- */
+    /* --------------------------------------------------------------------- */ 
 
     private static function getClient()
     {
         if ( self::$client == null )
         {
-            $handler = function_exists("curl_version") ? new CurlHandler() : new StreamHandler();
+            $handler = self::getHandler();
+
+			if( $handler == null )
+			{
+				throw new LogicException("Http client handlers are not available");
+			}
 
             self::$client = new Client(array(
                 "request.options" => array(
@@ -91,6 +96,21 @@ class UTIL_HttpClient
 
         return self::$client;
     }
+
+	private static function getHandler()
+	{
+		if( version_compare(PHP_VERSION, "5.5.0") >= 0 && function_exists("curl_version") )
+		{
+			return new CurlHandler();
+		}
+			
+		if( ini_get("allow_url_fopen") && extension_loaded("openssl") && in_array("https", stream_get_wrappers()) )
+		{
+			return new StreamHandler();
+		}
+		
+		return null;
+	}
 
     private static function request( $method, $url, array $options )
     {
