@@ -165,7 +165,7 @@ class ADMIN_CTRL_Themes extends ADMIN_CTRL_StorageAbstract
 
                 if ( !$result["result"] )
                 {
-                    $feedback->error($result["message"]);
+                    $this->feedback->error($result["message"]);
                     $this->redirect($router->urlForRoute("admin_themes_choose"));
                 }
 
@@ -176,7 +176,7 @@ class ADMIN_CTRL_Themes extends ADMIN_CTRL_StorageAbstract
 
                 if ( !move_uploaded_file($_FILES["file"]["tmp_name"], $tempFile) )
                 {
-                    $feedback->error($language->text("admin", "manage_theme_add_move_file_error"));
+                    $this->feedback->error($language->text("admin", "manage_theme_add_move_file_error"));
                     $this->redirect($router->urlForRoute("admin_themes_choose"));
                 }
 
@@ -189,7 +189,7 @@ class ADMIN_CTRL_Themes extends ADMIN_CTRL_StorageAbstract
                 }
                 else
                 {
-                    $feedback->error($language->text("admin", "manage_theme_add_extract_error"));
+                    $this->feedback->error($language->text("admin", "manage_theme_add_extract_error"));
                     $this->redirect($router->urlForRoute("admin_themes_choose"));
                 }
 
@@ -223,24 +223,24 @@ class ADMIN_CTRL_Themes extends ADMIN_CTRL_StorageAbstract
         {
             if ( basename($item) == BOL_ThemeService::THEME_XML )
             {
-                $localThemeRootPath = dirname($item) . DS;
+                $localThemeRootPath = dirname($item) . DS; 
             }
         }
 
         if ( $localThemeRootPath == null )
         {
-            $feedback->error($language->text("admin", "manage_theme_add_extract_error"));
+            $this->feedback->error($language->text("admin", "manage_theme_add_extract_error"));
             $this->redirect($router->urlForRoute('admin_themes_choose'));
         }
 
-        if ( file_exists($localThemeRootPath) )
+        $remoteDir = OW_DIR_THEME . basename($localThemeRootPath);
+
+		if ( file_exists($remoteDir) )
         {
             $this->feedback->error(OW::getLanguage()->text("admin", "theme_add_duplicated_dir_error",
-                    array("dir" => $localThemeRootPath)));
+                    array("dir" => $remoteDir)));
             $this->redirect($router->urlForRoute("admin_themes_choose"));
         }
-
-        $remoteDir = OW_DIR_THEME . basename($localThemeRootPath);
 
         $ftp = $this->getFtpConnection();
         $ftp->uploadDir($localThemeRootPath, $remoteDir);
