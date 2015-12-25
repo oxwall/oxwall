@@ -78,7 +78,7 @@ class ADMIN_CTRL_Theme extends ADMIN_CTRL_Abstract
 
     public function settings()
     {
-        $dto = $this->themeService->findThemeByName(OW::getConfig()->getValue('base', 'selectedTheme'));
+        $dto = $this->themeService->findThemeByKey(OW::getConfig()->getValue('base', 'selectedTheme'));
 
         if ( $dto === null )
         {
@@ -87,8 +87,8 @@ class ADMIN_CTRL_Theme extends ADMIN_CTRL_Abstract
 
         $assignArray = (array) json_decode($dto->getDescription());
 
-        $assignArray['iconUrl'] = $this->themeService->getStaticUrl($dto->getName()) . BOL_ThemeService::ICON_FILE;
-        $assignArray['name'] = $dto->getName();
+        $assignArray['iconUrl'] = $this->themeService->getStaticUrl($dto->getKey()) . BOL_ThemeService::ICON_FILE;
+        $assignArray['name'] = $dto->getKey();
         $assignArray['title'] = $dto->getTitle();
         $this->assign('themeInfo', $assignArray);
         $this->assign('resetUrl', OW::getRouter()->urlFor(__CLASS__, 'reset'));
@@ -127,7 +127,7 @@ class ADMIN_CTRL_Theme extends ADMIN_CTRL_Abstract
         {
             $css = isset($_POST['css']) ? trim($_POST['css']) : '';
 
-            $dto = $this->themeService->findThemeByName(OW::getConfig()->getValue('base', 'selectedTheme'));
+            $dto = $this->themeService->findThemeByKey(OW::getConfig()->getValue('base', 'selectedTheme'));
             $dto->setCustomCss($css);
             $this->themeService->saveTheme($dto);
             $this->themeService->updateCustomCssFile($dto->getId());
@@ -191,8 +191,7 @@ class ADMIN_CTRL_Theme extends ADMIN_CTRL_Abstract
         $this->assign('confirmMessage', OW::getLanguage()->text('admin', 'theme_graphics_image_delete_confirm_message'));
 
         $cmp = OW::getClassInstance('ADMIN_CMP_UploadedFileList');
-        $event = new OW_Event('admin.init_floatbox', array('layout' => 'floatbox'));
-        OW::getEventManager()->trigger($event);
+        $this->initFloatbox(array('layout' => 'floatbox'));
         $this->addComponent('filelist', $cmp);
 
         if ( OW::getRequest()->isPost() )
@@ -454,7 +453,7 @@ class ADMIN_CTRL_Theme extends ADMIN_CTRL_Abstract
 
     public function reset()
     {
-        $dto = $this->themeService->findThemeByName(OW::getConfig()->getValue('base', 'selectedTheme'));
+        $dto = $this->themeService->findThemeByKey(OW::getConfig()->getValue('base', 'selectedTheme'));
         $this->themeService->resetTheme($dto->getId());
         $this->redirect(OW::getRouter()->urlForRoute('admin_themes_edit'));
     }
@@ -492,6 +491,71 @@ class ADMIN_CTRL_Theme extends ADMIN_CTRL_Abstract
         );
     }
 
+    private function initFloatbox( $params )
+    {
+        static $isInitialized = false;
+
+        if ( $isInitialized )
+        {
+            return;
+        }
+
+        $layout = (!empty($params['layout']) && in_array($params['layout'], array('page', 'floatbox'))) ? $params['layout'] : 'floatbox';
+
+        $document = OW::getDocument();
+        $basePlugin = OW::getPluginManager()->getPlugin('base');
+
+        $document->addStyleSheet($basePlugin->getStaticCssUrl() . 'photo_floatbox.css');
+        $document->addScript($basePlugin->getStaticJsUrl() . 'jquery-ui.min.js');
+        $document->addScript($basePlugin->getStaticJsUrl() . 'slider.min.js', 'text/javascript', 1000000);
+        $document->addScript($basePlugin->getStaticJsUrl() . 'photo.js');
+
+        $language = OW::getLanguage();
+
+        $language->addKeyForJs('admin', 'tb_edit_photo');
+        $language->addKeyForJs('admin', 'confirm_delete');
+        $language->addKeyForJs('admin', 'mark_featured');
+        $language->addKeyForJs('admin', 'remove_from_featured');
+        $language->addKeyForJs('admin', 'rating_total');
+        $language->addKeyForJs('admin', 'rating_your');
+        $language->addKeyForJs('admin', 'of');
+        $language->addKeyForJs('admin', 'album');
+        $language->addKeyForJs('base', 'rate_cmp_owner_cant_rate_error_message');
+        $language->addKeyForJs('base', 'rate_cmp_auth_error_message');
+        $language->addKeyForJs('admin', 'slideshow_interval');
+        $language->addKeyForJs('admin', 'pending_approval');
+
+        $document->addScriptDeclarationBeforeIncludes(
+            UTIL_JsGenerator::composeJsString('
+                ;window.photoViewParams = Object.defineProperties({}, {
+                    ajaxResponder:{value: {$ajaxResponder}, enumerable: true},
+                    rateUserId: {value: {$rateUserId}, enumerable: true},
+                    layout: {value: {$layout}, enumerable: true},
+                    isClassic: {value: {$isClassic}, enumerable: true},
+                    urlHome: {value: {$urlHome}, enumerable: true},
+                    isDisabled: {value: {$isDisabled}, enumerable: true},
+                    isEnableFullscreen: {value: {$isEnableFullscreen}, enumerable: true}
+                });', array(
+                    'ajaxResponder' => OW::getRouter()->urlFor('ADMIN_CTRL_Theme', 'ajaxResponder'),
+                    'rateUserId' => OW::getUser()->getId(),
+                    'layout' => $layout,
+                    'isClassic' => false,
+                    'urlHome' => OW_URL_HOME,
+                    'isDisabled' => false,
+                    'isEnableFullscreen' => true
+                )
+            )
+        );
+
+        $document->addOnloadScript(';window.photoView.init();');
+
+        $cmp = new ADMIN_CMP_UploadedFilesFloatbox($layout);
+        $document->appendBody($cmp->render());
+
+        $isInitialized = true;
+    }
+
+
 }
 
 class UploadGraphicsForm extends Form
@@ -517,7 +581,7 @@ class AddCssForm extends Form
         parent::__construct('add-css');
 
         $text = new Textarea('css');
-        $dto = BOL_ThemeService::getInstance()->findThemeByName(OW::getConfig()->getValue('base', 'selectedTheme'));
+        $dto = BOL_ThemeService::getInstance()->findThemeByKey(OW::getConfig()->getValue('base', 'selectedTheme'));
         $text->setValue($dto->getCustomCss());
         $this->addElement($text);
 

@@ -21,131 +21,99 @@
  * Display of Attribution Information is required in Larger Works which are defined in the CPAL as a work
  * which combines Covered Code or portions thereof with code not governed by the terms of the CPAL.
  */
+use GuzzleHttp\RequestOptions;
 
 /**
  * @author Sardar Madumarov <madumarov@gmail.com>
- * @package ow_system_plugins.base.bol
- * @since 1.0
+ * @package ow_utilities
+ * @since 1.8.1
  */
-class BOL_Plugin extends BOL_StoreItem
+class UTIL_HttpClientParams
 {
     /**
-     * @var string
+     * @var array
      */
-    public $module;
+    private $options = array("params" => array());
 
-    /**
-     * @var boolean
-     */
-    public $isSystem;
-
-    /**
-     * @var boolean
-     */
-    public $isActive;
-
-    /**
-     * @var string
-     */
-    public $adminSettingsRoute;
-
-    /**
-     * @var string
-     */
-    public $uninstallRoute;
-
-    /**
-     * @return boolean
-     */
-    public function isActive()
+    public function __construct()
     {
-        return (bool) $this->isActive;
+        
     }
 
     /**
-     * @return boolean
+     * @param bool $allowRedirects
      */
-    public function isSystem()
+    public function setAllowRedirects( $allowRedirects )
     {
-        return (bool) $this->isSystem;
+        $this->options[RequestOptions::ALLOW_REDIRECTS] = (bool) $allowRedirects;
     }
 
     /**
-     * @return string
+     * @param int $timeout
      */
-    public function getModule()
+    public function setTimeout( $timeout )
     {
-        return $this->module;
+        $this->options[RequestOptions::CONNECT_TIMEOUT] = (int) $timeout;
     }
 
     /**
-     * @param boolean $isActive
-     * @return BOL_Plugin
+     * @param string $headerName
+     * @param string $headerVal
      */
-    public function setIsActive( $isActive )
+    public function setHeader( $headerName, $headerVal )
     {
-        $this->isActive = (boolean) $isActive;
+        if ( array_key_exists(RequestOptions::HEADERS, $this->options) )
+        {
+            $this->options[RequestOptions::HEADERS] = array();
+        }
 
-        return $this;
+        $this->options[RequestOptions::HEADERS][trim($headerName)] = trim($headerVal);
     }
 
     /**
-     * @param string $module
-     * @return BOL_Plugin
+     * @param array $headers
      */
-    public function setModule( $module )
+    public function setHeaders( array $headers )
     {
-        $this->module = trim($module);
-
-        return $this;
+        foreach ( $headers as $name => $val )
+        {
+            $this->setHeader($name, $val);
+        }
     }
 
     /**
-     * @param boolean $isSystem
-     * @return BOL_Plugin
+     * @param string $body
      */
-    public function setIsSystem( $isSystem )
+    public function setBody( $body )
     {
-        $this->isSystem = $isSystem;
-
-        return $this;
+        $this->options[RequestOptions::BODY] = trim($body);
     }
 
     /**
-     * @return string
+     * @return array
      */
-    public function getAdminSettingsRoute()
+    public function getOptions()
     {
-        return $this->adminSettingsRoute;
+        return $this->options;
     }
 
     /**
-     * @param string $adminSettingsRoute
-     * @return BOL_Plugin
+     * @param string $name
+     * @param string $val
      */
-    public function setAdminSettingsRoute( $adminSettingsRoute )
+    public function addParam( $name, $val )
     {
-        $this->adminSettingsRoute = $adminSettingsRoute;
-
-        return $this;
+        $this->options["params"][trim($name)] = trim($val);
     }
 
     /**
-     * @return string
+     * @param array $params
      */
-    public function getUninstallRoute()
+    public function addParams( array $params )
     {
-        return $this->uninstallRoute;
-    }
-
-    /**
-     * @param string $uninstallRoute
-     * @return BOL_Plugin
-     */
-    public function setUninstallRoute( $uninstallRoute )
-    {
-        $this->uninstallRoute = $uninstallRoute;
-
-        return $this;
+        foreach ( $params as $name => $val )
+        {
+            $this->addParam($name, $val);
+        }
     }
 }
