@@ -79,7 +79,7 @@ class BOL_PluginService
     }
 
     public function readPluginsList()
-    {        
+    {
         $this->pluginDaoCache = $this->pluginDao->findAll();
     }
 
@@ -321,7 +321,7 @@ class BOL_PluginService
         );
 
         $context = stream_context_create($options);
-        
+
         $resultArray = json_decode(file_get_contents($requestUrl, false, $context), true);
 
         if ( empty($resultArray) || !is_array($resultArray) )
@@ -557,12 +557,12 @@ class BOL_PluginService
 
         include_once OW_DIR_PLUGIN . $pluginDto->getModule() . DS . 'install.php';
         include_once OW_DIR_PLUGIN . $pluginDto->getModule() . DS . 'activate.php';
-        
+
         if ( $generateCache )
         {
             BOL_LanguageService::getInstance()->generateCacheForAllActiveLanguages();
         }
-        
+
         // trigger event
         $event = new OW_Event(OW_EventManager::ON_AFTER_PLUGIN_INSTALL, array('pluginKey' => $pluginDto->getKey()));
         OW::getEventManager()->trigger($event);
@@ -650,6 +650,10 @@ class BOL_PluginService
 
         //remove entry in DB
         $this->deletePluginById($pluginDto->getId());
+
+        // trigger event
+        $event = new OW_Event(OW_EventManager::ON_AFTER_PLUGIN_UNINSTALL, array('pluginKey' => $pluginDto->getKey()));
+        OW::getEventManager()->trigger($event);
     }
 
     public function activate( $key )
@@ -784,7 +788,8 @@ class BOL_PluginService
     public function getPluginObject( BOL_Plugin $dto )
     {
         return $dto->isSystem ?
-            new OW_SystemPlugin(array('dir_name' => $dto->getModule(), 'key' => $dto->getKey(), 'active' => $dto->isActive(), 'dto' => $dto)) :
+            new OW_SystemPlugin(array('dir_name' => $dto->getModule(), 'key' => $dto->getKey(), 'active' => $dto->isActive(),
+            'dto' => $dto)) :
             new OW_Plugin(array('dir_name' => $dto->getModule(), 'key' => $dto->getKey(), 'active' => $dto->isActive(), 'dto' => $dto));
     }
 }
