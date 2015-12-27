@@ -538,7 +538,7 @@ class BOL_StorageService
             else if ( $item->getLicenseCheckTimestamp() != null && $item->getLicenseCheckTimestamp() > 0 )
             {
                 $item->setLicenseCheckTimestamp(null);
-                $this->pluginService->savePlugin($item);
+                $this->saveStoreItem($item);
             }
         }
 
