@@ -54,6 +54,8 @@ if ($langId !== null)
         'Add unlimited number of values. Field values are stored regularly, which might affects the speed of profiles search.');
     $languageService->addOrUpdateValue($langId, 'admin', 'questions_infinite_possible_values_label',
         'Possible values');
+    $languageService->addOrUpdateValue($langId, 'admin', 'questions_values_should_not_be_empty',
+        'The value should not be empty');
 
 }
 

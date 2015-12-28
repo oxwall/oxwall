@@ -321,9 +321,13 @@ infiniteQuestionValuesField.prototype.setValue = function(values){
 
         $.each(list, function( key, item )
         {
-            if ( item != undefined )
+            if ( item != undefined && item.trim() != '' )
             {
                 valuesList.push(item);
+            }
+            else
+            {
+                OW.error(OW.getLanguageText('admin', 'questions_values_should_not_be_empty'));
             }
         });
 
