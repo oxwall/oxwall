@@ -23,7 +23,7 @@
              <span class="ow_plugin_controls">
                     {if !empty($plugin.license_url)}<a class="ow_lbutton ow_green" href="{$plugin.license_url}">{text key='admin+manage_plugins_add_license_label'}</a>{/if}
                     {if $plugin.update_url}<a class="ow_lbutton ow_green" href="{$plugin.update_url}">{text key='admin+manage_plugins_update_button_label'}</a>{/if}
-                    {if $plugin.set_url}<a class="ow_lbutton" href="{$plugin.set_url}">{text key='admin+manage_plugins_settings_button_label'}</a>{/if}
+                    {if $plugin.set_url && empty($plugin.license_url)}<a class="ow_lbutton" href="{$plugin.set_url}">{text key='admin+manage_plugins_settings_button_label'}</a>{/if}
                     <a class="ow_lbutton ow_red" href="{$plugin.deact_url}">{text key='admin+manage_plugins_deactivate_button_label'}</a>
                     {if $plugin.un_url}<a class="ow_lbutton ow_red" href="{$plugin.un_url}">{text key='admin+manage_plugins_uninstall_button_label'}</a>{/if}
                 </span>
@@ -42,8 +42,10 @@
          </td>
          <td class="ow_small" style="text-align:right;width:235px;vertical-align:middle;">
              <span class="ow_plugin_controls">
-                 {if !empty($plugin.license_url)}<a class="ow_lbutton ow_red" href="{$plugin.license_url}">{text key='admin+manage_plugins_add_license_label'}</a>{/if}
+                 {if !empty($plugin.license_url)}<a class="ow_lbutton ow_red" href="{$plugin.license_url}">{text key='admin+manage_plugins_add_license_label'}</a>
+                 {else}    
                 <a class="ow_lbutton ow_green" href="{$plugin.active_url}">{text key='admin+manage_plugins_activate_button_label'}</a>
+                {/if}
              </span>
          </td>
       </tr>

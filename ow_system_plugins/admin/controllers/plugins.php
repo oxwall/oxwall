@@ -333,7 +333,8 @@ class ADMIN_CTRL_Plugins extends ADMIN_CTRL_StorageAbstract
         $this->pluginService->deactivate($pluginDto->getKey());
         $event = new OW_Event(OW_EventManager::ON_AFTER_PLUGIN_DEACTIVATE, array('pluginKey' => $pluginDto->getKey()));
         OW::getEventManager()->trigger($event);
-        OW::getFeedback()->info($language->text('admin', 'manage_plugins_deactivate_success_message', array('plugin' => $pluginDto->getTitle())));
+        OW::getFeedback()->info($language->text('admin', 'manage_plugins_deactivate_success_message',
+                array('plugin' => $pluginDto->getTitle())));
         $this->redirectToAction('index');
     }
 
@@ -346,15 +347,30 @@ class ADMIN_CTRL_Plugins extends ADMIN_CTRL_StorageAbstract
     {
         $pluginDto = $this->getPluginDtoByKeyInParamsArray($params);
         $language = OW::getLanguage();
+        $urlRedirect = OW::getRouter()->urlForRoute("admin_plugins_installed");
+
+        $invalidItems = $this->pluginService->findPluginsWithInvalidLicense();
+
+        /* @var $item BOL_Plugin */
+        foreach ( $invalidItems as $item )
+        {
+            if ( $item->getKey() == $pluginDto->getKey() )
+            {
+                OW::getFeedback()->error($language->text("admin",
+                        "manage_plugins_cant_activate_item_with_invalid_license"));
+                $this->redirect($urlRedirect);
+            }
+        }
+
         $this->pluginService->activate($pluginDto->getKey());
 
         // trigger event
         $event = new OW_Event(OW_EventManager::ON_AFTER_PLUGIN_ACTIVATE, array("pluginKey" => $pluginDto->getKey()));
         OW::getEventManager()->trigger($event);
 
-        OW::getFeedback()->info(OW::getLanguage()->text("admin", "manage_plugins_activate_success_message",
+        OW::getFeedback()->info($language->text("admin", "manage_plugins_activate_success_message",
                 array("plugin" => $pluginDto->getTitle())));
-        $this->redirect(OW::getRouter()->urlForRoute("admin_plugins_installed"));
+        $this->redirect($urlRedirect);
     }
 
     /**
