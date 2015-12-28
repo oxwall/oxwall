@@ -228,6 +228,7 @@ class ADMIN_CTRL_Questions extends ADMIN_CTRL_Abstract
 
         OW::getLanguage()->addKeyForJs('admin', 'questions_edit_profile_question_title');
         OW::getLanguage()->addKeyForJs('admin', 'questions_add_profile_question_title');
+        OW::getLanguage()->addKeyForJs('admin', 'questions_values_should_not_be_empty');
     }
 
     public function accountTypes( $params = array() )
@@ -415,6 +416,8 @@ class ADMIN_CTRL_Questions extends ADMIN_CTRL_Abstract
         OW::getLanguage()->addKeyForJs('admin', 'questions_account_type_added_error');
 
         OW::getLanguage()->addKeyForJs('admin', 'questions_delete_account_type_confirmation');
+
+        OW::getLanguage()->addKeyForJs('admin', 'questions_values_should_not_be_empty');
 
         $contextAction = new BASE_CMP_ContextAction();
 
