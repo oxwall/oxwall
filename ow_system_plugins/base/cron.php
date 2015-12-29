@@ -98,7 +98,7 @@ class BASE_Cron extends OW_Cron
 
     public function checkPluginUpdates()
     {
-        BOL_PluginService::getInstance()->checkUpdates();
+        BOL_StorageService::getInstance()->checkUpdates();
     }
 
     public function deleteExpiredPasswordResetCodes()

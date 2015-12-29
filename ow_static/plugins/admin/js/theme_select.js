@@ -38,6 +38,13 @@ var ThemesSelect = function(themeList, addData)
             } else {
                 $btn.closest('.dlt_btn').hide();
             }
+            
+            if (e.data.data.license_url) {
+                $('.lsn_btn input').click(function(){window.location.replace(e.data.data.license_url);});
+                $('.lsn_btn').show();
+            } else {
+                $('.lsn_btn').hide();
+            }
 
             if (e.data.data.active) {
                 $btn.click(activeThemeMsg);

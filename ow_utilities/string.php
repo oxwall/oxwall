@@ -146,56 +146,81 @@ class UTIL_String
     {
         return self::getRandomString($length, $strength);
     }
+    const RND_STR_NUMERIC = 1;
+    const RND_STR_ALPHA_NUMERIC = 2;
+    const RND_STR_ALPHA_WITH_CAPS_NUMERIC = 3;
+    const RND_STR_ALPHA_WITH_CAPS_NUMERIC_SPEC = 4;
 
     /**
+     * Returns random string of provided length and strength.
+     * 
+     * @since 1.8.1
+     * @param string $prefix
      * @param int $length
      * @param int $strength
      * @return string
      */
-    public static function getRandomString( $length = 8, $strength = 3 )
+    public static function getRandomStringWithPrefix( $prefix, $length = 8, $strength = self::RND_STR_ALPHA_WITH_CAPS_NUMERIC )
     {
-        list($usec, $sec) = explode(' ', microtime());
+        return $prefix . self::getRandomString($length, $strength);
+    }
+
+    /**
+     * Returns random string of provided length and strength.
+     * 
+     * @since 1.7
+     * @param int $length
+     * @param int $strength
+     * @return string
+     */
+    public static function getRandomString( $length = 8, $strength = self::RND_STR_ALPHA_WITH_CAPS_NUMERIC )
+    {
+        list($usec, $sec) = explode(" ", microtime());
         $seed = (float) $sec + ((float) $usec * 100000);
 
         srand($seed);
 
-        $vowels = 'aeuy';
-        $consonants = 'bdghjmnpqrstvz';
+        $chars1 = "1234";
+        $chars2 = "56789";
 
         if ( $strength > 1 )
         {
-            $vowels .= 'AEUY';
-            $consonants .= 'BDGHJLMNPQRSTVWXZ';
+            $chars1 .= "aeiouy";
+            $chars2 .= "bdghjklmnpqrstvwxz";
         }
 
         if ( $strength > 2 )
         {
-            $consonants .= '23456789';
+            $chars1 .= "AEIOUY";
+            $chars2 .= "BDGHJKLMNPQRSTVWXZ";
         }
 
         if ( $strength > 3 )
         {
-            $consonants .= '@#$%';
+            $chars1 .= "@#";
+            $chars2 .= "$%";
         }
 
-        $password = '';
+        $rndString = "";
         $alt = time() % 2;
+        $chars1Length = strlen($chars1);
+        $chars2Length = strlen($chars2);
 
         for ( $i = 0; $i < $length; $i++ )
         {
             if ( $alt === 1 )
             {
-                $password .= $consonants[(rand() % strlen($consonants))];
+                $rndString .= $chars2[(rand() % $chars2Length)];
                 $alt = 0;
             }
             else
             {
-                $password .= $vowels[(rand() % strlen($vowels))];
+                $rndString .= $chars1[(rand() % $chars1Length)];
                 $alt = 1;
             }
         }
 
-        return $password;
+        return $rndString;
     }
 
     public static function truncate( $string, $length, $ending = null )
@@ -240,7 +265,14 @@ class UTIL_String
      */
     public static function xmlToArray( $xmlString )
     {
-        return self::processXmlObject(simplexml_load_string($xmlString));
+        $xml = simplexml_load_string($xmlString);
+
+        if ( !$xml )
+        {
+            return false;
+        }
+
+        return self::processXmlObject($xml);
     }
 
     private static function processXmlObject( SimpleXMLElement $el )

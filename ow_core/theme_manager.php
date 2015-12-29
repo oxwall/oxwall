@@ -83,9 +83,9 @@ final class OW_ThemeManager
 
     public function initDefaultTheme( $mobile = false )
     {
-        $defaultTheme = $this->themeService->getThemeObjectByName(BOL_ThemeService::DEFAULT_THEME, $mobile);
+        $defaultTheme = $this->themeService->getThemeObjectByKey(BOL_ThemeService::DEFAULT_THEME, $mobile);
         $this->themeObjects[self::DEFAULT_THEME] = $defaultTheme;
-        $this->themeObjects[$defaultTheme->getDto()->getName()] = $defaultTheme;
+        $this->themeObjects[$defaultTheme->getDto()->getKey()] = $defaultTheme;
         $this->themeObjects[self::CURRENT_THEME] = $defaultTheme;
     }
 
@@ -110,7 +110,7 @@ final class OW_ThemeManager
 
         if ( empty($this->themeObjects[$selectedTheme]) )
         {
-            $this->themeObjects[$selectedTheme] = $this->themeService->getThemeObjectByName(OW::getConfig()->getValue('base', 'selectedTheme'));
+            $this->themeObjects[$selectedTheme] = $this->themeService->getThemeObjectByKey(OW::getConfig()->getValue('base', 'selectedTheme'));
         }
 
         return $this->themeObjects[$selectedTheme];
@@ -138,7 +138,7 @@ final class OW_ThemeManager
             return;
         }
         $this->themeObjects[self::CURRENT_THEME] = $theme;
-        $this->themeObjects[$theme->getDto()->getName()] = $theme;
+        $this->themeObjects[$theme->getDto()->getKey()] = $theme;
     }
 
     /**

@@ -117,16 +117,16 @@ class UTIL_Ftp
             $rootPath = "";
 
             $dirRootPathArr = array_filter(explode(DS, OW_DIR_ROOT));
-			array_unshift($dirRootPathArr, "");
-			
+            array_unshift($dirRootPathArr, "");
+
             foreach ( $dirRootPathArr as $pathItem )
             {
-				$rootPath .= $pathItem . DS;
+                $rootPath .= $pathItem . DS;
 
                 if ( file_exists($rootPath . $dirname) )
                 {
                     $this->ftpRootDir = $rootPath;
-                    
+
                     ftp_rmdir($this->stream, $dirname);
                     return;
                 }
@@ -474,7 +474,10 @@ class UTIL_Ftp
             return $path;
         }
 
-        $path = substr($path, strlen($this->ftpRootDir));
+        if ( strlen($path) != strlen($this->ftpRootDir) )
+        {
+            $path = substr($path, strlen($this->ftpRootDir));
+        }
 
         return $path;
     }

@@ -157,7 +157,7 @@ class OW_Theme
      */
     public function getStaticDir( $mobile = false )
     {
-        return $this->themeService->getStaticDir($this->dto->getName(), $mobile);
+        return $this->themeService->getStaticDir($this->dto->getKey(), $mobile);
     }
 
     /**
@@ -167,7 +167,7 @@ class OW_Theme
      */
     public function getStaticUrl( $mobile = false )
     {
-        return $this->themeService->getStaticUrl($this->dto->getName(), $mobile);
+        return $this->themeService->getStaticUrl($this->dto->getKey(), $mobile);
     }
 
     /**
@@ -177,7 +177,7 @@ class OW_Theme
      */
     public function getStaticImagesDir( $mobile = false )
     {
-        return $this->themeService->getStaticImagesDir($this->dto->getName(), $mobile);
+        return $this->themeService->getStaticImagesDir($this->dto->getKey(), $mobile);
     }
 
     /**
@@ -187,7 +187,7 @@ class OW_Theme
      */
     public function getStaticImagesUrl( $mobile = false )
     {
-        return $this->themeService->getStaticImagesUrl($this->dto->getName(), $mobile);
+        return $this->themeService->getStaticImagesUrl($this->dto->getKey(), $mobile);
     }
 
     /**
@@ -197,7 +197,7 @@ class OW_Theme
      */
     public function getRootDir( $mobile = false )
     {
-        return $this->themeService->getRootDir($this->dto->getName(), $mobile);
+        return $this->themeService->getRootDir($this->dto->getKey(), $mobile);
     }
 
     /**
@@ -207,7 +207,7 @@ class OW_Theme
      */
     public function getDecoratorsDir()
     {
-        return $this->themeService->getDecoratorsDir($this->dto->getName());
+        return $this->themeService->getDecoratorsDir($this->dto->getKey());
     }
 
     /**
@@ -217,7 +217,7 @@ class OW_Theme
      */
     public function getMasterPagesDir( $mobile = false )
     {
-        return $this->themeService->getMasterPagesDir($this->dto->getName(), $mobile);
+        return $this->themeService->getMasterPagesDir($this->dto->getKey(), $mobile);
     }
 
     /**
@@ -227,7 +227,7 @@ class OW_Theme
      */
     public function getImagesDir( $mobile = false )
     {
-        return $this->themeService->getImagesDir($this->dto->getName(), $mobile);
+        return $this->themeService->getImagesDir($this->dto->getKey(), $mobile);
     }
 
     /**
