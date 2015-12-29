@@ -193,13 +193,15 @@ final class OW_Database
             $dsn .= "dbname={$params['dbname']}";
 
             $this->connection = new PDO($dsn, $params['username'], $params['password'],
-                array(PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES UTF8; SET SESSION sql_mode = "TRADITIONAL";',
+                array(PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES UTF8;',
                 PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => true));
 
             if ( !$this->isMysqlValidVersion() )
             {
                 throw new InvalidArgumentException("Cant connect to database. Connection needs MySQL version 5.0 + !");
             }
+
+            $this->prepareMysql();
 
             if ( !empty($params['profilerEnable']) )
             {
@@ -742,6 +744,22 @@ final class OW_Database
     {
         $verArray = explode('.', $this->connection->getAttribute(PDO::ATTR_SERVER_VERSION));
         return intval($verArray[0]) >= 5;
+    }
+
+    /**
+     * Set additional MySQL server settings
+     */
+    private function prepareMysql()
+    {
+        if ( $this->connection->getAttribute(PDO::ATTR_DRIVER_NAME) == 'mysql' )
+        {
+            $verArray = explode('.', $this->connection->getAttribute(PDO::ATTR_SERVER_VERSION));
+
+            if ( intval($verArray[0]) == 5 && intval($verArray[1]) >=7 && intval($verArray[2]) >= 9 )
+            {
+                $this->connection->exec(' SET SESSION sql_mode = ""; ');
+            }
+        }
     }
 
     private function getCacheKeyForQuery( $query, $params )

@@ -437,7 +437,7 @@ class BASE_CTRL_Edit extends OW_ActionController
                 exit;
             }
 
-            $editedUserId = $userId;
+            $editedUserId = $user->id;
         }
 
         $command = (string) $_POST["command"];
@@ -575,8 +575,13 @@ class editEmailValidator extends OW_Validator
      *
      * @param array $params
      */
-    public function __construct( $userId = null )
+    public function __construct( $userId )
     {
+        if ( empty($userId) )
+        {
+            throw new InvalidArgumentException(" Invalid parameter userId ");
+        }
+
         $this->userId = $userId;
     }
 
@@ -599,14 +604,9 @@ class editEmailValidator extends OW_Validator
         {
             $userId = $this->userId;
 
-            if ( empty($this->userId) )
-            {
-                $userId = OW::getUser()->getId();
-            }
-
             $user = BOL_UserService::getInstance()->findUserById($userId);
 
-            if ( $value !== $user->email )
+            if ( !$user || $value !== $user->email )
             {
                 $this->setErrorMessage($language->text('base', 'join_error_email_already_exist'));
                 return false;
