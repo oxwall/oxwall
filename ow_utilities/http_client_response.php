@@ -24,128 +24,67 @@
 
 /**
  * @author Sardar Madumarov <madumarov@gmail.com>
- * @package ow_system_plugins.base.bol
+ * @package ow_utilities
  * @since 1.0
  */
-class BOL_Plugin extends BOL_StoreItem
+class UTIL_HttpClientResponse
 {
-    /**
-     * @var string
-     */
-    public $module;
+    private $resultBody;
 
     /**
-     * @var boolean
+     * @var Psr\Http\Message\ResponseInterface
      */
-    public $isSystem;
+    private $response;
 
     /**
-     * @var boolean
+     * 
+     * @param Psr\Http\Message\ResponseInterface $response
      */
-    public $isActive;
-
-    /**
-     * @var string
-     */
-    public $adminSettingsRoute;
-
-    /**
-     * @var string
-     */
-    public $uninstallRoute;
-
-    /**
-     * @return boolean
-     */
-    public function isActive()
+    public function __construct( $response )
     {
-        return (bool) $this->isActive;
+        $this->response = $response;
+        $this->resultBody = $this->response->getBody()->getContents();
     }
 
     /**
-     * @return boolean
+     * @param string $name
+     * @return string
      */
-    public function isSystem()
+    public function getHeader( $name )
     {
-        return (bool) $this->isSystem;
+        return $this->response->getHeader($name);
+    }
+
+    /**
+     * @param string $name
+     * @return bool
+     */
+    public function hasHeader( $name )
+    {
+        return $this->response->hasHeader($name);
+    }
+
+    /**
+     * @return array
+     */
+    public function getHeaders()
+    {
+        return $this->response->getHeaders();
+    }
+
+    /**
+     * @return int
+     */
+    public function getStatusCode()
+    {
+        return $this->response->getStatusCode();
     }
 
     /**
      * @return string
      */
-    public function getModule()
+    public function getBody()
     {
-        return $this->module;
-    }
-
-    /**
-     * @param boolean $isActive
-     * @return BOL_Plugin
-     */
-    public function setIsActive( $isActive )
-    {
-        $this->isActive = (boolean) $isActive;
-
-        return $this;
-    }
-
-    /**
-     * @param string $module
-     * @return BOL_Plugin
-     */
-    public function setModule( $module )
-    {
-        $this->module = trim($module);
-
-        return $this;
-    }
-
-    /**
-     * @param boolean $isSystem
-     * @return BOL_Plugin
-     */
-    public function setIsSystem( $isSystem )
-    {
-        $this->isSystem = $isSystem;
-
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getAdminSettingsRoute()
-    {
-        return $this->adminSettingsRoute;
-    }
-
-    /**
-     * @param string $adminSettingsRoute
-     * @return BOL_Plugin
-     */
-    public function setAdminSettingsRoute( $adminSettingsRoute )
-    {
-        $this->adminSettingsRoute = $adminSettingsRoute;
-
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getUninstallRoute()
-    {
-        return $this->uninstallRoute;
-    }
-
-    /**
-     * @param string $uninstallRoute
-     * @return BOL_Plugin
-     */
-    public function setUninstallRoute( $uninstallRoute )
-    {
-        $this->uninstallRoute = $uninstallRoute;
-
-        return $this;
+        return $this->resultBody;
     }
 }

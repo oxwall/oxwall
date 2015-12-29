@@ -1052,31 +1052,45 @@ html body .ow_admin_permissions.ow_superwide {
     display: block;
     outline: 0 none;
 }
-
+.ow_admin_choose_theme .theme_item a.ow_lbutton.ow_green {
+	color: #fff;
+	background: transparent;
+}
 .ow_admin_choose_theme .theme_icon span.name {
     display: none;
 }
 
 .ow_admin_choose_theme .theme_item span.fake{
-    background: url(images/theme_frame_small.png) no-repeat scroll 0 0 transparent;
+    background: none;
     display: block;
     height: 103px;
 }
-
-.ow_admin_choose_theme .theme_item .theme_icon span.clicked,
+.ow_admin_choose_theme .theme_item.active span.clicked,
 .ow_admin_choose_theme .theme_item .theme_icon.clicked span.clicked {
-    background: url(images/theme_frame_small.png) no-repeat scroll 0 -112px transparent;
+  background: transparent url("images/theme_frame_small.png") no-repeat scroll 0 -224px;
+} 
+.ow_admin_choose_theme .theme_item.theme_update span.fake {
+    background: transparent url("images/theme_frame_small.png") no-repeat scroll 0 -448px;
 }
-
-.ow_admin_choose_theme .theme_item .theme_icon.clicked span {
-    background: url(images/theme_frame_small.png) no-repeat scroll 0 -224px transparent;
+.ow_admin_choose_theme .theme_item.active.theme_update span.clicked {
+ 	background: transparent url("images/theme_frame_small.png") no-repeat scroll 0 -224px;
 }
-
+.ow_admin_choose_theme .theme_item.theme_clicked span.fake {
+ 	background: transparent url("images/theme_frame_small.png") no-repeat scroll 0 -336px;
+}
+.ow_admin_choose_theme .theme_item.theme_invalid span.fake {
+    background: transparent url("images/theme_frame_small.png") no-repeat scroll 0 -112px;
+}
+.ow_admin_choose_theme .theme_item.theme_clicked.theme_invalid span.fake {
+ 	background: transparent url("images/theme_frame_small.png") no-repeat scroll 0 -112px;
+}
+.ow_admin_choose_theme .theme_item.active.theme_invalid span.clicked {
+ 	background: transparent url("images/theme_frame_small.png") no-repeat scroll 0 0px;
+}
 html body .ow_admin_choose_theme .selected_theme_info{
     float:right;
     width:312px;
 }
-
 html body .ow_admin_choose_theme .selected_theme_info_stick{
     width:312px;
 }
@@ -1111,27 +1125,18 @@ html body .ow_admin_choose_theme .selected_theme_info_stick{
     padding-left: 0;
     width: 18%;
 }
-.ow_admin_choose_theme .theme_item.theme_update span.fake {
-    background: url("images/theme_frame_small.png") no-repeat scroll 0 -336px transparent
-}
-.ow_admin_choose_theme .theme_item.theme_clicked span.fake {
-    background: url("images/theme_frame_small.png") no-repeat scroll 0 -224px transparent
-}
-.ow_admin_choose_theme .theme_item.active span.clicked {
-    background: url("images/theme_frame_small.png") no-repeat scroll 0 -112px transparent
-}
 .ow_admin_choose_theme .theme_update_label {
     position: absolute;
     right: 14px;
     top: 5px;
-    background: #ff9927;
-    border-left: 4px solid #ff9927;
-    border-bottom: 4px solid #ff9927;
+    background: #FFAB48;
+    border-left: 2px solid #FFAB48;
+    border-bottom: 2px solid #FFAB48;
 }
 .ow_admin_choose_theme .theme_item.theme_clicked .theme_update_label,
 .ow_admin_choose_theme .theme_item.active .theme_update_label {
-    background: none repeat scroll 0 0 #A8D700;
-    border-color: #A8D700;
+    background: none repeat scroll 0 0 #36DDB8;
+    border-color: #36DDB8;
 }
 /* Restricted Usernames */
 #restrictedUsernamesForm td {
@@ -1276,4 +1281,11 @@ html body .ow_admin_choose_theme .selected_theme_info_stick{
 	-moz-animation: none;
 	-o-animation: none;
 	}
+}
+
+.ow_plugin_invalid, 
+.ow_active_plugins .ow_plugin_invalid,
+.ow_inactive_plugins .ow_plugin_invalid {
+background: #fee5e3;
+border: 1px solid #ee3d32;
 }

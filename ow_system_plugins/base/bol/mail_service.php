@@ -21,8 +21,6 @@
  * Display of Attribution Information is required in Larger Works which are defined in the CPAL as a work
  * which combines Covered Code or portions thereof with code not governed by the terms of the CPAL.
  */
-require_once OW_DIR_LIB . 'php_mailer' . DS . 'class.phpmailer.php';
-require_once OW_DIR_LIB . 'php_mailer' . DS . 'class.smtp.php';
 
 /**
  * Mail Service
@@ -34,7 +32,6 @@ require_once OW_DIR_LIB . 'php_mailer' . DS . 'class.smtp.php';
 class BOL_MailService
 {
     const MAIL_COUNT_PER_CRON_JOB = 50;
-
     const TRANSFER_SMTP = 'smtp';
     const TRANSFER_MAIL = 'mail';
     const TRANSFER_SENDMAIL = 'sendmail';
@@ -65,6 +62,7 @@ class BOL_MailService
      * @var BOL_MailService
      */
     private static $classInstance;
+
     /**
      *
      * @var PHPMailer
@@ -122,7 +120,7 @@ class BOL_MailService
         }
 
         $mailer->CharSet = "utf-8";
-        
+
         return $mailer;
     }
 
@@ -245,7 +243,7 @@ class BOL_MailService
         OW::getEventManager()->trigger($event);
         $mailState = $event->getData();
 
-        if (empty($mailState['recipientEmailList']))
+        if ( empty($mailState['recipientEmailList']) )
         {
             return false;
         }
@@ -327,7 +325,7 @@ class BOL_MailService
             }
         }
 
-        if ( !empty ($fullDtoList) )
+        if ( !empty($fullDtoList) )
         {
             $this->mailDao->saveList($fullDtoList);
         }
@@ -370,16 +368,16 @@ class BOL_MailService
                 return $urlInfo['host'];
         }
     }
-    
+
     public function deleteQueuedMailsByRecipientId( $userId )
     {
         $user = BOL_UserService::getInstance()->findUserById($userId);
-        
+
         if ( $user === null )
         {
             return;
         }
-        
+
         $this->mailDao->deleteByRecipientEmail($user->email);
     }
 

@@ -39,6 +39,7 @@ if ( OW_DEBUG_MODE )
 }
 
 spl_autoload_register(array('OW_Autoload', 'autoload'));
+require_once OW_DIR_LIB_VENDOR . "autoload.php";
 
 // adding standard package pointers
 $autoloader = OW::getAutoloader();
