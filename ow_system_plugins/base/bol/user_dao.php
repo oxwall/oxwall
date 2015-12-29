@@ -894,7 +894,8 @@ class BOL_UserDao extends OW_BaseDao
 
             case BOL_QuestionService::QUESTION_PRESENTATION_RADIO :
             case BOL_QuestionService::QUESTION_PRESENTATION_SELECT :
-                
+            case BOL_QuestionService::QUESTION_PRESENTATION_FSELECT :
+
                 if ( !empty($value) )
                 {
                     if ( is_array($value) )

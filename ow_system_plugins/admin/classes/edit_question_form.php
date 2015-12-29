@@ -72,6 +72,7 @@ class ADMIN_CLASS_EditQuestionForm extends ADMIN_CLASS_AddQuestionForm
         $this->getElement('qst_answer_type')->setValue($question->presentation);
 
         $this->getElement('qst_possible_values')->setValue($values);
+        $this->getElement('qst_infinite_possible_values')->setValue($values);
         $this->getElement('qst_column_count')->setValue($question->columnCount);
         $this->getElement('qst_required')->setValue($question->required);
         $this->getElement('qst_on_sign_up')->setValue($question->onJoin);
@@ -318,9 +319,17 @@ class ADMIN_CLASS_EditQuestionForm extends ADMIN_CLASS_AddQuestionForm
                     }
                 } */
                 
-                if ( !empty($data['qst_possible_values']) )
+                if ( !empty($data['qst_possible_values']) && $data['qst_answer_type'] !== 'fselect' )
                 {
-                    if ( $this->questionService->updateQuestionValues($this->question->name, $data['qst_possible_values']) )
+                    if ( $this->questionService->updateQuestionValues($this->question, $data['qst_possible_values']) )
+                    {
+                        $updated = true;
+                    }
+                }
+
+                if ( !empty($data['qst_infinite_possible_values']) && $data['qst_answer_type'] == 'fselect' )
+                {
+                    if ( $this->questionService->updateQuestionValues($this->question, $data['qst_infinite_possible_values']) )
                     {
                         $updated = true;
                     }

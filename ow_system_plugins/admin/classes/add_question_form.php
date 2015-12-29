@@ -97,6 +97,7 @@ class ADMIN_CLASS_AddQuestionForm extends Form
             'qst_account_type' => true,
             'qst_answer_type' => true,
             'qst_possible_values' => true,
+            'qst_infinite_possible_values' => true,
             'qst_column_count' => true,
             'qst_required' => true,
             'qst_on_sign_up' => true,
@@ -124,6 +125,10 @@ class ADMIN_CLASS_AddQuestionForm extends Form
             BOL_QuestionService::QUESTION_VALUE_TYPE_MULTISELECT
         );
 
+        $infinitePossibleValuesTypeList = array(
+            BOL_QuestionService::QUESTION_VALUE_TYPE_FSELECT,
+        );
+
         $result = array();
 
         foreach ( $this->presentations2types as $presentation => $type )
@@ -146,6 +151,11 @@ class ADMIN_CLASS_AddQuestionForm extends Form
             if ( !in_array( $type, $possibleValuesTypeList ) )
             {
                 $result[$presentation]['qst_possible_values'] = false;
+            }
+
+            if ( !in_array( $type, $infinitePossibleValuesTypeList ) )
+            {
+                $result[$presentation]['qst_infinite_possible_values'] = false;
             }
         }
 
@@ -253,17 +263,16 @@ class ADMIN_CLASS_AddQuestionForm extends Form
 
         $this->addElement($qstAnswerType);
 
-//        if ( $displayPossibleValues )
-//        {
         $qstPossibleValues = new addValueField('qst_possible_values');
-        //$qstPossibleValues->addAttribute('class', $qstPossibleValues->getName());
         $qstPossibleValues->setLabel($language->text('admin', 'questions_possible_values_label'));
         $qstPossibleValues->setDescription($language->text('admin', 'questions_possible_values_description'));
-        //$qstPossibleValues->setValue( array( '1' => 'aaa', '2' => 'bbbb', '4' => 'ccc' ) );
-
         $this->addElement($qstPossibleValues);
-//        }
-        
+
+        $qstInfinitePossibleValues = new infiniteValueField('qst_infinite_possible_values');
+        $qstInfinitePossibleValues->setLabel($language->text('admin', 'questions_infinite_possible_values_label'));
+        $qstInfinitePossibleValues->setDescription($language->text('admin', 'questions_infinite_possible_values_description'));
+        $this->addElement($qstInfinitePossibleValues);
+
         $configList = $this->questionConfigs;
 
         foreach ( $configList as $config )
@@ -351,7 +360,7 @@ class ADMIN_CLASS_AddQuestionForm extends Form
     } 
 
     public function process()
-    {        
+    {
         if ( OW_Request::getInstance()->isPost() )
         {
             $data = $this->prepareData($_POST);
@@ -423,8 +432,15 @@ class ADMIN_CLASS_AddQuestionForm extends Form
 
                 $question->custom = json_encode($configs);
 
-                $questionValues = !empty($data['qst_possible_values']) ? $data['qst_possible_values'] : array();
-                
+                if (!empty($data['qst_infinite_possible_values']))
+                {
+                    $questionValues = $data['qst_infinite_possible_values'];
+                }
+                else
+                {
+                    $questionValues = !empty($data['qst_possible_values']) ? $data['qst_possible_values'] : array();
+                }
+
                 $name = !empty($data['qst_name']) ? trim($data['qst_name']) : '';
                 $description = !empty($data['qst_description']) ? htmlspecialchars(trim($data['qst_description'])) : '';
                 
