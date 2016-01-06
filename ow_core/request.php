@@ -23,8 +23,6 @@
  */
 
 /**
- * Desc...
- *
  * @author Sardar Madumarov <madumarov@gmail.com>
  * @package ow_core
  * @since 1.0
@@ -211,10 +209,14 @@ final class OW_Request
 
         $currentParams = array_merge($currentParams, $paramsToUpdate);
 
-        return (empty($requestUrlArray['scheme']) ? "" : $requestUrlArray['scheme'] . ":" ) . 
-			( empty($requestUrlArray['host']) ? '' : '//' . $requestUrlArray['host'] ). 
-			( empty($requestUrlArray['path']) ? '' : $requestUrlArray['path'] ) .
-            ( empty($requestUrlArray['port']) ? '' : ':' . (int) $requestUrlArray['port'] ) . '?' . http_build_query($currentParams) . ( $anchor === null ? '' : '#' . trim($anchor) );
+        $scheme = empty($requestUrlArray["scheme"]) ? "" : $requestUrlArray["scheme"] . ":";
+        $host = empty($requestUrlArray["host"]) ? "" : "//" . $requestUrlArray["host"];
+        $port = empty($requestUrlArray["port"]) ? "" : ":" . (int) $requestUrlArray["port"];
+        $path = empty($requestUrlArray["path"]) ? "" : $requestUrlArray["path"];
+        $queryString = empty($currentParams) ? "" : "?" . http_build_query($currentParams);
+        $anchor = ($anchor === null) ? "" : "#" . trim($anchor);
+
+        return $scheme . $host . $port . $path . $queryString . $anchor;
     }
 
     /**
