@@ -99,10 +99,10 @@ class UTIL_HttpClient
 
 	private static function getHandler()
 	{
-		if( version_compare(PHP_VERSION, "5.5.0") >= 0 && function_exists("curl_version") )
-		{
-			return new CurlHandler();
-		}
+//		if( version_compare(PHP_VERSION, "5.5.0") >= 0 && function_exists("curl_version") )
+//		{
+//			return new CurlHandler();
+//		}
 			
 		if( ini_get("allow_url_fopen") && extension_loaded("openssl") && in_array("https", stream_get_wrappers()) )
 		{
