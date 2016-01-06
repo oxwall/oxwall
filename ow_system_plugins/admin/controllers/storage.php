@@ -184,6 +184,7 @@ class ADMIN_CTRL_Storage extends ADMIN_CTRL_StorageAbstract
         $this->assign("text", OW::getLanguage()->text("admin", "manage_plugins_core_update_request_text", $params));
         $this->assign("redirectUrl", OW::getRouter()->urlFor(__CLASS__, "platformUpdate"));
         $this->assign("returnUrl", OW::getRouter()->urlForRoute("admin_default"));
+        $this->assign("changeLog", $newPlatformInfo["log"]);
     }
 
     /**
