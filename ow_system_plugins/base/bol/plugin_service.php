@@ -403,6 +403,8 @@ class BOL_PluginService
         $this->includeScript($plugin->getRootDir() . BOL_PluginService::SCRIPT_INSTALL);
         $this->includeScript($plugin->getRootDir() . BOL_PluginService::SCRIPT_ACTIVATE);
 
+        $pluginDto = $this->findPluginByKey($pluginDto->getKey());
+
         if ( $generateCache )
         {
             BOL_LanguageService::getInstance()->generateCacheForAllActiveLanguages();
