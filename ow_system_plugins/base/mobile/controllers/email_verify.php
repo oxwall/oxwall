@@ -33,7 +33,7 @@ class BASE_MCTRL_EmailVerify extends BASE_CTRL_EmailVerify
 {
     protected function setMasterPage()
     {
-         OW::getDocument()->getMasterPage()->setTemplate(OW::getThemeManager()->getMasterPageTemplate('mobile_blank'));
+         OW::getDocument()->getMasterPage()->setTemplate(OW::getThemeManager()->getMasterPageTemplate(OW_MobileMasterPage::TEMPLATE_BLANK));
     }
 
     public function index( $params )
@@ -54,7 +54,7 @@ class BASE_MCTRL_EmailVerify extends BASE_CTRL_EmailVerify
     {
         parent::verifyForm($params);
         
-        OW::getDocument()->getMasterPage()->setTemplate(OW::getThemeManager()->getMasterPageTemplate('mobile_blank'));
+        OW::getDocument()->getMasterPage()->setTemplate(OW::getThemeManager()->getMasterPageTemplate(OW_MobileMasterPage::TEMPLATE_BLANK));
         $this->setTemplate(OW::getPluginManager()->getPlugin('base')->getMobileCtrlViewDir().'email_verify_verify_form.html');
     }
 }
