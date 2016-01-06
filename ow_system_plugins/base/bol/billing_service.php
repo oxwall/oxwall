@@ -599,9 +599,9 @@ final class BOL_BillingService
      * 
      * @return array
      */
-    public function getActiveGatewaysList()
+    public function getActiveGatewaysList( $forMobile = false )
     {
-        return $this->billingGatewayDao->getActiveList();
+        return $this->billingGatewayDao->getActiveList($forMobile);
     }
     
     /**
@@ -688,16 +688,32 @@ final class BOL_BillingService
      * @param string $hash
      * @return string
      */
-    public function getOrderCompletedPageUrl( $hash = null )
+    public function getOrderCompletedPageUrl( $hash = null, $mobile = false )
     {
-        if ( isset($hash) && $sale = $this->getSaleByHash($hash) )
+        if($mobile)
         {
-            return OW::getRouter()->urlForRoute('base_billing_completed', array('hash' => $hash));
+            if ( isset($hash) && $sale = $this->getSaleByHash($hash) )
+            {
+                return OW::getRouter()->urlForRoute('base_billing_completed_mobile', array('hash' => $hash));
+            }
+            else
+            {
+                return OW::getRouter()->urlForRoute('base_billing_completed_st_mobile');
+            }
         }
         else
         {
-            return OW::getRouter()->urlForRoute('base_billing_completed_st');
+            if ( isset($hash) && $sale = $this->getSaleByHash($hash) )
+            {
+                return OW::getRouter()->urlForRoute('base_billing_completed', array('hash' => $hash));
+            }
+            else
+            {
+                return OW::getRouter()->urlForRoute('base_billing_completed_st');
+            }
         }
+
+
     }
 
     /**
