@@ -23,8 +23,6 @@
  */
 
 /**
- * Desc...
- *
  * @author Sardar Madumarov <madumarov@gmail.com>
  * @package ow_core
  * @since 1.0
@@ -211,10 +209,11 @@ final class OW_Request
 
         $currentParams = array_merge($currentParams, $paramsToUpdate);
 
-        return (empty($requestUrlArray['scheme']) ? "" : $requestUrlArray['scheme'] . ":" ) . 
-			( empty($requestUrlArray['host']) ? '' : '//' . $requestUrlArray['host'] ). 
-			( empty($requestUrlArray['path']) ? '' : $requestUrlArray['path'] ) .
-            ( empty($requestUrlArray['port']) ? '' : ':' . (int) $requestUrlArray['port'] ) . '?' . http_build_query($currentParams) . ( $anchor === null ? '' : '#' . trim($anchor) );
+        return (empty($requestUrlArray['scheme']) ? "" : $requestUrlArray['scheme'] . ":" ) .
+            ( empty($requestUrlArray['host']) ? '' : '//' . $requestUrlArray['host'] ) .
+            ( empty($requestUrlArray['port']) ? '' : ':' . (int) $requestUrlArray['port'] ) .
+            ( empty($requestUrlArray['path']) ? '' : $requestUrlArray['path'] ) .
+            '?' . http_build_query($currentParams) . ( $anchor === null ? '' : '#' . trim($anchor) );
     }
 
     /**
