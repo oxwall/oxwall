@@ -675,12 +675,12 @@ class ADMIN_CTRL_Plugins extends ADMIN_CTRL_StorageAbstract
             {
                 $pluginDto = $this->pluginService->install(trim($params[BOL_StorageService::URI_VAR_KEY]));
 
-                if ( $pluginDto != null )
+                if ( $pluginDto != null && !empty($params[BOL_StorageService::URI_VAR_LICENSE_KEY]) )
                 {
                     $pluginDto->setLicenseKey(urldecode($params[BOL_StorageService::URI_VAR_LICENSE_KEY]));
                     $this->pluginService->savePlugin($pluginDto);
                 }
-
+                
                 $feedback->info($language->text("admin", "manage_plugins_install_success_message",
                         array("plugin" => $pluginDto->getTitle())));
             }
