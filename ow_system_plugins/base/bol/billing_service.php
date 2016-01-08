@@ -688,32 +688,16 @@ final class BOL_BillingService
      * @param string $hash
      * @return string
      */
-    public function getOrderCompletedPageUrl( $hash = null, $mobile = false )
+    public function getOrderCompletedPageUrl( $hash = null )
     {
-        if($mobile)
+        if ( isset($hash) && $sale = $this->getSaleByHash($hash) )
         {
-            if ( isset($hash) && $sale = $this->getSaleByHash($hash) )
-            {
-                return OW::getRouter()->urlForRoute('base_billing_completed_mobile', array('hash' => $hash));
-            }
-            else
-            {
-                return OW::getRouter()->urlForRoute('base_billing_completed_st_mobile');
-            }
+            return OW::getRouter()->urlForRoute('base_billing_completed', array('hash' => $hash));
         }
         else
         {
-            if ( isset($hash) && $sale = $this->getSaleByHash($hash) )
-            {
-                return OW::getRouter()->urlForRoute('base_billing_completed', array('hash' => $hash));
-            }
-            else
-            {
-                return OW::getRouter()->urlForRoute('base_billing_completed_st');
-            }
+            return OW::getRouter()->urlForRoute('base_billing_completed_st');
         }
-
-
     }
 
     /**
@@ -722,7 +706,7 @@ final class BOL_BillingService
      * @param string $hash
      * @return string
      */
-    public function getOrderCancelledPageUrl( $hash = null )
+    public function getOrderCancelledPageUrl( $hash = null)
     {
         if ( isset($hash) && $sale = $this->getSaleByHash($hash) )
         {

@@ -45,11 +45,11 @@ $router->addRoute(new OW_Route('base.reset_user_password', 'reset-password/:code
 $router->addRoute(new OW_Route('base.reset_user_password_request', 'reset-password-request', 'BASE_MCTRL_User', 'resetPasswordRequest'));
 $router->addRoute(new OW_Route('base.reset_user_password_expired_code', 'reset-password-code-expired', 'BASE_MCTRL_User', 'resetPasswordCodeExpired'));
 
-$router->addRoute(new OW_Route('base_billing_completed_mobile', 'order/:hash/completed', 'BASE_MCTRL_Billing', 'completed'));
-$router->addRoute(new OW_Route('base_billing_completed_st_mobile', 'order/completed', 'BASE_MCTRL_Billing', 'completed'));
-$router->addRoute(new OW_Route('base_billing_canceled_mobile', 'order/:hash/canceled', 'BASE_MCTRL_Billing', 'canceled'));
-$router->addRoute(new OW_Route('base_billing_canceled_st_mobile', 'order/canceled', 'BASE_MCTRL_Billing', 'canceled'));
-$router->addRoute(new OW_Route('base_billing_error_mobile', 'order/incomplete', 'BASE_MCTRL_Billing', 'error'));
+$router->addRoute(new OW_Route('base_billing_completed', 'order/:hash/completed', 'BASE_MCTRL_Billing', 'completed'));
+$router->addRoute(new OW_Route('base_billing_completed_st', 'order/completed', 'BASE_MCTRL_Billing', 'completed'));
+$router->addRoute(new OW_Route('base_billing_canceled', 'order/:hash/canceled', 'BASE_MCTRL_Billing', 'canceled'));
+$router->addRoute(new OW_Route('base_billing_canceled_st', 'order/canceled', 'BASE_MCTRL_Billing', 'canceled'));
+$router->addRoute(new OW_Route('base_billing_error', 'order/incomplete', 'BASE_MCTRL_Billing', 'error'));
 
 // Drag And Drop panels
 $router->addRoute(new OW_Route('base_member_dashboard', 'dashboard', 'BASE_MCTRL_WidgetPanel', 'dashboard'));

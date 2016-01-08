@@ -2808,7 +2808,6 @@ class BillingGatewaySelectionField extends FormElement
                 $paymentOptions[$gateway->gatewayKey]['dto'] = $gateway;
                 $paymentOptions[$gateway->gatewayKey]['orderUrl'] = $adapter->getOrderFormUrl();
                 $paymentOptions[$gateway->gatewayKey]['logoUrl'] = $adapter->getLogoUrl();
-               // printVar($paymentOptions[$gateway->gatewayKey]['orderUrl'] );
             }
         }
 
@@ -2820,9 +2819,15 @@ class MobileBillingGatewaySelectionField extends BillingGatewaySelectionField
 {
     protected function getItemMarkUp($option, $field)
     {
-        return  '<li style="display: block;">
+        $name = str_replace('billing', '', $option['dto']->gatewayKey);
+
+        return'<div class="owm_payment_provider_item owm_std_margin_bottom">
+                <label class="owm_border owm_'.$name.' active">'.$field.'</label>
+        </div>';
+
+        /*return  '<li style="display: block;">
                     <label> <img src="' . $option['logoUrl'] . '" alt="' . $option['dto']->gatewayKey . '" />'.$field.'</label>
-                </li>';
+                </li>';*/
 
     }
 
@@ -2842,8 +2847,7 @@ class MobileBillingGatewaySelectionField extends BillingGatewaySelectionField
             {
                 $paymentOptions[$gateway->gatewayKey]['dto'] = $gateway;
                 $paymentOptions[$gateway->gatewayKey]['orderUrl'] = $adapter->getOrderFormUrl(true);
-                $paymentOptions[$gateway->gatewayKey]['logoUrl'] = $adapter->getLogoUrl();
-                //printVar($paymentOptions[$gateway->gatewayKey]['orderUrl'] );
+                $paymentOptions[$gateway->gatewayKey]['logoUrl'] = $adapter->getLogoUrl(true);
             }
         }
 
