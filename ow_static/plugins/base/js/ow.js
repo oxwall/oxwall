@@ -2437,7 +2437,7 @@ OWLinkObserver.handler.prototype =
     {
         var text, rgxp, result;
 
-        text = this.input.val();
+        text = encodeURI(this.input.val());
         rgxp = /(http(s)?:\/\/|www\.)((\d+\.\d+\.\d+\.\d+)|(([\w-]+\.)+([a-z,A-Z][\w-]*)))(:[1-9][0-9]*)?(\/?([?\w\-.\,\/:%+@&*=~]+[\w\-\,.\/?\':%+@&=*|]*)?)?/;
         result = text.match(rgxp);
 
