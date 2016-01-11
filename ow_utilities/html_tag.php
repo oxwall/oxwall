@@ -63,7 +63,7 @@ class UTIL_HtmlTag
     {
         $prefix = ( $prefix === null ) ? 'auto_id' : trim($prefix);
 
-        return $prefix . '_' . rand(1, 100000000);
+        return $prefix . '_' . UTIL_String::getRandomString(8, UTIL_String::RND_STR_ALPHA_NUMERIC);
     }
     /**
      * @var Jevix
@@ -73,7 +73,8 @@ class UTIL_HtmlTag
     /**
      * @return Jevix
      */
-    private static function getJevix( $tagList = null, $attrList = null, $blackListMode = false, $mediaSrcValidate = true )
+    private static function getJevix( $tagList = null, $attrList = null, $blackListMode = false,
+        $mediaSrcValidate = true )
     {
         if ( self::$jevix === null )
         {
@@ -92,7 +93,7 @@ class UTIL_HtmlTag
                 $tagRules[$tag] = array(Jevix::TR_TAG_LIST => true);
             }
         }
-        
+
         if ( $attrList !== null )
         {
             foreach ( $attrList as $attr )
@@ -104,27 +105,27 @@ class UTIL_HtmlTag
                     $tag = trim($parts[0]);
                     $param = trim($parts[1]);
 
-                    if( !strlen($tag) || !strlen($attr) )
+                    if ( !strlen($tag) || !strlen($attr) )
                     {
                         continue;
                     }
-                                        
-                    if( $tag === '*' )
+
+                    if ( $tag === '*' )
                     {
                         $commonAttrs[] = $param;
                         continue;
                     }
-                    
+
                     if ( !isset($tagRules[$tag]) )
                     {
                         $tagRules[$tag] = array(Jevix::TR_TAG_LIST => true);
                     }
-                    
-                    if( !isset($tagRules[$tag][Jevix::TR_PARAM_ALLOWED]) )
+
+                    if ( !isset($tagRules[$tag][Jevix::TR_PARAM_ALLOWED]) )
                     {
                         $tagRules[$tag][Jevix::TR_PARAM_ALLOWED] = array();
                     }
-                    
+
                     $tagRules[$tag][Jevix::TR_PARAM_ALLOWED][$param] = true;
                 }
                 else
@@ -149,7 +150,7 @@ class UTIL_HtmlTag
 
         foreach ( $cutWithContent as $cutTag )
         {
-            if( !isset($tagRules[$cutTag]) )
+            if ( !isset($tagRules[$cutTag]) )
             {
                 $tagRules[$cutTag] = array();
             }
@@ -178,18 +179,19 @@ class UTIL_HtmlTag
      *
      * @return string
      */
-    public static function stripTags( $text, array $tagList = null, array $attributeList = null, $blackListMode = false, $mediaSrcValidate = true )
+    public static function stripTags( $text, array $tagList = null, array $attributeList = null, $blackListMode = false,
+        $mediaSrcValidate = true )
     {
         // style remove fix
-        if( $blackListMode )
+        if ( $blackListMode )
         {
-            if( $tagList === null )
+            if ( $tagList === null )
             {
                 $tagList = array();
             }
-            
+
             $tagList[] = 'style';
-            
+
 //            if( $attributeList === null )
 //            {
 //                $attributeList = array();
@@ -199,14 +201,14 @@ class UTIL_HtmlTag
         }
         else
         {
-            if( is_array($tagList) )
+            if ( is_array($tagList) )
             {
-                if( in_array('style', $tagList) )
+                if ( in_array('style', $tagList) )
                 {
                     $tagList = array_diff($tagList, array('style'));
                 }
             }
-            
+
 //            if( is_array( $attributeList ) )
 //            {
 //                foreach ( $attributeList as $key => $item )
@@ -219,7 +221,7 @@ class UTIL_HtmlTag
 //            }
         }
         // fix end
-        
+
         $jevix = self::getJevix($tagList, $attributeList, $blackListMode, $mediaSrcValidate);
         return $jevix->parse($text);
     }
@@ -282,5 +284,17 @@ class UTIL_HtmlTag
         $jevix->isAutoLinkMode = true;
 
         return $jevix->parse($text);
+    }
+
+    /**
+     * Escapes chars to make sure that string doesn't contain valid JS code
+     * 
+     * @param string $string
+     * @return string
+     */
+    public static function escapeJs( $string )
+    {
+        return strtr($string,
+            array('\\' => '\\\\', "'" => "\\'", '"' => '\\"', "\r" => '\\r', "\n" => '\\n', '</' => '<\/'));
     }
 }

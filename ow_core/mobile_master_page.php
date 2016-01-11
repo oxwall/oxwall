@@ -35,7 +35,16 @@ class OW_MobileMasterPage extends OW_MasterPage
     /*
      * List of default master page templates.
      */
-    const TEMPLATE_GENERAL = 'mobile_general';
+    const TEMPLATE_GENERAL = "mobile_general";
+    const TEMPLATE_BLANK = "mobile_blank";
+
+    /**
+     * List of button params
+     */
+    const BTN_DATA_ID = "id";
+    const BTN_DATA_CLASS = "class";
+    const BTN_DATA_HREF = "href";
+    const BTN_DATA_EXTRA = "extraString";
 
     private $buttonData;
 
@@ -46,8 +55,10 @@ class OW_MobileMasterPage extends OW_MasterPage
     {
         parent::__construct();
         $this->buttonData = array(
-            'left' => array('id' => 'owm_header_left_btn', 'class' => null, 'href' => 'javascript://', 'extraString' => ''),
-            'right' => array('id' => 'owm_header_right_btn', 'class' => null, 'href' => 'javascript://', 'extraString' => '')
+            "left" => array(self::BTN_DATA_ID => "owm_header_left_btn", self::BTN_DATA_CLASS => null, self::BTN_DATA_HREF => "javascript://",
+                self::BTN_DATA_EXTRA => ""),
+            "right" => array(self::BTN_DATA_ID => "owm_header_right_btn", self::BTN_DATA_CLASS => null, self::BTN_DATA_HREF => "javascript://",
+                self::BTN_DATA_EXTRA => "")
         );
     }
 
@@ -65,7 +76,7 @@ class OW_MobileMasterPage extends OW_MasterPage
      */
     public function setLButtonData( array $data )
     {
-        $this->buttonData['left'] = array_merge($this->buttonData, $data);
+        $this->buttonData["left"] = array_merge($this->buttonData["left"], $data);
     }
 
     /**
@@ -73,7 +84,7 @@ class OW_MobileMasterPage extends OW_MasterPage
      */
     public function setRButtonData( array $data )
     {
-        $this->buttonData['right'] = array_merge($this->buttonData['right'], $data);
+        $this->buttonData["right"] = array_merge($this->buttonData["right"], $data);
     }
 
     public function onBeforeRender()
@@ -83,11 +94,22 @@ class OW_MobileMasterPage extends OW_MasterPage
             $this->setTemplate(OW::getThemeManager()->getMasterPageTemplate(self::TEMPLATE_GENERAL));
         }
 
-        $this->addComponent('signIn', new BASE_MCMP_SignIn());
-        $this->addComponent('topMenu', new BASE_MCMP_TopMenu());
-        $this->addComponent('bottomMenu', new BASE_MCMP_BottomMenu());
-        $this->assign('buttonData', $this->buttonData);
+        $this->addComponent("signIn", new BASE_MCMP_SignIn());
+        $this->addComponent("topMenu", new BASE_MCMP_TopMenu());
+        $this->addComponent("bottomMenu", new BASE_MCMP_BottomMenu());
+        $this->assign("buttonData", $this->buttonData);
 
         parent::onBeforeRender();
+    }
+
+    public function setTemplate( $template )
+    {
+        //TODO remove dirty hack for backcompat
+        if ( substr(basename($template), 0, strlen(self::TEMPLATE_BLANK)) == self::TEMPLATE_BLANK )
+        {
+            $this->buttonData = array("left" => array(), "right" => array());
+        }
+
+        parent::setTemplate($template);
     }
 }

@@ -179,7 +179,7 @@ class OW_Application
 
         if ( $activeThemeName !== BOL_ThemeService::DEFAULT_THEME && OW::getThemeManager()->getThemeService()->themeExists($activeThemeName) )
         {
-            OW_ThemeManager::getInstance()->setCurrentTheme(BOL_ThemeService::getInstance()->getThemeObjectByName(trim($activeThemeName)));
+            OW_ThemeManager::getInstance()->setCurrentTheme(BOL_ThemeService::getInstance()->getThemeObjectByKey(trim($activeThemeName)));
         }
 
         // adding static document routes
@@ -192,7 +192,7 @@ class OW_Application
             OW::getRouter()->addRoute(new OW_Route($value->getKey(), $value->getUri(), $staticPageDispatchAttrs['controller'], $staticPageDispatchAttrs['action'], array('documentKey' => array(OW_Route::PARAM_OPTION_HIDDEN_VAR => $value->getKey()))));
 
             // TODO refactor - hotfix for TOS page
-            if ( UTIL_String::removeFirstAndLastSlashes($value->getUri()) == 'terms-of-use' )
+            if ( in_array(UTIL_String::removeFirstAndLastSlashes($value->getUri()), array("terms-of-use", "privacy", "privacy-policy")) )
             {
                 OW::getRequestHandler()->addCatchAllRequestsExclude('base.members_only', $staticPageDispatchAttrs['controller'], $staticPageDispatchAttrs['action'], array('documentKey' => $value->getKey()));
             }
@@ -399,7 +399,7 @@ class OW_Application
         {
             if ( OW::getThemeManager()->getCurrentTheme()->getDto()->getCustomCssFileName() !== null )
             {
-                $document->addStyleSheet(OW::getThemeManager()->getThemeService()->getCustomCssFileUrl(OW::getThemeManager()->getCurrentTheme()->getDto()->getName()));
+                $document->addStyleSheet(OW::getThemeManager()->getThemeService()->getCustomCssFileUrl(OW::getThemeManager()->getCurrentTheme()->getDto()->getKey()));
             }
 
             if ( $this->getDocumentKey() !== 'base.sign_in' )
@@ -500,7 +500,7 @@ class OW_Application
      *
      * @var BOL_MenuItem
      */
-    private $indexMenuItem;
+    protected $indexMenuItem;
 
     public function activateMenuItem()
     {
@@ -775,11 +775,11 @@ class OW_Application
 
         if ( isset($_GET['set-theme']) )
         {
-            $theme = BOL_ThemeService::getInstance()->findThemeByName(trim($_GET['theme']));
+            $theme = BOL_ThemeService::getInstance()->findThemeByKey(trim($_GET['theme']));
 
             if ( $theme !== null )
             {
-                OW::getConfig()->saveConfig('base', 'selectedTheme', $theme->getName());
+                OW::getConfig()->saveConfig('base', 'selectedTheme', $theme->getKey());
             }
 
             $this->redirect(OW::getRequest()->buildUrlQueryString(null, array('theme' => null)));
@@ -867,6 +867,11 @@ class OW_Application
 
     protected function httpVsHttpsRedirect()
     {
+        if( OW::getRequest()->isAjax() )
+        {
+            return;
+        }
+
         $isSsl = OW::getRequest()->isSsl();
 
         if ( $isSsl === null )

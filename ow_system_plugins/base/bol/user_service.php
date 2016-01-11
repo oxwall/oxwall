@@ -1769,6 +1769,41 @@ final class BOL_UserService
                             $questionData[$userId][$question['name']] = $language->text('base', 'form_element_from') . " " . $range[0] . " " . $language->text('base', 'form_element_to') . " " . $range[1];
 
                             break;
+                        case BOL_QuestionService::QUESTION_PRESENTATION_FSELECT:
+                            $questionValue = (int) $questionData[$userId][$question['name']];
+                            $parentName = $question['name'];
+                            if ( !empty($question['parent']) )
+                            {
+                                $parent = BOL_QuestionService::getInstance()->findQuestionByName($question['parent']);
+
+                                if ( !empty($parent) )
+                                {
+                                    $parentName = $parent->name;
+                                }
+                            }
+
+                            $questionValues = BOL_QuestionService::getInstance()->findQuestionValues($parentName);
+                            $value = array();
+
+                            foreach ( $questionValues as $val )
+                            {
+                                /* @var $val BOL_QuestionValue */
+                                if ( ( (int) $val->value ) == $questionValue  )
+                                {
+                                    $value[$val->value] = BOL_QuestionService::getInstance()->getQuestionValueLang($val->questionName, $val->value);
+                                }
+                            }
+
+                            if ( !empty($value) )
+                            {
+                                $questionData[$userId][$question['name']] = $value;
+                            }
+                            else
+                            {
+                                unset($questionArray[$sectionKey][$questionKey]);
+                            }
+
+                            break;
 
                         case BOL_QuestionService::QUESTION_PRESENTATION_SELECT:
                         case BOL_QuestionService::QUESTION_PRESENTATION_RADIO:

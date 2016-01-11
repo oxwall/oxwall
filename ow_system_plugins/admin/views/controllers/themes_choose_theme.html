@@ -22,7 +22,15 @@
 				<td class="ow_value"><span class="author_url"><a href="{$themeInfo.authorUrl}">{$themeInfo.authorUrl}</a></span></td>
 			</tr>
 			</table>
-        <div class="clearfix"><div class="ow_right theme_control_button ow_btn_delimiter"><span class="dlt_btn"{if empty($themeInfo.delete_url)} style="display:none;"{/if}>{decorator name='button' class='theme_select_delete_btn ow_ic_delete' langLabel='admin+themes_choose_delete_button_label'}</span> {decorator name='button' class='theme_select_submit ow_positive' langLabel='admin+themes_choose_activate_button_label'}</div></div>
+        <div class="clearfix">
+            <div class="ow_right theme_control_button ow_btn_delimiter">
+                <span class="dlt_btn"{if empty($themeInfo.delete_url)} style="display:none;"{/if}>
+                    {decorator name='button' class='theme_select_delete_btn ow_ic_delete' langLabel='admin+themes_choose_delete_button_label'}
+                </span> 
+                <span class="lsn_btn"{if empty($themeInfo.license_url)} style="display:none;"{/if}>
+                    {decorator name='button' class='theme_select_lsn_btn' langLabel='admin+manage_plugins_add_license_label'}
+                </span> 
+                {decorator name='button' class='theme_select_submit ow_positive' langLabel='admin+themes_choose_activate_button_label'}</div></div>
             <div style="display: none;"><div class="theme_preview" style="text-align: center;"><img src="{$themeInfo.previewUrl}" /></div></div>
 		</div>
 {/block_decorator}
@@ -33,7 +41,7 @@
 {block_decorator name='box' type='empty' addClass='ow_stdmargin' iconClass="ow_ic_monitor" langLabel='admin+themes_choose_list_cap_title'}
 <div class="themes_select clearfix">
 {foreach from=$themes item='theme'}
-<div class="theme_item{if $theme.active} active{/if}{if $theme.update_url} theme_update{/if}">
+<div class="theme_item{if $theme.active} active{/if}{if $theme.update_url} theme_update{/if}{if !empty($theme.license_url)} theme_invalid{/if}">
 	<a class="theme_icon {$theme.key}" href="javascript://" style="background-image:url({$theme.iconUrl});">
 		<span class="fake{if $theme.active} clicked{/if}"></span>
 		<span class="name">{$theme.title}</span>

@@ -228,6 +228,7 @@ class ADMIN_CTRL_Questions extends ADMIN_CTRL_Abstract
 
         OW::getLanguage()->addKeyForJs('admin', 'questions_edit_profile_question_title');
         OW::getLanguage()->addKeyForJs('admin', 'questions_add_profile_question_title');
+        OW::getLanguage()->addKeyForJs('admin', 'questions_values_should_not_be_empty');
     }
 
     public function accountTypes( $params = array() )
@@ -415,6 +416,8 @@ class ADMIN_CTRL_Questions extends ADMIN_CTRL_Abstract
         OW::getLanguage()->addKeyForJs('admin', 'questions_account_type_added_error');
 
         OW::getLanguage()->addKeyForJs('admin', 'questions_delete_account_type_confirmation');
+
+        OW::getLanguage()->addKeyForJs('admin', 'questions_values_should_not_be_empty');
 
         $contextAction = new BASE_CMP_ContextAction();
 
@@ -614,7 +617,7 @@ class ADMIN_CTRL_Questions extends ADMIN_CTRL_Abstract
 
                 $value = (int) $_POST["value"];
 
-                if ( empty($question) || empty($value) )
+                if ( empty($question) || (empty($value) && $value !== 0) )
                 {
                     echo json_encode(array('result' => $result));
                     return;
@@ -677,7 +680,7 @@ class ADMIN_CTRL_Questions extends ADMIN_CTRL_Abstract
                     return;
                 }
 
-                if ( $this->questionService->updateQuestionValues($question->name, $values) )
+                if ( $this->questionService->updateQuestionValues($question, $values) )
                 {
                     $result = true;
                 }
@@ -990,93 +993,4 @@ class ADMIN_CTRL_Questions extends ADMIN_CTRL_Abstract
         exit;
     }
 
-//    public function deleteQuestion( $params )
-//    {
-//        if ( empty($params['questionId']) )
-//        {
-//            throw new Redirect404Exception();
-//        }
-//
-//        $question = $this->questionService->findQuestionById($params['questionId']);
-//
-//        $parent = null;
-//
-//        if ( !empty($question->parent) )
-//        {
-//            $parent = $this->questionService->findQuestionByName($question->parent);
-//        }
-//
-//        if ( $question->base == 1 || !$question->removable || !empty($parent) )
-//        {
-//            throw new Redirect404Exception();
-//        }
-//
-//
-//        $childList = $this->questionService->findQuestionChildren($question->name);
-//
-//        $deleteList = array();
-//
-//        foreach ( $childList as $child )
-//        {
-//            $deleteList[] = $child->id;
-//        }
-//
-//        if ( !empty($deleteList) )
-//        {
-//            $this->questionService->deleteQuestion($deleteList);
-//        }
-//
-//        if ( $this->questionService->deleteQuestion(array((int) $params['questionId'])) )
-//        {
-//            OW::getFeedback()->info(OW::getLanguage()->text('admin', 'questions_question_was_deleted'));
-//        }
-//
-//        $this->redirect(OW::getRouter()->urlFor('ADMIN_CTRL_Questions', 'properties'));
-//    }
-//
-//    public function deleteSection( $params )
-//    {
-//        if ( !empty($params['sectionName']) && mb_strlen($params['sectionName']) > 0 )
-//        {
-//            if ( $this->questionService->deleteSection(htmlspecialchars($params['sectionName'])) )
-//            {
-//                OW::getFeedback()->info(OW::getLanguage()->text('admin', 'questions_section_was_deleted'));
-//            }
-//        }
-//        else
-//        {
-//            throw new Redirect404Exception();
-//        }
-//
-//        $this->redirect(OW::getRouter()->urlFor('ADMIN_CTRL_Questions', 'properties'));
-//    }
-//
-//    public function deleteAccountType( $params )
-//    {
-//        if ( !empty($params['accountType']) && mb_strlen($params['accountType']) > 0 )
-//        {
-//            /* @var $defaultAccountType =  */
-//            $defaultAccountType = $this->questionService->getDefaultAccountType();
-//            $questionsCount = $this->questionService->findCountExlusiveQuestionForAccount($params['accountType']);
-//
-//            if ( $defaultAccountType == $params['accountType'] )
-//            {
-//                OW::getFeedback()->error(OW::getLanguage()->text('admin', 'questions_cant_delete_default_account_type'));
-//            }
-//            else if ( $questionsCount > 0 )
-//            {
-//                OW::getFeedback()->error(OW::getLanguage()->text('admin', 'questions_account_type_has_exclusive_questions'));
-//            }
-//            else if ( $this->questionService->deleteAccountType(htmlspecialchars($params['accountType'])) )
-//            {
-//                OW::getFeedback()->info(OW::getLanguage()->text('admin', 'questions_account_type_was_deleted'));
-//            }
-//        }
-//        else
-//        {
-//            throw new Redirect404Exception();
-//        }
-//
-//        $this->redirect(OW::getRouter()->urlFor('ADMIN_CTRL_Questions', 'editAccountType'));
-//    }
 }

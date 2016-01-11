@@ -61,6 +61,7 @@ class BOL_QuestionService
     /* field store types */
     const QUESTION_VALUE_TYPE_TEXT = 'text';
     const QUESTION_VALUE_TYPE_SELECT = 'select';
+    const QUESTION_VALUE_TYPE_FSELECT = 'fselect';
     const QUESTION_VALUE_TYPE_MULTISELECT = 'multiselect';
     const QUESTION_VALUE_TYPE_DATETIME = 'datetime';
     const QUESTION_VALUE_TYPE_BOOLEAN = 'boolean';
@@ -69,6 +70,7 @@ class BOL_QuestionService
     const QUESTION_PRESENTATION_TEXT = 'text';
     const QUESTION_PRESENTATION_TEXTAREA = 'textarea';
     const QUESTION_PRESENTATION_SELECT = 'select';
+    const QUESTION_PRESENTATION_FSELECT = 'fselect';
     const QUESTION_PRESENTATION_DATE = 'date';
     const QUESTION_PRESENTATION_BIRTHDATE = 'birthdate';
     const QUESTION_PRESENTATION_AGE = 'age';
@@ -159,6 +161,7 @@ class BOL_QuestionService
         $this->presentations = array(
             self::QUESTION_PRESENTATION_TEXT => self::QUESTION_VALUE_TYPE_TEXT,
             self::QUESTION_PRESENTATION_SELECT => self::QUESTION_VALUE_TYPE_SELECT,
+            self::QUESTION_PRESENTATION_FSELECT => self::QUESTION_VALUE_TYPE_FSELECT,
             self::QUESTION_PRESENTATION_TEXTAREA => self::QUESTION_VALUE_TYPE_TEXT,
             self::QUESTION_PRESENTATION_CHECKBOX => self::QUESTION_VALUE_TYPE_BOOLEAN,
             self::QUESTION_PRESENTATION_RADIO => self::QUESTION_VALUE_TYPE_SELECT,
@@ -270,6 +273,7 @@ class BOL_QuestionService
                     break;
 
                 case self::QUESTION_PRESENTATION_SELECT :
+                case self::QUESTION_PRESENTATION_FSELECT :
                     $class = new Selectbox($fieldName);
                     break;
 
@@ -409,6 +413,10 @@ class BOL_QuestionService
                 case self::QUESTION_PRESENTATION_SELECT :
                 case self::QUESTION_PRESENTATION_MULTICHECKBOX :
                     $class = new CheckboxGroup($fieldName);
+                    break;
+
+                case self::QUESTION_PRESENTATION_FSELECT :
+                    $class = new Selectbox($fieldName);
                     break;
 
                 case self::QUESTION_PRESENTATION_BIRTHDATE :
@@ -1091,11 +1099,13 @@ class BOL_QuestionService
 
             $questionsNameList[] = $question->name;
 
+            $valuesObjects = $this->valueDao->findQuestionValues($question->name);
+
             $values = array();
 
-            for ( $i = 0 ; $i < 31; $i++ )
+            foreach($valuesObjects as $v)
             {
-                $values[] = pow(2, $i);
+                $values[] = $v->value;
             }
 
             foreach ( $values as $value )
@@ -1428,6 +1438,7 @@ class BOL_QuestionService
                         }
                         
                     case self::QUESTION_VALUE_TYPE_SELECT:
+                    case self::QUESTION_VALUE_TYPE_FSELECT:
 
                         if ( !isset($value) )
                         {
@@ -1522,7 +1533,7 @@ class BOL_QuestionService
                 }
             }
         }
-        //printVar($user);
+
         $this->userService->saveOrUpdate($user);
 
         if ( count($questionDataArray) > 0 )
@@ -1744,13 +1755,6 @@ class BOL_QuestionService
 
             unset($questionsBolArray);
 
-            if ( count($notBaseFields) === 0 && count($baseFields) === 0 )
-            {
-                return array();
-            }
-
-            // -------------------- --
-
             if ( count($notBaseFields) > 0 )
             {
                 //get not base question values
@@ -1770,6 +1774,7 @@ class BOL_QuestionService
                                 {
                                     case self::QUESTION_VALUE_TYPE_BOOLEAN :
                                     case self::QUESTION_VALUE_TYPE_SELECT :
+                                    case self::QUESTION_VALUE_TYPE_FSELECT :
                                     case self::QUESTION_VALUE_TYPE_MULTISELECT :
                                         $value = $questionsData[$userId][$field]->intValue;
                                         break;
@@ -1842,7 +1847,6 @@ class BOL_QuestionService
         $event = new OW_Event('base.questions_get_data', array('userIdList' => $userIdList, 'fieldsList' => $fieldsList), $result);
 
         OW::getEventManager()->trigger($event);
-
         return $event->getData();
     }
 
@@ -2002,12 +2006,12 @@ class BOL_QuestionService
         $this->setQuestionLabel($question->name, $label, false);
         
         //add question values
-        if ( !empty($values) && is_array($values) && count($values) > 0 && in_array( $question->type,  array('select', 'multiselect') ) )
+        if ( !empty($values) && is_array($values) && count($values) > 0 && in_array( $question->type,  array('fselect','select', 'multiselect') ) )
         {
             $order = 0;
             foreach ( $values as $key => $value )
             {
-                if ( $order > 30 )
+                if ( $order > 30 && $question->presentation != 'fselect')
                 {
                     break;
                 }
@@ -2018,8 +2022,15 @@ class BOL_QuestionService
                     continue;
                 }
 
-                $valueId = ( $saveValuesKeys ) ? $key : pow(2, $order);
-                
+                if ($question->presentation == 'fselect')
+                {
+                    $valueId = ( $saveValuesKeys ) ? $key : $order;
+                }
+                else
+                {
+                    $valueId = ( $saveValuesKeys ) ? $key : pow(2, $order);
+                }
+
                 $this->addQuestionValue( $question->name, $valueId, $value, $order, false );
                 $order++;
             }
@@ -2046,8 +2057,9 @@ class BOL_QuestionService
         }
     }
 
-    public function updateQuestionValues( $questionName, $values, $generateCahce = true )
+    public function updateQuestionValues( BOL_Question $question, $values, $generateCahce = true )
     {
+        $questionName = $question->name;
         if ( empty($questionName) || empty($values) )
         {
             return false;
@@ -2068,7 +2080,7 @@ class BOL_QuestionService
 
             foreach ( $values as $key => $value )
             {
-                if ( $count > 30 )
+                if ( $count > 30 && $question->presentation != 'fselect')
                 {
                     break;
                 }
@@ -2078,7 +2090,7 @@ class BOL_QuestionService
                     $existingValuesList[$key]->sortOrder = $count;
 
                     $this->saveOrUpdateQuestionValue($existingValuesList[$key]);
-
+//                    BOL_LanguageService::getInstance()->addOrUpdateValue(OW::getLanguage()->getCurrentId(), 'base', 'questions_question_' . ($questionName) . '_value_' . $value, $label, $generateCache);
                     $event = new OW_Event(self::EVENT_AFTER_UPDATE_QUESTION_VALUE, array('dto' => $existingValuesList[$key]));
                     OW::getEventManager()->trigger($event);
                 }
@@ -2089,8 +2101,6 @@ class BOL_QuestionService
                     {
                         continue;
                     }
-
-                    $valueId = $key;
 
                     $this->addQuestionValue( $questionName, $key, $value, $count, $generateCahce );
                 }
@@ -2555,7 +2565,9 @@ class BOL_QuestionService
     public function getQuestionValueForUserList( BOL_Question $question, $value )
     {
         $stringValue = "";
-        
+
+        $language = OW::getLanguage();
+
         switch ( $question->presentation )
         {
             case BOL_QuestionService::QUESTION_PRESENTATION_CHECKBOX:
@@ -2613,7 +2625,7 @@ class BOL_QuestionService
 
             case BOL_QuestionService::QUESTION_PRESENTATION_AGE:
 
-                $date = UTIL_DateTime::parseDate($alue, UTIL_DateTime::MYSQL_DATETIME_DATE_FORMAT);
+                $date = UTIL_DateTime::parseDate($value, UTIL_DateTime::MYSQL_DATETIME_DATE_FORMAT);
                 $stringValue = UTIL_DateTime::getAge($date['year'], $date['month'], $date['day']) . " " . $language->text('base', 'questions_age_year_old');
 
                 break;
@@ -2626,6 +2638,7 @@ class BOL_QuestionService
                 break;
 
             case BOL_QuestionService::QUESTION_PRESENTATION_SELECT:
+            case BOL_QuestionService::QUESTION_PRESENTATION_FSELECT:
             case BOL_QuestionService::QUESTION_PRESENTATION_RADIO:
             case BOL_QuestionService::QUESTION_PRESENTATION_MULTICHECKBOX:
                 
@@ -2680,5 +2693,50 @@ class BOL_QuestionService
         }
         
         return $stringValue;
+    }
+
+    public function getChangedQuestionList($data, $userId)
+    {
+        // get changes list
+        $fields = array_keys($data);
+        $questions = $this->findQuestionByNameList($fields);
+        $oldData = $this->getQuestionData(array($userId), $fields);
+        $changesList = array();
+
+        foreach ( $questions as $question )
+        {
+            $key = $question->name;
+
+            $value = empty($oldData[$userId][$key]) ? null : $oldData[$userId][$key];
+
+            $value = $this->prepareFieldValue($question->presentation, $value);
+            $value1 = $this->prepareFieldValue($question->presentation, $data[$key]);
+
+            if ( $key == 'googlemap_location' && isset($value1['remove'])  )
+            {
+                unset($value1['remove']);
+            }
+
+            if ( $value != $value1 )
+            {
+                $changesList[$key] = $key;
+            }
+        }
+        return $changesList;
+    }
+
+    public function isNeedToModerate($changesList)
+    {
+        $questions = $this->findQuestionByNameList($changesList);
+        $textFields = array(self::QUESTION_PRESENTATION_TEXT, self::QUESTION_PRESENTATION_TEXTAREA );
+
+        foreach ( $questions as $question )
+        {
+            if ( $question && in_array($question->presentation, $textFields) && $question->name != 'googlemap_location' ) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

@@ -43,8 +43,10 @@ class OW_EventManager
     const ON_FINALIZE = 'core.finalize';
     const ON_AFTER_PLUGIN_INSTALL = 'core.plugin_install';
     const ON_BEFORE_PLUGIN_UNINSTALL = 'core.plugin_uninstall';
+    const ON_AFTER_PLUGIN_UNINSTALL = 'core.after_plugin_uninstall';
     const ON_AFTER_PLUGIN_ACTIVATE = 'core.plugin_activate';
     const ON_BEFORE_PLUGIN_DEACTIVATE = 'core.plugin_deactivate';
+    const ON_AFTER_PLUGIN_DEACTIVATE = 'core.after_plugin_deactivate';
     const ON_AFTER_PLUGIN_UPDATE = "core.plugin_update";
 
     /* list of predefined system events: general events  */
@@ -211,7 +213,8 @@ class OW_EventManager
 
                 if ( !in_array($event->getName(), $this->eventsToSkip) && count($this->eventsLog) < $this->maxItemsInLog )
                 {
-                    $this->eventsLog[] = array('type' => 'trigger', 'start' => $startTime, 'exec' => $this->profiler->getTotalTime(), 'event' => $event, 'listeners' => $this->listeners[$event->getName()]);
+                    $this->eventsLog[] = array('type' => 'trigger', 'start' => $startTime, 'exec' => $this->profiler->getTotalTime(),
+                        'event' => $event, 'listeners' => $this->listeners[$event->getName()]);
                 }
             }
             else
@@ -235,7 +238,8 @@ class OW_EventManager
 
             if ( $this->devMode && !in_array($event->getName(), $this->eventsToSkip) && count($this->eventsLog) < $this->maxItemsInLog )
             {
-                $this->eventsLog[] = array('type' => 'trigger', 'start' => $startTime, 'event' => $event, 'listeners' => array(), 'exec' => 0);
+                $this->eventsLog[] = array('type' => 'trigger', 'start' => $startTime, 'event' => $event, 'listeners' => array(),
+                    'exec' => 0);
             }
         }
 
@@ -267,7 +271,8 @@ class OW_EventManager
 
                 if ( !in_array($event->getName(), $this->eventsToSkip) && count($this->eventsLog) < $this->maxItemsInLog )
                 {
-                    $this->eventsLog[] = array('type' => 'call', 'start' => $startTime, 'exec' => $this->profiler->getTotalTime(), 'event' => $event, 'listeners' => $this->listeners[$event->getName()]);
+                    $this->eventsLog[] = array('type' => 'call', 'start' => $startTime, 'exec' => $this->profiler->getTotalTime(),
+                        'event' => $event, 'listeners' => $this->listeners[$event->getName()]);
                 }
             }
             else
@@ -285,7 +290,8 @@ class OW_EventManager
 
             if ( $this->devMode && !in_array($event->getName(), $this->eventsToSkip) && count($this->eventsLog) < $this->maxItemsInLog )
             {
-                $this->eventsLog[] = array('type' => 'call', 'start' => $startTime, 'event' => $event, 'listeners' => array(), 'exec' => 0);
+                $this->eventsLog[] = array('type' => 'call', 'start' => $startTime, 'event' => $event, 'listeners' => array(),
+                    'exec' => 0);
             }
         }
     }

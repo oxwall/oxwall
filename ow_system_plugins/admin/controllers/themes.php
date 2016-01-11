@@ -29,17 +29,17 @@
  * @package ow_system_plugins.admin.controllers
  * @since 1.0
  */
-class ADMIN_CTRL_Themes extends ADMIN_CTRL_Abstract
+class ADMIN_CTRL_Themes extends ADMIN_CTRL_StorageAbstract
 {
-    /**
-     * @var BOL_ThemeService
-     */
-    private $themeService;
-
     /**
      * @var BASE_CMP_ContentMenu
      */
-    private $menu;
+    protected $menu;
+
+    /**
+     * @var OW_Feedback
+     */
+    protected $feedback;
 
     /**
      * Constructor.
@@ -47,93 +47,110 @@ class ADMIN_CTRL_Themes extends ADMIN_CTRL_Abstract
     public function __construct()
     {
         parent::__construct();
-
-        $this->themeService = BOL_ThemeService::getInstance();
-        $this->setDefaultAction('chooseTheme');
+        $this->setDefaultAction("chooseTheme");
+        $this->feedback = OW::getFeedback();
     }
 
     public function init()
     {
-        $router = OW_Router::getInstance();
-
-        $pageActions = array('choose_theme', 'add_theme');
-
+        $language = OW::getLanguage();
+        $pageActions = array("choose_theme", "add_theme");
         $menuItems = array();
 
         foreach ( $pageActions as $key => $item )
         {
             $menuItem = new BASE_MenuItem();
-            $menuItem->setKey($item)->setLabel(OW::getLanguage()->text('admin', 'themes_menu_item_' . $item))->setOrder($key)->setUrl($router->urlFor(__CLASS__, $item));
+            $menuItem->setKey($item)->setLabel($language->text("admin", "themes_menu_item_" . $item))->setOrder($key)->setUrl(OW::getRouter()->urlFor(__CLASS__,
+                    $item));
             $menuItems[] = $menuItem;
         }
 
         $this->menu = new BASE_CMP_ContentMenu($menuItems);
-
-        $this->addComponent('contentMenu', $this->menu);
-
-        $this->setPageHeading(OW::getLanguage()->text('admin', 'themes_choose_page_title'));
+        $this->addComponent("contentMenu", $this->menu);
+        $this->setPageHeading($language->text("admin", "themes_choose_page_title"));
     }
 
     public function chooseTheme()
     {
         $language = OW::getLanguage();
+        $router = OW::getRouter();
 
         $this->themeService->updateThemeList();
         $this->themeService->updateThemesInfo();
         $themes = $this->themeService->findAllThemes();
         $themesInfo = array();
 
-        $activeTheme = OW::getThemeManager()->getSelectedTheme()->getDto()->getName();
+        $activeTheme = OW::getThemeManager()->getSelectedTheme()->getDto()->getKey();
 
         /* @var $theme BOL_Theme */
         foreach ( $themes as $theme )
         {
-            $themesInfo[$theme->getName()] = (array) json_decode($theme->getDescription());
-            $themesInfo[$theme->getName()]['key'] = $theme->getName();
-            $themesInfo[$theme->getName()]['title'] = $theme->getTitle();
-            $themesInfo[$theme->getName()]['iconUrl'] = $this->themeService->getStaticUrl($theme->getName()) . BOL_ThemeService::ICON_FILE;
-            $themesInfo[$theme->getName()]['previewUrl'] = $this->themeService->getStaticUrl($theme->getName()) . BOL_ThemeService::PREVIEW_FILE;
-            $themesInfo[$theme->getName()]['active'] = ( $theme->getName() === $activeTheme );
-            $themesInfo[$theme->getName()]['changeUrl'] = OW::getRouter()->urlFor(__CLASS__, 'changeTheme', array('theme' => $theme->getName()));
-            $themesInfo[$theme->getName()]['update_url'] = ( ((int) $theme->getUpdate() === 1) && !defined('OW_PLUGIN_XP') ) ? OW::getRouter()->urlFor('ADMIN_CTRL_Themes', 'updateRequest', array('name' => $theme->getName())) : false;
+            $themesInfo[$theme->getKey()] = array(
+                "key" => $theme->getKey(),
+                "title" => $theme->getTitle(),
+                "iconUrl" => $this->themeService->getStaticUrl($theme->getKey()) . BOL_ThemeService::ICON_FILE,
+                "previewUrl" => $this->themeService->getStaticUrl($theme->getKey()) . BOL_ThemeService::PREVIEW_FILE,
+                "active" => ( $theme->getKey() == $activeTheme ),
+                "changeUrl" => $router->urlFor(__CLASS__, "changeTheme",
+                    array("key" => $theme->getKey(), "devKey" => $theme->getDeveloperKey())),
+                "update_url" => ( ((int) $theme->getUpdate() == 1) ) ? $router->urlFor("ADMIN_CTRL_Themes",
+                        "updateRequest", array("key" => $theme->getKey())) : false,
+            );
 
-            if ( !in_array($theme->getName(), array(BOL_ThemeService::DEFAULT_THEME, $activeTheme)) )
+            if ( !in_array($theme->getKey(), array(BOL_ThemeService::DEFAULT_THEME, $activeTheme)) )
             {
-                $themesInfo[$theme->getName()]['delete_url'] = OW::getRouter()->urlFor(__CLASS__, 'deleteTheme', array('name' => $theme->getName()));
+                $themesInfo[$theme->getKey()]["delete_url"] = $router->urlFor(__CLASS__, "deleteTheme",
+                    array("key" => $theme->getKey()));
             }
+
+            if ( $theme->getLicenseCheckTimestamp() > 0 )
+            {
+                $params = array(
+                    BOL_StorageService::URI_VAR_BACK_URI => urlencode($router->uriForRoute("admin_themes_choose")),
+                    BOL_StorageService::URI_VAR_KEY => $theme->getKey(),
+                    BOL_StorageService::URI_VAR_ITEM_TYPE => BOL_StorageService::URI_VAR_ITEM_TYPE_VAL_THEME,
+                    BOL_StorageService::URI_VAR_DEV_KEY => $theme->getDeveloperKey()
+                );
+                $themesInfo[$theme->getKey()]["license_url"] = OW::getRequest()->buildUrlQueryString($router->urlFor("ADMIN_CTRL_Storage",
+                        "checkItemLicense"), $params);
+            }
+
+            $xmlInfo = $this->themeService->getThemeXmlInfoForKey($theme->getKey());
+            $themesInfo[$theme->getKey()] = array_merge($themesInfo[$theme->getKey()], $xmlInfo);
         }
 
-        OW::getDocument()->addScript(OW::getPluginManager()->getPlugin('admin')->getStaticJsUrl() . 'theme_select.js');
-        OW::getDocument()->addScript(OW::getPluginManager()->getPlugin('base')->getStaticJsUrl() . 'jquery.sticky.js');
+        OW::getDocument()->addScript(OW::getPluginManager()->getPlugin("admin")->getStaticJsUrl() . "theme_select.js");
+        OW::getDocument()->addScript(OW::getPluginManager()->getPlugin("base")->getStaticJsUrl() . "jquery.sticky.js");
 
         $addData = array(
-            'deleteConfirmMsg' => $language->text('admin', 'themes_choose_delete_confirm_msg'),
-            'deleteActiveThemeMsg' => $language->text('admin', 'themes_cant_delete_active_theme')
+            "deleteConfirmMsg" => $language->text("admin", "themes_choose_delete_confirm_msg"),
+            "deleteActiveThemeMsg" => $language->text("admin", "themes_cant_delete_active_theme")
         );
 
         OW::getDocument()->addOnloadScript(
             "window.owThemes = new ThemesSelect(" . json_encode($themesInfo) . ", " . json_encode($addData) . ");
         	$('.selected_theme_info input.theme_select_submit').click(function(){
-    			window.location.href = '" . $themesInfo[$activeTheme]['changeUrl'] . "';
+    			window.location.href = '{$themesInfo[$activeTheme]['changeUrl']}';
     		});
             $('.selected_theme_info_stick').sticky({topSpacing:60});
             $('.admin_themes_select a.theme_icon').click( function(){ $('.theme_info .theme_control_button').hide(); });"
         );
 
-        $this->assign("adminThemes", array(BOL_ThemeService::DEFAULT_THEME => $themesInfo[BOL_ThemeService::DEFAULT_THEME]));
-        $this->assign('themeInfo', $themesInfo[$activeTheme]);
+        $this->assign("adminThemes",
+            array(BOL_ThemeService::DEFAULT_THEME => $themesInfo[BOL_ThemeService::DEFAULT_THEME]));
+        $this->assign("themeInfo", $themesInfo[$activeTheme]);
         $event = new OW_Event("admin.filter_themes_to_choose", array(), $themesInfo);
         OW::getEventManager()->trigger($event);
-        $this->assign('themes', $event->getData());
+        $this->assign("themes", $event->getData());
 
         // add theme
-        $form = new Form('theme-add');
+        $form = new Form("theme-add");
         $form->setEnctype(Form::ENCTYPE_MULTYPART_FORMDATA);
-        $file = new FileField('file');
+        $file = new FileField("file");
         $form->addElement($file);
 
-        $submit = new Submit('submit');
-        $submit->setValue($language->text('admin', 'plugins_manage_add_submit_label'));
+        $submit = new Submit("submit");
+        $submit->setValue($language->text("admin", "plugins_manage_add_submit_label"));
         $form->addElement($submit);
 
         $this->addForm($form);
@@ -143,392 +160,338 @@ class ADMIN_CTRL_Themes extends ADMIN_CTRL_Abstract
             if ( $form->isValid($_POST) )
             {
                 $data = $form->getValues();
+                $result = UTIL_File::checkUploadedFile($_FILES["file"]);
 
-                $uploadMaxFilesize = (float) ini_get("upload_max_filesize");
-                $postMaxSize = (float) ini_get("post_max_size");
-
-                $serverLimit = $uploadMaxFilesize < $postMaxSize ? $uploadMaxFilesize : $postMaxSize;
-
-                if ( ($_FILES['file']['error'] != UPLOAD_ERR_OK && $_FILES['file']['error'] == UPLOAD_ERR_INI_SIZE ) || ( empty($_FILES['file']) || $_FILES['file']['size'] > $serverLimit * 1024 * 1024 ) )
+                if ( !$result["result"] )
                 {
-                    OW::getFeedback()->error($language->text('admin', 'manage_plugins_add_size_error_message', array('limit' => $serverLimit)));
-                    $this->redirect(OW::getRouter()->urlForRoute('admin_themes_choose'));
+                    $this->feedback->error($result["message"]);
+                    $this->redirect($router->urlForRoute("admin_themes_choose"));
                 }
 
-                if ( $_FILES['file']['error'] != UPLOAD_ERR_OK )
+                $pluginfilesDir = OW::getPluginManager()->getPlugin("base")->getPluginFilesDir();
+
+                $tempFile = $this->getTemDirPath() . UTIL_String::getRandomStringWithPrefix("theme_add") . ".zip";
+                $tempDirName = UTIL_String::getRandomStringWithPrefix("theme_add");
+
+                if ( !move_uploaded_file($_FILES["file"]["tmp_name"], $tempFile) )
                 {
-                    switch ( $_FILES['file']['error'] )
-                    {
-                        case UPLOAD_ERR_INI_SIZE:
-                            $error = $language->text('base', 'upload_file_max_upload_filesize_error');
-                            break;
-
-                        case UPLOAD_ERR_PARTIAL:
-                            $error = $language->text('base', 'upload_file_file_partially_uploaded_error');
-                            break;
-
-                        case UPLOAD_ERR_NO_FILE:
-                            $error = $language->text('base', 'upload_file_no_file_error');
-                            break;
-
-                        case UPLOAD_ERR_NO_TMP_DIR:
-                            $error = $language->text('base', 'upload_file_no_tmp_dir_error');
-                            break;
-
-                        case UPLOAD_ERR_CANT_WRITE:
-                            $error = $language->text('base', 'upload_file_cant_write_file_error');
-                            break;
-
-                        case UPLOAD_ERR_EXTENSION:
-                            $error = $language->text('base', 'upload_file_invalid_extention_error');
-                            break;
-
-                        default:
-                            $error = $language->text('base', 'upload_file_fail');
-                    }
-
-                    OW::getFeedback()->error($error);
-                    $this->redirect(OW::getRouter()->urlForRoute('admin_themes_choose'));
+                    $this->feedback->error($language->text("admin", "manage_theme_add_move_file_error"));
+                    $this->redirect($router->urlForRoute("admin_themes_choose"));
                 }
-
-                if ( !is_uploaded_file($_FILES['file']['tmp_name']) )
-                {
-                    OW::getFeedback()->error($language->text('admin', 'manage_themes_add_empty_field_error_message'));
-                    $this->redirect(OW::getRouter()->urlForRoute('admin_themes_choose'));
-                }
-
-                $tempFile = OW_DIR_PLUGINFILES . 'ow' . DS . uniqid('theme_add') . '.zip';
-                $tempDir = OW_DIR_PLUGINFILES . 'ow' . DS . uniqid('theme_add') . DS;
-
-                copy($_FILES['file']['tmp_name'], $tempFile);
 
                 $zip = new ZipArchive();
 
                 if ( $zip->open($tempFile) === true )
                 {
-                    $zip->extractTo($tempDir);
+                    $zip->extractTo($this->getTemDirPath() . $tempDirName);
                     $zip->close();
                 }
                 else
                 {
-                    OW::getFeedback()->error(OW::getLanguage()->text('admin', 'manage_theme_add_extract_error'));
-                    $this->redirect(OW::getRouter()->urlForRoute('admin_themes_choose'));
+                    $this->feedback->error($language->text("admin", "manage_theme_add_extract_error"));
+                    $this->redirect($router->urlForRoute("admin_themes_choose"));
                 }
 
                 unlink($tempFile);
-                $this->redirect(OW::getRequest()->buildUrlQueryString(OW::getRouter()->urlFor(__CLASS__, 'processAdd'), array('dir' => urlencode($tempDir))));
+                $this->redirect(OW::getRequest()->buildUrlQueryString($router->urlFor(__CLASS__, "processAdd"),
+                        array("dir" => $tempDirName)));
             }
         }
     }
 
     public function processAdd()
     {
-        $this->checkXP();
         $language = OW::getLanguage();
+        $router = OW::getRouter();
 
-        if ( empty($_GET['dir']) || !file_exists(urldecode($_GET['dir'])) )
+        $tempDirName = empty($_GET["dir"]) ? null : str_replace(DS, "", $_GET["dir"]);
+
+        if ( empty($tempDirName) || !file_exists($this->getTemDirPath() . $tempDirName) )
         {
-            OW::getFeedback()->error($language->text('admin', 'manage_plugins_add_ftp_move_error'));
-            $this->redirect(OW::getRouter()->urlForRoute('admin_themes_choose'));
+            $this->feedback->error($language->text("admin", "manage_plugins_add_ftp_move_error"));
+            $this->redirect($router->urlForRoute("admin_themes_choose"));
         }
 
-        $tempDir = urldecode($_GET['dir']);
-        $handle = opendir($tempDir);
+        $tempDirPath = $this->getTemDirPath() . $tempDirName;
 
-        if ( $handle !== false )
+        // locate plugin.xml file to find plugin source root dir
+        $result = UTIL_File::findFiles($tempDirPath, array("xml"));
+        $localThemeRootPath = null;
+
+        foreach ( $result as $item )
         {
-            while ( ($item = readdir($handle)) !== false )
+            if ( basename($item) == BOL_ThemeService::THEME_XML )
             {
-                if ( $item === '.' || $item === '..' )
-                {
-                    continue;
-                }
-
-                $innerDir = $item;
+                $localThemeRootPath = dirname($item) . DS;
             }
-
-            closedir($handle);
         }
 
-        if ( !empty($innerDir) && file_exists($tempDir . $innerDir . DS . 'theme.xml') )
+        if ( $localThemeRootPath == null )
         {
-            $localDir = $tempDir . $innerDir . DS;
-        }
-        else
-        {
-            OW::getFeedback()->error(OW::getLanguage()->text('admin', 'theme_add_extract_error'));
-            $this->redirect(OW::getRouter()->urlForRoute('admin_themes_choose'));
+            $this->feedback->error($language->text("admin", "manage_theme_add_extract_error"));
+            $this->redirect($router->urlForRoute('admin_themes_choose'));
         }
 
-        if ( file_exists(OW_DIR_THEME . $innerDir) )
+        $remoteDir = OW_DIR_THEME . basename($localThemeRootPath);
+
+        if ( file_exists($remoteDir) )
         {
-            OW::getFeedback()->error(OW::getLanguage()->text('admin', 'theme_add_duplicated_dir_error', array('dir' => $innerDir)));
-            $this->redirect(OW::getRouter()->urlForRoute('admin_themes_choose'));
+            $this->feedback->error(OW::getLanguage()->text("admin", "theme_add_duplicated_dir_error",
+                    array("dir" => $remoteDir)));
+            $this->redirect($router->urlForRoute("admin_themes_choose"));
         }
 
         $ftp = $this->getFtpConnection();
-        $ftp->uploadDir($localDir, OW_DIR_THEME . $innerDir);
-        UTIL_File::removeDir($tempDir);
-        OW::getFeedback()->info($language->text('base', 'themes_item_add_success_message'));
-        $this->redirect(OW::getRouter()->urlForRoute('admin_themes_choose'));
+        $ftp->uploadDir($localThemeRootPath, $remoteDir);
+        UTIL_File::removeDir($tempDirPath);
+        $this->feedback->info($language->text("base", "themes_item_add_success_message"));
+        $this->redirect($router->urlForRoute("admin_themes_choose"));
     }
 
     public function changeTheme( $params )
     {
-        OW::getConfig()->saveConfig('base', 'selectedTheme', trim($params['theme']));
-        OW::getEventManager()->trigger(new OW_Event('base.change_theme', array('name' => $params['theme'])));
-        OW::getFeedback()->info(OW::getLanguage()->text('admin', 'theme_change_success_message'));
-        $this->redirect(OW::getRouter()->uriForRoute('admin_themes_choose'));
-    }
-
-    private function checkXP()
-    {
-        if ( defined('OW_PLUGIN_XP') )
-        {
-            throw new Redirect404Exception();
-        }
-    }
-
-    /**
-     * Returns ftp connection.
-     *
-     * @return UTIL_Ftp
-     */
-    private function getFtpConnection()
-    {
-        try
-        {
-            $ftp = BOL_PluginService::getInstance()->getFtpConnection();
-        }
-        catch ( LogicException $e )
-        {
-            OW::getFeedback()->error($e->getMessage());
-            $this->redirect(OW::getRequest()->buildUrlQueryString(OW::getRouter()->urlFor('ADMIN_CTRL_Plugins', 'ftpAttrs'), array('back_uri' => urlencode(OW::getRequest()->getRequestUri()))));
-        }
-
-        return $ftp;
-    }
-    /*     * **** Theme Update ******** */
-
-    public function updateRequest( array $params )
-    {
-        $this->checkXP();
-        $themeDto = $this->getThemeDtoByName($params);
+        $backUrl = OW::getRouter()->urlForRoute("admin_themes_choose");
         $language = OW::getLanguage();
 
-        $remoteThemeInfo = (array) $this->themeService->getThemeInfoForUpdate($themeDto->getName(), $themeDto->getDeveloperKey());
-
-        if ( OW::getConfig()->getValue('base', 'update_soft') )
+        if ( empty($params["key"]) || empty($params["devKey"]) )
         {
-            $this->assign("platformUpdateAvail", true);
+            $this->feedback->error($language->text("admin", "theme_manage_empty_key_error_msg"));
+            $this->redirect($backUrl);
         }
 
-        if ( empty($remoteThemeInfo) || !empty($remoteThemeInfo['error']) )
-        {
-            $this->assign('mode', 'error');
-            $this->assign('text', $language->text('admin', 'theme_update_request_error'));
-            $this->assign('returnUrl', OW::getRouter()->urlForRoute('admin_themes_choose'));
-        }
-        else if ( (bool) $remoteThemeInfo['freeware'] )
-        {
-            $this->assign('mode', 'free');
-            $this->assign('text', $language->text('admin', 'free_theme_request_text', array('oldVersion' => $themeDto->getBuild(), 'newVersion' => $remoteThemeInfo['build'], 'name' => $themeDto->getTitle())));
-            $this->assign('redirectUrl', OW::getRouter()->urlFor('ADMIN_CTRL_Themes', 'update', $params));
-            $this->assign('returnUrl', OW::getRouter()->urlForRoute('admin_themes_choose'));
-        }
-        else if ( $remoteThemeInfo['build'] === null )
-        {
-            $query = "UPDATE `" . OW_DB_PREFIX . "base_theme` SET `update` = 0 WHERE `name` = :name";
-            OW::getDbo()->query($query, array('name' => $params['name']));
+        $params = array(
+            BOL_StorageService::URI_VAR_KEY => trim($params["key"]),
+            BOL_StorageService::URI_VAR_DEV_KEY => trim($params["devKey"]),
+            BOL_StorageService::URI_VAR_ITEM_TYPE => BOL_StorageService::URI_VAR_ITEM_TYPE_VAL_THEME
+        );
 
-            $this->assign('mode', 'error');
-            $this->assign('text', $language->text('admin', 'theme_update_not_available_error'));
-            $this->assign('returnUrl', OW::getRouter()->urlForRoute('admin_themes_choose'));
+        $activateTheme = false;
+
+        // get remote info about the plugin
+        $itemData = $this->storageService->getItemInfoForUpdate($params[BOL_StorageService::URI_VAR_KEY],
+            $params[BOL_StorageService::URI_VAR_DEV_KEY]);
+
+        // check if it's free
+        if ( isset($itemData[BOL_StorageService::URI_VAR_FREEWARE]) && (bool) $itemData[BOL_StorageService::URI_VAR_FREEWARE] )
+        {
+            $activateTheme = true;
         }
         else
         {
-            $this->assign('text', $language->text('admin', 'com_theme_request_text', array('oldVersion' => $themeDto->getBuild(), 'newVersion' => $remoteThemeInfo['build'], 'name' => $themeDto->getTitle())));
-
-            $form = new Form('license-key');
-
-            $licenseKey = new TextField('key');
-            $licenseKey->setValue($themeDto->getLicenseKey());
-            $licenseKey->setRequired();
-            $licenseKey->setLabel($language->text('admin', 'com_theme_request_name_label'));
-            $form->addElement($licenseKey);
-
-            $submit = new Submit('submit');
-            $submit->setValue($language->text('admin', 'license_form_submit_label'));
-            $form->addElement($submit);
-
-            $button = new Button('button');
-            $button->setValue($language->text('admin', 'license_form_leave_label'));
-            $button->addAttribute('onclick', "window.location='" . OW::getRouter()->urlForRoute('admin_themes_choose') . "'");
-            $form->addElement($button);
-
-            $this->addForm($form);
-
-            if ( OW::getRequest()->isPost() )
+            if ( !isset($params[BOL_StorageService::URI_VAR_LICENSE_CHECK_COMPLETE]) )
             {
-                if ( $form->isValid($_POST) )
+                $params[BOL_StorageService::URI_VAR_BACK_URI] = OW::getRequest()->getRequestUri();
+                $this->redirect(OW::getRequest()->buildUrlQueryString(OW::getRouter()->urlFor("ADMIN_CTRL_Storage",
+                            "checkItemLicense"), $params));
+            }
+
+            if ( isset($params[BOL_StorageService::URI_VAR_LICENSE_CHECK_RESULT]) && (bool) $params[BOL_StorageService::URI_VAR_LICENSE_CHECK_RESULT] && isset($params[BOL_StorageService::URI_VAR_LICENSE_KEY]) )
+            {
+                if ( $this->storageService->checkLicenseKey($params[BOL_StorageService::URI_VAR_KEY],
+                        $params[BOL_StorageService::URI_VAR_DEV_KEY], $params[BOL_StorageService::URI_VAR_LICENSE_KEY]) )
                 {
-                    $data = $form->getValues();
-                    $params['licenseKey'] = $data['key'];
-
-                    $result = $this->themeService->checkLicenseKey($themeDto->getName(), $themeDto->getDeveloperKey(), $data['key']);
-
-                    if ( $result === true )
-                    {
-                        $this->redirect(OW::getRouter()->urlFor('ADMIN_CTRL_Themes', 'update', $params));
-                    }
-                    else
-                    {
-                        OW::getFeedback()->error($language->text('admin', 'themes_manage_invalid_license_key_error_message'));
-                        $this->redirect();
-                    }
+                    $activateTheme = true;
                 }
             }
+        }
+
+        if ( $activateTheme )
+        {
+            OW::getConfig()->saveConfig("base", "selectedTheme", $params[BOL_StorageService::URI_VAR_KEY]);
+            OW::getEventManager()->trigger(new OW_Event("base.change_theme",
+                array(/* name for back. compat. */"name" => $params[BOL_StorageService::URI_VAR_KEY], "key" => $params[BOL_StorageService::URI_VAR_KEY])));
+            $this->feedback->info(OW::getLanguage()->text("admin", "theme_change_success_message"));
+        }
+        else
+        {
+            $this->feedback->error($language->text("admin", "manage_theme_activate_invalid_license_key"));
+        }
+
+        $this->redirect($backUrl);
+    }
+
+    public function updateRequest( array $params )
+    {
+        $themeDto = $this->getThemeDtoByKeyInParamsArray($params);
+        $language = OW::getLanguage();
+        $router = OW::getRouter();
+
+        $remoteThemeInfo = (array) $this->storageService->getItemInfoForUpdate($themeDto->getKey(),
+                $themeDto->getDeveloperKey(), $themeDto->getBuild());
+
+        if ( empty($remoteThemeInfo) || !empty($remoteThemeInfo["error"]) )
+        {
+            $this->assign("text", $language->text("admin", "theme_update_request_error"));
+            return;
+        }
+
+        if ( !(bool) $remoteThemeInfo["freeware"] && ($themeDto->getLicenseKey() == null || !$this->storageService->checkLicenseKey($themeDto->getKey(),
+                $themeDto->getDeveloperKey(), $themeDto->getLicenseKey())) )
+        {
+            if ( !isset($_GET[BOL_StorageService::URI_VAR_LICENSE_CHECK_COMPLETE]) )
+            {
+                $get = array(BOL_StorageService::URI_VAR_BACK_URI => $router->uriFor(__CLASS__, "updateRequest", $params));
+                $this->redirect(OW::getRequest()->buildUrlQueryString($router->urlFor("ADMIN_CTRL_Storage",
+                            "checkItemLicense"), $get));
+            }
+            else
+            {
+                $this->assign("text", $language->text("admin", "theme_update_request_error"));
+                return;
+            }
+        }
+
+        $this->assign("text",
+            $language->text("admin", "free_plugin_request_text",
+                array("oldVersion" => $themeDto->getBuild(), "newVersion" => $remoteThemeInfo["build"], "name" => $themeDto->getTitle())));
+        $this->assign("updateUrl", $router->urlFor(__CLASS__, "update", $params));
+        $this->assign("returnUrl", $router->urlForRoute("admin_themes_choose"));
+
+        if ( OW::getConfig()->getValue("base", "update_soft") )
+        {
+            $this->assign("platformUpdateAvail", true);
         }
     }
 
     public function update( array $params )
     {
-        $this->checkXP();
+        $themeDto = $this->getThemeDtoByKeyInParamsArray($params);
+        $language = OW::getLanguage();
+        $router = OW::getRouter();
 
-        if ( !empty($_GET['mode']) )
+        if ( !empty($_GET["mode"]) )
         {
-            switch ( trim($_GET['mode']) )
+            switch ( trim($_GET["mode"]) )
             {
-                case 'theme_up_to_date':
-                    OW::getFeedback()->warning(OW::getLanguage()->text('admin', 'manage_themes_up_to_date_message'));
+                case "theme_up_to_date":
+                    $this->feedback->warning($language->text("admin", "manage_themes_up_to_date_message"));
                     break;
 
-                case 'theme_update_success':
-                    OW::getFeedback()->info(OW::getLanguage()->text('admin', 'manage_themes_update_success_message'));
+                case "theme_update_success":
+                    $this->feedback->info($language->text("admin", "manage_themes_update_success_message"));
                     break;
 
                 default :
-                    OW::getFeedback()->error(OW::getLanguage()->text('admin', 'manage_themes_update_process_error'));
+                    $this->feedback->error($language->text("admin", "manage_themes_update_process_error"));
                     break;
             }
 
-            $this->redirect(OW::getRouter()->urlForRoute('admin_themes_choose'));
+            $this->redirect($router->urlForRoute("admin_themes_choose"));
         }
 
-        $themeDto = $this->getThemeDtoByName($params);
+        $remoteThemeInfo = (array) $this->storageService->getItemInfoForUpdate($themeDto->getKey(),
+                $themeDto->getDeveloperKey(), $themeDto->getBuild());
+
+        if ( empty($remoteThemeInfo) || !empty($remoteThemeInfo["error"]) )
+        {
+            $this->feedback->error($language->text("admin", "manage_themes_update_process_error"));
+            $this->redirect($router->urlForRoute("admin_themes_choose"));
+        }
+
+        if ( !(bool) $remoteThemeInfo["freeware"] && ($themeDto->getLicenseKey() == null || !$this->storageService->checkLicenseKey($themeDto->getKey(),
+                $themeDto->getDeveloperKey(), $themeDto->getLicenseKey())) )
+        {
+            $this->feedback->error($language->text("admin", "manage_plugins_update_invalid_key_error"));
+            $this->redirect($router->urlForRoute("admin_themes_choose"));
+        }
 
         $ftp = $this->getFtpConnection();
 
         try
         {
-            $archivePath = $this->themeService->downloadTheme($themeDto->getName(), $themeDto->getDeveloperKey(), (!empty($params['licenseKey']) ? $params['licenseKey'] : null));
+            $archivePath = $this->storageService->downloadItem($themeDto->getKey(), $themeDto->getDeveloperKey(),
+                $themeDto->getLicenseKey());
         }
         catch ( Exception $e )
         {
-            OW::getFeedback()->error($e->getMessage());
-            $this->redirect(OW::getRouter()->urlForRoute('admin_themes_choose'));
+            $this->feedback->error($e->getMessage());
+            $this->redirect($router->urlForRoute("admin_themes_choose"));
         }
 
         if ( !file_exists($archivePath) )
         {
-            OW::getFeedback()->error(OW::getLanguage()->text('admin', 'theme_update_download_error'));
-            $this->redirect(OW::getRouter()->urlForRoute('admin_themes_choose'));
+            $this->feedback->error($language->text("admin", "theme_update_download_error"));
+            $this->redirect($router->urlForRoute("admin_themes_choose"));
         }
 
         $zip = new ZipArchive();
 
-        $tempDir = OW_DIR_PLUGINFILES . 'ow' . DS . uniqid('theme_update') . DS;
+        $pluginfilesDir = OW::getPluginManager()->getPlugin("base")->getPluginFilesDir();
+        $tempDirPath = $pluginfilesDir . UTIL_HtmlTag::generateAutoId("theme_update") . DS;
 
         if ( $zip->open($archivePath) === true )
         {
-            $zip->extractTo($tempDir);
+            $zip->extractTo($tempDirPath);
             $zip->close();
         }
         else
         {
-            OW::getFeedback()->error(OW::getLanguage()->text('admin', 'theme_update_download_error'));
-            $this->redirect(OW::getRouter()->urlForRoute('admin_themes_choose'));
+            $this->feedback->error($language->text("admin", "theme_update_download_error"));
+            $this->redirect($router->urlForRoute("admin_themes_choose"));
         }
 
-        if ( file_exists($tempDir . 'theme.xml') )
+        $result = UTIL_File::findFiles($tempDirPath, array("xml"));
+        $localThemeRootPath = null;
+
+        foreach ( $result as $item )
         {
-            $localDir = $tempDir;
-        }
-        else
-        {
-            $handle = opendir($tempDir);
-
-            while ( ($item = readdir($handle)) !== false )
+            if ( basename($item) == BOL_ThemeService::THEME_XML )
             {
-                if ( $item === '.' || $item === '..' )
-                {
-                    continue;
-                }
-
-                $innerDir = $item;
-            }
-
-            closedir($handle);
-
-            if ( !empty($innerDir) && file_exists($tempDir . $innerDir . DS . 'theme.xml') )
-            {
-                $localDir = $tempDir . $innerDir;
-            }
-            else
-            {
-                OW::getFeedback()->error(OW::getLanguage()->text('admin', 'theme_update_download_error'));
+                $localThemeRootPath = dirname($item) . DS;
             }
         }
 
-
-        if ( substr($name, -1) === DS )
+        if ( $localThemeRootPath == null )
         {
-            $name = substr($name, 0, (strlen($name) - 1));
+            $this->feedback->error($language->text("admin", "manage_theme_update_extract_error"));
+            $this->redirect($router->urlForRoute("admin_themes_choose"));
         }
 
-        $remoteDir = OW_DIR_THEME . $themeDto->getName();
+        $remoteDir = OW_DIR_THEME . $themeDto->getKey();
 
         if ( !file_exists($remoteDir) )
         {
-            $ftp->mkDir($remoteDir);
+            $this->feedback->error($language->text("admin", "manage_theme_update_theme_not_found"));
+            $this->redirect($router->urlForRoute("admin_themes_choose"));
         }
 
-        $ftp->uploadDir($localDir, $remoteDir);
-        UTIL_File::removeDir($localDir);
+        $ftp->uploadDir($localThemeRootPath, $remoteDir);
+        UTIL_File::removeDir($localThemeRootPath);
 
-        $this->redirect(OW::getRequest()->buildUrlQueryString(OW_URL_HOME . 'ow_updates/index.php', array('theme' => $themeDto->getName(), 'back-uri' => urlencode(OW::getRequest()->getRequestUri()))));
+        $params = array("theme" => $themeDto->getKey(), "back-uri" => urlencode(OW::getRequest()->getRequestUri()));
+        $this->redirect(OW::getRequest()->buildUrlQueryString($this->storageService->getUpdaterUrl(), $params));
     }
 
     public function deleteTheme( $params )
     {
         $language = OW::getLanguage();
-        $themeDto = $this->getThemeDtoByName($params);
+        $themeDto = $this->getThemeDtoByKeyInParamsArray($params);
 
-        if ( OW::getThemeManager()->getDefaultTheme()->getDto()->getName() == $themeDto->getName() )
+        if ( OW::getThemeManager()->getDefaultTheme()->getDto()->getKey() == $themeDto->getKey() )
         {
-            OW::getFeedback()->error($language->text('admin', 'themes_cant_delete_default_theme'));
-            $this->redirect(OW::getRouter()->urlForRoute('admin_themes_choose'));
+            $this->feedback->error($language->text("admin", "themes_cant_delete_default_theme"));
+            $this->redirect(OW::getRouter()->urlForRoute("admin_themes_choose"));
         }
 
-        if ( OW::getThemeManager()->getCurrentTheme()->getDto()->getName() == $themeDto->getName() )
+        if ( OW::getThemeManager()->getCurrentTheme()->getDto()->getKey() == $themeDto->getKey() )
         {
-            OW::getFeedback()->error($language->text('admin', 'themes_cant_delete_active_theme'));
-            $this->redirect(OW::getRouter()->urlForRoute('admin_themes_choose'));
+            $this->feedback->error($language->text("admin", "themes_cant_delete_active_theme"));
+            $this->redirect(OW::getRouter()->urlForRoute("admin_themes_choose"));
         }
 
         $ftp = $this->getFtpConnection();
         $this->themeService->deleteTheme($themeDto->getId(), true);
-        $ftp->rmDir($this->themeService->getRootDir($themeDto->getName()));
+        $ftp->rmDir($this->themeService->getRootDir($themeDto->getKey()));
 
-        OW::getFeedback()->info($language->text('admin', 'themes_delete_success_message'));
-        $this->redirect(OW::getRouter()->urlForRoute('admin_themes_choose'));
+        $this->feedback->info($language->text("admin", "themes_delete_success_message"));
+        $this->redirect(OW::getRouter()->urlForRoute("admin_themes_choose"));
     }
 
-    private function getThemeDtoByName( $params )
+    private function getThemeDtoByKeyInParamsArray( $params )
     {
-        if ( !empty($params['name']) )
+        if ( !empty($params["key"]) )
         {
-            $themeDto = $this->themeService->findThemeByName(trim($params['name']));
+            $themeDto = $this->themeService->findThemeByKey(trim($params["key"]));
         }
 
         if ( !empty($themeDto) )
@@ -536,7 +499,7 @@ class ADMIN_CTRL_Themes extends ADMIN_CTRL_Abstract
             return $themeDto;
         }
 
-        OW::getFeedback()->error(OW::getLanguage()->text('admin', 'manage_themes_theme_not_found'));
-        $this->redirect(OW::getRouter()->urlForRoute('admin_themes_choose'));
+        $this->feedback->error(OW::getLanguage()->text("admin", "manage_themes_theme_not_found"));
+        $this->redirect(OW::getRouter()->urlForRoute("admin_themes_choose"));
     }
 }

@@ -18,6 +18,7 @@ final class BASE_MCLASS_JoinFormUtlis
                     $result[$presentation] = 'owm_checkbox_wrap';
                     break;
                 case BOL_QuestionService::QUESTION_PRESENTATION_SELECT:
+                case BOL_QuestionService::QUESTION_PRESENTATION_FSELECT:
                     $result[$presentation] = 'owm_field_wrap owm_select_wrap';
                     break;
                 case BOL_QuestionService::QUESTION_PRESENTATION_RADIO:

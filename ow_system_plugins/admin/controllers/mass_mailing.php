@@ -195,11 +195,13 @@ class ADMIN_CTRL_MassMailing extends ADMIN_CTRL_Abstract
                         $vars['user_name'] = $displayNameList[$user->id];
 
                         $code = md5($user->username . $user->password);
-
-                        $link = OW::getRouter()->urlForRoute('base_massmailing_unsubscribe', array('id' => $user->id, 'code' => $code));
                         
-                        $vars['unsubscribe_url'] = $link;
+                        $vars['unsubscribe_url'] = OW::getRouter()->urlForRoute('base_massmailing_unsubscribe', array('id' => $user->id, 'code' => $code));
 
+                        $event = new BASE_CLASS_PropertyEvent("base.massmail_on_before_fetch_user_mail", $vars, array("userId" => $user->id));
+                        OW::getEventManager()->trigger($event);
+                        $vars = $event->getProperties();
+                        
                         $subjectText = UTIL_String::replaceVars($data['subject'], $vars);
                         $mail->setSubject($subjectText);
                         
@@ -209,7 +211,7 @@ class ADMIN_CTRL_MassMailing extends ADMIN_CTRL_Abstract
                             
                             if( !$hasUnsubscribeUrl )
                             {
-                                $htmlContent .= $language->text('admin', 'massmailing_unsubscribe_link_html', array('link' => $link));
+                                $htmlContent .= $language->text('admin', 'massmailing_unsubscribe_link_html', array('link' => $vars['unsubscribe_url']));
                             }
                             
                             $mail->setHtmlContent($htmlContent);
@@ -224,7 +226,7 @@ class ADMIN_CTRL_MassMailing extends ADMIN_CTRL_Abstract
                             
                             if( !$hasUnsubscribeUrl )
                             {
-                                $textContent .= "\n\n" . $language->text('admin', 'massmailing_unsubscribe_link_text', array('link' => $link));
+                                $textContent .= "\n\n" . $language->text('admin', 'massmailing_unsubscribe_link_text', array('link' => $vars['unsubscribe_url']));
                             }
                             
                             $mail->setTextContent($textContent);

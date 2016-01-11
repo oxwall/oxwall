@@ -685,7 +685,8 @@ class ADMIN_CTRL_Languages extends ADMIN_CTRL_Abstract
 
                 $langDto = $languageService->findById($langId); /* @var $langDto BOL_Language */
 
-                $langDir = 'langs' . DS . $langDto->getTag() . DS;
+                //$langDir = 'langs' . DS . $langDto->getTag() . DS;
+                $langDir = "language_{$langDto->getTag()}" . DS;
                 $za->addEmptyDir($langDir);
 
                 $dir = "{$languageService->getExportDirPath()}{$langDir}";

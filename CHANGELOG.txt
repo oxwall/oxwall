@@ -1,3 +1,45 @@
+Oxwall 1.8.1 beta, Jan 5, 2016
+====================================
+
+Platform [core]:
+- added mobile version for new Simplicity theme;
+- license key is now required for commercial items during the installation of plugins/themes;
+- list of photos available for avatar upload is no longer duplicated on the Change Avatar page;
+- inverted commas within tags no longer cause errors on the content editing page;
+- improved stability for captcha display;
+- added new field type for fselect single choice, which allows to add unlimited number of values;
+- added User's Timezone option to User Preferences;
+- fixed Not Found errors for images on Admin Panel > Layout > Customize > Graphics page;
+- added basic customization option for mobile version theme in Admin Panel;
+- improved Amazon S3 support;
+- added option to disable captcha from Admin Panel;
+
+Newsfeed [newsfeed]:
+- private blog posts no longer show up in general Newsfeed;
+
+Virtual Gifts [virtualgifts]:
+- any selected gift is now shown as selected in Simplicity theme;
+
+Forum [forum]:
+- fixed link for creation of topics in Forum Topics index widget;
+- added check during creation of new topic to see if a forum for this new topic exists;
+
+Photos [photo]:
+- empty albums no longer show up in User Albums widget on Profile View page;
+- fixed photo search by tag bug;
+- fixed bugs found during display of photos on photo lists;
+
+Advertisement [ads]:
+- fixed Google AdSense display bug;
+- fixed conflict with Geolocation Data plugin;
+
+TinyChat [tinychat]:
+- added new user action "Use Chat";
+
+Events [event]:
+- only expired invitations are now deleted by cron;
+
+
 Oxwall 1.8.0, Sep 8, 2015
 ====================================
 

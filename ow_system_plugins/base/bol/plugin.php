@@ -23,78 +23,36 @@
  */
 
 /**
- * Data Transfer Object for `plugin` table.
- *
  * @author Sardar Madumarov <madumarov@gmail.com>
  * @package ow_system_plugins.base.bol
  * @since 1.0
  */
-class BOL_Plugin extends OW_Entity
+class BOL_Plugin extends BOL_StoreItem
 {
     /**
      * @var string
      */
-    public $title;
-    /**
-     * @var string
-     */
-    public $description;
-    /**
-     * @var string
-     */
     public $module;
-    /**
-     * @var string
-     */
-    public $key;
-    /**
-     * @var string
-     */
-    public $developerKey;
+
     /**
      * @var boolean
      */
     public $isSystem;
+
     /**
      * @var boolean
      */
     public $isActive;
+
     /**
      * @var string
      */
     public $adminSettingsRoute;
+
     /**
      * @var string
      */
     public $uninstallRoute;
-    /**
-     * @var integer
-     */
-    public $build = 0;
-    /**
-     * @var boolean
-     */
-    public $update = 0;
-    /**
-     * @var string
-     */
-    public $licenseKey;
-
-    /**
-     * @return string
-     */
-    public function getDescription()
-    {
-        return $this->description;
-    }
-
-    /**
-     * @return integer
-     */
-    public function getId()
-    {
-        return (int) $this->id;
-    }
 
     /**
      * @return boolean
@@ -115,34 +73,9 @@ class BOL_Plugin extends OW_Entity
     /**
      * @return string
      */
-    public function getKey()
-    {
-        return $this->key;
-    }
-
-    /**
-     * @return string
-     */
     public function getModule()
     {
         return $this->module;
-    }
-
-    /**
-     * @return string
-     */
-    public function getTitle()
-    {
-        return $this->title;
-    }
-
-    /**
-     * @param string $description
-     */
-    public function setDescription( $description )
-    {
-        $this->description = trim($description);
-        return $this;
     }
 
     /**
@@ -152,16 +85,7 @@ class BOL_Plugin extends OW_Entity
     public function setIsActive( $isActive )
     {
         $this->isActive = (boolean) $isActive;
-        return $this;
-    }
 
-    /**
-     * @param string $key
-     * @return BOL_Plugin
-     */
-    public function setKey( $key )
-    {
-        $this->key = trim($key);
         return $this;
     }
 
@@ -172,16 +96,7 @@ class BOL_Plugin extends OW_Entity
     public function setModule( $module )
     {
         $this->module = trim($module);
-        return $this;
-    }
 
-    /**
-     * @param string $title
-     * @return BOL_Plugin
-     */
-    public function setTitle( $title )
-    {
-        $this->title = trim($title);
         return $this;
     }
 
@@ -192,6 +107,7 @@ class BOL_Plugin extends OW_Entity
     public function setIsSystem( $isSystem )
     {
         $this->isSystem = $isSystem;
+
         return $this;
     }
 
@@ -205,59 +121,31 @@ class BOL_Plugin extends OW_Entity
 
     /**
      * @param string $adminSettingsRoute
+     * @return BOL_Plugin
      */
     public function setAdminSettingsRoute( $adminSettingsRoute )
     {
         $this->adminSettingsRoute = $adminSettingsRoute;
+
+        return $this;
     }
 
-    public function getBuild()
-    {
-        return $this->build;
-    }
-
-    public function setBuild( $build )
-    {
-        $this->build = (int) $build;
-    }
-
-    public function getUpdate()
-    {
-        return $this->update;
-    }
-
-    public function setUpdate( $update )
-    {
-        $this->update = (int) $update;
-    }
-
-    public function getLicenseKey()
-    {
-        return $this->licenseKey;
-    }
-
-    public function setLicenseKey( $licenseKey )
-    {
-        $this->licenseKey = $licenseKey;
-    }
-
-    public function getDeveloperKey()
-    {
-        return $this->developerKey;
-    }
-
-    public function setDeveloperKey( $developerKey )
-    {
-        $this->developerKey = $developerKey;
-    }
-
+    /**
+     * @return string
+     */
     public function getUninstallRoute()
     {
         return $this->uninstallRoute;
     }
 
+    /**
+     * @param string $uninstallRoute
+     * @return BOL_Plugin
+     */
     public function setUninstallRoute( $uninstallRoute )
     {
         $this->uninstallRoute = $uninstallRoute;
+
+        return $this;
     }
 }
