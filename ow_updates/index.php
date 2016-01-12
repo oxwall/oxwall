@@ -244,8 +244,8 @@ if ( !empty($_GET['plugin']) )
 
 if ( !empty($_GET['theme']) )
 {
-    $query = "SELECT * FROM `" . OW_DB_PREFIX . "base_theme` WHERE `name` = :name";
-    $result = $db->queryForRow($query, array('name' => trim($_GET['theme'])));
+    $query = "SELECT * FROM `" . OW_DB_PREFIX . "base_theme` WHERE `key` = :key";
+    $result = $db->queryForRow($query, array('key' => trim($_GET['theme'])));
 
     // theme not found
     if ( empty($result) )
@@ -255,7 +255,7 @@ if ( !empty($_GET['theme']) )
     }
     else
     {
-        $xmlInfoArray = (array) simplexml_load_file(OW_DIR_ROOT . 'ow_themes' . DS . $result['name'] . DS . 'theme.xml');
+        $xmlInfoArray = (array) simplexml_load_file(OW_DIR_ROOT . 'ow_themes' . DS . $result['key'] . DS . 'theme.xml');
 
         if ( (int) $xmlInfoArray['build'] > (int) $result['build'] )
         {
@@ -268,7 +268,7 @@ if ( !empty($_GET['theme']) )
                 $query = "INSERT INTO `" . OW_DB_PREFIX . "base_log` (`message`, `type`, `key`, `timeStamp`) VALUES (:message, 'ow_update', :key, :time)";
                 try
                 {
-                    $db->query($query, array('message' => json_encode($entries), 'key' => $result['name'], 'time' => time()));
+                    $db->query($query, array('message' => json_encode($entries), 'key' => $result['key'], 'time' => time()));
                 }
                 catch ( Exception $e )
                 {
@@ -276,10 +276,10 @@ if ( !empty($_GET['theme']) )
                 }
             }
 
-            $query = "UPDATE `" . OW_DB_PREFIX . "base_theme` SET `update` = 0 WHERE `name` = :name";
-            $db->query($query, array('name' => $result['name']));
+            $query = "UPDATE `" . OW_DB_PREFIX . "base_theme` SET `update` = 0 WHERE `key` = :key";
+            $db->query($query, array('key' => $result['key']));
 
-            BOL_ThemeService::getInstance()->updateThemeInfo($result['name'], true);
+            BOL_ThemeService::getInstance()->updateThemeInfo($result['key'], true);
 
             $mode = 'theme_update_success';
             $hcMessage = "Update Complete! Theme '<b>" . $result['title'] . "</b>' successfully updated.";
@@ -289,7 +289,7 @@ if ( !empty($_GET['theme']) )
         }
         else
         {
-            $db->query("UPDATE `" . OW_DB_PREFIX . "base_theme` SET `update` = 0 WHERE `name` = :name", array('name' => $result['name']));
+            $db->query("UPDATE `" . OW_DB_PREFIX . "base_theme` SET `update` = 0 WHERE `key` = :key", array('key' => $result['key']));
             $mode = 'theme_up_to_date';
             $hcMessage = "Error! Theme '<b>" . $result['title'] . "</b>' is up to date.";
         }
