@@ -9,7 +9,7 @@ Platform [core]:
 - improved stability for captcha display;
 - added new field type for fselect single choice, which allows to add unlimited number of values;
 - added User's Timezone option to User Preferences;
-- fixed Not Found errors for images on Admin Panel > Layout > Customize > Graphics page;
+- fixed Not Found errors for images on Admin Panel > Appearance > Customize > Graphics page;
 - added basic customization option for mobile version theme in Admin Panel;
 - improved Amazon S3 support;
 - added option to disable captcha from Admin Panel;
