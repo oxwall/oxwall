@@ -831,7 +831,7 @@ class BOL_ThemeService
 
         $newTempName = $tmp->filename . '.' . $ext;
         rename($tmp->filename, $newTempName);
-        OW::getStorage()->copyFile($tmpPath, $this->userfileImagesDir . $imageName);
+        OW::getStorage()->copyFile($tmpPath, $this->getUserfileImagesDir() . $imageName);
         if ( file_exists($newTempName) )
         {
             unlink($newTempName);
@@ -863,7 +863,7 @@ class BOL_ThemeService
         $images = $this->themeImageDao->filterGraphics($params);
         foreach ( $images as $key => $photo )
         {
-            $images[$key]->url = $storage->getFileUrl($this->getUserfileImagesUrl() . $photo->filename);
+            $images[$key]->url = $storage->getFileUrl($this->getUserfileImagesDir() . $photo->filename);
         }
         return $images;
     }
