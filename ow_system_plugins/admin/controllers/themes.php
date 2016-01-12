@@ -91,8 +91,8 @@ class ADMIN_CTRL_Themes extends ADMIN_CTRL_StorageAbstract
                 "iconUrl" => $this->themeService->getStaticUrl($theme->getKey()) . BOL_ThemeService::ICON_FILE,
                 "previewUrl" => $this->themeService->getStaticUrl($theme->getKey()) . BOL_ThemeService::PREVIEW_FILE,
                 "active" => ( $theme->getKey() == $activeTheme ),
-                "changeUrl" => $router->urlFor(__CLASS__, "changeTheme",
-                    array("key" => $theme->getKey(), "devKey" => $theme->getDeveloperKey())),
+                "changeUrl" => OW::getRequest()->buildUrlQueryString($router->urlFor(__CLASS__, "changeTheme"),
+                    array(BOL_StorageService::URI_VAR_KEY => $theme->getKey(), BOL_StorageService::URI_VAR_DEV_KEY => $theme->getDeveloperKey())),
                 "update_url" => ( ((int) $theme->getUpdate() == 1) ) ? $router->urlFor("ADMIN_CTRL_Themes",
                         "updateRequest", array("key" => $theme->getKey())) : false,
             );
@@ -248,22 +248,17 @@ class ADMIN_CTRL_Themes extends ADMIN_CTRL_StorageAbstract
         $this->redirect($router->urlForRoute("admin_themes_choose"));
     }
 
-    public function changeTheme( $params )
+    public function changeTheme()
     {
+        $params = $_GET;
         $backUrl = OW::getRouter()->urlForRoute("admin_themes_choose");
         $language = OW::getLanguage();
 
-        if ( empty($params["key"]) || empty($params["devKey"]) )
+        if ( empty($params[BOL_StorageService::URI_VAR_KEY]) || empty($params[BOL_StorageService::URI_VAR_DEV_KEY]) )
         {
             $this->feedback->error($language->text("admin", "theme_manage_empty_key_error_msg"));
             $this->redirect($backUrl);
         }
-
-        $params = array(
-            BOL_StorageService::URI_VAR_KEY => trim($params["key"]),
-            BOL_StorageService::URI_VAR_DEV_KEY => trim($params["devKey"]),
-            BOL_StorageService::URI_VAR_ITEM_TYPE => BOL_StorageService::URI_VAR_ITEM_TYPE_VAL_THEME
-        );
 
         $activateTheme = false;
 
@@ -280,9 +275,15 @@ class ADMIN_CTRL_Themes extends ADMIN_CTRL_StorageAbstract
         {
             if ( !isset($params[BOL_StorageService::URI_VAR_LICENSE_CHECK_COMPLETE]) )
             {
-                $params[BOL_StorageService::URI_VAR_BACK_URI] = OW::getRequest()->getRequestUri();
+                $requestParams = array(
+                    BOL_StorageService::URI_VAR_KEY => trim($params[BOL_StorageService::URI_VAR_KEY]),
+                    BOL_StorageService::URI_VAR_DEV_KEY => trim($params[BOL_StorageService::URI_VAR_DEV_KEY]),
+                    BOL_StorageService::URI_VAR_ITEM_TYPE => BOL_StorageService::URI_VAR_ITEM_TYPE_VAL_THEME,
+                    BOL_StorageService::URI_VAR_BACK_URI => OW::getRequest()->getRequestUri()
+                );
+
                 $this->redirect(OW::getRequest()->buildUrlQueryString(OW::getRouter()->urlFor("ADMIN_CTRL_Storage",
-                            "checkItemLicense"), $params));
+                            "checkItemLicense"), $requestParams));
             }
 
             if ( isset($params[BOL_StorageService::URI_VAR_LICENSE_CHECK_RESULT]) && (bool) $params[BOL_StorageService::URI_VAR_LICENSE_CHECK_RESULT] && isset($params[BOL_StorageService::URI_VAR_LICENSE_KEY]) )
