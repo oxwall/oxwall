@@ -1,8 +1,8 @@
 <div class="ow_wide ow_automargin">
     {block_decorator name='box'  addClass='ow_stdmargin' iconClass='ow_ic_plugin' langLabel='admin+manage_themes_update_request_box_cap_label'}
-    <div style="text-align:center;">
+    <div class="ow_center">
         {if !empty($platformUpdateAvail)}
-            <div class="ow_anno">{text key="admin+item_update_request_platform_update_warning"}</div>
+            <div class="ow_anno ow_smallmargin ow_nocontent ow_ic_warning">{text key="admin+item_update_request_platform_update_warning"}</div>
         {/if}
         {if !empty($text)}
             {$text}<br /><br />

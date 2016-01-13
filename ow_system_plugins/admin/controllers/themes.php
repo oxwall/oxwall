@@ -109,7 +109,8 @@ class ADMIN_CTRL_Themes extends ADMIN_CTRL_StorageAbstract
                     BOL_StorageService::URI_VAR_BACK_URI => urlencode($router->uriForRoute("admin_themes_choose")),
                     BOL_StorageService::URI_VAR_KEY => $theme->getKey(),
                     BOL_StorageService::URI_VAR_ITEM_TYPE => BOL_StorageService::URI_VAR_ITEM_TYPE_VAL_THEME,
-                    BOL_StorageService::URI_VAR_DEV_KEY => $theme->getDeveloperKey()
+                    BOL_StorageService::URI_VAR_DEV_KEY => $theme->getDeveloperKey(),
+                    BOL_StorageService::URI_VAR_RETURN_RESULT => 0
                 );
                 $themesInfo[$theme->getKey()]["license_url"] = OW::getRequest()->buildUrlQueryString($router->urlFor("ADMIN_CTRL_Storage",
                         "checkItemLicense"), $params);
