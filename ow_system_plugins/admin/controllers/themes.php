@@ -92,9 +92,9 @@ class ADMIN_CTRL_Themes extends ADMIN_CTRL_StorageAbstract
                 "previewUrl" => $this->themeService->getStaticUrl($theme->getKey()) . BOL_ThemeService::PREVIEW_FILE,
                 "active" => ( $theme->getKey() == $activeTheme ),
                 "changeUrl" => $router->urlFor(__CLASS__, "changeTheme",
-                    array("key" => $theme->getKey(), "devKey" => $theme->getDeveloperKey())),
+                    array(BOL_StorageService::URI_VAR_KEY => $theme->getKey())),
                 "update_url" => ( ((int) $theme->getUpdate() == 1) ) ? $router->urlFor("ADMIN_CTRL_Themes",
-                        "updateRequest", array("key" => $theme->getKey())) : false,
+                        "updateRequest", array(BOL_StorageService::URI_VAR_KEY => $theme->getKey())) : false,
             );
 
             if ( !in_array($theme->getKey(), array(BOL_ThemeService::DEFAULT_THEME, $activeTheme)) )
@@ -248,64 +248,48 @@ class ADMIN_CTRL_Themes extends ADMIN_CTRL_StorageAbstract
         $this->redirect($router->urlForRoute("admin_themes_choose"));
     }
 
-    public function changeTheme( $params )
+    public function changeTheme( array $params )
     {
+        $themeDto = $this->getThemeDtoByKeyInParamsArray($params);
         $backUrl = OW::getRouter()->urlForRoute("admin_themes_choose");
         $language = OW::getLanguage();
 
-        if ( empty($params["key"]) || empty($params["devKey"]) )
+        if ( $themeDto == null )
         {
             $this->feedback->error($language->text("admin", "theme_manage_empty_key_error_msg"));
             $this->redirect($backUrl);
         }
 
-        $params = array(
-            BOL_StorageService::URI_VAR_KEY => trim($params["key"]),
-            BOL_StorageService::URI_VAR_DEV_KEY => trim($params["devKey"]),
-            BOL_StorageService::URI_VAR_ITEM_TYPE => BOL_StorageService::URI_VAR_ITEM_TYPE_VAL_THEME
-        );
-
-        $activateTheme = false;
-
         // get remote info about the plugin
-        $itemData = $this->storageService->getItemInfoForUpdate($params[BOL_StorageService::URI_VAR_KEY],
-            $params[BOL_StorageService::URI_VAR_DEV_KEY]);
+        $itemData = $this->storageService->getItemInfoForUpdate($themeDto->getKey(), $themeDto->getDeveloperKey());
 
         // check if it's free
-        if ( isset($itemData[BOL_StorageService::URI_VAR_FREEWARE]) && (bool) $itemData[BOL_StorageService::URI_VAR_FREEWARE] )
+        if ( empty($itemData[BOL_StorageService::URI_VAR_FREEWARE]) && ($themeDto->getLicenseKey() == null || !$this->storageService->checkLicenseKey($themeDto->getKey(),
+                $themeDto->getDeveloperKey(), $themeDto->getLicenseKey())) )
         {
-            $activateTheme = true;
-        }
-        else
-        {
-            if ( !isset($params[BOL_StorageService::URI_VAR_LICENSE_CHECK_COMPLETE]) )
+            if ( !isset($_GET[BOL_StorageService::URI_VAR_LICENSE_CHECK_COMPLETE]) )
             {
-                $params[BOL_StorageService::URI_VAR_BACK_URI] = OW::getRequest()->getRequestUri();
+                $requestParams = array(
+                    BOL_StorageService::URI_VAR_KEY => $themeDto->getKey(),
+                    BOL_StorageService::URI_VAR_DEV_KEY => $themeDto->getDeveloperKey(),
+                    BOL_StorageService::URI_VAR_ITEM_TYPE => BOL_StorageService::URI_VAR_ITEM_TYPE_VAL_THEME,
+                    BOL_StorageService::URI_VAR_BACK_URI => OW::getRequest()->getRequestUri()
+                );
+
                 $this->redirect(OW::getRequest()->buildUrlQueryString(OW::getRouter()->urlFor("ADMIN_CTRL_Storage",
-                            "checkItemLicense"), $params));
+                            "checkItemLicense"), $requestParams));
             }
-
-            if ( isset($params[BOL_StorageService::URI_VAR_LICENSE_CHECK_RESULT]) && (bool) $params[BOL_StorageService::URI_VAR_LICENSE_CHECK_RESULT] && isset($params[BOL_StorageService::URI_VAR_LICENSE_KEY]) )
+            else
             {
-                if ( $this->storageService->checkLicenseKey($params[BOL_StorageService::URI_VAR_KEY],
-                        $params[BOL_StorageService::URI_VAR_DEV_KEY], $params[BOL_StorageService::URI_VAR_LICENSE_KEY]) )
-                {
-                    $activateTheme = true;
-                }
+                $this->feedback->error($language->text("admin", "manage_theme_activate_invalid_license_key"));
+                $this->redirect($backUrl);
             }
         }
 
-        if ( $activateTheme )
-        {
-            OW::getConfig()->saveConfig("base", "selectedTheme", $params[BOL_StorageService::URI_VAR_KEY]);
-            OW::getEventManager()->trigger(new OW_Event("base.change_theme",
-                array(/* name for back. compat. */"name" => $params[BOL_StorageService::URI_VAR_KEY], "key" => $params[BOL_StorageService::URI_VAR_KEY])));
-            $this->feedback->info(OW::getLanguage()->text("admin", "theme_change_success_message"));
-        }
-        else
-        {
-            $this->feedback->error($language->text("admin", "manage_theme_activate_invalid_license_key"));
-        }
+        OW::getConfig()->saveConfig("base", "selectedTheme", $themeDto->getKey());
+        OW::getEventManager()->trigger(new OW_Event("base.change_theme",
+            array(/* name for back. compat. */"name" => $themeDto->getKey(), "key" => $themeDto->getKey())));
+        $this->feedback->info(OW::getLanguage()->text("admin", "theme_change_success_message"));
 
         $this->redirect($backUrl);
     }
@@ -325,12 +309,17 @@ class ADMIN_CTRL_Themes extends ADMIN_CTRL_StorageAbstract
             return;
         }
 
-        if ( !(bool) $remoteThemeInfo["freeware"] && ($themeDto->getLicenseKey() == null || !$this->storageService->checkLicenseKey($themeDto->getKey(),
+        if ( empty($remoteThemeInfo[BOL_StorageService::URI_VAR_FREEWARE]) && ($themeDto->getLicenseKey() == null || !$this->storageService->checkLicenseKey($themeDto->getKey(),
                 $themeDto->getDeveloperKey(), $themeDto->getLicenseKey())) )
         {
             if ( !isset($_GET[BOL_StorageService::URI_VAR_LICENSE_CHECK_COMPLETE]) )
             {
-                $get = array(BOL_StorageService::URI_VAR_BACK_URI => $router->uriFor(__CLASS__, "updateRequest", $params));
+                $get = array(
+                    BOL_StorageService::URI_VAR_KEY => $themeDto->getKey(),
+                    BOL_StorageService::URI_VAR_DEV_KEY => $themeDto->getDeveloperKey(),
+                    BOL_StorageService::URI_VAR_ITEM_TYPE => BOL_StorageService::URI_VAR_ITEM_TYPE_VAL_THEME,
+                    BOL_StorageService::URI_VAR_BACK_URI => OW::getRequest()->getRequestUri()
+                );
                 $this->redirect(OW::getRequest()->buildUrlQueryString($router->urlFor("ADMIN_CTRL_Storage",
                             "checkItemLicense"), $get));
             }

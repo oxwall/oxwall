@@ -204,7 +204,7 @@ class BOL_ThemeService
             $newTheme = new BOL_Theme();
             $newTheme->setKey($themeKey);
             $newTheme->setTitle(trim($xmlInfo["name"]));
-            $newTheme->setDescription($xmlInfo["description"]);
+            $newTheme->setDescription(json_encode($xmlInfo));
             $newTheme->setSidebarPosition($xmlInfo["sidebarPosition"]);
 
             $this->themeDao->save($newTheme);
@@ -345,7 +345,8 @@ class BOL_ThemeService
         mkdir($themeStaticDir);
 
         // copy all static files        
-        UTIL_File::copyDir($themeRootDir, $this->getStaticDir($themeName), function( $itemPath )
+        UTIL_File::copyDir($themeRootDir, $this->getStaticDir($themeName),
+            function( $itemPath )
         {
             if ( substr($itemPath, 0, 1) == "." )
             {
@@ -583,7 +584,8 @@ class BOL_ThemeService
                 // first semicolon is attr devider
                 if ( $firstSemicolon && $char === ":" )
                 {
-                    $attrValue = trim(str_replace(";", "", substr($fileContents, ($i + 1), ($controlPosition - ($i + 1)))));
+                    $attrValue = trim(str_replace(";", "",
+                            substr($fileContents, ($i + 1), ($controlPosition - ($i + 1)))));
                     $firstSemicolon = false;
                     $firstSemicolonPosition = $i;
                     continue;
@@ -722,7 +724,8 @@ class BOL_ThemeService
                 continue;
             }
 
-            if ( is_string($value) && in_array(trim($value), array("default", trim($namedControls[$key]["defaultValue"]))) )
+            if ( is_string($value) && in_array(trim($value),
+                    array("default", trim($namedControls[$key]["defaultValue"]))) )
             {
                 $this->themeControlValueDao->deleteByTcNameAndThemeId($namedControls[$key]["key"], $themeId);
                 continue;
@@ -745,7 +748,8 @@ class BOL_ThemeService
 
                 //TODO remove hotfix temp solution for assigning theme img data in master pages
                 $curentValue = json_decode(OW::getConfig()->getValue("base", "master_page_theme_info"), true);
-                $curentValue[$themeId][$namedControls[$key]["key"]] = array("src" => OW::getStorage()->getFileUrl($this->getUserfileImagesDir() . $image->getFilename()), "width" => $width, "height" => $height);
+                $curentValue[$themeId][$namedControls[$key]["key"]] = array("src" => OW::getStorage()->getFileUrl($this->getUserfileImagesDir() . $image->getFilename()),
+                    "width" => $width, "height" => $height);
                 OW::getConfig()->saveConfig("base", "master_page_theme_info", json_encode($curentValue));
             }
 
@@ -831,7 +835,7 @@ class BOL_ThemeService
 
         $newTempName = $tmp->filename . '.' . $ext;
         rename($tmp->filename, $newTempName);
-        OW::getStorage()->copyFile($tmpPath, $this->userfileImagesDir . $imageName);
+        OW::getStorage()->copyFile($tmpPath, $this->getUserfileImagesDir() . $imageName);
         if ( file_exists($newTempName) )
         {
             unlink($newTempName);
@@ -863,7 +867,7 @@ class BOL_ThemeService
         $images = $this->themeImageDao->filterGraphics($params);
         foreach ( $images as $key => $photo )
         {
-            $images[$key]->url = $storage->getFileUrl($this->getUserfileImagesUrl() . $photo->filename);
+            $images[$key]->url = $storage->getFileUrl($this->getUserfileImagesDir() . $photo->filename);
         }
         return $images;
     }
@@ -1269,7 +1273,7 @@ class BOL_ThemeService
 
         $themeDto->setKey($xmlInfo["key"]);
         $themeDto->setTitle($xmlInfo["name"]);
-        $themeDto->setDescription($xmlInfo["description"]);
+        $themeDto->setDescription(json_encode($xmlInfo));
         $themeDto->setSidebarPosition($xmlInfo["sidebarPosition"]);
         $themeDto->setDeveloperKey($xmlInfo["developerKey"]);
 
@@ -1384,7 +1388,8 @@ class BOL_ThemeService
             }
         }
 
-        $sidebarPositions = array(BOL_ThemeDao::VALUE_SIDEBAR_POSITION_LEFT, BOL_ThemeDao::VALUE_SIDEBAR_POSITION_RIGHT, BOL_ThemeDao::VALUE_SIDEBAR_POSITION_NONE);
+        $sidebarPositions = array(BOL_ThemeDao::VALUE_SIDEBAR_POSITION_LEFT, BOL_ThemeDao::VALUE_SIDEBAR_POSITION_RIGHT,
+            BOL_ThemeDao::VALUE_SIDEBAR_POSITION_NONE);
 
         if ( empty($xmlInfo["sidebarPosition"]) || !in_array($xmlInfo["sidebarPosition"], $sidebarPositions) )
         {
