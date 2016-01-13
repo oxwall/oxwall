@@ -1370,8 +1370,20 @@ class BOL_ThemeService
             return null;
         }
 
-        $propList = array("key", "name", "description", "license", "author", "build", "copyright", "licenseUrl");
+        //$propList = array("key", "developerKey", "name", "description", "license", "author", "build", "copyright", "licenseUrl");
+        $propList = array("key", "name", "description");
         $xmlInfo = UTIL_String::xmlToArray(file_get_contents($themeXmlPath));
+
+        //TODO refactor
+        if ( empty($xmlInfo["developerKey"]) )
+        {
+            $xmlInfo["developerKey"] = null;
+        }
+
+        if ( empty($xmlInfo["build"]) )
+        {
+            $xmlInfo["build"] = 0;
+        }
 
         if ( !$xmlInfo )
         {

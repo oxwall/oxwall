@@ -84,7 +84,8 @@ class ADMIN_CTRL_Plugins extends ADMIN_CTRL_StorageAbstract
                     BOL_StorageService::URI_VAR_BACK_URI => urlencode($router->uriForRoute("admin_plugins_installed")),
                     BOL_StorageService::URI_VAR_KEY => $plugin->getKey(),
                     BOL_StorageService::URI_VAR_ITEM_TYPE => BOL_StorageService::URI_VAR_ITEM_TYPE_VAL_PLUGIN,
-                    BOL_StorageService::URI_VAR_DEV_KEY => $plugin->getDeveloperKey()
+                    BOL_StorageService::URI_VAR_DEV_KEY => $plugin->getDeveloperKey(),
+                    BOL_StorageService::URI_VAR_RETURN_RESULT => 0
                 );
                 $array["license_url"] = OW::getRequest()->buildUrlQueryString($router->urlFor("ADMIN_CTRL_Storage",
                         "checkItemLicense"), $params);
