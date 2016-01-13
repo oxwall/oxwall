@@ -48,6 +48,7 @@ class BOL_StorageService
     const URI_VAR_LICENSE_CHECK_RESULT = "license-check-result";
     const URI_VAR_FREEWARE = "freeware";
     const URI_VAR_NOT_FOUND = "notFound";
+    const URI_VAR_RETURN_RESULT = "returnResult";
     /* ---------------------------------------------------------------------- */
     const URI_VAR_ITEM_TYPE_VAL_PLUGIN = "plugin";
     const URI_VAR_ITEM_TYPE_VAL_THEME = "theme";
