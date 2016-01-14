@@ -419,7 +419,6 @@ class BASE_CTRL_Edit extends OW_ActionController
         }
 
         $editedUserId = $editorId;
-
         if ( !empty($_POST["userId"]) )
         {
             $adminMode = true;
@@ -433,7 +432,7 @@ class BASE_CTRL_Edit extends OW_ActionController
                 exit;
             }
 
-            if ( !OW::getUser()->isAdmin() )
+            if ( !OW::getUser()->isAdmin() && ( !OW::getUser()->isAuthenticated() || OW::getUser()->getId() != $userId ) )
             {
                 echo json_encode(array('result' => false));
                 exit;
@@ -605,7 +604,6 @@ class editEmailValidator extends OW_Validator
         if ( BOL_UserService::getInstance()->isExistEmail($value) )
         {
             $userId = $this->userId;
-
             $user = BOL_UserService::getInstance()->findUserById($userId);
 
             if ( !$user || $value !== $user->email )
