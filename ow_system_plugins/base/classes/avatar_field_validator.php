@@ -32,20 +32,24 @@
 class BASE_CLASS_AvatarFieldValidator extends OW_Validator
 {
     protected $required = false;
+    protected $userId = null;
 
     /**
      * @param bool $required
      */
-    public function __construct( $required = false )
+    public function __construct( $required = false, $userId = null )
     {
         $this->required = $required;
+        $this->userId = $userId;
 
         $language = OW::getLanguage();
         $this->setErrorMessage($language->text('base', 'form_validator_required_error_message'));
     }
 
     /**
-     * @param mixed $value
+     * Is avatar valid
+     *
+     * @param string $value
      * @return bool
      */
     public function isValid( $value )
@@ -56,14 +60,14 @@ class BASE_CLASS_AvatarFieldValidator extends OW_Validator
         }
 
         $language = OW::getLanguage();
-        
-
         $avatarService = BOL_AvatarService::getInstance();
 
         $key = $avatarService->getAvatarChangeSessionKey();
         $path = $avatarService->getTempAvatarPath($key, 3);
 
-        if ( !file_exists($path) && !BOL_AvatarService::getInstance()->getAvatarUrl(OW::getUser()->getId(), 1) )
+        $userId = $this->userId ? $this->userId : OW::getUser()->getId();
+
+        if ( !$value  || (!file_exists($path) && !BOL_AvatarService::getInstance()->getAvatarUrl($userId, 1)) )
         {
             return false;
         }
@@ -83,7 +87,7 @@ class BASE_CLASS_AvatarFieldValidator extends OW_Validator
      *
      * @return string
      */
-    public function getJsValidator()
+    public function getJsValidsator()
     {
         $condition = '';
 
