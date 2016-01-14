@@ -87,7 +87,7 @@ class BASE_CLASS_AvatarFieldValidator extends OW_Validator
      *
      * @return string
      */
-    public function getJsValidsator()
+    public function getJsValidator()
     {
         $condition = '';
 
