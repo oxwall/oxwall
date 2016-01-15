@@ -29,7 +29,7 @@
  */
 class BOL_StorageService
 {
-    const UPDATE_SERVER = "https://storage.oxwall.org/"; 
+    const UPDATE_SERVER = "https://storage.oxwall.org/";
     /* ---------------------------------------------------------------------- */
     const URI_CHECK_ITEMS_FOR_UPDATE = "get-items-update-info";
     const URI_GET_ITEM_INFO = "get-item-info";
@@ -103,7 +103,8 @@ class BOL_StorageService
      */
     public function checkUpdates()
     {
-        $requestArray = array("platform" => array(self::URI_VAR_BUILD => OW::getConfig()->getValue("base", "soft_build")), "items" => array());
+        $requestArray = array("platform" => array(self::URI_VAR_BUILD => OW::getConfig()->getValue("base", "soft_build")),
+            "items" => array());
 
         $plugins = $this->pluginService->findRegularPlugins();
 
@@ -144,7 +145,8 @@ class BOL_StorageService
 
         if ( $response->getStatusCode() != UTIL_HttpClient::HTTP_STATUS_OK )
         {
-            OW::getLogger()->addEntry(__CLASS__ . "::" . __METHOD__ . "#" . __LINE__ . " storage request status is not OK", "core.update");
+            OW::getLogger()->addEntry(__CLASS__ . "::" . __METHOD__ . "#" . __LINE__ . " storage request status is not OK",
+                "core.update");
 
             return;
         }
@@ -158,7 +160,8 @@ class BOL_StorageService
 
         if ( empty($resultArray) || !is_array($resultArray) )
         {
-            OW::getLogger()->addEntry(__CLASS__ . "::" . __METHOD__ . "#" . __LINE__ . " remote request returned empty result", "core.update");
+            OW::getLogger()->addEntry(__CLASS__ . "::" . __METHOD__ . "#" . __LINE__ . " remote request returned empty result",
+                "core.update");
 
             return;
         }
@@ -176,10 +179,9 @@ class BOL_StorageService
             }
         }
 
-        if ( !empty($resultArray["invalidLicense"]) )
-        {
-            $this->updateItemsLicenseStatus($resultArray["invalidLicense"]);
-        }
+        $items = !empty($resultArray["invalidLicense"]) ? $resultArray["invalidLicense"] : array();
+
+        $this->updateItemsLicenseStatus($items);
     }
 
     /**
@@ -230,7 +232,8 @@ class BOL_StorageService
         );
 
         $data = array_merge($params, $this->triggerEventBeforeRequest($params));
-        $requestUrl = OW::getRequest()->buildUrlQueryString($this->getStorageUrl(self::URI_DOWNLOAD_PLATFORM_ARCHIVE), $data);
+        $requestUrl = OW::getRequest()->buildUrlQueryString($this->getStorageUrl(self::URI_DOWNLOAD_PLATFORM_ARCHIVE),
+            $data);
 
         $paramsObj = new UTIL_HttpClientParams();
         $paramsObj->addParams($data);
@@ -403,7 +406,8 @@ class BOL_StorageService
      */
     public function findItemsWithInvalidLicense()
     {
-        return array_merge($this->pluginService->findPluginsWithInvalidLicense(), $this->themeService->findItemsWithInvalidLicense());
+        return array_merge($this->pluginService->findPluginsWithInvalidLicense(),
+            $this->themeService->findItemsWithInvalidLicense());
     }
 
     /**
@@ -559,8 +563,10 @@ class BOL_StorageService
         $mail = OW::getMailer()->createMail();
         $mail->addRecipientEmail(OW::getConfig()->getValue("base", "site_email"));
         $mail->setSubject($language->text("admin", "mail_template_admin_invalid_license_subject"));
-        $mail->setHtmlContent($language->text("admin", "mail_template_admin_invalid_license_content_html", array("itemList" => implode(", ", $titleList), "siteURL" => OW_URL_HOME)));
-        $mail->setTextContent($language->text("admin", "mail_template_admin_invalid_license_content_text", array("itemList" => implode(", ", $titleList), "siteURL" => OW_URL_HOME)));
+        $mail->setHtmlContent($language->text("admin", "mail_template_admin_invalid_license_content_html",
+                array("itemList" => implode(", ", $titleList), "siteURL" => OW_URL_HOME)));
+        $mail->setTextContent($language->text("admin", "mail_template_admin_invalid_license_content_text",
+                array("itemList" => implode(", ", $titleList), "siteURL" => OW_URL_HOME)));
 
         OW::getMailer()->send($mail);
     }
