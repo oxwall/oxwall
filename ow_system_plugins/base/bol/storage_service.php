@@ -552,6 +552,11 @@ class BOL_StorageService
 
     private function notifyAdminAboutInvalidItems( array $items )
     {
+        if ( empty($items) )
+        {
+            return;
+        }
+
         $titleList = array();
 
         foreach ( $items as $item )
