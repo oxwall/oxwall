@@ -2803,7 +2803,7 @@ class BillingGatewaySelectionField extends FormElement
         foreach ( $gateways as $gateway )
         {
             /* @var $adapter OW_BillingAdapter */
-            if ( $adapter = new $gateway->adapterClassName )
+            if ( $adapter = OW::getClassInstance($gateway->adapterClassName) )
             {
                 $paymentOptions[$gateway->gatewayKey]['dto'] = $gateway;
                 $paymentOptions[$gateway->gatewayKey]['orderUrl'] = $adapter->getOrderFormUrl();
@@ -2825,10 +2825,6 @@ class MobileBillingGatewaySelectionField extends BillingGatewaySelectionField
                 <label class="owm_border owm_'.$name.' active">'.$field.'</label>
         </div>';
 
-        /*return  '<li style="display: block;">
-                    <label> <img src="' . $option['logoUrl'] . '" alt="' . $option['dto']->gatewayKey . '" />'.$field.'</label>
-                </li>';*/
-
     }
 
     protected function getActiveGatewaysList()
@@ -2843,7 +2839,7 @@ class MobileBillingGatewaySelectionField extends BillingGatewaySelectionField
         foreach ( $gateways as $gateway )
         {
             /* @var $adapter OW_BillingAdapter */
-            if ( $adapter = new $gateway->adapterClassName )
+            if ( $adapter = OW::getClassInstance($gateway->adapterClassName) )
             {
                 $paymentOptions[$gateway->gatewayKey]['dto'] = $gateway;
                 $paymentOptions[$gateway->gatewayKey]['orderUrl'] = $adapter->getOrderFormUrl(true);
