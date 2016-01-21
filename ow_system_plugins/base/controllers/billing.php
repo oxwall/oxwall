@@ -31,7 +31,7 @@
  */
 class BASE_CTRL_Billing extends OW_ActionController
 {
-    use BASE_CLASS_BillingMethodsTraits;
+    use BASE_CLASS_BillingMethodsTrait;
 
     /**
      * Class constructor

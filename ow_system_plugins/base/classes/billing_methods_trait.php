@@ -23,14 +23,14 @@
  */
 
 /**
- * Billing action controller
+ * Billing trait class
  *
  * @author Sergey Pryadkin <GiperProger@gmail.com>
- * @package ow.ow_system_plugins.base.controllers
- * @since 1.8
+ * @package ow.ow_system_plugins.base.classes
+ * @since 1.8.2
  */
 
-trait BASE_CLASS_BillingMethodsTraits
+trait BASE_CLASS_BillingMethodsTrait
 {
     /**
      * Controller action for completed orders
