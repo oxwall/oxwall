@@ -25,13 +25,14 @@
 /**
  * Billing action controller
  *
- * @author Egor Bulgakov <egor.bulgakov@gmail.com>
- * @package ow.ow_system_plugins.base.controllers
- * @since 1.0
+ * @author Sergey Pryadkin <GiperProger@gmail.com>
+ * @package ow.ow_system_plugins.base.mobile.controllers
+ * @since 1.8
  */
-class BASE_MCTRL_Billing extends BASE_CTRL_Billing
+class BASE_MCTRL_Billing extends OW_MobileActionController
 {
 
+    use BASE_CTRL_BillingMethods;
     /**
      * Class constructor
      */
