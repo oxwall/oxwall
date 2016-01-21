@@ -32,7 +32,7 @@
 class BASE_MCTRL_Billing extends OW_MobileActionController
 {
 
-    use BASE_CTRL_BillingMethods;
+    use BASE_CLASS_BillingMethodsTraits;
     /**
      * Class constructor
      */

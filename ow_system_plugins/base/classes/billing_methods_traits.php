@@ -30,7 +30,7 @@
  * @since 1.8
  */
 
-trait BASE_CTRL_BillingMethods
+trait BASE_CLASS_BillingMethodsTraits
 {
     /**
      * Controller action for completed orders
