@@ -105,11 +105,16 @@ class BOL_BillingGatewayDao extends OW_BaseDao
         return $this->deleteByExample($example);
     }
 
-    public function getActiveList()
+    public function getActiveList($forMobile = false)
     {
         $example = new OW_Example();
         $example->andFieldEqual('active', 1);
         $example->andFieldEqual('hidden', 0);
+
+        if( $forMobile )
+        {
+            $example->andFieldEqual('mobile', 1);
+        }
 
         return $this->findListByExample($example);
     }
