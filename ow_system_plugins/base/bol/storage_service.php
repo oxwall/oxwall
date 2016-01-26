@@ -279,7 +279,7 @@ class BOL_StorageService
             throw new LogicException("Can't download file. Server returned empty file.");
         }
 
-        $fileName = UTIL_String::getRandomString("plugin_archive_", 8, UTIL_String::RND_STR_NUMERIC) . ".zip";
+        $fileName = UTIL_String::getRandomStringWithPrefix("plugin_archive_", 8, UTIL_String::RND_STR_NUMERIC) . ".zip";
         $archivePath = OW_DIR_PLUGINFILES . DS . $fileName;
         file_put_contents($archivePath, $response->getBody());
 
