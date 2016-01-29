@@ -258,8 +258,6 @@ class BASE_CTRL_Join extends OW_ActionController
         {
             case 'isExistUserName':
 
-                $result = false;
-
                 $username = $_POST["value"];
                 $result = $this->userService->isExistUserName($username);
 
@@ -268,8 +266,6 @@ class BASE_CTRL_Join extends OW_ActionController
                 break;
 
             case 'isExistEmail':
-
-                $result = false;
 
                 $email = $_POST["value"];
 
@@ -292,8 +288,6 @@ class BASE_CTRL_Join extends OW_ActionController
         $language = OW::getLanguage();
         // create new user
         $user = $this->userService->createUser($joinData['username'], $joinData['password'], $joinData['email'], $accountType);
-
-        $password = $joinData['password'];
 
         unset($joinData['username']);
         unset($joinData['password']);
@@ -383,7 +377,6 @@ class JoinForm extends BASE_CLASS_UserQuestionForm
 
         $this->checkSession();
 
-        $stepCount = 1;
         $joinSubmitLabel = "";
 
         // get available account types from DB
@@ -448,7 +441,7 @@ class JoinForm extends BASE_CLASS_UserQuestionForm
         $this->getQuestions();
 
         $section = null;
-        //$this->questionListBySection = array();
+
         $questionNameList = array();
         $this->sortedQuestionsList = array();
 
@@ -884,9 +877,6 @@ class JoinForm extends BASE_CLASS_UserQuestionForm
             $this->addElement($captchaField);
             $displayCaptcha = true;
         }
-        //$captchaField = new CaptchaField('captchaField');
-
-        //$this->addElement($captchaField);
 
         $controller->assign('display_captcha', $displayCaptcha);
         $controller->assign('display_photo', $displayPhoto);
@@ -938,8 +928,6 @@ class JoinForm extends BASE_CLASS_UserQuestionForm
 
     protected function setFieldOptions( $formField, $questionName, array $questionValues )
     {
-        $valuesArray = array();
-
         $realQuestionList = OW::getSession()->get(self::SESSION_REAL_QUESTION_LIST);
 
         $name = $questionName;
@@ -949,19 +937,6 @@ class JoinForm extends BASE_CLASS_UserQuestionForm
         }
 
         parent::setFieldOptions($formField, $name, $questionValues);
-
-        /* foreach ( $questionValues as $values )
-        {
-            if ( is_array($values) )
-            {
-                foreach ( $values as $value )
-                {
-                    $valuesArray[($value->value)] = OW::getLanguage()->text('base', 'questions_question_' . $name . '_value_' . ($value->value));
-                }
-            }
-        }
-
-        $formField->setOptions($valuesArray); */
     }
 
     public function isBot()
