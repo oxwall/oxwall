@@ -4,6 +4,7 @@
     },
     "require": {
         "smarty/smarty": "~3.1",
-        "phpmailer/phpmailer": "~5.2"
+        "phpmailer/phpmailer": "~5.2",
+        "zendframework/zend-escaper": "^2.5"
     }
 }
