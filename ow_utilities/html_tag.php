@@ -46,7 +46,7 @@ class UTIL_HtmlTag
         {
             foreach ( $attrs as $key => $value )
             {
-                $attrString .= ' ' . $key . '="' . $value . '"';
+                $attrString .= ' ' . $key . '="' . self::escapeHtmlAttr($value) . '"';
             }
         }
 
@@ -287,6 +287,21 @@ class UTIL_HtmlTag
     }
 
     /**
+     * Escape a string for the HTML Attribute context. We use an extended set of characters
+     * to escape that are not covered by htmlspecialchars() to cover cases where an attribute
+     * might be unquoted or quoted illegally (e.g. backticks are valid quotes for IE).
+     *
+     * @param string $string
+     * @return string
+     */
+    public static function escapeHtmlAttr( $string )
+    {
+        $escaper = new Zend\Escaper\Escaper('utf-8');
+
+        return $escaper->escapeHtmlAttr($string);
+    }
+
+    /**
      * Escapes chars to make sure that string doesn't contain valid JS code
      * 
      * @param string $string
@@ -294,7 +309,8 @@ class UTIL_HtmlTag
      */
     public static function escapeJs( $string )
     {
-        return strtr($string,
-            array('\\' => '\\\\', "'" => "\\'", '"' => '\\"', "\r" => '\\r', "\n" => '\\n', '</' => '<\/'));
+        $escaper = new Zend\Escaper\Escaper('utf-8');
+
+        return $escaper->escapeJs($string);
     }
 }
