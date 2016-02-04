@@ -195,7 +195,7 @@ class OEmbedDefaultProvider extends OEmbedProvider
                 }
             }
 
-            $images[] = UTIL_HtmlTag::escapeHtmlAttr($img);
+            $images[] = $img;
         }
 
         $firstImg = reset($images);
