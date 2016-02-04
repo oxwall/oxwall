@@ -195,7 +195,7 @@ class OEmbedDefaultProvider extends OEmbedProvider
                 }
             }
 
-            $images[] = $img;
+            $images[] = UTIL_HtmlTag::escapeHtmlAttr($img);
         }
 
         $firstImg = reset($images);
@@ -203,8 +203,8 @@ class OEmbedDefaultProvider extends OEmbedProvider
 
         return array(
             'type' => 'link',
-            'description' => $description,
-            'title' => $title,
+            'description' => UTIL_HtmlTag::escapeHtml($description),
+            'title' => UTIL_HtmlTag::escapeHtml($title),
             'thumbnail_url' => $firstImg,
             'allImages' => $images
         );
