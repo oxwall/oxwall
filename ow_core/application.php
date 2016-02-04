@@ -942,7 +942,9 @@ class OW_Application
 
             foreach ( $contentReplaceArr as $index )
             {
-                $search[$index] = str_replace($matches[2][$index], str_replace("http:", "https:", $matches[2][$index]), $search[$index]);
+                $search[$index] = !empty($matches[2][$index]) && !empty($search[$index])
+                    ? str_replace($matches[2][$index], str_replace("http:", "https:", $matches[2][$index]), $search[$index])
+                    : null;
             }
 
             $markup = str_replace($replace, $search, $markup);
