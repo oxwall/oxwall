@@ -96,6 +96,14 @@ class BASE_CLASS_EventHandler
         $eventManager->bind("base.user_list.get_displayed_fields", array($this, 'onGetUserListFields'));
         $eventManager->bind("base.user_list.get_questions", array($this, 'onGetUserListQuestions'));
         $eventManager->bind("base.user_list.get_field_data", array($this, 'onGetUserListFieldValue'));
+
+        $owBasePlugin = OW::getPluginManager()->getPlugin('base');
+        $classesToAutoload = array(
+            'UserNameValidator' => $owBasePlugin->getCtrlDir() . 'join.php',
+            'joinEmailValidator' => $owBasePlugin->getCtrlDir() . 'join.php',
+        );
+
+        OW::getAutoloader()->addClassArray($classesToAutoload);
     }
 
     public function init()

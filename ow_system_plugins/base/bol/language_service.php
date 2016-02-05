@@ -273,11 +273,42 @@ class BOL_LanguageService
         return $keyDao->countKeyByPrefix($prefixId);
     }
 
-    public function getText( $languageId, $prefix, $key )
+    public function getTemplateText( $languageId, $prefix, $key )
     {
         OW::getEventManager()->trigger( new OW_Event('servicelangtools.lang_used_log', array( 'prefix' => $prefix, 'key' => $key)) );
 
         return ( isset($this->language[$languageId][$prefix . '+' . $key]) ) ? $this->language[$languageId][$prefix . '+' . $key] : null;
+    }
+
+
+    public function getText( $languageId, $prefix, $key, $vars = null )
+    {
+        $text = $this->getTemplateText($languageId, $prefix, $key);
+
+        if ( !empty($vars) && is_array($vars) ) {
+            foreach ($vars as $key => &$value) {
+                if (UTIL_Serialize::isSerializedObject($value)) {
+                    $object = UTIL_Serialize::unserialize($value);
+                    if (empty($object) || !($object instanceof BASE_CLASS_LanguageParams)) {
+                        $value = '';
+                    }
+
+                    $value = $object->fetch();
+                }
+            }
+        }
+
+        $event = new OW_Event("core.get_text", array("prefix" => $prefix, "key" => $key, "vars" => $vars));
+        $this->eventManager->trigger($event);
+
+        if ( $event->getData() !== null )
+        {
+            return $event->getData();
+        }
+
+        $text = UTIL_String::replaceVars($text, $vars);
+
+        return $text;
     }
 
     public function getValue( $languageId, $prefix, $key )
