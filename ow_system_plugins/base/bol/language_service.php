@@ -299,7 +299,7 @@ class BOL_LanguageService
         }
 
         $event = new OW_Event("core.get_text", array("prefix" => $prefix, "key" => $key, "vars" => $vars));
-        $this->eventManager->trigger($event);
+        OW::getEventManager()->trigger($event);
 
         if ( $event->getData() !== null )
         {
