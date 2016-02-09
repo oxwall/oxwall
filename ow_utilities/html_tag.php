@@ -294,8 +294,13 @@ class UTIL_HtmlTag
      * @param string $string
      * @return string
      */
-    public static function escapeUrl($string)
+    public static function escapeUrl( $string = null )
     {
+        if ( !$string )
+        {
+            return;
+        }
+
         $escaper = new Zend\Escaper\Escaper('utf-8');
 
         return $escaper->escapeUrl($string);
@@ -308,8 +313,13 @@ class UTIL_HtmlTag
      * @param string $string
      * @return string
      */
-    public static function escapeHtml( $string )
+    public static function escapeHtml( $string = null )
     {
+        if ( !$string )
+        {
+            return;
+        }
+
         $escaper = new Zend\Escaper\Escaper('utf-8');
 
         return $escaper->escapeHtml($string);
@@ -323,8 +333,13 @@ class UTIL_HtmlTag
      * @param string $string
      * @return string
      */
-    public static function escapeHtmlAttr( $string )
+    public static function escapeHtmlAttr( $string = null )
     {
+        if ( !$string )
+        {
+            return;
+        }
+
         $escaper = new Zend\Escaper\Escaper('utf-8');
 
         return $escaper->escapeHtmlAttr($string);
@@ -336,8 +351,13 @@ class UTIL_HtmlTag
      * @param string $string
      * @return string
      */
-    public static function escapeJs( $string )
+    public static function escapeJs( $string = null )
     {
+        if ( !$string )
+        {
+            return;
+        }
+
         $escaper = new Zend\Escaper\Escaper('utf-8');
 
         return $escaper->escapeJs($string);
