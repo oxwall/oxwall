@@ -168,7 +168,10 @@ class BOL_EmailVerifyService
                 break;
 
             default :
-                OW::getFeedback()->error($language->text('base', 'email_verify_verify_mail_was_not_sent'));
+                if ( isset($params['feedback']) && $params['feedback'] == true )
+                {
+                    OW::getFeedback()->error(OW::getLanguage()->text('base', 'email_verify_verify_mail_was_not_sent'));
+                }
                 return;
         }
 
@@ -216,7 +219,7 @@ class BOL_EmailVerifyService
 
         OW::getMailer()->send($mail);
 
-        if ( !isset($params['feedback']) || $params['feedback'] !== false )
+        if ( isset($params['feedback']) && $params['feedback'] == true )
         {
             OW::getFeedback()->info($language->text('base', 'email_verify_verify_mail_was_sent'));
         }
@@ -238,13 +241,16 @@ class BOL_EmailVerifyService
             'user' => $user,
             'subject' => $subject,
             'body_html' => $template_html,
-            'body_text' => $template_text
+            'body_text' => $template_text,
+            'feedback' => $feedback
         );
 
         $this->sendVerificationMail(self::TYPE_USER_EMAIL, $params);
     }
 
-    public function sendSiteVerificationMail( $feedback = true )
+
+
+    public function sendSiteVerificationMail($feedback = true)
     {
         $language = OW::getLanguage();
 
@@ -255,7 +261,8 @@ class BOL_EmailVerifyService
         $params = array(
             'subject' => $subject,
             'body_html' => $template_html,
-            'body_text' => $template_text
+            'body_text' => $template_text,
+            'feedback' => $feedback
         );
 
         $this->sendVerificationMail(self::TYPE_SITE_EMAIL, $params);
@@ -269,14 +276,45 @@ class BOL_EmailVerifyService
         $language = OW::getLanguage();
 
         /* @var BOL_EmailVerified */
+        $data =  $this->verifyEmailCode($code);
+
+        if ( $data['isValid'] )
+        {
+            switch ( $data["type"] )
+            {
+                case self::TYPE_USER_EMAIL:
+
+                    OW::getFeedback()->info($language->text('base', 'email_verify_email_verify_success'));
+                    OW::getApplication()->redirect(OW::getRouter()->urlForRoute('base_default_index'));
+                    break;
+
+                case self::TYPE_SITE_EMAIL:
+
+                    OW::getFeedback()->info($language->text('base', 'email_verify_email_verify_success'));
+                    OW::getApplication()->redirect(OW::getRouter()->urlForRoute('admin_settings_main'));
+                    break;
+            }
+        }
+    }
+
+    /**
+     * @param string $code
+     */
+    public function verifyEmailCode( $code )
+    {
+        $result = ["isValid" => false, "type" => "", "message" => ""];
+
+        /* @var BOL_EmailVerified */
         $emailVerifyData = $this->findByHash($code);
         if ( $emailVerifyData !== null )
         {
+            $result["type"] = $emailVerifyData->type;
             switch ( $emailVerifyData->type )
             {
                 case self::TYPE_USER_EMAIL:
 
                     $user = BOL_UserService::getInstance()->findUserById($emailVerifyData->userId);
+
                     if ( $user !== null )
                     {
                         if ( OW::getUser()->isAuthenticated() )
@@ -294,22 +332,22 @@ class BOL_EmailVerifyService
                         $user->emailVerify = true;
                         BOL_UserService::getInstance()->saveOrUpdate($user);
 
-                        OW::getFeedback()->info($language->text('base', 'email_verify_email_verify_success'));
-                        
-                        OW::getApplication()->redirect(OW::getRouter()->urlForRoute('base_default_index'));
+                        $result["isValid"] = true;
                     }
+
                     break;
 
                 case self::TYPE_SITE_EMAIL:
 
                     OW::getConfig()->saveConfig('base', 'site_email', $emailVerifyData->email);
                     BOL_LanguageService::getInstance()->generateCacheForAllActiveLanguages();
-                    OW::getFeedback()->info($language->text('base', 'email_verify_email_verify_success'));
-                    OW::getApplication()->redirect(OW::getRouter()->urlForRoute('admin_settings_main'));
+
+                    $result["isValid"] = true;
 
                     break;
             }
         }
+
+        return $result;
     }
 }
-?>

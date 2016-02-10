@@ -45,13 +45,11 @@ class BASE_CTRL_UserList extends OW_ActionController
     public function index( $params )
     {
         $listType = empty($params['list']) ? 'latest' : strtolower(trim($params['list']));
-        $language = OW::getLanguage();
         $this->addComponent('menu', self::getMenu($listType));
 
         $page = (!empty($_GET['page']) && intval($_GET['page']) > 0 ) ? intval($_GET['page']) : 1;
         list($list, $itemCount) = $this->getData($listType, (($page - 1) * $this->usersPerPage), $this->usersPerPage);
 
-        //$cmp = new BASE_Members($list, $itemCount, $this->usersPerPage, true, $listType);
         $cmp = OW::getClassInstance("BASE_Members", $list, $itemCount, $this->usersPerPage, true, $listType);
         
         $this->addComponent('cmp', $cmp);
@@ -83,7 +81,6 @@ class BASE_CTRL_UserList extends OW_ActionController
         $page = (!empty($_GET['page']) && intval($_GET['page']) > 0 ) ? $_GET['page'] : 1;
         list($list, $itemCount) = $this->getData('waiting-for-approval', (($page - 1) * $this->usersPerPage), $this->usersPerPage);
 
-        //$cmp = new BASE_Members($list, $itemCount, $this->usersPerPage, false, 'waiting-for-approval');
         $cmp = OW::getClassInstance("BASE_Members", $list, $itemCount, $this->usersPerPage, false, 'waiting-for-approval');
         
         $this->addComponent('cmp', $cmp);
