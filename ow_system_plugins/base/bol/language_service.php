@@ -273,7 +273,7 @@ class BOL_LanguageService
         return $keyDao->countKeyByPrefix($prefixId);
     }
 
-    public function getTemplateText( $languageId, $prefix, $key )
+    public function getTextTemplate( $languageId, $prefix, $key )
     {
         OW::getEventManager()->trigger( new OW_Event('servicelangtools.lang_used_log', array( 'prefix' => $prefix, 'key' => $key)) );
 
@@ -281,15 +281,19 @@ class BOL_LanguageService
     }
 
 
-    public function getText( $languageId, $prefix, $key, $vars = null )
+    public function getText( $languageId, $prefix, $key, $vars = array() )
     {
-        $text = $this->getTemplateText($languageId, $prefix, $key);
+        $text = $this->getTextTemplate($languageId, $prefix, $key);
 
-        if ( !empty($vars) && is_array($vars) ) {
-            foreach ($vars as $key => &$value) {
-                if (UTIL_Serialize::isSerializedObject($value)) {
+        if ( !empty($vars) && is_array($vars) ) 
+        {
+            foreach ( $vars as $key => &$value ) 
+            {
+                if ( UTIL_Serialize::isSerializedObject($value) ) 
+                {
                     $object = UTIL_Serialize::unserialize($value);
-                    if (empty($object) || !($object instanceof BASE_CLASS_LanguageParams)) {
+                    if ( empty($object) || !($object instanceof BASE_CLASS_LanguageParams) ) 
+                    {
                         $value = '';
                     }
 
