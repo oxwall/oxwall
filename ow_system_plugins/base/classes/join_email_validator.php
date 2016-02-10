@@ -30,11 +30,13 @@ class BASE_CLASS_JoinEmailValidator extends OW_Validator
         if ( !UTIL_Validator::isEmailValid($value) )
         {
             $this->setErrorMessage($language->text('base', 'join_error_email_not_valid'));
+            
             return false;
         }
         else if ( BOL_UserService::getInstance()->isExistEmail($value) )
         {
             $this->setErrorMessage($language->text('base', 'join_error_email_already_exist'));
+            
             return false;
         }
 
