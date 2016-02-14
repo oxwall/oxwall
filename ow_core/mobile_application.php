@@ -323,9 +323,10 @@ class OW_MobileApplication extends OW_Application
     public function onBeforeDocumentRender()
     {
         $document = OW::getDocument();
+        $config = OW::getConfig();
 
-        $document->addStyleSheet(OW::getPluginManager()->getPlugin('base')->getStaticCssUrl() . 'mobile.css' . '?' . OW::getConfig()->getValue('base', 'cachedEntitiesPostfix'), 'all', -100);
-        $document->addStyleSheet(OW::getThemeManager()->getCssFileUrl(true) . '?' . OW::getConfig()->getValue('base', 'cachedEntitiesPostfix'), 'all', (-90));
+        $document->addStyleSheet(OW::getPluginManager()->getPlugin('base')->getStaticCssUrl() . 'mobile.css' . '?' . $config->getValue('base', 'cachedEntitiesPostfix'), 'all', -100);
+        $document->addStyleSheet(OW::getThemeManager()->getCssFileUrl(true) . '?' . $config->getValue('base', 'cachedEntitiesPostfix'), 'all', (-90));
 
         if ( OW::getThemeManager()->getCurrentTheme()->getDto()->getCustomCssFileName() !== null )
         {
@@ -341,7 +342,7 @@ class OW_MobileApplication extends OW_Application
 
         if ( $document->getDescription() === null )
         {
-            $document->setDescription($language->text('mobile', 'page_default_description'));
+            $document->setDescription($config->getValue('base', 'site_description'));
         }
 
         if ( $document->getHeading() === null )
