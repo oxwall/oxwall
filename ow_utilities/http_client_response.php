@@ -30,20 +30,20 @@
 class UTIL_HttpClientResponse
 {
     private $resultBody;
-
-    /**
-     * @var Psr\Http\Message\ResponseInterface
-     */
-    private $response;
+    private $headers;
 
     /**
      * 
-     * @param Psr\Http\Message\ResponseInterface $response
+     * @param string
      */
-    public function __construct( $response )
+    public function __construct( $response, $headers )
     {
-        $this->response = $response;
-        $this->resultBody = $this->response->getBody()->getContents();
+        $this->resultBody = $response;
+
+        if ( $headers && is_array($headers) )
+        {
+            $this->headers = $this->parseHeaders($headers);
+        }
     }
 
     /**
@@ -52,7 +52,10 @@ class UTIL_HttpClientResponse
      */
     public function getHeader( $name )
     {
-        return $this->response->getHeader($name);
+        if ( !empty($this->headers[$name]) )
+        {
+            return $this->headers[$name];
+        }
     }
 
     /**
@@ -61,7 +64,7 @@ class UTIL_HttpClientResponse
      */
     public function hasHeader( $name )
     {
-        return $this->response->hasHeader($name);
+        return !empty($this->headers[$name]);
     }
 
     /**
@@ -69,7 +72,7 @@ class UTIL_HttpClientResponse
      */
     public function getHeaders()
     {
-        return $this->response->getHeaders();
+        return $this->headers;
     }
 
     /**
@@ -77,7 +80,7 @@ class UTIL_HttpClientResponse
      */
     public function getStatusCode()
     {
-        return $this->response->getStatusCode();
+        return $this->headers["reponse_code"];
     }
 
     /**
@@ -86,5 +89,23 @@ class UTIL_HttpClientResponse
     public function getBody()
     {
         return $this->resultBody;
+    }
+
+    private function parseHeaders( $headers )
+    {
+        $head = array();
+        foreach ( $headers as $k => $v )
+        {
+            $t = explode(':', $v, 2);
+            if ( isset($t[1]) )
+                $head[trim($t[0])] = trim($t[1]);
+            else
+            {
+                $head[] = $v;
+                if ( preg_match("#HTTP/[0-9\.]+\s+([0-9]+)#", $v, $out) )
+                    $head['reponse_code'] = intval($out[1]);
+            }
+        }
+        return $head;
     }
 }

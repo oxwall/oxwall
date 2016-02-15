@@ -49,8 +49,6 @@ class UTIL_Validator
     {
         $pattern = self::EMAIL_PATTERN;
 
-        $trimValue = trim($value);
-
         if ( !preg_match($pattern, $value) )
         {
             return false;
@@ -63,8 +61,6 @@ class UTIL_Validator
     {
         $pattern = self::URL_PATTERN;
 
-        $trimValue = trim($value);
-
         if ( !preg_match($pattern, $value) )
         {
             return false;
@@ -75,8 +71,6 @@ class UTIL_Validator
 
     public static function isIntValid( $value )
     {
-        $intValue = (int) $value;
-
         if ( !preg_match(self::INT_PATTERN, $value) )
         {
             return false;
@@ -87,8 +81,6 @@ class UTIL_Validator
 
     public static function isFloatValid( $value )
     {
-        $floatValue = (float) $value;
-
         if ( !preg_match(self::FLOAT_PATTERN, $value) )
         {
             return false;
@@ -101,8 +93,6 @@ class UTIL_Validator
     {
         $pattern = self::ALPHA_NUMERIC_PATTERN;
 
-        $trimValue = trim($value);
-
         if ( !preg_match($pattern, $value) )
         {
             return false;
@@ -114,7 +104,6 @@ class UTIL_Validator
     public static function isUserNameValid( $value )
     {
         $pattern = self::USER_NAME_PATTERN;
-        $trimValue = trim($value);
 
         if ( !preg_match($pattern, $value) )
         {
@@ -142,6 +131,7 @@ class UTIL_Validator
         }
 
         require_once OW_DIR_LIB . 'securimage/securimage.php';
+
         $img = new Securimage();
 
         if ( !$img->check($value) )

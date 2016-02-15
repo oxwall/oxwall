@@ -704,17 +704,25 @@ class BOL_UserDao extends OW_BaseDao
             "method" => "BOL_UserDao::countUsersByQuestionValues"
         ));
 
-        $query = "SELECT DISTINCT COUNT(`user`.id) FROM `" . $this->getTableName() . "` `user`
-            " . $innerJoin . "
+        $usersTableName = "`{$this->getTableName()}`";
+        
+        if ( !empty($aditionalParams["limit_users_count"]) && OW_SQL_LIMIT_USERS_COUNT > 0 )
+        {
+            $orderFieldname = self::ACTIVITY_STAMP;
+            $usersTableName = "( SELECT * FROM {$usersTableName} ORDER BY `{$orderFieldname}` DESC LIMIT " . OW_SQL_LIMIT_USERS_COUNT . " )";
+        }
+        
+        $query = "SELECT DISTINCT COUNT(`user`.id) FROM {$usersTableName} `user`
+            {$innerJoin}
             {$queryParts["join"]}
 
-            WHERE {$queryParts["where"]} " . $where;
+            WHERE {$queryParts["where"]} {$where}";
 
         if ( $isAdmin === true )
         {
-            $query = "SELECT DISTINCT COUNT(`user`.`id` ) FROM `" . $this->getTableName() . "` `user`
-                " . $innerJoin . "
-                WHERE 1 " . $where;
+            $query = "SELECT DISTINCT COUNT(`user`.`id` ) FROM {$usersTableName} `user`
+                {$innerJoin}
+                WHERE 1 {$where}";
         }
 
         return $this->dbo->queryForColumn($query);
@@ -810,20 +818,28 @@ class BOL_UserDao extends OW_BaseDao
             $order = $aditionalParams['order'];
         }
 
-        $query = "SELECT DISTINCT `user`.id, `user`.`activityStamp` FROM `" . $this->getTableName() . "` `user`
-                " . $innerJoin . "
+        $usersTableName = "`{$this->getTableName()}`";
+        
+        if ( !empty($aditionalParams["limit_users_count"]) && OW_SQL_LIMIT_USERS_COUNT > 0 )
+        {
+            $orderFieldname = self::ACTIVITY_STAMP;
+            $usersTableName = "( SELECT * FROM {$usersTableName} ORDER BY `{$orderFieldname}` DESC LIMIT " . OW_SQL_LIMIT_USERS_COUNT . " )";
+        }
+        
+        $query = "SELECT DISTINCT `user`.id, `user`.`activityStamp` FROM {$usersTableName} `user`
+                {$innerJoin}
                 {$queryParts["join"]}
 
-                WHERE {$queryParts["where"]} " . $where . "
-                ORDER BY " . $order . "
+                WHERE {$queryParts["where"]} {$where}
+                ORDER BY {$order}
                 LIMIT :first, :count ";
 
         if ( $isAdmin === true )
         {
-            $query = "SELECT DISTINCT `user`.id FROM `" . $this->getTableName() . "` `user`
-                " . $innerJoin . "
-                WHERE 1 " . $where . "
-                ORDER BY '.$order.'
+            $query = "SELECT DISTINCT `user`.id FROM {$usersTableName} `user`
+            {$innerJoin}
+                WHERE 1 {$where}
+                ORDER BY {$order}
                 LIMIT :first, :count ";
         }
         

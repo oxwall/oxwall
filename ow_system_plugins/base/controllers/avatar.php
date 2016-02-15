@@ -80,16 +80,16 @@ class BASE_CTRL_Avatar extends OW_ActionController
             {
                 return array('result' => false, 'error' => $lang->text('base', 'not_valid_image'));
             }
-            
+
             $message = BOL_FileService::getInstance()->getUploadErrorMessage($_FILES['file']['error']);
-            
+
             if ( !empty($message) )
             {
                 return array('result' => false, 'error' => $message);
             }
-            
+
             $filesize = OW::getConfig()->getValue('base', 'avatar_max_upload_size');
-            
+
             if ( $filesize*1024*1024 < $_FILES['file']['size'] )
             {
                 $message = OW::getLanguage()->text('base', 'upload_file_max_upload_filesize_error');
