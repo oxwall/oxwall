@@ -34,11 +34,7 @@ use GuzzleHttp\Handler\StreamHandler;
 class UTIL_HttpClient
 {
     const HTTP_STATUS_OK = 200;
-
-    /**
-     * @var GuzzleHttp\Client
-     */
-    private static $client;
+    
 
     /**
      * @param string $url
@@ -47,14 +43,12 @@ class UTIL_HttpClient
      */
     public static function get( $url, UTIL_HttpClientParams $params = null )
     {
-        $options = $params ? $params->getOptions() : array();
-
-        if ( !empty($options["params"]) )
+        if ( $params && $params->getParams() )
         {
-            $options["query"] = $options["params"];
+            $url = OW::getRequest()->buildUrlQueryString($url, $params->getParams());
         }
 
-        return self::request("GET", $url, $options);
+        return self::request(file_get_contents($url), $http_response_header);
     }
 
     /**
@@ -64,58 +58,28 @@ class UTIL_HttpClient
      */
     public static function post( $url, UTIL_HttpClientParams $params = null )
     {
-        $options = $params ? $params->getOptions() : array();
+        $vars = array();
 
-        if ( !empty($options["params"]) )
+        if ( $params && $params->getParams() )
         {
-            $options["form_params"] = $options["params"];
+            $vars = $params->getParams();
         }
 
-        return self::request("POST", $url, $options);
+        $options = array(
+            "http" => array(
+                "header" => "Content-type: application/x-www-form-urlencoded\r\n",
+                "method" => "POST",
+                "content" => http_build_query($vars),
+            ),
+        );
+        $context = stream_context_create($options);
+
+
+        return self::request(file_get_contents($url, false, $context), $http_response_header);
     }
-    /* --------------------------------------------------------------------- */ 
-
-    private static function getClient()
+    
+    private static function request( $markup, $headers )
     {
-        if ( self::$client == null )
-        {
-            $handler = self::getHandler();
-
-			if( $handler == null )
-			{
-				throw new LogicException("Http client handlers are not available");
-			}
-
-            self::$client = new Client(array(
-                "request.options" => array(
-                    "exceptions" => false,
-                ),
-                "handler" => HandlerStack::create($handler)
-            ));
-        }
-
-        return self::$client;
-    }
-
-	private static function getHandler()
-	{
-		if( version_compare(PHP_VERSION, "5.5.0") >= 0 && function_exists("curl_version") )
-		{
-			return new CurlHandler();
-		}
-			
-		if( ini_get("allow_url_fopen") && extension_loaded("openssl") && in_array("https", stream_get_wrappers()) )
-		{
-			return new StreamHandler();
-		}
-		
-		return null;
-	}
-
-    private static function request( $method, $url, array $options )
-    {
-        $response = self::getClient()->request($method, $url, $options);
-
-        return new UTIL_HttpClientResponse($response);
+        return new UTIL_HttpClientResponse($markup, $headers);
     }
 }

@@ -22,40 +22,21 @@
  * which combines Covered Code or portions thereof with code not governed by the terms of the CPAL.
  */
 
-/**
- * Email Verify controller
- *
- * @author Podyachev Evgeny <joker.OW2@gmail.com>
- * @package ow_system_plugins.base.mobile.controller
- * @since 1.0
- */
-class BASE_MCTRL_EmailVerify extends BASE_CTRL_EmailVerify
+$languageService = Updater::getLanguageService();
+
+$languages = $languageService->getLanguages();
+$langId = null;
+
+foreach ($languages as $lang)
 {
-    protected function setMasterPage()
+    if ($lang->tag == 'en')
     {
-         OW::getDocument()->getMasterPage()->setTemplate(OW::getThemeManager()->getMasterPageTemplate(OW_MobileMasterPage::TEMPLATE_BLANK));
-    }
-
-    public function index( $params )
-    {
-        parent::index($params);
-
-        $this->setTemplate(OW::getPluginManager()->getPlugin('base')->getMobileCtrlViewDir().'email_verify_index.html');
-    }
-
-    public function verify( $params )
-    {
-        parent::verify($params);
-
-        $this->setTemplate(OW::getPluginManager()->getPlugin('base')->getMobileCtrlViewDir().'email_verify_verify.html');
-    }
-
-    public function verifyForm( $params )
-    {
-        parent::verifyForm($params);
-        
-        OW::getDocument()->getMasterPage()->setTemplate(OW::getThemeManager()->getMasterPageTemplate(OW_MobileMasterPage::TEMPLATE_BLANK));
-        $this->setTemplate(OW::getPluginManager()->getPlugin('base')->getMobileCtrlViewDir().'email_verify_verify_form.html');
+        $langId = $lang->id;
+        break;
     }
 }
 
+if ($langId !== null)
+{
+    $languageService->addOrUpdateValue($langId, 'base',  'themes_item_add_success_message', 'Theme added');
+}

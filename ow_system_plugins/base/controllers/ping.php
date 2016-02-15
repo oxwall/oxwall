@@ -13,14 +13,17 @@ class BASE_CTRL_Ping extends OW_ActionController
 
         foreach ( $stack as $c )
         {
-            $event = new OW_Event(self::PING_EVENT . '.' . trim($c['command']), $c['params']);
+            $command = strip_tags(trim($c['command']));
+            $params  = $c['params'];
+
+            $event = new OW_Event(self::PING_EVENT . '.' . $command, $params);
             OW::getEventManager()->trigger($event);
 
             $event = new OW_Event(self::PING_EVENT, $c, $event->getData());
             OW::getEventManager()->trigger($event);
 
             $responseStack[] = array(
-                'command' => $c['command'],
+                'command' => $command,
                 'result' => $event->getData()
             );
         }
