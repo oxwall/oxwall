@@ -161,7 +161,7 @@ class OW_HtmlDocument extends OW_Document
     /**
      * @var string
      */
-    private $bodyClass;
+    private $bodyClass = "";
 
     /**
      * @var array
@@ -181,7 +181,15 @@ class OW_HtmlDocument extends OW_Document
      */
     public function setBodyClass( $bodyClass )
     {
-        $this->bodyClass = $bodyClass;
+        $this->bodyClass = trim($bodyClass);
+    }
+
+    /**
+     * @param string $class
+     */
+    public function addBodyClass( $class )
+    {
+        $this->bodyClass .= " " . trim($class);
     }
 
     /**
@@ -716,7 +724,8 @@ class OW_HtmlDocument extends OW_Document
                 foreach ( $declarations as $declaration )
                 {
                     $attrs = array('type' => $type);
-                    $jsData .= UTIL_HtmlTag::generateTag('script', $attrs, true, PHP_EOL . '(function() {' . $declaration . '})();' . PHP_EOL) . PHP_EOL;
+                    $jsData .= UTIL_HtmlTag::generateTag('script', $attrs, true,
+                            PHP_EOL . '(function() {' . $declaration . '})();' . PHP_EOL) . PHP_EOL;
                 }
             }
         }
@@ -750,7 +759,7 @@ class OW_HtmlDocument extends OW_Document
             'language' => $this->language,
             'direction' => $this->direction,
             'pageBody' => $this->prependCode . $masterPageOutput . $this->appendCode . $jsData . OW_Document::APPEND_PLACEHOLDER,
-            'bodyClass' => !empty($this->bodyClass) ? ' ' . $this->bodyClass : ''
+            'bodyClass' => $this->bodyClass
         );
 
         $renderer = OW_ViewRenderer::getInstance();
