@@ -198,8 +198,7 @@ class ADMIN_CTRL_AjaxUpload extends ADMIN_CTRL_Abstract
         if ( $this->isAvailableFile($_FILES) )
         {
             $order = !empty($_POST['order']) ? (int) $_POST['order'] : 0;
-            ini_set('memory_limit', '-1');
-            
+
             if ( ($id = BOL_FileTemporaryService::getInstance()->addTemporaryFile($_FILES['file']['tmp_name'], $_FILES['file']['name'], OW::getUser()->getId(), $order)) )
             {
                 $fileUrl = BOL_FileTemporaryService::getInstance()->getTemporaryFileUrl($id);
