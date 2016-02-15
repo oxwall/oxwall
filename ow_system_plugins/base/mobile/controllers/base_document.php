@@ -113,7 +113,7 @@ class BASE_MCTRL_BaseDocument extends OW_MobileActionController
     {
         if ( !OW::getRequest()->isAjax() )
         {
-            OW::getDocument()->getMasterPage()->setTemplate(OW::getThemeManager()->getMasterPageTemplate('mobile_blank'));
+            OW::getDocument()->getMasterPage()->setTemplate(OW::getThemeManager()->getMasterPageTemplate(OW_MobileMasterPage::TEMPLATE_BLANK));
         }
         else
         {
@@ -131,7 +131,7 @@ class BASE_MCTRL_BaseDocument extends OW_MobileActionController
             $this->redirect($url);
         }
 
-        OW::getDocument()->getMasterPage()->setTemplate(OW::getThemeManager()->getMasterPageTemplate('mobile_blank'));
+        OW::getDocument()->getMasterPage()->setTemplate(OW::getThemeManager()->getMasterPageTemplate(OW_MobileMasterPage::TEMPLATE_BLANK));
         $this->assign('submit_url', OW::getRequest()->buildUrlQueryString(null, array('agree' => 1)));
 
         $leaveUrl = OW::getConfig()->getValue('base', 'splash_leave_url');
@@ -178,7 +178,7 @@ class BASE_MCTRL_BaseDocument extends OW_MobileActionController
         }
 
         OW::getDocument()->setHeading($language->text('base', 'password_protection_text'));
-        OW::getDocument()->getMasterPage()->setTemplate(OW::getThemeManager()->getMasterPageTemplate('mobile_blank'));
+        OW::getDocument()->getMasterPage()->setTemplate(OW::getThemeManager()->getMasterPageTemplate(OW_MobileMasterPage::TEMPLATE_BLANK));
     }
 
     public function notAvailable()

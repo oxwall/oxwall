@@ -104,7 +104,7 @@ class ADMIN_CLASS_MasterPage extends OW_MasterPage
     {
         parent::onBeforeRender();
         $language = OW::getLanguage();
-        OW::getDocument()->setBodyClass('ow_admin_area');
+        OW::getDocument()->addBodyClass('ow_admin_area');
         $this->setTemplate(OW::getThemeManager()->getMasterPageTemplate(OW_MasterPage::TEMPLATE_ADMIN));
 
         $arrayToAssign = array();

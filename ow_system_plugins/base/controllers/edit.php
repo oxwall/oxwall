@@ -169,15 +169,17 @@ class BASE_CTRL_Edit extends OW_ActionController
             $this->assign('displayAccountType', true);
         }
 
+        $userId = !empty($params['userId']) ? $params['userId'] : $viewerId;
+
         // add avatar field
         $editAvatar = OW::getClassInstance("BASE_CLASS_AvatarField", 'avatar', false);
         $editAvatar->setLabel(OW::getLanguage()->text('base', 'questions_question_user_photo_label'));
-        $editAvatar->setValue(BOL_AvatarService::getInstance()->getAvatarUrl($user->id, 1, null, true, false));
+        $editAvatar->setValue(BOL_AvatarService::getInstance()->getAvatarUrl($userId, 1, null, true, false));
         $displayPhotoUpload = OW::getConfig()->getValue('base', 'join_display_photo_upload');
 
         // add the required avatar validator
         if ($displayPhotoUpload == BOL_UserService::CONFIG_JOIN_DISPLAY_AND_SET_REQUIRED_PHOTO_UPLOAD) {
-            $avatarValidator = OW::getClassInstance("BASE_CLASS_AvatarFieldValidator", true);
+            $avatarValidator = OW::getClassInstance("BASE_CLASS_AvatarFieldValidator", true, $userId);
             $editAvatar->addValidator($avatarValidator);
         }
 
@@ -417,7 +419,6 @@ class BASE_CTRL_Edit extends OW_ActionController
         }
 
         $editedUserId = $editorId;
-
         if ( !empty($_POST["userId"]) )
         {
             $adminMode = true;
@@ -431,7 +432,7 @@ class BASE_CTRL_Edit extends OW_ActionController
                 exit;
             }
 
-            if ( !OW::getUser()->isAdmin() )
+            if ( !OW::getUser()->isAdmin() && ( !OW::getUser()->isAuthenticated() || OW::getUser()->getId() != $userId ) )
             {
                 echo json_encode(array('result' => false));
                 exit;
@@ -603,7 +604,6 @@ class editEmailValidator extends OW_Validator
         if ( BOL_UserService::getInstance()->isExistEmail($value) )
         {
             $userId = $this->userId;
-
             $user = BOL_UserService::getInstance()->findUserById($userId);
 
             if ( !$user || $value !== $user->email )
