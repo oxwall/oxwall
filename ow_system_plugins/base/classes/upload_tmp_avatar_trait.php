@@ -19,7 +19,9 @@ trait BASE_CLASS_UploadTmpAvatarTrait {
                 return array('result' => false, 'error' => $lang->text('base', 'not_valid_image'));
             }
 
-            $message = BOL_FileService::getInstance()->getUploadErrorMessage($_FILES['file']['error']);
+            if ( !empty($file['error']) ) {
+                $message = BOL_FileService::getInstance()->getUploadErrorMessage($file['error']);
+            }
 
             if ( !empty($message) )
             {
@@ -28,7 +30,7 @@ trait BASE_CLASS_UploadTmpAvatarTrait {
 
             $filesize = OW::getConfig()->getValue('base', 'avatar_max_upload_size');
 
-            if ( $filesize*1024*1024 < $_FILES['file']['size'] )
+            if ( empty($file['size']) || $filesize*1024*1024 < $file['size'] )
             {
                 $message = OW::getLanguage()->text('base', 'upload_file_max_upload_filesize_error');
                 return array('result' => false, 'error' => $message);
