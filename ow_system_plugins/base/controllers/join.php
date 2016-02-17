@@ -906,12 +906,12 @@ class JoinForm extends BASE_CLASS_UserQuestionForm
         {
             if ( !empty($questionInfo['realName']) && $questionInfo['realName'] === 'email' && $questionInfo['fake'] == false )
             {
-                $formField->addValidator(new joinEmailValidator());
+                $formField->addValidator(new BASE_CLASS_JoinEmailValidator());
             }
 
             if ( !empty($questionInfo['realName']) && $questionInfo['realName'] === 'username' && $questionInfo['fake'] == false )
             {
-                $formField->addValidator(new UserNameValidator());
+                $formField->addValidator(new BASE_CLASS_JoinUsernameValidator());
             }
 
             if ( $question['name'] === 'password' )
@@ -986,129 +986,6 @@ class JoinForm extends BASE_CLASS_UserQuestionForm
     public function getSortedQuestionsList()
     {
         return $this->sortedQuestionsList;
-    }
-}
-
-class UserNameValidator extends OW_Validator
-{
-
-    /**
-     * Constructor.
-     *
-     * @param array $params
-     */
-    public function __construct()
-    {
-
-    }
-
-    /**
-     * @see Validator::isValid()
-     *
-     * @param mixed $value
-     */
-    public function isValid( $value )
-    {
-        $language = OW::getLanguage();
-        if ( !UTIL_Validator::isUserNameValid($value) )
-        {
-            $this->setErrorMessage($language->text('base', 'join_error_username_not_valid'));
-            return false;
-        }
-        else if ( BOL_UserService::getInstance()->isExistUserName($value) )
-        {
-            $this->setErrorMessage($language->text('base', 'join_error_username_already_exist'));
-            return false;
-        }
-        else if ( BOL_UserService::getInstance()->isRestrictedUsername($value) )
-        {
-            $this->setErrorMessage($language->text('base', 'join_error_username_restricted'));
-            return false;
-        }
-
-        return true;
-    }
-
-    /**
-     * @see Validator::getJsValidator()
-     *
-     * @return string
-     */
-    public function getJsValidator()
-    {
-        return "{
-                validate : function( value )
-                {
-                    // window.join.validateUsername(false);
-                    if( window.join.errors['username']['error'] !== undefined )
-                    {
-                        throw window.join.errors['username']['error'];
-                    }
-                },
-                getErrorMessage : function(){
-                    if( window.join.errors['username']['error'] !== undefined ){ return window.join.errors['username']['error']; }
-                    else{ return " . json_encode($this->getError()) . " }
-                }
-        }";
-    }
-}
-
-class joinEmailValidator extends OW_Validator
-{
-
-    /**
-     * Constructor.
-     *
-     * @param array $params
-     */
-    public function __construct()
-    {
-
-    }
-
-    /**
-     * @see Validator::isValid()
-     *
-     * @param mixed $value
-     */
-    public function isValid( $value )
-    {
-        $language = OW::getLanguage();
-        if ( !UTIL_Validator::isEmailValid($value) )
-        {
-            $this->setErrorMessage($language->text('base', 'join_error_email_not_valid'));
-            return false;
-        }
-        else if ( BOL_UserService::getInstance()->isExistEmail($value) )
-        {
-            $this->setErrorMessage($language->text('base', 'join_error_email_already_exist'));
-            return false;
-        }
-
-        return true;
-    }
-
-    /**
-     * @see Validator::getJsValidator()
-     *
-     * @return string
-     */
-    public function getJsValidator()
-    {
-        return "{
-        	validate : function( value )
-                { 
-                    // window.join.validateEmail(false);
-                    if( window.join.errors['email']['error'] !== undefined )
-                    {
-                        throw window.join.errors['email']['error'];
-                    }
-                },
-        	getErrorMessage : function(){
-                    if( window.join.errors['email']['error'] !== undefined ){ return window.join.errors['email']['error']; }
-                    else{ return " . json_encode($this->getError()) . " }
-                 }
-        }";
     }
 }
 
