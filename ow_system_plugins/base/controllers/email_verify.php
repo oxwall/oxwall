@@ -82,7 +82,7 @@ class BASE_CTRL_EmailVerify extends OW_ActionController
         $email = new TextField('email');
         $email->setLabel($language->text('base', 'questions_question_email_label'));
         //$email->setRequired();
-        $email->addValidator(new EmailVerifyValidator());
+        $email->addValidator(new BASE_CLASS_EmailVerifyValidator());
         $email->setValue($user->email);
 
         $emailVerifyForm->addElement($email);
@@ -139,7 +139,7 @@ class BASE_CTRL_EmailVerify extends OW_ActionController
 
         $verificationCode = new TextField('verificationCode');
         $verificationCode->setLabel($language->text('base', 'email_verify_verification_code_label'));
-        $verificationCode->addValidator(new VerificationCodeValidator());
+        $verificationCode->addValidator(new BASE_CLASS_VerificationCodeValidator());
 
         $form->addElement($verificationCode);
 
@@ -161,124 +161,3 @@ class BASE_CTRL_EmailVerify extends OW_ActionController
         }
     }
 }
-
-class EmailVerifyValidator extends OW_Validator
-{
-
-    /**
-     * Constructor.
-     *
-     * @param array $params
-     */
-    public function __construct()
-    {
-
-    }
-
-    /**
-     * @see Validator::isValid()
-     *
-     * @param mixed $value
-     */
-    public function isValid( $value )
-    {
-        $language = OW::getLanguage();
-
-        if ( !UTIL_Validator::isEmailValid($value) )
-        {
-            $this->setErrorMessage($language->text('base', 'join_error_email_not_valid'));
-            return false;
-        }
-        else if ( BOL_UserService::getInstance()->isExistEmail($value) )
-        {
-            $userId = OW::getUser()->getId();
-            $user = BOL_UserService::getInstance()->findUserById($userId);
-
-            if ( $user->email !== $value )
-            {
-                $this->setErrorMessage($language->text('base', 'join_error_email_already_exist'));
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    /**
-     * @see Validator::getJsValidator()
-     *
-     * @return string
-     */
-    public function getJsValidator()
-    {
-        return "{
-        	validate : function( value )
-                {
-                },
-        	getErrorMessage : function(){
-                    return " . json_encode($this->getError()) . ";
-                 }
-        }";
-    }
-}
-
-class VerificationCodeValidator extends OW_Validator
-{
-
-    /**
-     * Constructor.
-     *
-     * @param array $params
-     */
-    public function __construct()
-    {
-        $language = OW::getLanguage();
-
-        $this->setErrorMessage($language->text('base', 'email_verify_invalid_verification_code'));
-    }
-
-    /**
-     * @see Validator::isValid()
-     *
-     * @param mixed $value
-     */
-    public function isValid( $value )
-    {
-        $emailVerifyData = BOL_EmailVerifyService::getInstance()->findByHash($value);
-
-        if ( $emailVerifyData == null )
-        {
-            return false;
-        }
-
-        if( $emailVerifyData->type === BOL_EmailVerifyService::TYPE_USER_EMAIL )
-        {
-            $user = BOL_UserService::getInstance()->findUserById($emailVerifyData->userId);
-
-            if ( $user == null )
-            {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    /**
-     * @see Validator::getJsValidator()
-     *
-     * @return string
-     */
-    public function getJsValidator()
-    {
-        return "{
-                validate : function( value )
-                {
-                },
-                getErrorMessage : function(){
-                    return " . json_encode($this->getError()) . ";
-                 }
-        }";
-    }
-}
-?>
