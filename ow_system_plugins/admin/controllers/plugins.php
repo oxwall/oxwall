@@ -653,7 +653,7 @@ class ADMIN_CTRL_Plugins extends ADMIN_CTRL_StorageAbstract
         {
             if ( !isset($params[BOL_StorageService::URI_VAR_LICENSE_CHECK_COMPLETE]) )
             {
-                $params[BOL_StorageService::URI_VAR_BACK_URI] = OW::getRouter()->uriFor(__CLASS__, "install");
+                $params[BOL_StorageService::URI_VAR_BACK_URI] = OW::getRouter()->uriForRoute("admin_plugins_available");
                 $this->redirect(OW::getRequest()->buildUrlQueryString(OW::getRouter()->urlFor("ADMIN_CTRL_Storage",
                             "checkItemLicense"), $params));
             }
@@ -679,7 +679,7 @@ class ADMIN_CTRL_Plugins extends ADMIN_CTRL_StorageAbstract
                     $pluginDto->setLicenseKey(urldecode($params[BOL_StorageService::URI_VAR_LICENSE_KEY]));
                     $this->pluginService->savePlugin($pluginDto);
                 }
-                
+
                 $feedback->info($language->text("admin", "manage_plugins_install_success_message",
                         array("plugin" => $pluginDto->getTitle())));
             }
