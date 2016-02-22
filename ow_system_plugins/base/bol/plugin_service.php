@@ -549,6 +549,11 @@ class BOL_PluginService
     {
         $pluginDto = $this->pluginDao->findPluginByKey($key);
 
+        if ( $pluginDto == null )
+        {
+            throw new LogicException("Can't activate {$key} plugin!");
+        }
+
         $pluginDto->setIsActive(true);
         $this->pluginDao->save($pluginDto);
         OW::getPluginManager()->addPackagePointers($pluginDto);
@@ -556,6 +561,10 @@ class BOL_PluginService
         $this->includeScript(OW_DIR_PLUGIN . $pluginDto->getModule() . DS . self::SCRIPT_ACTIVATE);
 
         $this->updatePluginListCache();
+
+        // trigger event
+        $event = new OW_Event(OW_EventManager::ON_AFTER_PLUGIN_ACTIVATE, array("pluginKey" => $pluginDto->getKey()));
+        OW::getEventManager()->trigger($event);
     }
 
     /**
@@ -567,12 +576,24 @@ class BOL_PluginService
     {
         $pluginDto = $this->pluginDao->findPluginByKey($key);
 
+        if ( $pluginDto == null )
+        {
+            throw new LogicException("Can't deactivate {$key} plugin!");
+        }
+
+        // trigger event
+        $event = new OW_Event(OW_EventManager::ON_BEFORE_PLUGIN_DEACTIVATE, array("pluginKey" => $pluginDto->getKey()));
+        OW::getEventManager()->trigger($event);
+
         $pluginDto->setIsActive(false);
         $this->pluginDao->save($pluginDto);
 
         $this->includeScript(OW::getPluginManager()->getPlugin($pluginDto->getKey())->getRootDir() . self::SCRIPT_DEACTIVATE);
 
         $this->updatePluginListCache();
+
+        $event = new OW_Event(OW_EventManager::ON_AFTER_PLUGIN_DEACTIVATE, array("pluginKey" => $pluginDto->getKey()));
+        OW::getEventManager()->trigger($event);
     }
 
     /**

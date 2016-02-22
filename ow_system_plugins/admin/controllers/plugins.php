@@ -75,7 +75,8 @@ class ADMIN_CTRL_Plugins extends ADMIN_CTRL_StorageAbstract
                 "description" => $plugin->getDescription(),
                 "set_url" => ( $plugin->isActive && $plugin->getAdminSettingsRoute() !== null) ? $router->urlForRoute($plugin->adminSettingsRoute) : false,
                 "update_url" => ((int) $plugin->getUpdate() == 1) ? $router->urlFor(__CLASS__, "updateRequest",
-                        array("key" => $plugin->getKey())) : false
+                        array("key" => $plugin->getKey())) : false,
+                "un_url" => $router->urlFor(__CLASS__, "uninstallRequest", array("key" => $plugin->getKey()))
             );
 
             if ( $plugin->getLicenseCheckTimestamp() > 0 )
@@ -94,7 +95,6 @@ class ADMIN_CTRL_Plugins extends ADMIN_CTRL_StorageAbstract
             if ( $plugin->isActive() )
             {
                 $array["deact_url"] = $router->urlFor(__CLASS__, "deactivate", array("key" => $plugin->getKey()));
-                $array["un_url"] = $router->urlFor(__CLASS__, "uninstallRequest", array("key" => $plugin->getKey()));
 
                 if ( $plugin->getUninstallRoute() !== null )
                 {
@@ -327,13 +327,8 @@ class ADMIN_CTRL_Plugins extends ADMIN_CTRL_StorageAbstract
         $pluginDto = $this->getPluginDtoByKeyInParamsArray($params);
         $language = OW::getLanguage();
 
-        // trigger event
-        $event = new OW_Event(OW_EventManager::ON_BEFORE_PLUGIN_DEACTIVATE, array("pluginKey" => $pluginDto->getKey()));
-        OW::getEventManager()->trigger($event);
-
         $this->pluginService->deactivate($pluginDto->getKey());
-        $event = new OW_Event(OW_EventManager::ON_AFTER_PLUGIN_DEACTIVATE, array('pluginKey' => $pluginDto->getKey()));
-        OW::getEventManager()->trigger($event);
+
         OW::getFeedback()->info($language->text('admin', 'manage_plugins_deactivate_success_message',
                 array('plugin' => $pluginDto->getTitle())));
         $this->redirectToAction('index');
@@ -364,10 +359,6 @@ class ADMIN_CTRL_Plugins extends ADMIN_CTRL_StorageAbstract
         }
 
         $this->pluginService->activate($pluginDto->getKey());
-
-        // trigger event
-        $event = new OW_Event(OW_EventManager::ON_AFTER_PLUGIN_ACTIVATE, array("pluginKey" => $pluginDto->getKey()));
-        OW::getEventManager()->trigger($event);
 
         OW::getFeedback()->info($language->text("admin", "manage_plugins_activate_success_message",
                 array("plugin" => $pluginDto->getTitle())));
@@ -727,6 +718,11 @@ class ADMIN_CTRL_Plugins extends ADMIN_CTRL_StorageAbstract
             $this->redirect(OW::getRouter()->urlForRoute("admin_plugins_installed"));
         }
 
+        if ( !$pluginDto->isActive )
+        {
+            $this->pluginService->activate($pluginDto->getKey());
+        }
+        
         try
         {
             $this->pluginService->uninstall($pluginDto->getKey());
