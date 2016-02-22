@@ -22,102 +22,23 @@
  * which combines Covered Code or portions thereof with code not governed by the terms of the CPAL.
  */
 
-/**
- * Data Transfer Object for `base_billing_sale` table.
- *
- * @author Egor Bulgakov <egor.bulgakov@gmail.com>
- * @package ow.ow_system_plugins.base.bol
- * @since 1.0
- */
-class BOL_BillingSale extends OW_Entity
+$tblPrefix = OW_DB_PREFIX;
+$dbo = Updater::getDbo();
+
+$logger = Updater::getLogger();
+
+$queries = array();
+
+$queries = "ALTER TABLE `{$tblPrefix}base_billing_sale` ADD `periodUnits` VARCHAR(20) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL AFTER `extraData`;";
+
+foreach ( $queries as $query )
 {
-    /**
-     * @var integer
-     */
-    public $id;
-    /**
-     * @var string
-     */
-    public $hash;
-    /**
-     * @var string
-     */
-    public $pluginKey;
-    /**
-     * @var string
-     */
-    public $entityKey;
-    /**
-     * @var int
-     */
-    public $entityId;
-    /**
-     * @var string 
-     */
-    public $entityDescription;
-    /**
-     * @var int
-     */
-    public $gatewayId;
-    /**
-     * @var int
-     */
-    public $userId;
-    /**
-     * @var string
-     */
-    public $transactionUid;
-    /**
-     * @var float
-     */
-    public $price;
-    /**
-     * @var int
-     */
-    public $period;
-    /**
-     * @var int
-     */
-    public $quantity = 1;
-    /**
-     * @var float
-     */
-    public $totalAmount;
-    /**
-     * @var string
-     */
-    public $currency;
-    /**
-     * @var boolean
-     */
-    public $recurring;
-    /**
-     * @var string
-     */
-    public $status;
-    /**
-     * @var int
-     */
-    public $timeStamp;
-    /**
-     * JSON encoded extra data
-     * 
-     * @var string
-     */
-    public $extraData;
-    /**
-     * @var string
-     */
-    public $periodUnits;
-
-
-    public function getExtraData()
+    try
     {
-        return mb_strlen($this->extraData) ? json_decode($this->extraData) : null;
+        $dbo->query($query);
     }
-
-    public function setExtraData( array $data )
+    catch (Exception $e)
     {
-        $this->extraData = is_array($data) ? json_encode($data) : null;
+        $logger->addEntry(json_encode($e));
     }
 }
