@@ -530,7 +530,7 @@ class BOL_StorageService
                 }
                 else if ( $this->isItemLicenseCheckPeriodExpired($item->getLicenseCheckTimestamp()) )
                 {
-                    if ( $type == self::URI_VAR_ITEM_TYPE_VAL_THEME && $this->themeService->getSelectedThemeName() )
+                    if ( $type == self::URI_VAR_ITEM_TYPE_VAL_THEME && $this->themeService->getSelectedThemeName() == $item->getKey() )
                     {
                         $this->themeService->setSelectedThemeName(BOL_ThemeService::DEFAULT_THEME);
                     }
