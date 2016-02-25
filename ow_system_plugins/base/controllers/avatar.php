@@ -75,7 +75,7 @@ class BASE_CTRL_Avatar extends OW_ActionController
     {
         if ( isset($_FILES['file']) )
         {
-            return uploadTmpAvatar($_FILES['file']);
+            return $this->uploadTmpAvatar($_FILES['file']);
         }
 
         return array('result' => false);
