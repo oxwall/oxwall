@@ -73,14 +73,11 @@ class ADMIN_CMP_UploadedFileList extends OW_Component
 
             clipboard.on('error', function(e) {
                 OW.warning(OW.getLanguageText('admin', 'press_ctrl_c'));
-                var input = $('<input type=\"text\" class=\"ow_disabled\" disabled=\"disabled\" name=\"url\" value=\"' + $(e.trigger).attr('data-clipboard-text') + '\" />');
-                if (!$(e.trigger).parent().find('input')[0])
-                {
-                    $(e.trigger).parent().prepend(input);
-                    $(e.trigger).parent().addClass('ow_url_input_visible');
-                }
-                var el = $(e.trigger).parent().find('input')[0];
-                el.setSelectionRange(0, el.value.length);
+                var parent = $(e.trigger).parent();
+                var input = parent.find('input')
+                parent.addClass('ow_url_input_visible');
+                input.val($(e.trigger).attr('data-clipboard-text'));
+                input.get(0).setSelectionRange(0, input.get(0).value.length);
             });
         });
         ");
