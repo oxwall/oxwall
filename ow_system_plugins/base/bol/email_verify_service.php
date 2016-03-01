@@ -189,10 +189,16 @@ class BOL_EmailVerifyService
 
         if ( $emailVerifiedData === null )
         {
+            $hash = BOL_EmailVerifyService::getInstance()->generateHash();
+
+            if ( OW::getApplication()->getContext() == OW_Application::CONTEXT_API ) {
+                $hash = mb_substr($hash, 0, 8);
+            }
+
             $emailVerifiedData = new BOL_EmailVerify();
             $emailVerifiedData->userId = $userId;
             $emailVerifiedData->email = trim($email);
-            $emailVerifiedData->hash = BOL_EmailVerifyService::getInstance()->generateHash();
+            $emailVerifiedData->hash = $hash;
             $emailVerifiedData->createStamp = time();
             $emailVerifiedData->type = $type;
 
@@ -201,9 +207,13 @@ class BOL_EmailVerifyService
 
         $vars = array(
             'code' => $emailVerifiedData->hash,
-            'url' => OW::getRouter()->urlForRoute('base_email_verify_code_check', array('code' => $emailVerifiedData->hash)),
-            'verification_page_url' => OW::getRouter()->urlForRoute('base_email_verify_code_form')
         );
+
+        if ( OW::getApplication()->getContext() != OW_Application::CONTEXT_API )
+        {
+            $vars['url'] = OW::getRouter()->urlForRoute('base_email_verify_code_check', array('code' => $emailVerifiedData->hash));
+            $vars['verification_page_url'] = OW::getRouter()->urlForRoute('base_email_verify_code_form');
+        }
 
         $language = OW::getLanguage();
 
