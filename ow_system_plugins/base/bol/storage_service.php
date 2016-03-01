@@ -521,10 +521,9 @@ class BOL_StorageService
             // if the item is on DB
             if ( isset($invalidItems[$type][$item->getKey()]) && $invalidItems[$type][$item->getKey()] == $item->getDeveloperKey() )
             {
-                $dataForNotification[] = array("type" => $type, "title" => $item->getTitle());
-
                 if ( (int) $item->getLicenseCheckTimestamp() == 0 )
                 {
+                    $dataForNotification[] = array("type" => $type, "title" => $item->getTitle());
                     $item->setLicenseCheckTimestamp(time());
                     $this->saveStoreItem($item);
                 }
