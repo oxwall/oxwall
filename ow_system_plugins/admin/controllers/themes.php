@@ -274,7 +274,7 @@ class ADMIN_CTRL_Themes extends ADMIN_CTRL_StorageAbstract
                     BOL_StorageService::URI_VAR_KEY => $themeDto->getKey(),
                     BOL_StorageService::URI_VAR_DEV_KEY => $themeDto->getDeveloperKey(),
                     BOL_StorageService::URI_VAR_ITEM_TYPE => BOL_StorageService::URI_VAR_ITEM_TYPE_VAL_THEME,
-                    BOL_StorageService::URI_VAR_BACK_URI => OW::getRequest()->getRequestUri()
+                    BOL_StorageService::URI_VAR_BACK_URI => OW::getRouter()->uriForRoute("admin_themes_choose")
                 );
 
                 $this->redirect(OW::getRequest()->buildUrlQueryString(OW::getRouter()->urlFor("ADMIN_CTRL_Storage",

@@ -239,13 +239,12 @@ class ApiAccessException extends ApiResponseErrorException
     const TYPE_SUSPENDED = "suspended";
     const TYPE_NOT_APPROVED = "not_approved";
     const TYPE_NOT_VERIFIED = "not_verified";
-    
-    public $data = array();
-    
-    public function __construct( $type ) 
+
+    public function __construct( $type, $userData = array() )
     {
         parent::__construct(array(
-            "type" => $type
+            "type" => $type,
+            "data" => $userData
         ));
     }
 }

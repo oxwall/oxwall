@@ -530,10 +530,6 @@ class BOL_AuthorizationService
         {
             if ( !empty($option['label']) )
             {
-                if ( OW::getApplication()->isMobile() )
-                {
-                    $option['url'] = null;
-                }
                 $label = mb_strtolower($option['label']);
                 $links[] = !empty($option['url']) ? '<a href="'.$option['url'].'">'.$label.'</a>' : $label;
             }

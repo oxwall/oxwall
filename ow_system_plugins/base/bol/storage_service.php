@@ -521,16 +521,15 @@ class BOL_StorageService
             // if the item is on DB
             if ( isset($invalidItems[$type][$item->getKey()]) && $invalidItems[$type][$item->getKey()] == $item->getDeveloperKey() )
             {
-                $dataForNotification[] = array("type" => $type, "title" => $item->getTitle());
-
                 if ( (int) $item->getLicenseCheckTimestamp() == 0 )
                 {
+                    $dataForNotification[] = array("type" => $type, "title" => $item->getTitle());
                     $item->setLicenseCheckTimestamp(time());
                     $this->saveStoreItem($item);
                 }
                 else if ( $this->isItemLicenseCheckPeriodExpired($item->getLicenseCheckTimestamp()) )
                 {
-                    if ( $type == self::URI_VAR_ITEM_TYPE_VAL_THEME && $this->themeService->getSelectedThemeName() )
+                    if ( $type == self::URI_VAR_ITEM_TYPE_VAL_THEME && $this->themeService->getSelectedThemeName() == $item->getKey() )
                     {
                         $this->themeService->setSelectedThemeName(BOL_ThemeService::DEFAULT_THEME);
                     }
@@ -561,17 +560,22 @@ class BOL_StorageService
 
         foreach ( $items as $item )
         {
-            $titleList[] = "\"" . $item["title"] . "\"";
+            $titleList[] = "\"{$item["title"]}\"";
         }
+
+        $params = array(
+            "itemList" => implode("<br />", $titleList),
+            "siteURL" => OW::getRouter()->getBaseUrl(),
+            "adminUrl" => OW::getRouter()->urlForRoute("admin_plugins_installed")
+        );
 
         $language = OW::getLanguage();
         $mail = OW::getMailer()->createMail();
         $mail->addRecipientEmail(OW::getConfig()->getValue("base", "site_email"));
         $mail->setSubject($language->text("admin", "mail_template_admin_invalid_license_subject"));
-        $mail->setHtmlContent($language->text("admin", "mail_template_admin_invalid_license_content_html",
-                array("itemList" => implode(", ", $titleList), "siteURL" => OW_URL_HOME)));
-        $mail->setTextContent($language->text("admin", "mail_template_admin_invalid_license_content_text",
-                array("itemList" => implode(", ", $titleList), "siteURL" => OW_URL_HOME)));
+        $mail->setHtmlContent($language->text("admin", "mail_template_admin_invalid_license_content_html", $params));
+        $params["itemList"] = implode(PHP_EOL, $titleList);
+        $mail->setTextContent($language->text("admin", "mail_template_admin_invalid_license_content_text", $params));
 
         OW::getMailer()->send($mail);
     }
