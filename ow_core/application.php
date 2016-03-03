@@ -897,7 +897,7 @@ class OW_Application
 
     protected function httpVsHttpsRedirect()
     {
-        if ( OW::getRequest()->isAjax() )
+        if ( OW::getRequest()->isAjax() || substr(OW::getRouter()->getBaseUrl(), 0, 5) == "https" )
         {
             return;
         }
