@@ -9,6 +9,7 @@
         {/if}
         {if !empty($changeLog)}
             <div class="ow_std_margin" style="text-align: left;">
+                {text key="admin+changelog_heading"}
                 {foreach from=$changeLog item='item'}
                     <span><pre>{$item|escape:'html'}</pre></span>
                 {/foreach}
