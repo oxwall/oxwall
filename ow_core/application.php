@@ -117,12 +117,12 @@ class OW_Application
         // setting default time zone
         date_default_timezone_set(OW::getConfig()->getValue('base', 'site_timezone'));
 
-        if( OW::getUser()->isAuthenticated() )
+        if ( OW::getUser()->isAuthenticated() )
         {
             $userId = OW::getUser()->getId();
             $timeZone = BOL_PreferenceService::getInstance()->getPreferenceValue('timeZoneSelect', $userId);
 
-            if(!empty($timeZone))
+            if ( !empty($timeZone) )
             {
                 date_default_timezone_set($timeZone);
             }
@@ -189,17 +189,23 @@ class OW_Application
         /* @var $value BOL_Document */
         foreach ( $staticDocs as $value )
         {
-            OW::getRouter()->addRoute(new OW_Route($value->getKey(), $value->getUri(), $staticPageDispatchAttrs['controller'], $staticPageDispatchAttrs['action'], array('documentKey' => array(OW_Route::PARAM_OPTION_HIDDEN_VAR => $value->getKey()))));
+            OW::getRouter()->addRoute(new OW_Route($value->getKey(), $value->getUri(),
+                $staticPageDispatchAttrs['controller'], $staticPageDispatchAttrs['action'],
+                array('documentKey' => array(OW_Route::PARAM_OPTION_HIDDEN_VAR => $value->getKey()))));
 
             // TODO refactor - hotfix for TOS page
-            if ( in_array(UTIL_String::removeFirstAndLastSlashes($value->getUri()), array("terms-of-use", "privacy", "privacy-policy")) )
+            if ( in_array(UTIL_String::removeFirstAndLastSlashes($value->getUri()),
+                    array("terms-of-use", "privacy", "privacy-policy")) )
             {
-                OW::getRequestHandler()->addCatchAllRequestsExclude('base.members_only', $staticPageDispatchAttrs['controller'], $staticPageDispatchAttrs['action'], array('documentKey' => $value->getKey()));
+                OW::getRequestHandler()->addCatchAllRequestsExclude('base.members_only',
+                    $staticPageDispatchAttrs['controller'], $staticPageDispatchAttrs['action'],
+                    array('documentKey' => $value->getKey()));
             }
         }
 
         //adding index page route
-        $item = BOL_NavigationService::getInstance()->findFirstLocal((OW::getUser()->isAuthenticated() ? BOL_NavigationService::VISIBLE_FOR_MEMBER : BOL_NavigationService::VISIBLE_FOR_GUEST), OW_Navigation::MAIN);
+        $item = BOL_NavigationService::getInstance()->findFirstLocal((OW::getUser()->isAuthenticated() ? BOL_NavigationService::VISIBLE_FOR_MEMBER : BOL_NavigationService::VISIBLE_FOR_GUEST),
+            OW_Navigation::MAIN);
 
         if ( $item !== null )
         {
@@ -213,7 +219,9 @@ class OW_Application
                 $ddispatchAttrs = OW::getRequestHandler()->getStaticPageAttributes();
             }
 
-            $router->addRoute(new OW_Route('base_default_index', '/', $ddispatchAttrs['controller'], $ddispatchAttrs['action'], array('documentKey' => array(OW_Route::PARAM_OPTION_HIDDEN_VAR => $item->getDocumentKey()))));
+            $router->addRoute(new OW_Route('base_default_index', '/', $ddispatchAttrs['controller'],
+                $ddispatchAttrs['action'],
+                array('documentKey' => array(OW_Route::PARAM_OPTION_HIDDEN_VAR => $item->getDocumentKey()))));
             $this->indexMenuItem = $item;
             OW::getEventManager()->bind(OW_EventManager::ON_AFTER_REQUEST_HANDLE, array($this, 'activateMenuItem'));
         }
@@ -226,7 +234,8 @@ class OW_Application
         {
             OW::getResponse()->setDocument($this->newDocument());
             OW::getDocument()->setMasterPage(new OW_MasterPage());
-            OW::getResponse()->setHeader(OW_Response::HD_CNT_TYPE, OW::getDocument()->getMime() . '; charset=' . OW::getDocument()->getCharset());
+            OW::getResponse()->setHeader(OW_Response::HD_CNT_TYPE,
+                OW::getDocument()->getMime() . '; charset=' . OW::getDocument()->getCharset());
         }
         else
         {
@@ -249,7 +258,8 @@ class OW_Application
         $viewRenderer->assignVar('siteName', OW::getConfig()->getValue('base', 'site_name'));
         $viewRenderer->assignVar('siteTagline', OW::getConfig()->getValue('base', 'site_tagline'));
         $viewRenderer->assignVar('siteUrl', OW_URL_HOME);
-        $viewRenderer->assignVar('bottomPoweredByLink', '<a href="http://www.oxwall.org/" target="_blank" title="Powered by Oxwall Community Software"><img src="' . $currentThemeImagesDir . 'powered-by-oxwall.png" alt="Oxwall Community Software" /></a>');
+        $viewRenderer->assignVar('bottomPoweredByLink',
+            '<a href="http://www.oxwall.org/" target="_blank" title="Powered by Oxwall Community Software"><img src="' . $currentThemeImagesDir . 'powered-by-oxwall.png" alt="Oxwall Community Software" /></a>');
 
         $spotParams = array(
             "platform-version" => OW::getConfig()->getValue("base", "soft_version"),
@@ -257,7 +267,8 @@ class OW_Application
             "theme" => OW::getConfig()->getValue("base", "selectedTheme")
         );
 
-        $viewRenderer->assignVar('adminDashboardIframeUrl', OW::getRequest()->buildUrlQueryString("//static.oxwall.org/spotlight/", $spotParams));
+        $viewRenderer->assignVar('adminDashboardIframeUrl',
+            OW::getRequest()->buildUrlQueryString("//static.oxwall.org/spotlight/", $spotParams));
 
         if ( function_exists('ow_service_actions') )
         {
@@ -390,16 +401,19 @@ class OW_Application
     public function onBeforeDocumentRender()
     {
         $document = OW::getDocument();
+        $themeManager = OW::getThemeManager();
 
-        $document->addStyleSheet(OW::getPluginManager()->getPlugin('base')->getStaticCssUrl() . 'ow.css' . '?' . OW::getConfig()->getValue('base', 'cachedEntitiesPostfix'), 'all', -100);
-        $document->addStyleSheet(OW::getThemeManager()->getCssFileUrl() . '?' . OW::getConfig()->getValue('base', 'cachedEntitiesPostfix'), 'all', (-90));
+        $document->addStyleSheet(OW::getPluginManager()->getPlugin('base')->getStaticCssUrl() . 'ow.css' . '?' . OW::getConfig()->getValue('base',
+                'cachedEntitiesPostfix'), 'all', -100);
+        $document->addStyleSheet($themeManager->getCssFileUrl() . '?' . OW::getConfig()->getValue('base',
+                'cachedEntitiesPostfix'), 'all', (-90));
 
         // add custom css if page is not admin TODO replace with another condition
         if ( !OW::getDocument()->getMasterPage() instanceof ADMIN_CLASS_MasterPage )
         {
-            if ( OW::getThemeManager()->getCurrentTheme()->getDto()->getCustomCssFileName() !== null )
+            if ( $themeManager->getCurrentTheme()->getDto()->getCustomCssFileName() !== null )
             {
-                $document->addStyleSheet(OW::getThemeManager()->getThemeService()->getCustomCssFileUrl(OW::getThemeManager()->getCurrentTheme()->getDto()->getKey()));
+                $document->addStyleSheet($themeManager->getThemeService()->getCustomCssFileUrl($themeManager->getCurrentTheme()->getDto()->getKey()));
             }
 
             if ( $this->getDocumentKey() !== 'base.sign_in' )
@@ -420,8 +434,12 @@ class OW_Application
         }
         else
         {
-            $document->addStyleSheet(OW::getPluginManager()->getPlugin('admin')->getStaticCssUrl() . 'admin.css' . '?' . OW::getConfig()->getValue('base', 'cachedEntitiesPostfix'), 'all', -50);
+            $document->addStyleSheet(OW::getPluginManager()->getPlugin('admin')->getStaticCssUrl() . 'admin.css' . '?' . OW::getConfig()->getValue('base',
+                    'cachedEntitiesPostfix'), 'all', -50);
         }
+
+        // add current theme name to body class
+        $document->addBodyClass($themeManager->getCurrentTheme()->getDto()->getKey());
 
         $language = OW::getLanguage();
 
@@ -447,7 +465,7 @@ class OW_Application
 
         if ( !empty($this->documentKey) )
         {
-            $document->setBodyClass($this->documentKey);
+            $document->addBodyClass($this->documentKey);
         }
 
         if ( $this->getDocumentKey() !== null )
@@ -508,7 +526,8 @@ class OW_Application
         {
             if ( OW::getRequest()->getRequestUri() === '/' || OW::getRequest()->getRequestUri() === '' )
             {
-                OW::getNavigation()->activateMenuItem(OW_Navigation::MAIN, $this->indexMenuItem->getPrefix(), $this->indexMenuItem->getKey());
+                OW::getNavigation()->activateMenuItem(OW_Navigation::MAIN, $this->indexMenuItem->getPrefix(),
+                    $this->indexMenuItem->getKey());
             }
         }
     }
@@ -536,11 +555,14 @@ class OW_Application
             $document->setFavicon(OW::getPluginManager()->getPlugin('base')->getUserFilesUrl() . 'favicon.ico');
         }
 
-        $document->addScript(OW::getPluginManager()->getPlugin('base')->getStaticJsUrl() . 'jquery.min.js', 'text/javascript', (-100));
-        $document->addScript(OW::getPluginManager()->getPlugin('base')->getStaticJsUrl() . 'jquery-migrate.min.js', 'text/javascript', (-100));
+        $document->addScript(OW::getPluginManager()->getPlugin('base')->getStaticJsUrl() . 'jquery.min.js',
+            'text/javascript', (-100));
+        $document->addScript(OW::getPluginManager()->getPlugin('base')->getStaticJsUrl() . 'jquery-migrate.min.js',
+            'text/javascript', (-100));
 
         //$document->addScript(OW::getPluginManager()->getPlugin('base')->getStaticJsUrl() . 'json2.js', 'text/javascript', (-99));
-        $document->addScript(OW::getPluginManager()->getPlugin('base')->getStaticJsUrl() . 'ow.js?' . OW::getConfig()->getValue('base', 'cachedEntitiesPostfix'), 'text/javascript', (-50));
+        $document->addScript(OW::getPluginManager()->getPlugin('base')->getStaticJsUrl() . 'ow.js?' . OW::getConfig()->getValue('base',
+                'cachedEntitiesPostfix'), 'text/javascript', (-50));
 
         $onloadJs = "OW.bindAutoClicks();OW.bindTips($('body'));";
 
@@ -608,14 +630,18 @@ class OW_Application
                 }
 
                 $requestHandlerData['ctrlPath'] = $ctrlPath;
-                $requestHandlerData['paramsExp'] = var_export(( empty($requestHandlerData['params']) ? array() : $requestHandlerData['params']), true);
+                $requestHandlerData['paramsExp'] = var_export(( empty($requestHandlerData['params']) ? array() : $requestHandlerData['params']),
+                    true);
                 $viewRenderer->assignVar('requestHandler', $requestHandlerData);
                 $viewRenderer->assignVar('profiler', UTIL_Profiler::getInstance()->getResult());
-                $viewRenderer->assignVar('memoryUsage', (function_exists('memory_get_peak_usage') ? sprintf('%0.3f', memory_get_peak_usage(true) / 1048576) : 'No info'));
+                $viewRenderer->assignVar('memoryUsage',
+                    (function_exists('memory_get_peak_usage') ? sprintf('%0.3f', memory_get_peak_usage(true) / 1048576) : 'No info'));
 
                 if ( !OW_DEV_MODE || true )
                 { //TODO remove hardcode
-                    $viewRenderer->assignVar('clrBtnUrl', OW::getRequest()->buildUrlQueryString(OW::getRouter()->urlFor('BASE_CTRL_Base', 'turnDevModeOn'), array('back-uri' => urlencode(OW::getRouter()->getUri()))));
+                    $viewRenderer->assignVar('clrBtnUrl',
+                        OW::getRequest()->buildUrlQueryString(OW::getRouter()->urlFor('BASE_CTRL_Base', 'turnDevModeOn'),
+                            array('back-uri' => urlencode(OW::getRouter()->getUri()))));
                 }
 
                 $rndItems = OW_Renderable::getRenderedClasses();
@@ -647,7 +673,8 @@ class OW_Application
                     }
                 }
 
-                $viewRenderer->assignVar('renderedItems', array('items' => $rndArray, 'count' => ( count(OW_Renderable::getRenderedClasses()) - 2 )));
+                $viewRenderer->assignVar('renderedItems',
+                    array('items' => $rndArray, 'count' => ( count(OW_Renderable::getRenderedClasses()) - 2 )));
 
                 $queryLog = OW::getDbo()->getQueryLog();
                 foreach ( $queryLog as $key => $query )
@@ -667,7 +694,8 @@ class OW_Application
                     }
                 }
 
-                $viewRenderer->assignVar('database', array('qet' => OW::getDbo()->getTotalQueryExecTime(), 'ql' => $queryLog, 'qc' => count($queryLog)));
+                $viewRenderer->assignVar('database',
+                    array('qet' => OW::getDbo()->getTotalQueryExecTime(), 'ql' => $queryLog, 'qc' => count($queryLog)));
 
                 //events
                 $eventsData = OW::getEventManager()->getLog();
@@ -741,7 +769,9 @@ class OW_Application
                     }
 
                     $paramsData = var_export($eventItem['event']->getParams(), true);
-                    $eventsDataToAssign['call'][] = array('type' => $eventItem['type'], 'name' => $eventItem['event']->getName(), 'listeners' => $listenersList, 'params' => $paramsData, 'start' => sprintf('%.3f', $eventItem['start']), 'exec' => sprintf('%.3f', $eventItem['exec']));
+                    $eventsDataToAssign['call'][] = array('type' => $eventItem['type'], 'name' => $eventItem['event']->getName(),
+                        'listeners' => $listenersList, 'params' => $paramsData, 'start' => sprintf('%.3f',
+                            $eventItem['start']), 'exec' => sprintf('%.3f', $eventItem['exec']));
                 }
 
                 $eventsDataToAssign['bindsCount'] = count($eventsDataToAssign['bind']);
@@ -867,7 +897,7 @@ class OW_Application
 
     protected function httpVsHttpsRedirect()
     {
-        if( OW::getRequest()->isAjax() )
+        if ( OW::getRequest()->isAjax() || substr(OW::getRouter()->getBaseUrl(), 0, 5) == "https" )
         {
             return;
         }
@@ -942,7 +972,8 @@ class OW_Application
 
             foreach ( $contentReplaceArr as $index )
             {
-                $search[$index] = str_replace($matches[2][$index], str_replace("http:", "https:", $matches[2][$index]), $search[$index]);
+                $search[$index] = str_replace($matches[2][$index], str_replace("http:", "https:", $matches[2][$index]),
+                    $search[$index]);
             }
 
             $markup = str_replace($replace, $search, $markup);
@@ -983,7 +1014,8 @@ class OW_Application
         {
             if ( is_array($item) && !empty($item['controller']) && !empty($item['action']) )
             {
-                OW::getRequestHandler()->addCatchAllRequestsExclude($key, trim($item['controller']), trim($item['action']));
+                OW::getRequestHandler()->addCatchAllRequestsExclude($key, trim($item['controller']),
+                    trim($item['action']));
             }
         }
     }

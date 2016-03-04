@@ -1289,3 +1289,14 @@ html body .ow_admin_choose_theme .selected_theme_info_stick{
 background: #fee5e3;
 border: 1px solid #ee3d32;
 }
+
+.ow_anno.ow_ic_warning {
+padding-left: 40px;
+}
+
+pre {
+    font-family: 'core_sans_e35_light', "Trebuchet MS", "Helvetica CY", sans-serif;
+    word-wrap: break-word;
+    white-space: -moz-pre-wrap; 
+    white-space: pre-wrap;
+}

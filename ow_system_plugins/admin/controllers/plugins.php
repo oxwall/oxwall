@@ -75,7 +75,8 @@ class ADMIN_CTRL_Plugins extends ADMIN_CTRL_StorageAbstract
                 "description" => $plugin->getDescription(),
                 "set_url" => ( $plugin->isActive && $plugin->getAdminSettingsRoute() !== null) ? $router->urlForRoute($plugin->adminSettingsRoute) : false,
                 "update_url" => ((int) $plugin->getUpdate() == 1) ? $router->urlFor(__CLASS__, "updateRequest",
-                        array("key" => $plugin->getKey())) : false
+                        array("key" => $plugin->getKey())) : false,
+                "un_url" => $router->urlFor(__CLASS__, "uninstallRequest", array("key" => $plugin->getKey()))
             );
 
             if ( $plugin->getLicenseCheckTimestamp() > 0 )
@@ -84,7 +85,8 @@ class ADMIN_CTRL_Plugins extends ADMIN_CTRL_StorageAbstract
                     BOL_StorageService::URI_VAR_BACK_URI => urlencode($router->uriForRoute("admin_plugins_installed")),
                     BOL_StorageService::URI_VAR_KEY => $plugin->getKey(),
                     BOL_StorageService::URI_VAR_ITEM_TYPE => BOL_StorageService::URI_VAR_ITEM_TYPE_VAL_PLUGIN,
-                    BOL_StorageService::URI_VAR_DEV_KEY => $plugin->getDeveloperKey()
+                    BOL_StorageService::URI_VAR_DEV_KEY => $plugin->getDeveloperKey(),
+                    BOL_StorageService::URI_VAR_RETURN_RESULT => 0
                 );
                 $array["license_url"] = OW::getRequest()->buildUrlQueryString($router->urlFor("ADMIN_CTRL_Storage",
                         "checkItemLicense"), $params);
@@ -93,7 +95,6 @@ class ADMIN_CTRL_Plugins extends ADMIN_CTRL_StorageAbstract
             if ( $plugin->isActive() )
             {
                 $array["deact_url"] = $router->urlFor(__CLASS__, "deactivate", array("key" => $plugin->getKey()));
-                $array["un_url"] = $router->urlFor(__CLASS__, "uninstallRequest", array("key" => $plugin->getKey()));
 
                 if ( $plugin->getUninstallRoute() !== null )
                 {
@@ -326,13 +327,8 @@ class ADMIN_CTRL_Plugins extends ADMIN_CTRL_StorageAbstract
         $pluginDto = $this->getPluginDtoByKeyInParamsArray($params);
         $language = OW::getLanguage();
 
-        // trigger event
-        $event = new OW_Event(OW_EventManager::ON_BEFORE_PLUGIN_DEACTIVATE, array("pluginKey" => $pluginDto->getKey()));
-        OW::getEventManager()->trigger($event);
-
         $this->pluginService->deactivate($pluginDto->getKey());
-        $event = new OW_Event(OW_EventManager::ON_AFTER_PLUGIN_DEACTIVATE, array('pluginKey' => $pluginDto->getKey()));
-        OW::getEventManager()->trigger($event);
+
         OW::getFeedback()->info($language->text('admin', 'manage_plugins_deactivate_success_message',
                 array('plugin' => $pluginDto->getTitle())));
         $this->redirectToAction('index');
@@ -363,10 +359,6 @@ class ADMIN_CTRL_Plugins extends ADMIN_CTRL_StorageAbstract
         }
 
         $this->pluginService->activate($pluginDto->getKey());
-
-        // trigger event
-        $event = new OW_Event(OW_EventManager::ON_AFTER_PLUGIN_ACTIVATE, array("pluginKey" => $pluginDto->getKey()));
-        OW::getEventManager()->trigger($event);
 
         OW::getFeedback()->info($language->text("admin", "manage_plugins_activate_success_message",
                 array("plugin" => $pluginDto->getTitle())));
@@ -654,7 +646,7 @@ class ADMIN_CTRL_Plugins extends ADMIN_CTRL_StorageAbstract
         {
             if ( !isset($params[BOL_StorageService::URI_VAR_LICENSE_CHECK_COMPLETE]) )
             {
-                $params[BOL_StorageService::URI_VAR_BACK_URI] = OW::getRouter()->uriFor(__CLASS__, "install");
+                $params[BOL_StorageService::URI_VAR_BACK_URI] = OW::getRouter()->uriForRoute("admin_plugins_available");
                 $this->redirect(OW::getRequest()->buildUrlQueryString(OW::getRouter()->urlFor("ADMIN_CTRL_Storage",
                             "checkItemLicense"), $params));
             }
@@ -680,7 +672,7 @@ class ADMIN_CTRL_Plugins extends ADMIN_CTRL_StorageAbstract
                     $pluginDto->setLicenseKey(urldecode($params[BOL_StorageService::URI_VAR_LICENSE_KEY]));
                     $this->pluginService->savePlugin($pluginDto);
                 }
-                
+
                 $feedback->info($language->text("admin", "manage_plugins_install_success_message",
                         array("plugin" => $pluginDto->getTitle())));
             }
@@ -728,6 +720,11 @@ class ADMIN_CTRL_Plugins extends ADMIN_CTRL_StorageAbstract
             $this->redirect(OW::getRouter()->urlForRoute("admin_plugins_installed"));
         }
 
+        if ( !$pluginDto->isActive )
+        {
+            $this->pluginService->activate($pluginDto->getKey());
+        }
+        
         try
         {
             $this->pluginService->uninstall($pluginDto->getKey());

@@ -46,6 +46,7 @@
                  {else}    
                 <a class="ow_lbutton ow_green" href="{$plugin.active_url}">{text key='admin+manage_plugins_activate_button_label'}</a>
                 {/if}
+                {if $plugin.un_url}<a class="ow_lbutton ow_red" href="{$plugin.un_url}">{text key='admin+manage_plugins_uninstall_button_label'}</a>{/if}
              </span>
          </td>
       </tr>

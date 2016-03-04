@@ -84,6 +84,11 @@ abstract class ADMIN_CTRL_StorageAbstract extends ADMIN_CTRL_Abstract
         $backUri = $getParams[BOL_StorageService::URI_VAR_BACK_URI];
         unset($getParams[BOL_StorageService::URI_VAR_BACK_URI]);
 
+        if( isset($getParams[BOL_StorageService::URI_VAR_RETURN_RESULT]) && !$getParams[BOL_StorageService::URI_VAR_RETURN_RESULT] )
+        {
+            $getParams = array();
+        }
+        
         $this->redirect(OW::getRequest()->buildUrlQueryString(OW_URL_HOME . urldecode($backUri), $getParams));
     }
 

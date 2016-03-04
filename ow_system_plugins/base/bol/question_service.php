@@ -1251,7 +1251,7 @@ class BOL_QuestionService
     {
         return $this->sectionDao->findBySectionName($sectionName);
     }
-    
+
     public function findSectionBySectionNameList( $list )
     {
         $list = $this->sectionDao->findBySectionNameList($list);

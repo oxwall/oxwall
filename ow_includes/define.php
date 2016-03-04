@@ -40,3 +40,8 @@ if ( defined('OW_URL_USERFILES') )
 }
 
 define("OW_DIR_LIB_VENDOR", OW_DIR_LIB . "vendor" . DS);
+
+if ( !defined("OW_SQL_LIMIT_USERS_COUNT") )
+{
+    define("OW_SQL_LIMIT_USERS_COUNT", 10000);
+}

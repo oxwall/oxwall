@@ -175,7 +175,7 @@ class ADMIN_CTRL_Storage extends ADMIN_CTRL_StorageAbstract
         {
             return;
         }
-
+//TODO check if the result is false | null
         $params = array(
             "oldVersion" => OW::getConfig()->getValue("base", "soft_version"),
             "newVersion" => $newPlatformInfo["version"],

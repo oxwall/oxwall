@@ -75,7 +75,7 @@ class BASE_CLASS_AvatarField extends FormElement
             $markup .= '<input type="hidden" id="' . $this->getId() . '_preload_avatar" name="avatarPreloaded" value="1" />';
         }
 
-        $markup .= '<input type="hidden" name="" value="' . $this->value . '" class="ow_avatar_field_value" />';
+        $markup .= '<input type="hidden" name="' . $this->attributes['name'] . '" value="' . $this->value . '" class="ow_avatar_field_value" />';
         $markup .= '</div>';
 
         return $markup;
