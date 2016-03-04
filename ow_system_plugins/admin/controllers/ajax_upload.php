@@ -48,7 +48,6 @@ class ADMIN_CTRL_AjaxUpload extends ADMIN_CTRL_Abstract
         {
             throw new AuthenticateException();
         }
-        $this->returnResponse(array('status' => self::STATUS_ERROR, 'result' => false, 'msg' => OW::getLanguage()->text('photo', 'auth_upload_permissions')));
     }
     
     protected function getEntity( $params )
