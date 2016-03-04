@@ -297,6 +297,7 @@ class ADMIN_CTRL_Themes extends ADMIN_CTRL_StorageAbstract
 
     public function updateRequest( array $params )
     {
+        //TODO merge method with platform update request
         $themeDto = $this->getThemeDtoByKeyInParamsArray($params);
         $language = OW::getLanguage();
         $router = OW::getRouter();
@@ -326,7 +327,7 @@ class ADMIN_CTRL_Themes extends ADMIN_CTRL_StorageAbstract
             }
             else
             {
-                $this->assign("text", $language->text("admin", "theme_update_request_error"));
+                $this->assign("text", $language->text("admin", "theme_license_request_error"));
                 return;
             }
         }
@@ -336,6 +337,7 @@ class ADMIN_CTRL_Themes extends ADMIN_CTRL_StorageAbstract
                 array("oldVersion" => $themeDto->getBuild(), "newVersion" => $remoteThemeInfo["build"], "name" => $themeDto->getTitle())));
         $this->assign("updateUrl", $router->urlFor(__CLASS__, "update", $params));
         $this->assign("returnUrl", $router->urlForRoute("admin_themes_choose"));
+        $this->assign("changeLog", $remoteThemeInfo["changeLog"]);
 
         if ( OW::getConfig()->getValue("base", "update_soft") )
         {

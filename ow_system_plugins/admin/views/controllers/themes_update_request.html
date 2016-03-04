@@ -5,15 +5,22 @@
             <div class="ow_anno ow_smallmargin ow_nocontent ow_ic_warning">{text key="admin+item_update_request_platform_update_warning"}</div>
         {/if}
         {if !empty($text)}
-            {$text}<br /><br />
+            <div class="ow_std_margin">{$text}</div>
+        {/if}
+        {if !empty($changeLog)}
+            <div class="ow_std_margin" style="text-align: left;">
+                {foreach from=$changeLog item='item'}
+                    <span><pre>{$item|escape:'html'}</pre></span>
+                {/foreach}
+            </div>
+        {/if}
+        {if !empty($returnUrl)}
+            {* TODO CSRF  *}
+            {decorator name='button' langLabel='admin+license_form_leave_label' onclick="window.location='`$returnUrl|escape:javascript`'" class="ow_ic_left_arrow"}
         {/if}
         {if !empty($updateUrl)}
             {* TODO CSRF  *}
             {decorator name='button' langLabel='admin+plugin_update_yes_button_label' onclick="window.location='`$updateUrl|escape:javascript`'"}
-        {/if}
-        {if !empty($returnUrl)}
-            {* TODO CSRF  *}
-            {decorator name='button' langLabel='admin+license_form_leave_label' onclick="window.location='`$returnUrl|escape:javascript`'"}
         {/if}
     </div>
     {/block_decorator}

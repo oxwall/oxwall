@@ -373,6 +373,7 @@ class ADMIN_CTRL_Plugins extends ADMIN_CTRL_StorageAbstract
      */
     public function updateRequest( array $params )
     {
+        //TODO merge method with platform update request
         $pluginDto = $this->getPluginDtoByKeyInParamsArray($params);
         $language = OW::getLanguage();
         $router = OW::getRouter();
@@ -380,6 +381,7 @@ class ADMIN_CTRL_Plugins extends ADMIN_CTRL_StorageAbstract
         $remotePluginInfo = (array) $this->storageService->getItemInfoForUpdate($pluginDto->getKey(),
                 $pluginDto->getDeveloperKey(), $pluginDto->getBuild());
         $this->assign("returnUrl", $router->urlForRoute("admin_plugins_installed"));
+        $this->assign("changeLog", $remotePluginInfo["changeLog"]);
 
         if ( empty($remotePluginInfo) || !empty($remotePluginInfo["error"]) )
         {
