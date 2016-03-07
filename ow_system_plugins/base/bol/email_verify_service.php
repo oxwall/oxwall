@@ -310,7 +310,7 @@ class BOL_EmailVerifyService
     /**
      * @param string $code
      */
-    public function verifyEmailCode( $code )
+    public function verifyEmailCode( $code, $loginUser = true )
     {
         $result = ["isValid" => false, "type" => "", "message" => ""];
 
@@ -327,15 +327,15 @@ class BOL_EmailVerifyService
 
                     if ( $user !== null )
                     {
-                        if ( OW::getUser()->isAuthenticated() )
-                        {
-                            if ( OW::getUser()->getId() !== $user->getId() )
-                            {
-                                OW::getUser()->logout();
+                        if ( $loginUser ) {
+                            if (OW::getUser()->isAuthenticated()) {
+                                if (OW::getUser()->getId() !== $user->getId()) {
+                                    OW::getUser()->logout();
+                                }
                             }
-                        }
 
-                        OW::getUser()->login($user->getId());
+                            OW::getUser()->login($user->getId());
+                        }
 
                         $this->deleteById($emailVerifyData->id);
 
