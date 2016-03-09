@@ -877,10 +877,21 @@ class OW_Application
 
     protected function urlHostRedirect()
     {
+        if ( !isset($_SERVER['HTTP_HOST']) )
+        {
+            return;
+        }
+
         $urlArray = parse_url(OW_URL_HOME);
         $constHost = $urlArray['host'];
+        $serverHost = $_SERVER['HTTP_HOST'];
 
-        if ( isset($_SERVER['HTTP_HOST']) && ( $_SERVER['HTTP_HOST'] !== $constHost ) )
+        if ( mb_strpos($serverHost, ':') !== false )
+        {
+            $serverHost = substr($serverHost, 0, mb_strpos($serverHost, ':'));
+        }
+
+        if ( $serverHost !== $constHost )
         {
             $this->redirect(OW_URL_HOME . OW::getRequest()->getRequestUri());
         }
@@ -897,7 +908,7 @@ class OW_Application
 
     protected function httpVsHttpsRedirect()
     {
-        if ( OW::getRequest()->isAjax() || substr(OW::getRouter()->getBaseUrl(), 0, 5) == "https" )
+        if ( OW::getRequest()->isAjax() )
         {
             return;
         }
@@ -944,7 +955,7 @@ class OW_Application
 
     protected function handleHttps()
     {
-        if ( !OW::getRequest()->isSsl() )
+        if ( !OW::getRequest()->isSsl() || substr(OW::getRouter()->getBaseUrl(), 0, 5) == "https" )
         {
             return;
         }
