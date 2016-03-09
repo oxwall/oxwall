@@ -886,7 +886,7 @@ class OW_Application
         $constHost = $urlArray['host'];
         $serverHost = $_SERVER['HTTP_HOST'];
 
-        if ( mb_strstr($serverHost, ':') )
+        if ( mb_strpos($serverHost, ':') !== false )
         {
             $serverHost = substr($serverHost, 0, mb_strpos($serverHost, ':'));
         }
