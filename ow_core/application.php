@@ -888,7 +888,7 @@ class OW_Application
 
         if ( mb_strpos($serverHost, ':') !== false )
         {
-            $serverHost = substr($serverHost, 0, mb_strpos($serverHost, ':'));
+            $serverHost = mb_substr($serverHost, 0, mb_strpos($serverHost, ':'));
         }
 
         if ( $serverHost !== $constHost )
