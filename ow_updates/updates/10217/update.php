@@ -39,6 +39,6 @@ foreach ($languages as $lang)
 if ($langId !== null)
 {
     $languageService->addOrUpdateValue($langId, 'admin', 'url_copied', 'Url copied to clipboard');
-    $languageService->addOrUpdateValue($langId, 'admin', 'press_ctrl_c', 'Press "ctrl+c" to copy url');
+    $languageService->addOrUpdateValue($langId, 'admin', 'press_ctrl_c', 'Press "Command+C" to copy url');
 }
 
