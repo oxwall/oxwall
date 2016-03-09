@@ -41,7 +41,7 @@ abstract class FormElement
 
     /**
      * Added validators.
-     * 
+     *
      * @var array
      */
     protected $validators = array();
@@ -55,27 +55,27 @@ abstract class FormElement
 
     /**
      * Form element value.
-     * 
+     *
      * @var mixed
      */
     protected $value;
 
     /**
      * Validator errors.
-     * 
+     *
      * @var array
      */
     protected $errors = array();
 
     /**
      * Form element label.
-     * 
+     *
      * @var string
      */
     protected $label;
 
     /**
-     * Form element description. 
+     * Form element description.
      *
      * @var string
      */
@@ -83,7 +83,7 @@ abstract class FormElement
 
     /**
      * Form element attributes.
-     * 
+     *
      * @var array
      */
     protected $attributes = array();
@@ -258,7 +258,7 @@ abstract class FormElement
 
     /**
      * Adds form element attributes.
-     * 
+     *
      * @param array $attributes
      * @return FormElement
      * @throws InvalidArgumentException
@@ -377,7 +377,7 @@ abstract class FormElement
 
     /**
      * Returns input label.
-     * 
+     *
      * @return string
      */
     public function renderLabel()
@@ -446,8 +446,8 @@ abstract class FormElement
     }
 
     /**
-     * Returns form element JS. 
-     * 
+     * Returns form element JS.
+     *
      * @return string
      */
     public function getElementJs()
@@ -555,7 +555,7 @@ abstract class InvitationFormElement extends FormElement
 
 /**
  * Form element: TextField.
- * 
+ *
  * @author Sardar Madumarov <madumarov@gmail.com>
  * @package ow_core
  * @since 1.0
@@ -831,7 +831,7 @@ class DateField extends FormElement
 
 /**
  * Form element: Textarea.
- * 
+ *
  * @author Sardar Madumarov <madumarov@gmail.com>
  * @package ow_core
  * @since 1.0
@@ -893,7 +893,7 @@ class Textarea extends InvitationFormElement
 
 /**
  * Form element: Hidden.
- * 
+ *
  * @author Sardar Madumarov <madumarov@gmail.com>
  * @package ow_core
  * @since 1.0
@@ -932,7 +932,7 @@ class HiddenField extends FormElement
 
 /**
  * Form element: Submit.
- * 
+ *
  * @author Sardar Madumarov <madumarov@gmail.com>
  * @package ow_core
  * @since 1.0
@@ -1020,7 +1020,7 @@ class Button extends Submit
 
 /**
  * Form element: PasswordField.
- * 
+ *
  * @author Sardar Madumarov <madumarov@gmail.com>
  * @package ow_core
  * @since 1.0
@@ -1061,7 +1061,7 @@ class PasswordField extends TextField
 
 /**
  * Form element: RadioField.
- * 
+ *
  * @author Sardar Madumarov <madumarov@gmail.com>
  * @package ow_core
  * @since 1.0
@@ -1113,7 +1113,7 @@ class RadioField extends FormElement
 
     /**
      * Sets field options.
-     * 
+     *
      * @param array $options
      * @return RadioField
      * @throws InvalidArgumentException
@@ -1132,7 +1132,7 @@ class RadioField extends FormElement
 
     /**
      * Adds field option.
-     * 
+     *
      * @param string $key
      * @param string$value
      * @return RadioField
@@ -1146,7 +1146,7 @@ class RadioField extends FormElement
 
     /**
      * Adds options list.
-     * 
+     *
      * @param array $options
      * @return RadioField
      */
@@ -1232,7 +1232,7 @@ class RadioField extends FormElement
 
 /**
  * Form element: CheckboxGroup.
- * 
+ *
  * @author Sardar Madumarov <madumarov@gmail.com>
  * @package ow_core
  * @since 1.0
@@ -1286,7 +1286,7 @@ class CheckboxGroup extends FormElement
 
     /**
      * Sets field options.
-     * 
+     *
      * @param array $options
      * @return CheckboxGroup
      */
@@ -1304,7 +1304,7 @@ class CheckboxGroup extends FormElement
 
     /**
      * Adds field option.
-     * 
+     *
      * @param string $key
      * @param string$value
      * @return CheckboxGroup
@@ -1318,7 +1318,7 @@ class CheckboxGroup extends FormElement
 
     /**
      * Adds options list.
-     * 
+     *
      * @param array $options
      * @return CheckboxGroup
      */
@@ -1432,7 +1432,7 @@ class CheckboxGroup extends FormElement
 
 /**
  * Form element: Selectbox.
- * 
+ *
  * @author Sardar Madumarov <madumarov@gmail.com>
  * @package ow_core
  * @since 1.0
@@ -1469,7 +1469,7 @@ class Selectbox extends InvitationFormElement
 
     /**
      * Sets field options.
-     * 
+     *
      * @param array $options
      * @return Selectbox
      * @throws InvalidArgumentException
@@ -1488,7 +1488,7 @@ class Selectbox extends InvitationFormElement
 
     /**
      * Adds input option.
-     * 
+     *
      * @param string $value
      * @param string $label
      * @return Selectbox
@@ -1502,7 +1502,7 @@ class Selectbox extends InvitationFormElement
 
     /**
      * Adds input options list.
-     * 
+     *
      * @param array $options
      * @return Selectbox
      */
@@ -1553,7 +1553,7 @@ class Selectbox extends InvitationFormElement
 
 /**
  * Form element: CheckboxField.
- * 
+ *
  * @author Sardar Madumarov <madumarov@gmail.com>
  * @package ow_core
  * @since 1.0
@@ -1882,7 +1882,7 @@ class MultiFileField extends FormElement
 
     /**
      * Constructor.
-     * 
+     *
      * @param string $name
      * @param int $inputs
      */
@@ -2252,7 +2252,7 @@ class AgeRange extends FormElement implements DateRangeInterface
 
         return $this;
     }
-    
+
     public function getMaxYear()
     {
         return (int) date("Y") - (int) $this->minAge;
@@ -2705,24 +2705,11 @@ class BillingGatewaySelectionField extends FormElement
 
         $name = $this->getName();
 
-        $billingService = BOL_BillingService::getInstance();
-
-        $gateways = $billingService->getActiveGatewaysList();
-
-        $paymentOptions = array();
+        $gateways = $this->getActiveGatewaysList();
 
         if ( $gateways )
         {
-            foreach ( $gateways as $gateway )
-            {
-                /* @var $adapter OW_BillingAdapter */
-                if ( $adapter = new $gateway->adapterClassName )
-                {
-                    $paymentOptions[$gateway->gatewayKey]['dto'] = $gateway;
-                    $paymentOptions[$gateway->gatewayKey]['orderUrl'] = $adapter->getOrderFormUrl();
-                    $paymentOptions[$gateway->gatewayKey]['logoUrl'] = $adapter->getLogoUrl();
-                }
-            }
+            $paymentOptions = $this->getAdapterData($gateways);
 
             $gatewaysNumber = count($paymentOptions);
 
@@ -2764,7 +2751,7 @@ class BillingGatewaySelectionField extends FormElement
                             'id' => 'url-' . $id,
                             'value' => $option['dto']->gatewayKey,
                             'name' => $name . '[key]'
-                            )
+                        )
                     );
                 }
                 else
@@ -2772,9 +2759,8 @@ class BillingGatewaySelectionField extends FormElement
                     $field = UTIL_HtmlTag::generateTag('input', $this->attributes);
                 }
 
-                $renderedString .= '<li style="display: inline-block;">
-                    <label>' . $field . '<img src="' . $option['logoUrl'] . '" alt="' . $option['dto']->gatewayKey . '" /></label>
-                </li>';
+
+                $renderedString .= $this->getItemMarkUp($option, $field);
                 $i++;
                 $this->removeAttribute(self::ATTR_CHECKED);
             }
@@ -2795,6 +2781,73 @@ class BillingGatewaySelectionField extends FormElement
         }
 
         return $renderedString;
+    }
+
+    protected function getItemMarkUp($option, $field)
+    {
+        return  '<li style="display: inline-block;">
+                    <label>' . $field . '<img src="' . $option['logoUrl'] . '" alt="' . $option['dto']->gatewayKey . '" /></label>
+                </li>';
+
+    }
+
+    protected function getActiveGatewaysList()
+    {
+        return BOL_BillingService::getInstance()->getActiveGatewaysList();
+    }
+
+    protected function getAdapterData( $gateways )
+    {
+        $paymentOptions = array();
+
+        foreach ( $gateways as $gateway )
+        {
+            /* @var $adapter OW_BillingAdapter */
+            if ( $adapter = OW::getClassInstance($gateway->adapterClassName) )
+            {
+                $paymentOptions[$gateway->gatewayKey]['dto'] = $gateway;
+                $paymentOptions[$gateway->gatewayKey]['orderUrl'] = $adapter->getOrderFormUrl();
+                $paymentOptions[$gateway->gatewayKey]['logoUrl'] = $adapter->getLogoUrl();
+            }
+        }
+
+        return $paymentOptions;
+    }
+}
+
+class MobileBillingGatewaySelectionField extends BillingGatewaySelectionField
+{
+    protected function getItemMarkUp($option, $field)
+    {
+        $name = str_replace('billing', '', $option['dto']->gatewayKey);
+
+        return'<div class="owm_payment_provider_item owm_std_margin_bottom">
+                <label class="owm_border owm_'.$name.' active">'.$field.'</label>
+        </div>';
+
+    }
+
+    protected function getActiveGatewaysList()
+    {
+        return BOL_BillingService::getInstance()->getActiveGatewaysList(true);
+    }
+
+    protected function getAdapterData( $gateways )
+    {
+        $paymentOptions = array();
+
+        foreach ( $gateways as $gateway )
+        {
+            /* @var $adapter OW_BillingAdapter */
+            if ( $adapter = OW::getClassInstance($gateway->adapterClassName) )
+            {
+                $paymentOptions[$gateway->gatewayKey]['dto'] = $gateway;
+                $paymentOptions[$gateway->gatewayKey]['orderUrl'] = $adapter->getOrderFormUrl(true);
+                $paymentOptions[$gateway->gatewayKey]['logoUrl'] = $adapter->getLogoUrl(true);
+            }
+        }
+
+        return $paymentOptions;
     }
 }
 
@@ -2886,7 +2939,7 @@ class YearRange extends FormElement implements DateRangeInterface
     {
         return $this->minYear;
     }
-    
+
     public function renderInput( $params = null )
     {
         parent::renderInput($params);
@@ -2943,7 +2996,7 @@ class YearRange extends FormElement implements DateRangeInterface
 
 /**
  * Form element: Textarea.
- * 
+ *
  * @author Alex Ermashev <alexermashev@gmail.com>
  * @package ow_core
  * @since 1.0
@@ -2957,14 +3010,14 @@ class MobileWysiwygTextarea extends Textarea
     protected $pluginKey;
 
     /**
-     * Text format service 
+     * Text format service
      * @var BOL_TextFormatService
      */
     protected $textFormatService;
 
     /**
      * Buttons list
-     * 
+     *
      * @var array
      */
     private $buttons = array(
@@ -3028,8 +3081,8 @@ class MobileWysiwygTextarea extends Textarea
      */
     public function renderInput( $params = null )
     {
-        
-	if ( OW::getRegistry()->get('baseWsInit') === null )
+
+        if ( OW::getRegistry()->get('baseWsInit') === null )
         {
             if ( in_array(BOL_TextFormatService::WS_BTN_IMAGE, $this->buttons) )
             {
@@ -3094,7 +3147,7 @@ class MobileWysiwygTextarea extends Textarea
 
 /**
  * Form element: Textarea.
- * 
+ *
  * @author Sardar Madumarov <madumarov@gmail.com>
  * @package ow_core
  * @since 1.0
@@ -3106,7 +3159,7 @@ class WysiwygTextarea extends InvitationFormElement
     const SIZE_L = 300;
 
     /**
-     * @var type 
+     * @var type
      */
     private $init;
 
@@ -3187,7 +3240,7 @@ class WysiwygTextarea extends InvitationFormElement
 
     /**
      * Returns current buttons set.
-     * 
+     *
      * @return array
      */
     public function getButtons()
@@ -3196,7 +3249,7 @@ class WysiwygTextarea extends InvitationFormElement
     }
 
     /**
-     * @param integer $size 
+     * @param integer $size
      */
     public function setSize( $size )
     {
@@ -3205,8 +3258,8 @@ class WysiwygTextarea extends InvitationFormElement
 
     /**
      * Adds custom buttons set.
-     * 
-     * @param array $buttons 
+     *
+     * @param array $buttons
      */
     public function setButtons( array $buttons )
     {
@@ -3437,7 +3490,7 @@ class WysiwygTextarea extends InvitationFormElement
     }
 }
 
-class TagsInputField extends FormElement 
+class TagsInputField extends FormElement
 {
     private $invLabel;
     private $delimiterChars;
@@ -3567,7 +3620,7 @@ var formElement = new OwFormElement('" . $this->getId() . "', '" . $this->getNam
     }
 }
 
-interface DateRangeInterface 
+interface DateRangeInterface
 {
     public function getMinYear();
 
