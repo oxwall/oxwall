@@ -998,8 +998,12 @@ html body .ow_admin_permissions.ow_superwide {
 .ow_plugin_update,
 .ow_active_plugins .ow_plugin_update, 
 .ow_inactive_plugins .ow_plugin_update {
-    background: #F3FCF9;
-    border: 1px solid #18d398;
+    background: transparent;
+    border: 1px solid #FFA74F;
+}
+
+.ow_plugin_controls a.ow_lbutton.ow_green { 
+    color: #FFA74F;
 }
 
 /* Choose theme Page */
@@ -1286,8 +1290,8 @@ html body .ow_admin_choose_theme .selected_theme_info_stick{
 .ow_plugin_invalid, 
 .ow_active_plugins .ow_plugin_invalid,
 .ow_inactive_plugins .ow_plugin_invalid {
-background: #fee5e3;
-border: 1px solid #ee3d32;
+    background: transparent;
+    border: 1px solid #ee3d32;
 }
 
 .ow_anno.ow_ic_warning {
