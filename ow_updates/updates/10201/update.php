@@ -21,6 +21,7 @@
  * Display of Attribution Information is required in Larger Works which are defined in the CPAL as a work
  * which combines Covered Code or portions thereof with code not governed by the terms of the CPAL.
  */
+
 $keysToDelete = array(
     "admin" => "mail_template_admin_invalid_license_subject",
     "admin" => "mail_template_admin_invalid_license_content_html",
@@ -32,4 +33,4 @@ foreach ( $keysToDelete as $prefix => $key )
     Updater::getLanguageService()->deleteLangKey($prefix, $key);
 }
 
-Updater::getLanguageService()->importPrefixFromDir(__DIR__ . DS . "langs");
+Updater::getLanguageService()->importPrefixFromZip(dirname(__FILE__) . DS . "langs.zip", "admin");
