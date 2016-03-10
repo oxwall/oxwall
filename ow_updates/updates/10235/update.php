@@ -29,7 +29,7 @@ $logger = Updater::getLogger();
 
 $queries = array();
 
-$queries = "ALTER TABLE `{$tblPrefix}base_billing_sale` ADD `periodUnits` VARCHAR(20) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL AFTER `extraData`;";
+$queries[] = "ALTER TABLE `{$tblPrefix}base_billing_sale` ADD `periodUnits` VARCHAR(20) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL AFTER `extraData`;";
 
 foreach ( $queries as $query )
 {
