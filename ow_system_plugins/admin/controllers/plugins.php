@@ -402,7 +402,7 @@ class ADMIN_CTRL_Plugins extends ADMIN_CTRL_StorageAbstract
             if ( !isset($_GET[BOL_StorageService::URI_VAR_LICENSE_CHECK_COMPLETE]) )
             {
                 $get = array(
-                    BOL_StorageService::URI_VAR_BACK_URI => $router->uriFor(__CLASS__, "updateRequest", $params),
+                    BOL_StorageService::URI_VAR_BACK_URI => urlencode($router->uriFor(__CLASS__, "updateRequest", $params)),
                     BOL_StorageService::URI_VAR_KEY => $pluginDto->getKey(),
                     BOL_StorageService::URI_VAR_ITEM_TYPE => BOL_StorageService::URI_VAR_ITEM_TYPE_VAL_PLUGIN,
                     BOL_StorageService::URI_VAR_DEV_KEY => $pluginDto->getDeveloperKey()
@@ -712,7 +712,8 @@ class ADMIN_CTRL_Plugins extends ADMIN_CTRL_StorageAbstract
         {
             if ( !isset($params[BOL_StorageService::URI_VAR_LICENSE_CHECK_COMPLETE]) )
             {
-                $params[BOL_StorageService::URI_VAR_BACK_URI] = OW::getRouter()->uriForRoute("admin_plugins_available");
+                $params[BOL_StorageService::URI_VAR_BACK_URI] = urlencode(OW::getRequest()->getRequestUri());
+                $params["back-button-uri"] = urlencode(OW::getRouter()->uriForRoute("admin_plugins_available"));
                 $this->redirect(OW::getRequest()->buildUrlQueryString(OW::getRouter()->urlFor("ADMIN_CTRL_Storage",
                             "checkItemLicense"), $params));
             }
