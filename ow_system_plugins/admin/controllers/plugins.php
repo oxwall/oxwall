@@ -605,6 +605,72 @@ class ADMIN_CTRL_Plugins extends ADMIN_CTRL_StorageAbstract
     }
 
     /**
+     * Updates plugin DB after manual source upload
+     * 
+     * @param array $params
+     */
+    public function manualUpdateAll()
+    {
+        $pluginDto = $this->pluginService->findNextManualUpdatePlugin();        
+        
+        if( $pluginDto == null )
+        {
+            $data = OW::getSession()->get("mupdateList");
+            
+            if( $data )
+            {
+                foreach ( $data as $message )
+                {
+                    OW::getFeedback()->info($message);
+                }
+            }
+        }
+        
+        if( $pluginDto )
+        
+        $language = OW::getLanguage();
+        $feedback = OW::getFeedback();
+
+        if ( !empty($_GET["mode"]) )
+        {
+            switch ( trim($_GET["mode"]) )
+            {
+                case "plugin_up_to_date":
+                    $feedback->warning($language->text("admin", "manage_plugins_up_to_date_message"));
+                    break;
+
+                case "plugin_update_success":
+
+                    if ( $pluginDto !== null )
+                    {
+                        OW::getEventManager()->trigger(new OW_Event(OW_EventManager::ON_AFTER_PLUGIN_UPDATE,
+                            array("pluginKey" => $pluginDto->getKey())));
+                    }
+
+                    $feedback->info($language->text("admin", "manage_plugins_update_success_message"));
+                    break;
+
+                default :
+                    $feedback->error($language->text("admin", "manage_plugins_update_process_error"));
+                    break;
+            }
+
+            $this->redirect(OW::getRouter()->urlForRoute("admin_plugins_installed"));
+        }
+
+        if ( (int) $pluginDto->getUpdate() != BOL_PluginService::PLUGIN_STATUS_MANUAL_UPDATE )
+        {
+            $this->redirect(OW::getRouter()->urlForRoute("admin_plugins_installed"));
+        }
+
+        $this->assign("text",
+            $language->text("admin", "manage_plugins_manual_update_request", array("name" => $pluginDto->getTitle())));
+        $params = array("plugin" => $pluginDto->getKey(), "back-uri" => urlencode(OW::getRequest()->getRequestUri()), "addParam" => UTIL_String::getRandomString());
+        $this->assign("redirectUrl",
+            OW::getRequest()->buildUrlQueryString($this->storageService->getUpdaterUrl(), $params));
+    }
+
+    /**
      * Installs plugin.
      */
     public function install()
@@ -724,7 +790,7 @@ class ADMIN_CTRL_Plugins extends ADMIN_CTRL_StorageAbstract
         {
             $this->pluginService->activate($pluginDto->getKey());
         }
-        
+
         try
         {
             $this->pluginService->uninstall($pluginDto->getKey());
