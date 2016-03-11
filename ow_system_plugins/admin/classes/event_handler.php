@@ -38,6 +38,8 @@ class ADMIN_CLASS_EventHandler
             array($this, 'onGetJoinStampDisableActionList'), 999);
 
         $eventManager->bind('admin.add_admin_notification', array($this, 'onAddAdminNotification'));
+        $eventManager->bind(OW_EventManager::ON_AFTER_ROUTE, array($this, "onAfterRoute"));
+        $eventManager->bind("admin.check_if_admin_page", array($this, "checkIfAdminPage"));
     }
 
     public function onAddAdminNotification( ADMIN_CLASS_NotificationCollector $coll )
@@ -245,5 +247,39 @@ class ADMIN_CLASS_EventHandler
 
             $e->setData($disableActionList);
         }
+    }
+
+    public function onAfterRoute( OW_Event $e )
+    {
+        $pluginService = BOL_PluginService::getInstance();
+        $attrs = OW::getRequestHandler()->getHandlerAttributes();
+
+        if ( is_subclass_of($attrs[OW_RequestHandler::ATTRS_KEY_CTRL], "ADMIN_CTRL_Abstract") && $pluginService->findNextManualUpdatePlugin() )
+        {
+            $pluginService->checkManualUpdates();
+            BOL_ThemeService::getInstance()->checkManualUpdates();
+            
+            $params = array(
+                OW_RequestHandler::ATTRS_KEY_CTRL => "ADMIN_CTRL_Plugins",
+                OW_RequestHandler::ATTRS_KEY_ACTION => "manualUpdateRequest",
+                OW_RequestHandler::CATCH_ALL_REQUEST_KEY_REDIRECT => true
+            );
+
+            OW::getRequestHandler()->setCatchAllRequestsAttributes("admin.manual_update", $params);
+            OW::getRequestHandler()->addCatchAllRequestsExclude("admin.manual_update", "ADMIN_CTRL_Plugins",
+                "manualUpdateAll");
+        }
+    }
+
+    public function checkIfAdminPage( OW_Event $e )
+    {
+        $attrs = OW::getRequestHandler()->getHandlerAttributes();
+
+        if ( empty($attrs) || empty($attrs[OW_RequestHandler::ATTRS_KEY_CTRL]) )
+        {
+            return null;
+        }
+
+        return is_subclass_of($attrs[OW_RequestHandler::ATTRS_KEY_CTRL], "ADMIN_CTRL_Abstract");
     }
 }

@@ -56,32 +56,6 @@ abstract class ADMIN_CTRL_Abstract extends OW_ActionController
             $document->setMasterPage(new ADMIN_CLASS_MasterPage());
             $this->setPageTitle(OW::getLanguage()->text('admin', 'page_default_title'));
         }
-
-        BOL_PluginService::getInstance()->checkManualUpdates();
-        BOL_ThemeService::getInstance()->checkManualUpdates();
-        $plugin = BOL_PluginService::getInstance()->findNextManualUpdatePlugin();
-
-        $handlerParams = OW::getRequestHandler()->getHandlerAttributes();
-
-        // TODO refactor shortcut below
-        if ( !defined('OW_PLUGIN_XP') && $plugin !== null )
-        {
-            if ( ( $handlerParams['controller'] === 'ADMIN_CTRL_Plugins' && $handlerParams['action'] === 'manualUpdateRequest' ) )
-            {
-                //action
-            }
-            else
-            {
-                throw new RedirectException(OW::getRouter()->urlFor('ADMIN_CTRL_Plugins', 'manualUpdateRequest', array('key' => $plugin->getKey())));
-            }
-        }
-
-        // TODO temp admin pge inform event
-        function admin_check_if_admin_page()
-        {
-            return true;
-        }
-        OW::getEventManager()->bind('admin.check_if_admin_page', 'admin_check_if_admin_page');
     }
 
     public function setPageTitle( $title )

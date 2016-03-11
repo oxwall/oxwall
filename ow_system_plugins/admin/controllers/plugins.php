@@ -402,7 +402,8 @@ class ADMIN_CTRL_Plugins extends ADMIN_CTRL_StorageAbstract
             if ( !isset($_GET[BOL_StorageService::URI_VAR_LICENSE_CHECK_COMPLETE]) )
             {
                 $get = array(
-                    BOL_StorageService::URI_VAR_BACK_URI => urlencode($router->uriFor(__CLASS__, "updateRequest", $params)),
+                    BOL_StorageService::URI_VAR_BACK_URI => urlencode($router->uriFor(__CLASS__, "updateRequest",
+                            $params)),
                     BOL_StorageService::URI_VAR_KEY => $pluginDto->getKey(),
                     BOL_StorageService::URI_VAR_ITEM_TYPE => BOL_StorageService::URI_VAR_ITEM_TYPE_VAL_PLUGIN,
                     BOL_StorageService::URI_VAR_DEV_KEY => $pluginDto->getDeveloperKey()
@@ -561,9 +562,22 @@ class ADMIN_CTRL_Plugins extends ADMIN_CTRL_StorageAbstract
      */
     public function manualUpdateRequest( array $params )
     {
-        $pluginDto = $this->getPluginDtoByKeyInParamsArray($params);
         $language = OW::getLanguage();
         $feedback = OW::getFeedback();
+        $urlToRedirect = OW::getRouter()->urlForRoute("admin_plugins_installed");
+        $pluginDto = null;
+
+        // check if plugin key was provided
+        if ( !empty($params["key"]) )
+        {
+            $pluginDto = $this->pluginService->findPluginByKey(trim($params["key"]));
+        }
+
+        // try to get item for manual update from DB
+        if ( !$pluginDto )
+        {
+            $pluginDto = $this->pluginService->findNextManualUpdatePlugin();
+        }
 
         if ( !empty($_GET["mode"]) )
         {
@@ -589,12 +603,14 @@ class ADMIN_CTRL_Plugins extends ADMIN_CTRL_StorageAbstract
                     break;
             }
 
-            $this->redirect(OW::getRouter()->urlForRoute("admin_plugins_installed"));
+            $this->redirect($urlToRedirect);
         }
 
-        if ( (int) $pluginDto->getUpdate() != BOL_PluginService::PLUGIN_STATUS_MANUAL_UPDATE )
+        // if nothing was found for update or everything is up to date
+        if ( !$pluginDto || (int) $pluginDto->getUpdate() != BOL_PluginService::PLUGIN_STATUS_MANUAL_UPDATE )
         {
-            $this->redirect(OW::getRouter()->urlForRoute("admin_plugins_installed"));
+            $feedback->warning(OW::getLanguage()->text("admin", "no_plugins_for_manual_updates"));
+            $this->redirect($urlToRedirect);
         }
 
         $this->assign("text",
@@ -611,63 +627,39 @@ class ADMIN_CTRL_Plugins extends ADMIN_CTRL_StorageAbstract
      */
     public function manualUpdateAll()
     {
-        $pluginDto = $this->pluginService->findNextManualUpdatePlugin();        
-        
-        if( $pluginDto == null )
-        {
-            $data = OW::getSession()->get("mupdateList");
-            
-            if( $data )
-            {
-                foreach ( $data as $message )
-                {
-                    OW::getFeedback()->info($message);
-                }
-            }
-        }
-        
-        if( $pluginDto )
-        
         $language = OW::getLanguage();
         $feedback = OW::getFeedback();
 
-        if ( !empty($_GET["mode"]) )
+        //try to get next plugin for manual update
+        $pluginDto = $this->pluginService->findNextManualUpdatePlugin();
+
+        if ( $pluginDto == null )
         {
-            switch ( trim($_GET["mode"]) )
+            $data = OW::getSession()->get("mupdateList");
+
+            if ( $data )
             {
-                case "plugin_up_to_date":
-                    $feedback->warning($language->text("admin", "manage_plugins_up_to_date_message"));
-                    break;
+                foreach ( $data as $message )
+                {
+                    $feedback->info($message);
+                }
 
-                case "plugin_update_success":
-
-                    if ( $pluginDto !== null )
-                    {
-                        OW::getEventManager()->trigger(new OW_Event(OW_EventManager::ON_AFTER_PLUGIN_UPDATE,
-                            array("pluginKey" => $pluginDto->getKey())));
-                    }
-
-                    $feedback->info($language->text("admin", "manage_plugins_update_success_message"));
-                    break;
-
-                default :
-                    $feedback->error($language->text("admin", "manage_plugins_update_process_error"));
-                    break;
+                $this->redirectToAction("index");
             }
-
-            $this->redirect(OW::getRouter()->urlForRoute("admin_plugins_installed"));
+            else
+            {
+                $feedback->warning(OW::getLanguage()->text("admin", "no_plugins_for_manual_updates"));
+                $this->redirectToAction("index");
+            }
         }
 
-        if ( (int) $pluginDto->getUpdate() != BOL_PluginService::PLUGIN_STATUS_MANUAL_UPDATE )
-        {
-            $this->redirect(OW::getRouter()->urlForRoute("admin_plugins_installed"));
-        }
+        $params = array(
+            "plugin" => $pluginDto->getKey(),
+            "back-uri" => urlencode(OW::getRequest()->getRequestUri()),
+            "addParam" => UTIL_String::getRandomString()
+        );
 
-        $this->assign("text",
-            $language->text("admin", "manage_plugins_manual_update_request", array("name" => $pluginDto->getTitle())));
-        $params = array("plugin" => $pluginDto->getKey(), "back-uri" => urlencode(OW::getRequest()->getRequestUri()), "addParam" => UTIL_String::getRandomString());
-        $this->assign("redirectUrl",
-            OW::getRequest()->buildUrlQueryString($this->storageService->getUpdaterUrl(), $params));
+        $this->redirect(OW::getRequest()->buildUrlQueryString($this->storageService->getUpdaterUrl(), $params));
     }
 
     /**
