@@ -22,14 +22,14 @@
  * which combines Covered Code or portions thereof with code not governed by the terms of the CPAL.
  */
 $keysToDelete = array(
-    "admin" => "mail_template_admin_invalid_license_subject",
-    "admin" => "mail_template_admin_invalid_license_content_html",
-    "admin" => "mail_template_admin_invalid_license_content_text"
+    "mail_template_admin_invalid_license_subject",
+    "mail_template_admin_invalid_license_content_html",
+    "mail_template_admin_invalid_license_content_text"
 );
 
-foreach ( $keysToDelete as $prefix => $key )
+foreach ( $keysToDelete as $key )
 {
-    Updater::getLanguageService()->deleteLangKey($prefix, $key);
+    Updater::getLanguageService()->deleteLangKey("admin", $key);
 }
 
 Updater::getLanguageService()->importPrefixFromDir(__DIR__ . DS . "langs");
