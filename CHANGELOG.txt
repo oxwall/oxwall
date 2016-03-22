@@ -24,7 +24,7 @@ Videos [video]:
 Friends [friends]:
 - fixed a bug appearing when a user deletes someone from the friends list;
 
-Newsfeed:
+Newsfeed [newsfeed]:
 - outbound links left by users are no longer converted to https, when SSL is active across the entire site;
 - unless a user post features a thumbnail image, the post now fits the full width of the newsfeed;
 
