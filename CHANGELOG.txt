@@ -28,7 +28,7 @@ Newsfeed [newsfeed]:
 - outbound links left by users are no longer converted to https, when SSL is active across the entire site;
 - unless a user post features a thumbnail image, the post now fits the full width of the newsfeed;
 
-Import Contacts [contactimporter]:
+Import Contacts [contact_importer]:
 - added Send button when selecting Gmail contacts to invite;
 
 
