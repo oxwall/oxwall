@@ -2,7 +2,7 @@ Oxwall 1.8.2, Mar 22, 2016
 ====================================
 
 Platform [core]:
-- Oxwall minimum PHP supported version increased to 5.5;
+- oxwall minimum PHP supported version increased to 5.5;
 - the list of changes is now shown during plugin update request (if the plugin developer added the list of changes to the Store);
 - improved validation system for commercial plugins/themes;
 - added new class definition <body class="ow {$theme-name}"> for each theme, where $thene-name is taken from theme.xml
