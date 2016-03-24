@@ -32,6 +32,7 @@ final class OW
     const CONTEXT_MOBILE = OW_Application::CONTEXT_MOBILE;
     const CONTEXT_DESKTOP = OW_Application::CONTEXT_DESKTOP;
     const CONTEXT_API = OW_Application::CONTEXT_API;
+    const CONTEXT_CLI = OW_Application::CONTEXT_CLI;
 
     private static $context;
 
@@ -56,6 +57,10 @@ final class OW
 
                 case OW_USE_CONTEXT == 1 << 2:
                     self::$context = self::CONTEXT_API;
+                    return;
+
+                case CONTEXT_CLI == 1 << 3:
+                    self::$context = self::CONTEXT_CLI;
                     return;
             }
         }
