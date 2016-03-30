@@ -57,31 +57,4 @@ class OW_CliApplication extends OW_Application
 
         return self::$classInstance;
     }
-
-    /**
-     * Application init actions.
-     */
-    public function init()
-    {
-        require_once OW_DIR_SYSTEM_PLUGIN . 'base' . DS . 'classes' . DS . 'cli_err_output.php';
-
-        OW_ErrorManager::getInstance()->setErrorOutput(new BASE_CLASS_CliErrOutput());
-
-        // setting default time zone
-        date_default_timezone_set(OW::getConfig()->getValue('base', 'site_timezone'));
-
-        if ( OW::getUser()->isAuthenticated() )
-        {
-            $userId = OW::getUser()->getId();
-            $timeZone = BOL_PreferenceService::getInstance()->getPreferenceValue('timeZoneSelect', $userId);
-
-            if ( !empty($timeZone) )
-            {
-                date_default_timezone_set($timeZone);
-            }
-        }
-
-        // synchronize the db's time zone
-        OW::getDbo()->setTimezone();
-    }
 }

@@ -27,6 +27,12 @@ define('DS', DIRECTORY_SEPARATOR);
 define('OW_DIR_ROOT', __DIR__ . DS);
 
 require_once OW_DIR_ROOT . 'ow_includes' . DS . 'init.php';
+require_once OW_DIR_SYSTEM_PLUGIN . 'base' . DS . 'classes' . DS . 'cli_err_output.php';
+
+OW_ErrorManager::getInstance()->setErrorOutput(new BASE_CLASS_CliErrOutput());
+
+// setting default time zone
+date_default_timezone_set(OW::getConfig()->getValue('base', 'site_timezone'));
 
 OW::getPluginManager()->initPlugins();
 $event = new OW_Event(OW_EventManager::ON_PLUGINS_INIT);
