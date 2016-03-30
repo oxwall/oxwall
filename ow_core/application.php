@@ -34,7 +34,7 @@ class OW_Application
     const CONTEXT_MOBILE = BOL_UserService::USER_CONTEXT_MOBILE;
     const CONTEXT_DESKTOP = BOL_UserService::USER_CONTEXT_DESKTOP;
     const CONTEXT_API = BOL_UserService::USER_CONTEXT_API;
-    const CONTEXT_CLI = 4;
+    const CONTEXT_CLI = BOL_UserService::USER_CONTEXT_CLI;
     const CONTEXT_NAME = 'owContext';
 
     /**
@@ -1050,5 +1050,10 @@ class OW_Application
     public function isApi()
     {
         return $this->context == self::CONTEXT_API;
+    }
+
+    public function isCli()
+    {
+        return $this->context == self::CONTEXT_CLI;
     }
 }

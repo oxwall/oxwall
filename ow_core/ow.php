@@ -59,11 +59,12 @@ final class OW
                     self::$context = self::CONTEXT_API;
                     return;
 
-                case CONTEXT_CLI == 1 << 3:
+                case OW_USE_CONTEXT == 1 << 3:
                     self::$context = self::CONTEXT_CLI;
                     return;
             }
         }
+
 
         $context = self::CONTEXT_DESKTOP;
 
@@ -107,10 +108,10 @@ final class OW
             $context = self::CONTEXT_DESKTOP;
         }
 
-
         //temp API context detection
         //TODO remake
         $uri = UTIL_Url::getRealRequestUri(OW::getRouter()->getBaseUrl(), $_SERVER['REQUEST_URI']);
+
 
         if ( mb_strstr($uri, '/') )
         {
@@ -156,6 +157,9 @@ final class OW
 
             case self::CONTEXT_API:
                 return OW_ApiApplication::getInstance();
+
+            case self::CONTEXT_CLI:
+                return OW_CliApplication::getInstance();
 
             default:
                 return OW_Application::getInstance();

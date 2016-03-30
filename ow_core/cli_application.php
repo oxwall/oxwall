@@ -22,21 +22,39 @@
  * which combines Covered Code or portions thereof with code not governed by the terms of the CPAL.
  */
 
-define('OW_USE_CONTEXT', 8); // CLI context
-define('DS', DIRECTORY_SEPARATOR);
-define('OW_DIR_ROOT', __DIR__ . DS);
+/**
+ * Description...
+ *
+ * @author Sardar Madumarov <madumarov@gmail.com>
+ * @package ow_core
+ * @since 1.8.2
+ */
+class OW_CliApplication extends OW_Application
+{
 
-require_once OW_DIR_ROOT . 'ow_includes' . DS . 'init.php';
-require_once OW_DIR_SYSTEM_PLUGIN . 'base' . DS . 'classes' . DS . 'cli_err_output.php';
+    private function __construct()
+    {
+        $this->context = self::CONTEXT_CLI;
+    }
+    /**
+     * Singleton instance.
+     *
+     * @var OW_ApiApplication
+     */
+    private static $classInstance;
 
-OW_ErrorManager::getInstance()->setErrorOutput(new BASE_CLASS_CliErrOutput());
+    /**
+     * Returns an instance of class (singleton pattern implementation).
+     *
+     * @return OW_ApiApplication
+     */
+    public static function getInstance()
+    {
+        if ( self::$classInstance === null )
+        {
+            self::$classInstance = new self();
+        }
 
-// setting default time zone
-date_default_timezone_set(OW::getConfig()->getValue('base', 'site_timezone'));
-
-OW::getPluginManager()->initPlugins();
-$event = new OW_Event(OW_EventManager::ON_PLUGINS_INIT);
-OW::getEventManager()->trigger($event);
-
-$event = new OW_Event(OW_EventManager::ON_CLI_RUN, array('args' => $argv));
-OW::getEventManager()->trigger($event);
+        return self::$classInstance;
+    }
+}
