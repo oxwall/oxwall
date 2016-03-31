@@ -37,6 +37,7 @@ class BOL_UserOnlineDao extends OW_BaseDao
     const CONTEXT_VAL_DESKTOP = 1;
     const CONTEXT_VAL_MOBILE = 2;
     const CONTEXT_VAL_API = 4;
+    const CONTEXT_VAL_CLI = 8;
 
     /**
      * Constructor.

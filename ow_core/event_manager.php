@@ -49,6 +49,8 @@ class OW_EventManager
     const ON_AFTER_PLUGIN_DEACTIVATE = 'core.after_plugin_deactivate';
     const ON_AFTER_PLUGIN_UPDATE = "core.plugin_update";
 
+    const ON_CLI_RUN = 'cli.run';
+
     /* list of predefined system events: general events  */
     const ON_BEFORE_USER_REGISTER = 'base.before_user_register';
     const ON_BEFORE_USER_LOGIN = 'base.before_user_login';

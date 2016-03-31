@@ -128,6 +128,11 @@ class OW_Plugin
         return ($this->dto->isSystem() ? OW_DIR_SYSTEM_PLUGIN : OW_DIR_PLUGIN) . $this->getDirName() . DS;
     }
 
+    public function getCliDir()
+    {
+        return $this->getRootDir() . "cli" . DS;
+    }
+
     public function getMobileDir()
     {
         return $this->getRootDir() . "mobile" . DS;
