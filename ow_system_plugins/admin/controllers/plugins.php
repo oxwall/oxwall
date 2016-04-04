@@ -621,48 +621,6 @@ class ADMIN_CTRL_Plugins extends ADMIN_CTRL_StorageAbstract
     }
 
     /**
-     * Updates plugin DB after manual source upload
-     * 
-     * @param array $params
-     */
-    public function manualUpdateAll()
-    {
-        $language = OW::getLanguage();
-        $feedback = OW::getFeedback();
-
-        //try to get next plugin for manual update
-        $pluginDto = $this->pluginService->findNextManualUpdatePlugin();
-
-        if ( $pluginDto == null )
-        {
-            $data = OW::getSession()->get("mupdateList");
-
-            if ( $data )
-            {
-                foreach ( $data as $message )
-                {
-                    $feedback->info($message);
-                }
-
-                $this->redirectToAction("index");
-            }
-            else
-            {
-                $feedback->warning(OW::getLanguage()->text("admin", "no_plugins_for_manual_updates"));
-                $this->redirectToAction("index");
-            }
-        }
-
-        $params = array(
-            "plugin" => $pluginDto->getKey(),
-            "back-uri" => urlencode(OW::getRequest()->getRequestUri()),
-            "addParam" => UTIL_String::getRandomString()
-        );
-
-        $this->redirect(OW::getRequest()->buildUrlQueryString($this->storageService->getUpdaterUrl(), $params));
-    }
-
-    /**
      * Installs plugin.
      */
     public function install()
