@@ -130,6 +130,7 @@ class BASE_MCLASS_EventHandler extends BASE_CLASS_EventHandler
     public function onAddMembersOnlyException( BASE_CLASS_EventCollector $event )
     {
         $event->add(array('controller' => 'BASE_MCTRL_User', 'action' => 'standardSignIn'));
+        $event->add(array('controller' => 'BASE_MCTRL_User', 'action' => 'signIn'));
         $event->add(array('controller' => 'BASE_MCTRL_User', 'action' => 'forgotPassword'));
         $event->add(array('controller' => 'BASE_MCTRL_User', 'action' => 'resetPasswordRequest'));
         $event->add(array('controller' => 'BASE_MCTRL_User', 'action' => 'resetPassword'));
