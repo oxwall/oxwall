@@ -123,6 +123,10 @@ else
         case UPDATE_UpdateExecutor::URI_VAR_ACTION_VAL_UPDATE_PLATFORM:
             //TODO implement
             break;
+
+        default :
+            $message = "Error! Action is not defined.";
+            $status = UPDATE_UpdateExecutor::STATUS_FAIL;
     }
 }
 

@@ -194,7 +194,6 @@ class UPDATE_UpdateExecutor
     private function updatePlugin( array $pluginArr )
     {
         $pluginRootPath = OW_DIR_PLUGIN . $pluginArr["module"] . DS;
-        $result = false;
 
         $xmlInfoArray = (array) simplexml_load_file("{$pluginRootPath}plugin.xml");
 
