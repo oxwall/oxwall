@@ -96,6 +96,7 @@ $router->addRoute(new OW_Route('admin.ajax_upload', 'admin/ajax-upload', 'ADMIN_
 $router->addRoute(new OW_Route('admin.ajax_upload_delete', 'admin/ajax-upload-delete', 'ADMIN_CTRL_AjaxUpload', 'delete'));
 $router->addRoute(new OW_Route('admin.ajax_upload_submit', 'admin/ajax-upload-submit', 'ADMIN_CTRL_AjaxUpload', 'ajaxSubmitPhotos'));
 $router->addRoute(new OW_Route('admin.ajax_responder', 'admin/ajax-responder/', 'ADMIN_CTRL_Theme', 'ajaxResponder'));
+$router->addRoute(new OW_Route('admin.bulk_plugins_manual_update', 'admin/plugins/manual-update-all', 'ADMIN_CTRL_Plugins', 'manualUpdateAll'));
 
 // Mobile
 $router->addRoute(new OW_Route('mobile.admin.navigation', 'admin/mobile', 'ADMIN_CTRL_MobileNavigation', 'index'));
