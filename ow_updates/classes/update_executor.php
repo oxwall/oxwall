@@ -29,6 +29,17 @@
  */
 class UPDATE_UpdateExecutor
 {
+    const URI_VAR_ACTION = "action";
+    const URI_VAR_ACTION_VAL_UPDATE_PLUGIN = "update-plugin";
+    const URI_VAR_ACTION_VAL_UPDATE_ALL_PLUGINS = "update-all-plugins";
+    const URI_VAR_ACTION_VAL_UPDATE_PLATFORM = "update-platform";
+    const URI_VAR_BACK_URI = BOL_StorageService::URI_VAR_BACK_URI;
+    const URI_VAR_PLUGIN_KEY = BOL_StorageService::URI_VAR_KEY;
+    const STATUS_EMPTY_ACTION = "status_success";
+    const STATUS_UP_TO_DATE = "status_up_to_date";
+    const STATUS_SUCCESS = "status_success";
+    const STATUS_FAIL = "status_success";
+
     /**
      * @var OW_Database
      */
@@ -39,113 +50,61 @@ class UPDATE_UpdateExecutor
      */
     private $dbPrefix;
 
-    /**
-     * @var string
-     */
-    private $heading;
-
-    /**
-     * @var string
-     */
-    private $message;
-
-    /**
-     * @var string
-     */
-    private $resultCode;
-
-    /**
-     * @var array
-     */
-    private $params;
-
-    public function __construct( array $params )
+    public function __construct()
     {
         $this->db = Updater::getDbo();
         $this->dbPrefix = OW_DB_PREFIX;
-        $this->params = $params;
     }
 
-    public function runTask()
-    {
-        if ( empty($this->params["task"]) )
-        {
-            return;
-        }
-
-        $task = trim($this->params["task"]);
-
-        if ( $task == "updatePlugin" )
-        {
-            if ( empty($this->params["pluginKey"]) )
-            {
-                $this->message = "Error! Empty plugin key.";
-                $this->resultCode = "plugin_empty";
-                return;
-            }
-
-            $this->updateSinglePlugin($this->params["pluginKey"]);
-        }
-
-        if ( $task == "update-all-plugins" )
-        {
-            $this->updateAllPlugins();
-        }
-
-        if ( $task == "platform" )
-        {
-            $this->updatePlatform();
-        }
-    }
-
+    /**
+     * Updates single plugin
+     * 
+     * @param string $pluginKey
+     * @throws LogicException
+     * @throws LogicUpToDateException
+     * 
+     * @return array
+     */
     public function updateSinglePlugin( $pluginKey )
     {
-        if ( empty($this->params["plugin"]) )
-        {
-            $this->message = "Error! Invalid plugin key.";
-            $this->resultCode = "plugin_empty";
-            return;
-        }
-
-        $pluginKey = htmlspecialchars(trim($this->params["plugin"]));
-        $result = $this->db->queryForRow("SELECT * FROM `{$this->dbPrefix}base_plugin` WHERE `key` = :key AND `update` = 2",
-            array("key" => $pluginKey));
+        $pluginData = $this->db->queryForRow("SELECT * FROM `{$this->dbPrefix}base_plugin` WHERE `key` = :key AND `update` = :statusVal",
+            array("key" => $pluginKey, "statusVal" => BOL_PluginDao::UPDATE_VAL_MANUAL_UPDATE));
 
         // plugin not found
-        if ( empty($result) )
+        if ( empty($pluginData) )
         {
-            $this->message = "Error! Plugin `<b>{$pluginKey}</b>` not found.";
-            $this->resultCode = "plugin_empty";
-            return;
+            throw new LogicException("Plugin not found");
         }
 
         $this->setMaintenance(true);
 
-        if ( !$this->updatePlugin($result) )
+        if ( !$this->updatePlugin($pluginData) )
         {
-            $this->message = "Error! Plugin '<b>{$pluginArr['key']}</b>' is up to date.";
-            $this->resultCode = "plugin_up_to_date";
-            $this->setDevMode();
-        }
-        else
-        {
-            $this->message = "Update Complete! Plugin '<b>{$pluginArr['key']}</b>' successfully updated.";
-            $this->resultCode = "plugin_update_success";
+            throw new LogicUpToDateException("Plugin is up to date");
         }
 
+        $this->setDevMode();
         $this->setMaintenance(false);
+
+        return $pluginData;
     }
 
+    /**
+     * Updates all plugins
+     * 
+     * @return int
+     * @throws LogicException
+     * @throws LogicUpToDateException
+     */
     public function updateAllPlugins()
     {
-        $result = $this->db->queryForList("SELECT * FROM `{$this->dbPrefix}base_plugin` WHERE `update` = 2");
-
+        $result = $this->db->queryForList("SELECT * FROM `{$this->dbPrefix}base_plugin` WHERE `update` = :statusVal",
+            array("statusVal" => BOL_PluginDao::UPDATE_VAL_MANUAL_UPDATE));
+        printVar($result);
         // plugin not found
         if ( empty($result) )
         {
-            $this->message = "Error! No plugins for update.";
-            $this->resultCode = "plugin_empty";
-            return;
+            throw new LogicException("No plugins for update");
         }
 
         $this->setMaintenance(true);
@@ -165,119 +124,72 @@ class UPDATE_UpdateExecutor
             }
         }
 
-        $this->setDevMode();
         $this->setMaintenance(false);
 
-        if ( $successCount > 0 )
+        if ( $successCount <= 0 )
         {
-            $this->resultCode = "plugin_update_success";
-            $this->message = "Update Complete! {$successCount} plugins successfully updated.";
+            throw new LogicUpToDateException("All plugins are up to date");
         }
-        else
-        {
-            $this->message = "Error! All plugins are up to date.";
-            $this->resultCode = "plugin_up_to_date";
-        }
+
+        $this->setDevMode();
+
+        return $successCount;
     }
 
-    public function updateSingleTheme()
-    {
-        
-    }
-
-    public function updateAllThemes()
-    {
-        
-    }
-
-    public function updatePlatform()
-    {
-        $currentBuild = (int) $this->db->queryForColumn("SELECT `value` FROM `{$this->dbPrefix}base_config` WHERE `key` = 'base' AND `name` = 'soft_build'");
-
-        $currentXmlInfo = (array) simplexml_load_file(OW_DIR_ROOT . "ow_version.xml");
-
-        if ( (int) $currentXmlInfo["build"] > $currentBuild )
-        {
-            $this->setMaintenance(true);
-
-            $owpUpdateDir = UPDATE_DIR_ROOT . "updates" . DS;
-
-            $updateDirList = array();
-
-            $handle = opendir($owpUpdateDir);
-
-            while ( ($item = readdir($handle)) !== false )
-            {
-                if ( $item === "." || $item === ".." )
-                {
-                    continue;
-                }
-
-                $dirPath = $owpUpdateDir . ((int) $item);
-
-                if ( file_exists($dirPath) && is_dir($dirPath) )
-                {
-                    $updateDirList[] = (int) $item;
-                }
-            }
-
-            sort($updateDirList);
-
-            foreach ( $updateDirList as $item )
-            {
-                if ( $item > $currentBuild )
-                {
-                    $this->includeScript($owpUpdateDir . $item . DS . "update.php");
-                }
-
-                $this->db->query("UPDATE `{$this->dbPrefix}base_config` SET `value` = :build WHERE `key` = 'base' AND `name` = 'soft_build'",
-                    array("build" => $currentXmlInfo["build"]));
-                $this->db->query("UPDATE `{$this->dbPrefix}base_config` SET `value` = :version WHERE `key` = 'base' AND `name` = 'soft_version'",
-                    array("version" => $currentXmlInfo["version"]));
-            }
-
-            $db->query("UPDATE `" . OW_DB_PREFIX . "base_config` SET `value` = 0 WHERE `key` = 'base' AND `name` = 'update_soft'");
-
-            $this->setMaintenance(false);
-            $this->setDevMode();
-            $this->writeLog();
-        }
-    }
+//    public function updatePlatform()
+//    {
+//        $currentBuild = (int) $this->db->queryForColumn("SELECT `value` FROM `{$this->dbPrefix}base_config` WHERE `key` = 'base' AND `name` = 'soft_build'");
+//
+//        $currentXmlInfo = (array) simplexml_load_file(OW_DIR_ROOT . "ow_version.xml");
+//
+//        if ( (int) $currentXmlInfo["build"] > $currentBuild )
+//        {
+//            $this->setMaintenance(true);
+//
+//            $owpUpdateDir = UPDATE_DIR_ROOT . "updates" . DS;
+//
+//            $updateDirList = array();
+//
+//            $handle = opendir($owpUpdateDir);
+//
+//            while ( ($item = readdir($handle)) !== false )
+//            {
+//                if ( $item === "." || $item === ".." )
+//                {
+//                    continue;
+//                }
+//
+//                $dirPath = $owpUpdateDir . ((int) $item);
+//
+//                if ( file_exists($dirPath) && is_dir($dirPath) )
+//                {
+//                    $updateDirList[] = (int) $item;
+//                }
+//            }
+//
+//            sort($updateDirList);
+//
+//            foreach ( $updateDirList as $item )
+//            {
+//                if ( $item > $currentBuild )
+//                {
+//                    $this->includeScript($owpUpdateDir . $item . DS . "update.php");
+//                }
+//
+//                $this->db->query("UPDATE `{$this->dbPrefix}base_config` SET `value` = :build WHERE `key` = 'base' AND `name` = 'soft_build'",
+//                    array("build" => $currentXmlInfo["build"]));
+//                $this->db->query("UPDATE `{$this->dbPrefix}base_config` SET `value` = :version WHERE `key` = 'base' AND `name` = 'soft_version'",
+//                    array("version" => $currentXmlInfo["version"]));
+//            }
+//
+//            $db->query("UPDATE `" . OW_DB_PREFIX . "base_config` SET `value` = 0 WHERE `key` = 'base' AND `name` = 'update_soft'");
+//
+//            $this->setMaintenance(false);
+//            $this->setDevMode();
+//            $this->writeLog();
+//        }
+//    }
     /* -------------------------------------------------------------------------------------------------------------- */
-
-    public function processResult()
-    {
-        if ( !empty($this->params["back-uri"]) )
-        {
-            $url = build_url_query_string(OW_URL_HOME . urldecode($this->params["back-uri"]),
-                array_merge($this->params, array("mode" => $this->resultCode)));
-            Header("HTTP/1.1 301 Moved Permanently");
-            Header("Location: {$url}");
-            exit;
-        }
-
-        echo '
-  <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-  <html>
-  <head>
-  <title></title>
-  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-  </head>
-  <body style="font:18px Tahoma;">
-  <div style="width:400px;margin:300px auto 0;font:14px Tahoma;">
-  <h3 style="color:#CF3513;font:bold 20px Tahoma;">' . ($this->heading ? $this->heading : "Update Request") . '</h3>
-  ' . $this->message . ' <br />
-  Go to <a style="color:#3366CC;" href="' . OW_URL_HOME . '">Index Page</a>&nbsp; or &nbsp;<a style="color:#3366CC;" href="' . OW_URL_HOME . 'admin">Admin Panel</a>
-  </div>
-  </body>
-  </html>
-  ';
-    }
-
-    private function updateTheme( array $themeArr )
-    {
-        //NO need to update themes in this script
-    }
 
     private function updatePlugin( array $pluginArr )
     {
@@ -333,18 +245,27 @@ class UPDATE_UpdateExecutor
                 $this->writeLog();
             }
 
-            $query = "UPDATE `{$this->dbPrefix}base_plugin` SET `build` = :build, `update` = 0, `title` = :title, `description` = :desc WHERE `key` = :key";
+            $query = "UPDATE `{$this->dbPrefix}base_plugin` SET `build` = :build, `update` = :updateVal, `title` = :title, `description` = :desc WHERE `key` = :key";
 
             $this->db->query($query,
                 array(
                 "build" => (int) $xmlInfoArray["build"],
                 "key" => $pluginArr["key"],
                 "title" => $xmlInfoArray["name"],
-                "desc" => $xmlInfoArray["description"])
+                "desc" => $xmlInfoArray["description"],
+                "updateVal" => BOL_PluginDao::UPDATE_VAL_UP_TO_DATE)
             );
 
             return true;
         }
+
+        $query = "UPDATE `{$this->dbPrefix}base_plugin` SET `update` = :updateVal WHERE `key` = :key";
+
+        $this->db->query($query,
+            array(
+            "key" => $pluginArr["key"],
+            "updateVal" => BOL_PluginDao::UPDATE_VAL_UP_TO_DATE)
+        );
 
         return false;
     }
@@ -388,4 +309,9 @@ class UPDATE_UpdateExecutor
         $this->db->query("UPDATE `{$this->dbPrefix}base_config` SET `value` = 1 WHERE `key` = 'base' AND `name` = 'dev_mode'",
             array("mode" => $mode));
     }
+}
+
+class LogicUpToDateException extends LogicException
+{
+    
 }

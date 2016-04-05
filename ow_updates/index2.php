@@ -54,14 +54,105 @@ $dbPrefix = OW_DB_PREFIX;
 
 //TODO check what for we need authentificator
 OW_Auth::getInstance()->setAuthenticator(new OW_SessionAuthenticator());
+$updater = new UPDATE_UpdateExecutor();
 
-$updateExec = new UPDATE_UpdateExecutor($_GET);
-$updateExec->runTask();
-$updateExec->processResult();
+$status = "";
+$message = "";
 
-//http://gskl/ow_updates/index2.php?task=update-all-plugins
+if ( empty($_GET[UPDATE_UpdateExecutor::URI_VAR_ACTION]) )
+{
+    $status = UPDATE_UpdateExecutor::STATUS_EMPTY_ACTION;
+    $message = "Error! Action not provided.";
+}
+else
+{
+    switch ( trim($_GET[UPDATE_UpdateExecutor::URI_VAR_ACTION]) )
+    {
+        case UPDATE_UpdateExecutor::URI_VAR_ACTION_VAL_UPDATE_PLUGIN:
 
+            if ( !empty($_GET[UPDATE_UpdateExecutor::URI_VAR_PLUGIN_KEY]) )
+            {
+                $pluginKey = trim($_GET[UPDATE_UpdateExecutor::URI_VAR_PLUGIN_KEY]);
 
+                try
+                {
+                    $pluginArr = $updater->updateSinglePlugin($pluginKey);
+                    $status = UPDATE_UpdateExecutor::STATUS_SUCCESS;
+                    $message = "Update Complete! Plugin '<b>{$pluginArr["key"]}</b>' successfully updated.";
+                }
+                catch ( LogicUpToDateException $ex )
+                {
+                    $status = UPDATE_UpdateExecutor::STATUS_UP_TO_DATE;
+                    $message = "Error! Plugin '<b>" . htmlspecialchars($pluginKey) . "</b>' is up to date.";
+                }
+                catch ( LogicException $ex )
+                {
+                    $status = UPDATE_UpdateExecutor::STATUS_FAIL;
+                    $message = "Error! Plugin '<b>" . htmlspecialchars($pluginKey) . "</b>' not found.";
+                }
+            }
+            else
+            {
+                $status = UPDATE_UpdateExecutor::STATUS_FAIL;
+                $message = "Error! Empty plugin key.";
+            }
+
+            break;
+
+        case UPDATE_UpdateExecutor::URI_VAR_ACTION_VAL_UPDATE_ALL_PLUGINS:
+
+            try
+            {
+                $count = $updater->updateAllPlugins();
+                $status = UPDATE_UpdateExecutor::STATUS_SUCCESS;
+                $this->message = "Update Complete! {$count} plugins successfully updated.";
+            }
+            catch ( LogicUpToDateException $ex )
+            {
+                $status = UPDATE_UpdateExecutor::STATUS_UP_TO_DATE;
+                $message = "Error! All plugins are up to date.";
+            }
+            catch ( LogicException $ex )
+            {
+                $status = UPDATE_UpdateExecutor::STATUS_FAIL;
+                $message = "Error! No plugins for update.";
+            }
+
+            break;
+
+        case UPDATE_UpdateExecutor::URI_VAR_ACTION_VAL_UPDATE_PLATFORM:
+            //TODO implement
+            break;
+    }
+}
+
+if ( !empty($_GET[UPDATE_UpdateExecutor::URI_VAR_BACK_URI]) )
+{
+    $url = build_url_query_string(OW_URL_HOME . urldecode(trim($_GET[UPDATE_UpdateExecutor::URI_VAR_BACK_URI])),
+        array_merge($_GET, array("mode" => $status)));
+    Header("HTTP/1.1 301 Moved Permanently");
+    Header("Location: {$url}");
+    exit;
+}
+
+echo '
+  <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+  <html>
+  <head>
+  <title></title>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+  <body style="font:18px Tahoma;">
+  <div style="width:400px;margin:300px auto 0;font:14px Tahoma;">
+  <h3 style="color:#CF3513;font:bold 20px Tahoma;">Update Request</h3>
+  ' . $message . ' <br />
+  Go to <a style="color:#3366CC;" href="' . OW_URL_HOME . '">Index Page</a>&nbsp; or &nbsp;<a style="color:#3366CC;" href="' . OW_URL_HOME . 'admin">Admin Panel</a>
+  </div>
+  </body>
+  </html>
+  ';
+
+//http://site.com/ow_updates/index2.php?task=update-all-plugins
 
 /* functions */
 

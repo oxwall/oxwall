@@ -147,7 +147,7 @@ class ADMIN_CTRL_Plugins extends ADMIN_CTRL_StorageAbstract
             $arrayToAssign[$key]["inst_url"] = OW::getRequest()->buildUrlQueryString(OW::getRouter()->urlFor(__CLASS__,
                     "install"), $params);
             $arrayToAssign[$key]["del_url"] = OW::getRouter()->urlFor(__CLASS__, "delete",
-                array("key" => $plugin['key']));
+                array("key" => $plugin["key"]));
         }
 
         $event = new OW_Event("admin.plugins_list_view", array("ctrl" => $this, "type" => "available"), $arrayToAssign);
