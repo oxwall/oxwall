@@ -100,7 +100,7 @@ class UPDATE_UpdateExecutor
     {
         $result = $this->db->queryForList("SELECT * FROM `{$this->dbPrefix}base_plugin` WHERE `update` = :statusVal",
             array("statusVal" => BOL_PluginDao::UPDATE_VAL_MANUAL_UPDATE));
-        printVar($result);
+        
         // plugin not found
         if ( empty($result) )
         {
