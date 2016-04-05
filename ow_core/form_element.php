@@ -990,7 +990,7 @@ class Submit extends FormElement
 
         if ( $this->decorator !== false )
         {
-            $finalMarkup = OW::getThemeManager()->processDecorator('button', $params);
+            $finalMarkup = OW::getThemeManager()->processDecorator($this->decorator, $params);
         }
         else
         {
