@@ -301,9 +301,7 @@ class UTIL_HtmlTag
             return;
         }
 
-        $escaper = new Zend\Escaper\Escaper('utf-8');
-
-        return $escaper->escapeUrl($string);
+        return rawurlencode($string);
     }
 
     /**
@@ -320,9 +318,7 @@ class UTIL_HtmlTag
             return;
         }
 
-        $escaper = new Zend\Escaper\Escaper('utf-8');
-
-        return $escaper->escapeHtml($string);
+        return htmlspecialchars($string, ENT_QUOTES);
     }
 
     /**
@@ -340,9 +336,7 @@ class UTIL_HtmlTag
             return;
         }
 
-        $escaper = new Zend\Escaper\Escaper('utf-8');
-
-        return $escaper->escapeHtmlAttr($string);
+        return htmlspecialchars($string, ENT_COMPAT);
     }
 
     /**
@@ -358,8 +352,7 @@ class UTIL_HtmlTag
             return;
         }
 
-        $escaper = new Zend\Escaper\Escaper('utf-8');
-
-        return $escaper->escapeJs($string);
+        return strtr($string,
+            array('\\' => '\\\\', "'" => "\\'", '"' => '\\"', "\r" => '\\r', "\n" => '\\n', '</' => '<\/'));
     }
 }
