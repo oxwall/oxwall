@@ -37,6 +37,7 @@ class OW_Autoload
      * @var array
      */
     private $packagePointers = array();
+
     /**
      * Registered classes.
      *
@@ -50,7 +51,7 @@ class OW_Autoload
      */
     private function __construct()
     {
-
+        
     }
     /**
      * Singleton instance.
@@ -233,6 +234,22 @@ class OW_Autoload
      */
     public function getPluginKey( $className )
     {
+        //if classname uses namespaces
+        if ( strpos($className, "\\") !== false )
+        {
+            $classArr = explode("\\", $className);
+
+            if ( strpos($className, "oxwall\ow_") === 0 )
+            {
+                return $classArr[2];
+            }
+
+            if ( strpos($className, "oxwall\\") === 0 )
+            {
+                return $classArr[1];
+            }
+        }
+
         // throw exception if class doesn't contain underscore symbols
         if ( !strstr($className, '_') )
         {
@@ -268,5 +285,24 @@ class OW_Autoload
 
         $this->packagePointers[trim(strtoupper($packagePointer))] = $dir;
     }
-}
 
+    /**
+     * Default autoloader based on namespaces
+     * 
+     * @param string $class     
+     */
+    public static function namespaceAutoload( $class )
+    {
+        $prefix = "oxwall\ow_";
+
+        if ( strpos($class, $prefix) !== 0 )
+        {
+            return;
+        }
+
+        $classArr = explode("\\", $class);
+        array_shift($classArr);
+
+        require_once OW_DIR_ROOT . implode(DS, $classArr) . ".php";
+    }
+}

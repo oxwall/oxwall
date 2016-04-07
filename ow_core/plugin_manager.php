@@ -128,21 +128,24 @@ final class OW_PluginManager
      */
     public function initPlugin( OW_Plugin $pluginObject )
     {
-        $this->addPackagePointers($pluginObject->getDto());
+        $this->addAutoloader($pluginObject->getDto());
 
-        $initDirPath = $pluginObject->getRootDir();
+        switch ( OW::getApplication()->getContext() )
+        {
+            case OW::CONTEXT_MOBILE;
+                $initDirPath = $pluginObject->getMobileDir();
+                break;
 
-        if ( OW::getApplication()->getContext() == OW::CONTEXT_MOBILE )
-        {
-            $initDirPath = $pluginObject->getMobileDir();
-        }
-        if ( OW::getApplication()->getContext() == OW::CONTEXT_CLI )
-        {
-            $initDirPath = $pluginObject->getCliDir();
-        }
-        else if ( OW::getApplication()->getContext() == OW::CONTEXT_API )
-        {
-            $initDirPath = $pluginObject->getApiDir();
+            case OW::CONTEXT_CLI:
+                $initDirPath = $pluginObject->getCliDir();
+                break;
+
+            case OW::CONTEXT_API:
+                $initDirPath = $pluginObject->getApiDir();
+                break;
+
+            default :
+                $initDirPath = $pluginObject->getRootDir();
         }
 
         OW::getEventManager()->trigger(new OW_Event("core.performance_test",
@@ -159,7 +162,7 @@ final class OW_PluginManager
      * 
      * @param BOL_Plugin $pluginDto
      */
-    public function addPackagePointers( BOL_Plugin $pluginDto )
+    public function addAutoloader( BOL_Plugin $pluginDto )
     {
         $plugin = new OW_Plugin($pluginDto);
         $upperedKey = mb_strtoupper($plugin->getKey());
@@ -183,6 +186,18 @@ final class OW_PluginManager
         {
             $autoloader->addPackagePointer($upperedKey . "_" . $pointer, $dirPath);
         }
+
+        spl_autoload_register(function($class) use ($plugin)
+        {
+            $prefix = "oxwall\\{$plugin->getKey()}\\";
+
+            if ( strpos($class, $prefix) !== 0 )
+            {
+                return;
+            }
+
+            include_once $plugin->getRootDir() . str_replace("\\", DS, substr($class, strlen($prefix))) . ".php";
+        });
     }
 
     /**
@@ -281,17 +296,6 @@ final class OW_PluginManager
         {
             $plugin->setUninstallRoute($routName);
             $this->pluginService->savePlugin($plugin);
-        }
-    }
-
-    /**
-     * @param string $filePath
-     */
-    private function includeFile( $filePath )
-    {
-        if ( file_exists($filePath) )
-        {
-            include_once $filePath;
         }
     }
 }

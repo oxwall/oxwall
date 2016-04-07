@@ -204,8 +204,7 @@ class OW_RequestHandler
      */
     public function dispatch()
     {
-        // check if controller class contains package pointer with plugin key
-        if ( empty($this->handlerAttributes[self::ATTRS_KEY_CTRL]) || !mb_strstr($this->handlerAttributes[self::ATTRS_KEY_CTRL], '_') )
+        if ( empty($this->handlerAttributes[self::ATTRS_KEY_CTRL]) )
         {
             throw new InvalidArgumentException("Can't dispatch request! Empty or invalid controller class provided!");
         }
@@ -227,12 +226,15 @@ class OW_RequestHandler
 
         try
         {
-            $controller = OW::getClassInstance($this->handlerAttributes[self::ATTRS_KEY_CTRL]);
+            $reflectionClass = new ReflectionClass($this->handlerAttributes[self::ATTRS_KEY_CTRL]);
         }
         catch ( ReflectionException $e )
         {
             throw new Redirect404Exception();
         }
+        
+        /* @var $controller OW_ActionController */
+        $controller = $reflectionClass->newInstance();
 
         /* @var $controller OW_ActionController */
 
@@ -256,15 +258,35 @@ class OW_RequestHandler
             $this->handlerAttributes[self::ATTRS_KEY_ACTION] = $controller->getDefaultAction();
         }
 
-        if ( !method_exists($controller, $this->handlerAttributes[self::ATTRS_KEY_ACTION]) )
+        try
+        {
+            $action = $reflectionClass->getMethod($this->handlerAttributes[self::ATTRS_KEY_ACTION]);
+        }
+        catch ( Exception $e )
         {
             throw new Redirect404Exception();
         }
+        
+        $this->processControllerAction($action, $controller);
+    }
+
+    /**
+     * @param ReflectionMethod $action
+     * @param OW_ActionController $controller
+     */
+    protected function processControllerAction( ReflectionMethod $action, OW_ActionController $controller )
+    {
+        $args =  array(
+            self::ATTRS_KEY_VARLIST => 
+                empty($this->handlerAttributes[self::ATTRS_KEY_VARLIST]) ? array() : $this->handlerAttributes[self::ATTRS_KEY_VARLIST]
+        );
+        
         OW::getEventManager()->trigger(new OW_Event("core.performance_test", array("key" => "controller_call.start", "handlerAttrs" => $this->handlerAttributes)));
-        call_user_func_array(array($controller, $this->handlerAttributes[self::ATTRS_KEY_ACTION]), array(
-            self::ATTRS_KEY_VARLIST => ( empty($this->handlerAttributes[self::ATTRS_KEY_VARLIST]) ? array() : $this->handlerAttributes[self::ATTRS_KEY_VARLIST] )
-        ));
+        
+        $action->invokeArgs($controller, $args);
+        
         OW::getEventManager()->trigger(new OW_Event("core.performance_test", array("key" => "controller_call.end", "handlerAttrs" => $this->handlerAttributes)));
+        
         // set default template for controller action if template wasn't set
         if ( $controller->getTemplate() === null )
         {
@@ -274,7 +296,7 @@ class OW_RequestHandler
         OW::getDocument()->setBody($controller->render());
     }
 
-    /**
+        /**
      * Returns template path for provided controller and action.
      *
      * @param string $controller
@@ -284,8 +306,14 @@ class OW_RequestHandler
     protected function getControllerActionDefaultTemplate( OW_ActionController $ctrl )
     {
         $plugin = OW::getPluginManager()->getPlugin(OW::getAutoloader()->getPluginKey($this->handlerAttributes[self::ATTRS_KEY_CTRL]));
-
-        $templateFilename = OW::getAutoloader()->classToFilename($this->handlerAttributes[self::ATTRS_KEY_CTRL], false) . '_'
+        $className = $this->handlerAttributes[self::ATTRS_KEY_CTRL];
+        
+        if( strpos($className, "\\") )
+        {
+            $className = substr($className, strrpos($className, "\\")+1);
+        }
+        
+        $templateFilename = OW::getAutoloader()->classToFilename($className, false) . '_'
             . OW::getAutoloader()->classToFilename(ucfirst($this->handlerAttributes[self::ATTRS_KEY_ACTION]), false) . '.html';
 
         return ( $ctrl instanceof OW_MobileActionController ? $plugin->getMobileCtrlViewDir() : $plugin->getCtrlViewDir() ) . $templateFilename;

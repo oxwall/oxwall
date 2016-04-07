@@ -556,7 +556,7 @@ class BOL_PluginService
 
         $pluginDto->setIsActive(true);
         $this->pluginDao->save($pluginDto);
-        OW::getPluginManager()->addPackagePointers($pluginDto);
+        OW::getPluginManager()->addAutoloader($pluginDto);
 
         $this->includeScript(OW_DIR_PLUGIN . $pluginDto->getModule() . DS . self::SCRIPT_ACTIVATE);
 

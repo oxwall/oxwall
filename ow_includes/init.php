@@ -38,6 +38,7 @@ if ( OW_DEBUG_MODE )
     ob_start();
 }
 
+spl_autoload_register(array('OW_Autoload', 'namespaceAutoload'));
 spl_autoload_register(array('OW_Autoload', 'autoload'));
 require_once OW_DIR_LIB_VENDOR . "autoload.php";
 
