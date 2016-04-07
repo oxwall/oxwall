@@ -31,14 +31,6 @@ class BASE_CLASS_ConsoleEventHandler
 
         if ( OW::getUser()->isAuthenticated() )
         {
-            /**
-             * My Profile Menu
-             *
-             * @var $item BASE_CMP_MyProfileConsoleItem
-             */
-            $item = OW::getClassInstance("BASE_CMP_MyProfileConsoleItem");
-            $event->addItem($item, 2);
-
             // Admin menu
             if ( OW::getUser()->isAdmin() )
             {
@@ -52,6 +44,14 @@ class BASE_CLASS_ConsoleEventHandler
 
                 $event->addItem($item, 1);
             }
+
+            /**
+             * My Profile Menu
+             *
+             * @var $item BASE_CMP_MyProfileConsoleItem
+             */
+            $item = OW::getClassInstance("BASE_CMP_MyProfileConsoleItem");
+            $event->addItem($item, 2);
         }
         else
         {
