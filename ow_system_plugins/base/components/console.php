@@ -81,13 +81,17 @@ class BASE_CMP_Console extends OW_Component
                 $order = count($resultItems);
             }
 
-            $renderEvent = new OW_Event(self::RENDER_EVENT_NAME, array(
+            $resultItem = array(
                 "item" => $itemCmp,
                 "order" => $order
-            ), $itemCmp);
-            OW::getEventManager()->trigger($renderEvent);
+            );
 
-            $itemCmp = $renderEvent->getData();
+            $renderEvent = new OW_Event(self::RENDER_EVENT_NAME, $resultItem, $resultItem);
+            OW::getEventManager()->trigger($renderEvent);
+            $resultItem = $renderEvent->getData();
+
+            $itemCmp = $resultItem['item'];
+            $order = $resultItem['order'];
 
             if ( is_subclass_of($itemCmp, 'OW_Renderable') && $itemCmp->isVisible() )
             {
