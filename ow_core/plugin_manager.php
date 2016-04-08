@@ -187,17 +187,7 @@ final class OW_PluginManager
             $autoloader->addPackagePointer($upperedKey . "_" . $pointer, $dirPath);
         }
 
-        spl_autoload_register(function($class) use ($plugin)
-        {
-            $prefix = "oxwall\\{$plugin->getKey()}\\";
-
-            if ( strpos($class, $prefix) !== 0 )
-            {
-                return;
-            }
-
-            include_once $plugin->getRootDir() . str_replace("\\", DS, substr($class, strlen($prefix))) . ".php";
-        });
+        $autoloader->registerNamespaceLoader("Oxwall\\" . ucfirst($plugin->getKey()) . "\\", $plugin->getRootDir());
     }
 
     /**

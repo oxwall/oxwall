@@ -95,7 +95,7 @@ class OW_Autoload
      * Main static method registered as autoloader.
      * Don't call it manually.
      */
-    public static function autoload( $className )
+    public function autoload( $className )
     {
         $thisObj = self::getInstance();
 
@@ -237,16 +237,9 @@ class OW_Autoload
         //if classname uses namespaces
         if ( strpos($className, "\\") !== false )
         {
-            $classArr = explode("\\", $className);
-
-            if ( strpos($className, "oxwall\ow_") === 0 )
-            {
-                return $classArr[2];
-            }
-
             if ( strpos($className, "oxwall\\") === 0 )
             {
-                return $classArr[1];
+                return substr($className, 0, strpos($className, "\\"));
             }
         }
 
@@ -287,22 +280,21 @@ class OW_Autoload
     }
 
     /**
-     * Default autoloader based on namespaces
+     * Adds predefined namespace autoloaders
      * 
-     * @param string $class     
+     * @param string $prefix
+     * @param string $rootPath
      */
-    public static function namespaceAutoload( $class )
+    public function registerNamespaceLoader( $prefix, $rootPath )
     {
-        $prefix = "oxwall\ow_";
-
-        if ( strpos($class, $prefix) !== 0 )
+        spl_autoload_register(function( $class ) use ( $prefix, $rootPath )
         {
-            return;
-        }
+            if ( strpos($class, $prefix) !== 0 )
+            {
+                return;
+            }
 
-        $classArr = explode("\\", $class);
-        array_shift($classArr);
-
-        require_once OW_DIR_ROOT . implode(DS, $classArr) . ".php";
+            include_once $rootPath . str_replace("\\", DS, substr($class, strlen($prefix))) . ".php";
+        });
     }
 }
