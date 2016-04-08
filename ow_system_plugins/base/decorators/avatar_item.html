@@ -2,9 +2,9 @@
 <div class="ow_avatar{if !empty($data.class)} {$data.class}{/if}">
 {if !empty($data.isMarked)}<div class="ow_ic_bookmark ow_bookmark_icon"></div>{/if}
 {if !empty($data.url)}
-<a href="{$data.url}"><img alt=""{if !empty($data.title)} title="{$data.title}"{/if} {if !empty($data.attrs)}{$data.attrs}{/if} src="{$data.src}" /></a>
+<a href="{$data.url}"><img {if !empty($data.title)} alt="{$data.title|escape}" title="{$data.title|escape}"{/if} {if !empty($data.attrs)}{$data.attrs}{/if} src="{$data.src}" /></a>
 {else}
-<img alt="" {if !empty($data.title)} title="{$data.title}"{/if} {if !empty($data.attrs)}{$data.attrs}{/if} src="{$data.src}" />
+<img {if !empty($data.title)} alt="{$data.title|escape}" title="{$data.title|escape}"{/if} {if !empty($data.attrs)}{$data.attrs}{/if} src="{$data.src}" />
 {/if}
 {if !empty($data.label)}<span class="ow_avatar_label"{if !empty($data.labelColor)} style="background-color: {$data.labelColor}"{/if}>{$data.label}</span>{/if}
 </div>
