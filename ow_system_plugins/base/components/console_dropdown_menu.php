@@ -10,14 +10,19 @@ class BASE_CMP_ConsoleDropdownMenu extends OW_Renderable
      */
     protected $consoleItem;
 
-    public function __construct( $label )
+    public function __construct( $label, $key = null )
     {
         parent::__construct();
 
         $template = OW::getPluginManager()->getPlugin('base')->getCmpViewDir() . 'console_dropdown_menu.html';
         $this->setTemplate($template);
 
-        $this->consoleItem = new BASE_CMP_ConsoleDropdownHover($label);
+        $this->consoleItem = new BASE_CMP_ConsoleDropdownHover($label, $key);
+    }
+
+    public function getKey()
+    {
+        return $this->consoleItem->getKey();
     }
 
     public function setIsHidden( $hidden = true )

@@ -33,6 +33,7 @@ class BASE_CMP_Console extends OW_Component
 {
 
     const EVENT_NAME = 'console.collect_items';
+    const RENDER_EVENT_NAME = 'console.before_item_render';
 
     const ALIGN_LEFT = -1;
     const ALIGN_RIGHT = 0;
@@ -79,6 +80,18 @@ class BASE_CMP_Console extends OW_Component
             {
                 $order = count($resultItems);
             }
+
+            $resultItem = array(
+                "item" => $itemCmp,
+                "order" => $order
+            );
+
+            $renderEvent = new OW_Event(self::RENDER_EVENT_NAME, $resultItem, $resultItem);
+            OW::getEventManager()->trigger($renderEvent);
+            $resultItem = $renderEvent->getData();
+
+            $itemCmp = $resultItem['item'];
+            $order = $resultItem['order'];
 
             if ( is_subclass_of($itemCmp, 'OW_Renderable') && $itemCmp->isVisible() )
             {

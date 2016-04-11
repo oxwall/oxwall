@@ -31,36 +31,7 @@ class BASE_CLASS_ConsoleEventHandler
 
         if ( OW::getUser()->isAuthenticated() )
         {
-            $item = new BASE_CMP_ConsoleDropdownMenu(BOL_UserService::getInstance()->getDisplayName(OW::getUser()->getId()));
-            $item->setUrl($router->urlForRoute('base_user_profile', array('username' => OW::getUser()->getUserObject()->getUsername())));
-            $item->addItem('main', array('label' => $language->text('base', 'console_item_label_profile'), 'url' => $router->urlForRoute('base_user_profile', array('username' => OW::getUser()->getUserObject()->getUsername()))));
-            $item->addItem('main', array('label' => $language->text('base', 'edit_index'), 'url' => $router->urlForRoute('base_edit')));
-            $item->addItem('main', array('label' => $language->text('base', 'preference_index'), 'url' => $router->urlForRoute('base_preference_index')));
-            
-            if ( OW::getUser()->isAdmin() || BOL_AuthorizationService::getInstance()->isModerator() )
-            {
-                $item->addItem('main', array(
-                    'label' => $language->text('base', 'moderation_tools'),
-                    'url' => $router->urlForRoute('base.moderation_tools')
-                ));
-            }
-            
-            $item->addItem('foot', array('label' => $language->text('base', 'console_item_label_sign_out'), 'url' => $router->urlForRoute('base_sign_out')));
-
-            $addItemsEvent = new BASE_CLASS_EventCollector('base.add_main_console_item');
-            OW::getEventManager()->trigger($addItemsEvent);
-            $addItems = $addItemsEvent->getData();
-
-            foreach ( $addItems as $addItem )
-            {
-                if ( !empty($addItem['label']) && !empty($addItem['url']) )
-                {
-                    $item->addItem('main', array('label' => $addItem['label'], 'url' => $addItem['url']));
-                }
-            }
-            
-            $event->addItem($item, 2);
-
+            // Admin menu
             if ( OW::getUser()->isAdmin() )
             {
                 $item = new BASE_CMP_ConsoleDropdownMenu($language->text('admin', 'main_menu_admin'));
@@ -73,20 +44,28 @@ class BASE_CLASS_ConsoleEventHandler
 
                 $event->addItem($item, 1);
             }
+
+            /**
+             * My Profile Menu
+             *
+             * @var $item BASE_CMP_MyProfileConsoleItem
+             */
+            $item = OW::getClassInstance("BASE_CMP_MyProfileConsoleItem");
+            $event->addItem($item, 2);
         }
         else
         {
             $buttonListEvent = new BASE_CLASS_EventCollector(BASE_CMP_ConnectButtonList::HOOK_REMOTE_AUTH_BUTTON_LIST);
             OW::getEventManager()->trigger($buttonListEvent);
             $buttonList = $buttonListEvent->getData();
-            
+
             $iconListMarkup = '';
 
             foreach ( $buttonList as $button )
             {
                 $iconListMarkup .= '<span class="ow_ico_signin ' . $button['iconClass'] . '"></span>';
             }
-            
+
             $cmp = new BASE_CMP_SignIn(true);
             $signInMarkup = '<div style="display:none"><div id="base_cmp_floatbox_ajax_signin">' . $cmp->render() . '</div></div>';
 

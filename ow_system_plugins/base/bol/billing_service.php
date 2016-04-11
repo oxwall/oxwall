@@ -599,9 +599,9 @@ final class BOL_BillingService
      * 
      * @return array
      */
-    public function getActiveGatewaysList()
+    public function getActiveGatewaysList( $forMobile = false )
     {
-        return $this->billingGatewayDao->getActiveList();
+        return $this->billingGatewayDao->getActiveList($forMobile);
     }
     
     /**
@@ -706,7 +706,7 @@ final class BOL_BillingService
      * @param string $hash
      * @return string
      */
-    public function getOrderCancelledPageUrl( $hash = null )
+    public function getOrderCancelledPageUrl( $hash = null)
     {
         if ( isset($hash) && $sale = $this->getSaleByHash($hash) )
         {

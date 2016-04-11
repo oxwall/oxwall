@@ -274,8 +274,8 @@ class ADMIN_CTRL_Themes extends ADMIN_CTRL_StorageAbstract
                     BOL_StorageService::URI_VAR_KEY => $themeDto->getKey(),
                     BOL_StorageService::URI_VAR_DEV_KEY => $themeDto->getDeveloperKey(),
                     BOL_StorageService::URI_VAR_ITEM_TYPE => BOL_StorageService::URI_VAR_ITEM_TYPE_VAL_THEME,
-                    BOL_StorageService::URI_VAR_BACK_URI => OW::getRequest()->getRequestUri()
-                );
+                    BOL_StorageService::URI_VAR_BACK_URI => urlencode(OW::getRequest()->getRequestUri()),
+                    "back-button-uri" => urlencode(OW::getRouter()->uriForRoute("admin_themes_choose"))                );
 
                 $this->redirect(OW::getRequest()->buildUrlQueryString(OW::getRouter()->urlFor("ADMIN_CTRL_Storage",
                             "checkItemLicense"), $requestParams));
@@ -297,6 +297,7 @@ class ADMIN_CTRL_Themes extends ADMIN_CTRL_StorageAbstract
 
     public function updateRequest( array $params )
     {
+        //TODO merge method with platform update request
         $themeDto = $this->getThemeDtoByKeyInParamsArray($params);
         $language = OW::getLanguage();
         $router = OW::getRouter();
@@ -319,14 +320,14 @@ class ADMIN_CTRL_Themes extends ADMIN_CTRL_StorageAbstract
                     BOL_StorageService::URI_VAR_KEY => $themeDto->getKey(),
                     BOL_StorageService::URI_VAR_DEV_KEY => $themeDto->getDeveloperKey(),
                     BOL_StorageService::URI_VAR_ITEM_TYPE => BOL_StorageService::URI_VAR_ITEM_TYPE_VAL_THEME,
-                    BOL_StorageService::URI_VAR_BACK_URI => OW::getRequest()->getRequestUri()
+                    BOL_StorageService::URI_VAR_BACK_URI => urlencode(OW::getRequest()->getRequestUri())
                 );
                 $this->redirect(OW::getRequest()->buildUrlQueryString($router->urlFor("ADMIN_CTRL_Storage",
                             "checkItemLicense"), $get));
             }
             else
             {
-                $this->assign("text", $language->text("admin", "theme_update_request_error"));
+                $this->assign("text", $language->text("admin", "theme_license_request_error"));
                 return;
             }
         }
@@ -336,6 +337,7 @@ class ADMIN_CTRL_Themes extends ADMIN_CTRL_StorageAbstract
                 array("oldVersion" => $themeDto->getBuild(), "newVersion" => $remoteThemeInfo["build"], "name" => $themeDto->getTitle())));
         $this->assign("updateUrl", $router->urlFor(__CLASS__, "update", $params));
         $this->assign("returnUrl", $router->urlForRoute("admin_themes_choose"));
+        $this->assign("changeLog", $remoteThemeInfo["changeLog"]);
 
         if ( OW::getConfig()->getValue("base", "update_soft") )
         {

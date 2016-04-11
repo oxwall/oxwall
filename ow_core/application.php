@@ -34,6 +34,7 @@ class OW_Application
     const CONTEXT_MOBILE = BOL_UserService::USER_CONTEXT_MOBILE;
     const CONTEXT_DESKTOP = BOL_UserService::USER_CONTEXT_DESKTOP;
     const CONTEXT_API = BOL_UserService::USER_CONTEXT_API;
+    const CONTEXT_CLI = BOL_UserService::USER_CONTEXT_CLI;
     const CONTEXT_NAME = 'owContext';
 
     /**
@@ -877,10 +878,21 @@ class OW_Application
 
     protected function urlHostRedirect()
     {
+        if ( !isset($_SERVER['HTTP_HOST']) )
+        {
+            return;
+        }
+
         $urlArray = parse_url(OW_URL_HOME);
         $constHost = $urlArray['host'];
+        $serverHost = $_SERVER['HTTP_HOST'];
 
-        if ( isset($_SERVER['HTTP_HOST']) && ( $_SERVER['HTTP_HOST'] !== $constHost ) )
+        if ( mb_strpos($serverHost, ':') !== false )
+        {
+            $serverHost = mb_substr($serverHost, 0, mb_strpos($serverHost, ':'));
+        }
+
+        if ( $serverHost !== $constHost )
         {
             $this->redirect(OW_URL_HOME . OW::getRequest()->getRequestUri());
         }
@@ -944,7 +956,7 @@ class OW_Application
 
     protected function handleHttps()
     {
-        if ( !OW::getRequest()->isSsl() )
+        if ( !OW::getRequest()->isSsl() || substr(OW::getRouter()->getBaseUrl(), 0, 5) == "https" )
         {
             return;
         }
@@ -1038,5 +1050,10 @@ class OW_Application
     public function isApi()
     {
         return $this->context == self::CONTEXT_API;
+    }
+
+    public function isCli()
+    {
+        return $this->context == self::CONTEXT_CLI;
     }
 }

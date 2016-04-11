@@ -56,6 +56,7 @@ class ADMIN_CTRL_Storage extends ADMIN_CTRL_StorageAbstract
             OW::getFeedback()->error($errMsg);
             $this->redirectToBackUri($params);
             $this->assign("message", $errMsg);
+
             return;
         }
 
@@ -72,6 +73,7 @@ class ADMIN_CTRL_Storage extends ADMIN_CTRL_StorageAbstract
             OW::getFeedback()->error($errMsg);
             $this->redirectToBackUri($params);
             $this->assign("message", $errMsg);
+
             return;
         }
 
@@ -109,11 +111,11 @@ class ADMIN_CTRL_Storage extends ADMIN_CTRL_StorageAbstract
         $submit->setValue($language->text("admin", "license_form_button_label"));
         $form->addElement($submit);
 
-        if ( isset($params[BOL_StorageService::URI_VAR_BACK_URI]) )
+        if ( isset($params["back-button-uri"]) )
         {
             $button = new Button("button");
             $button->setValue($language->text("admin", "license_form_back_label"));
-            $redirectUrl = UTIL_HtmlTag::escapeJs(OW_URL_HOME . urldecode($params[BOL_StorageService::URI_VAR_BACK_URI]));
+            $redirectUrl = UTIL_HtmlTag::escapeJs(OW_URL_HOME . urldecode($params["back-button-uri"]));
             $button->addAttribute("onclick", "window.location='{$redirectUrl}'");
             $form->addElement($button);
             $this->assign("backButton", true);
@@ -184,6 +186,7 @@ class ADMIN_CTRL_Storage extends ADMIN_CTRL_StorageAbstract
         $this->assign("text", OW::getLanguage()->text("admin", "manage_plugins_core_update_request_text", $params));
         $this->assign("redirectUrl", OW::getRouter()->urlFor(__CLASS__, "platformUpdate"));
         $this->assign("returnUrl", OW::getRouter()->urlForRoute("admin_default"));
+        $this->assign("changeLog", $newPlatformInfo["log"]);
     }
 
     /**
