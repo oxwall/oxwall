@@ -22,16 +22,17 @@
  * which combines Covered Code or portions thereof with code not governed by the terms of the CPAL.
  */
 
+namespace Oxwall\Core;
+
 /**
  * The class is a gateway for auth. adapters and provides common API to authenticate users.
  *
  * @author Sardar Madumarov <madumarov@gmail.com>
- * @package ow_core
- * @since 1.0
+ * @since 1.8.3
  */
-class OW_SessionAuthenticator implements OW_IAuthenticator
+class SessionAuthenticator implements IAuthenticator
 {
-    const USER_ID_SESSION_KEY = 'userId';
+    const USER_ID_SESSION_KEY = "userId";
 
     public function __construct()
     {
@@ -45,7 +46,7 @@ class OW_SessionAuthenticator implements OW_IAuthenticator
      */
     public function isAuthenticated()
     {
-        return ( OW::getSession()->isKeySet(self::USER_ID_SESSION_KEY) && $this->getUserId() > 0 );
+        return ( \OW::getSession()->isKeySet(self::USER_ID_SESSION_KEY) && $this->getUserId() > 0 );
     }
 
     /**
@@ -56,7 +57,7 @@ class OW_SessionAuthenticator implements OW_IAuthenticator
      */
     public function getUserId()
     {
-        return (int) OW::getSession()->get(self::USER_ID_SESSION_KEY);
+        return (int) \OW::getSession()->get(self::USER_ID_SESSION_KEY);
     }
 
     /**
@@ -66,7 +67,7 @@ class OW_SessionAuthenticator implements OW_IAuthenticator
      */
     public function login( $userId )
     {
-        OW::getSession()->set(self::USER_ID_SESSION_KEY, $userId);
+        \OW::getSession()->set(self::USER_ID_SESSION_KEY, $userId);
     }
 
     /**
@@ -74,7 +75,7 @@ class OW_SessionAuthenticator implements OW_IAuthenticator
      */
     public function logout()
     {
-        OW::getSession()->delete(self::USER_ID_SESSION_KEY);
+        \OW::getSession()->delete(self::USER_ID_SESSION_KEY);
     }
 
     /**

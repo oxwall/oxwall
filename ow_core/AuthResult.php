@@ -22,14 +22,15 @@
  * which combines Covered Code or portions thereof with code not governed by the terms of the CPAL.
  */
 
+namespace Oxwall\Core;
+
 /**
  * The class represents the results of an authentication attempt.
  *
  * @author Sardar Madumarov <madumarov@gmail.com>
- * @package ow_core
- * @since 1.0
+ * @since 1.8.3
  */
-class OW_AuthResult
+class AuthResult
 {
     /**
      * General Failure.

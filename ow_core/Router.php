@@ -22,14 +22,15 @@
  * which combines Covered Code or portions thereof with code not governed by the terms of the CPAL.
  */
 
+namespace Oxwall\Core;
+
 /**
- * OW_Router is responsible for routing process, i.e. finding which controller and action should recieve request.
+ * Router is responsible for routing process, i.e. finding which controller and action should recieve request.
  * 
  * @author Sardar Madumarov <madumarov@gmail.com>
- * @package ow_core
- * @since 1.0
+ * @since 1.8.3
  */
-class OW_Router
+class Router
 {
     /**
      * Current request uri.
@@ -37,24 +38,28 @@ class OW_Router
      * @var string
      */
     private $uri;
+
     /**
      * Static routes.
      *
      * @var array
      */
     private $staticRoutes = array();
+
     /**
      * Dynamic routes.
      *
      * @var array
      */
     private $routes = array();
+
     /**
      * Default route. Used for default url generation strategy.
      * 
      * @var DefaultRoute
      */
     private $defaultRoute;
+
     /**
      * Base url is added to all generated URIs.
      *
@@ -108,7 +113,7 @@ class OW_Router
      * @param DefaultRoute $defaultRoute
      * @return OW_Router
      */
-    public function setDefaultRoute( OW_DefaultRoute $defaultRoute )
+    public function setDefaultRoute( $defaultRoute )
     {
         $this->defaultRoute = $defaultRoute;
         return $this;
@@ -155,7 +160,7 @@ class OW_Router
      */
     public function getRoutes()
     {
-        return array('staticRoutes' => $this->staticRoutes, 'routes' => $this->routes);
+        return array("staticRoutes" => $this->staticRoutes, "routes" => $this->routes);
     }
 
     /**
@@ -167,14 +172,13 @@ class OW_Router
      * @param OW_RouteAbstract $route
      * @return OW_Router
      */
-    public function addRoute( OW_Route $route )
+    public function addRoute( $route )
     {
         $routeName = $route->getRouteName();
 
         if ( isset($this->staticRoutes[$routeName]) || isset($this->routes[$routeName]) )
         {
-            //throw new LogicException( "Can't add route! Route `" . $routeName . "` already exists!");
-            trigger_error("Can't add route! Route `" . $routeName . "` already added!", E_USER_WARNING);
+            trigger_error("Cant add route! Route `{$routeName}` already added!", E_USER_WARNING);
         }
         else
         {
@@ -259,9 +263,9 @@ class OW_Router
             return $this->routes[$routeName]->generateUri($params);
         }
 
-        trigger_error("Can't generate URI! Route `" . $routeName . "` not found!", E_USER_WARNING);
+        trigger_error("Cant generate URI!Route `{$routeName}` not found!", E_USER_WARNING);
 
-        return 'INVALID_URI';
+        return "INVALID_URI";
     }
 
     /**
@@ -269,11 +273,14 @@ class OW_Router
      *
      * @param string $routeName
      * @param array $params
+
+
      * @return string
      */
     public function urlForRoute( $routeName, array $params = array() )
     {
-        return $this->baseUrl . $this->uriForRoute($routeName, $params);
+        return $this->
+            baseUrl . $this->uriForRoute($routeName, $params);
     }
 
     /**
@@ -288,9 +295,9 @@ class OW_Router
     public function urlFor( $controller, $action = null, array $params = array() )
     {
         //return $this->baseUrl . $this->uriFor($controller, $action, $params);
-
         //temp fix for mobile version
-        return (mb_stristr($controller, '_mctrl_') ? $this->baseUrl : $this->getBaseUrl()) . $this->uriFor($controller, $action, $params);
+        return (mb_stristr($controller, "_mctrl_") ? $this->baseUrl : $this->getBaseUrl()) . $this->uriFor($controller,
+                $action, $params);
     }
 
     /**
@@ -310,10 +317,11 @@ class OW_Router
     /**
      * Returns routing result - array with params (module, controller, action).
      * Tries to match requested URI with all added routes. 
-     * If matches weren't found default route is used.
+     * If matches weren"t found default route is used.
      *
      * @throws Redirect404Exception
      * @return array
+
      */
     public function route()
     {
@@ -325,7 +333,7 @@ class OW_Router
                 return $route->getDispatchAttrs();
             }
         }
-        
+
         foreach ( $this->routes as $route )
         {
             if ( $route->match($this->uri) )
@@ -337,7 +345,7 @@ class OW_Router
 
         return $this->defaultRoute->getDispatchAttrs($this->uri);
     }
-    
+
     /**
      * Returns all added routes.
      * 
@@ -347,7 +355,7 @@ class OW_Router
     {
         return $this->routes;
     }
-    
+
     /**
      * Returns used route.
      * 

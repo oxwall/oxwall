@@ -22,27 +22,26 @@
  * which combines Covered Code or portions thereof with code not governed by the terms of the CPAL.
  */
 
+namespace Oxwall\Core;
+
 /**
- * Desc...
- *
- * @author Sardar Madumarov <madumarov@gmail.com>
- * @package ow_core
- * @since 1.0
+ * @author Sardar Madumarov <madumarov@gmail.com> 
+ * @since 1.8.3
  */
-final class OW_Response
+class Response
 {
     /**
      * HTTP Header constants
      */
-    const HD_CACHE_CONTROL = 'Cache-Control';
-    const HD_CNT_DISPOSITION = 'Content-Disposition';
-    const HD_CNT_LENGTH = 'Content-Length';
-    const HD_CONNECTION = 'Connection';
-    const HD_PRAGMA = 'Pragma';
-    const HD_CNT_TYPE = 'Content-Type';
-    const HD_EXPIRES = 'Expires';
-    const HD_LAST_MODIFIED = 'Last-Modified';
-    const HD_LOCATION = 'Location';
+    const HD_CACHE_CONTROL = "Cache-Control";
+    const HD_CNT_DISPOSITION = "Content-Disposition";
+    const HD_CNT_LENGTH = "Content-Length";
+    const HD_CONNECTION = "Connection";
+    const HD_PRAGMA = "Pragma";
+    const HD_CNT_TYPE = "Content-Type";
+    const HD_EXPIRES = "Expires";
+    const HD_LAST_MODIFIED = "Last-Modified";
+    const HD_LOCATION = "Location";
 
     /**
      * Headers to send with response
@@ -63,19 +62,19 @@ final class OW_Response
      *
      * @var string
      */
-    private $markup = '';
+    private $markup = "";
 
     /**
      * Singleton instance.
      *
-     * @var OW_Response
+     * @var Response
      */
     private static $classInstance;
 
     /**
      * Returns an instance of class (singleton pattern implementation).
      *
-     * @return OW_Response
+     * @return Response
      */
     public static function getInstance()
     {
@@ -96,7 +95,7 @@ final class OW_Response
     }
 
     /**
-     * @return OW_Document
+     * @return Document
      */
     public function getDocument()
     {
@@ -104,9 +103,9 @@ final class OW_Response
     }
 
     /**
-     * @param OW_Document $document
+     * @param Document $document
      */
-    public function setDocument( OW_Document $document )
+    public function setDocument( Document $document )
     {
         $this->document = $document;
     }
@@ -155,17 +154,17 @@ final class OW_Response
         {
             foreach ( $this->headers as $headerName => $headerValue )
             {
-                if ( substr(mb_strtolower($headerName), 0, 4) === 'http' )
+                if ( substr(mb_strtolower($headerName), 0, 4) === "http" )
                 {
-                    header($headerName . ' ' . $headerValue);
+                    header($headerName . " " . $headerValue);
                 }
-                else if ( mb_strtolower($headerName) === 'status' )
+                else if ( mb_strtolower($headerName) === "status" )
                 {
-                    header(ucfirst(mb_strtolower($headerName)) . ': ' . $headerValue, null, (int) $headerValue);
+                    header(ucfirst(mb_strtolower($headerName)) . ": " . $headerValue, null, (int) $headerValue);
                 }
                 else
                 {
-                    header($headerName . ':' . $headerValue);
+                    header($headerName . ":" . $headerValue);
                 }
             }
         }
@@ -193,31 +192,31 @@ final class OW_Response
      */
     public function respond()
     {
-        $event = new OW_Event(OW_EventManager::ON_BEFORE_DOCUMENT_RENDER);
-        OW::getEventManager()->trigger($event);
+        $event = new \OW_Event(EventManager::ON_BEFORE_DOCUMENT_RENDER);
+        \OW::getEventManager()->trigger($event);
         if ( $this->document !== null )
         {
             $renderedMarkup = $this->document->render();
 
-            $event = new BASE_CLASS_EventCollector('base.append_markup');
-            OW::getEventManager()->trigger($event);
+            $event = new \BASE_CLASS_EventCollector("base.append_markup");
+            \OW::getEventManager()->trigger($event);
             $data = $event->getData();
-            $this->markup = str_replace(OW_Document::APPEND_PLACEHOLDER, PHP_EOL . implode(PHP_EOL, $data), $renderedMarkup);
+            $this->markup = str_replace(Document::APPEND_PLACEHOLDER, PHP_EOL . implode(PHP_EOL, $data), $renderedMarkup);
         }
 
-        $event = new OW_Event(OW_EventManager::ON_AFTER_DOCUMENT_RENDER);
-        OW::getEventManager()->trigger($event);
+        $event = new \OW_Event(EventManager::ON_AFTER_DOCUMENT_RENDER);
+        \OW::getEventManager()->trigger($event);
 
         $this->sendHeaders();
 
-        if ( OW::getRequest()->isAjax() )
+        if ( \OW::getRequest()->isAjax() )
         {
             exit();
         }
 
         if ( OW_PROFILER_ENABLE || OW_DEV_MODE )
         {
-            UTIL_Profiler::getInstance()->mark('final');
+            \Oxwall\Utilities\Profiler::getInstance()->mark("final");
         }
 
         if ( OW_DEBUG_MODE )
@@ -227,7 +226,7 @@ final class OW_Response
 
         echo $this->markup;
 
-        $event = new OW_Event('core.exit');
-        OW::getEventManager()->trigger($event);
+        $event = new \OW_Event("core.exit");
+        \OW::getEventManager()->trigger($event);
     }
 }

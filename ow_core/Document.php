@@ -22,14 +22,16 @@
  * which combines Covered Code or portions thereof with code not governed by the terms of the CPAL.
  */
 
+namespace Oxwall\Core;
+
 /**
  * Base document class.
  *
  * @author Sardar Madumarov <madumarov@gmail.com>
  * @package ow_core
- * @since 1.0
+ * @since 1.8.3
  */
-abstract class OW_Document
+abstract class Document
 {
     const HTML = 1;
     const AJAX = 2;
@@ -38,7 +40,7 @@ abstract class OW_Document
 //	const FEED = 3;
 //	const PDF = 4;
 
-    const APPEND_PLACEHOLDER = '###ow_postappend_placeholder###';
+    const APPEND_PLACEHOLDER = "###ow_postappend_placeholder###";
 
     /**
      * Document title.

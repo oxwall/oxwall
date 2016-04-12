@@ -22,28 +22,27 @@
  * which combines Covered Code or portions thereof with code not governed by the terms of the CPAL.
  */
 
+namespace Oxwall\Core;
+
 /**
- * Description...
- *
  * @author Sardar Madumarov <madumarov@gmail.com>
- * @package ow_core
- * @since 1.0
+ * @since 1.8.3
  */
-class OW_AjaxDocument extends OW_HtmlDocument
+class AjaxDocument extends HtmlDocument
 {
 
     public function __construct()
     {
-        $this->setType(OW_Document::AJAX);
+        $this->setType(Document::AJAX);
     }
 
     public function getOnloadScript()
     {
-        $onloadJS = '';
+        $onloadJS = "";
 
-        ksort($this->onloadJavaScript['items']);
+        ksort($this->onloadJavaScript["items"]);
 
-        foreach ( $this->onloadJavaScript['items'] as $priority => $scripts )
+        foreach ( $this->onloadJavaScript["items"] as $priority => $scripts )
         {
             foreach ( $scripts as $script )
             {
@@ -56,7 +55,7 @@ class OW_AjaxDocument extends OW_HtmlDocument
     
     public function getScriptBeforeIncludes()
     {
-        $onloadJS = '';
+        $onloadJS = "";
         
         ksort($this->preIncludeJavaScriptDeclarations);
 
@@ -78,9 +77,9 @@ class OW_AjaxDocument extends OW_HtmlDocument
     {
         $jsUrlList = array();
 
-        ksort($this->javaScripts['items']);
+        ksort($this->javaScripts["items"]);
 
-        foreach ( $this->javaScripts['items'] as $priority => $types )
+        foreach ( $this->javaScripts["items"] as $priority => $types )
         {
             foreach ( $types as $type => $urls )
             {
@@ -98,9 +97,9 @@ class OW_AjaxDocument extends OW_HtmlDocument
     {
         $cssFiles = array();
 
-        ksort($this->styleSheets['items']);
+        ksort($this->styleSheets["items"]);
 
-        foreach ( $this->styleSheets['items'] as $priority => $scipts )
+        foreach ( $this->styleSheets["items"] as $priority => $scipts )
         {
             foreach ( $scipts as $media => $urls )
             {
@@ -116,11 +115,11 @@ class OW_AjaxDocument extends OW_HtmlDocument
 
     public function getStyleDeclarations()
     {
-        $cssCode = '';
+        $cssCode = "";
 
-        ksort($this->styleDeclarations['items']);
+        ksort($this->styleDeclarations["items"]);
 
-        foreach ( $this->styleDeclarations['items'] as $priority => $mediaTypes )
+        foreach ( $this->styleDeclarations["items"] as $priority => $mediaTypes )
         {
             foreach ( $mediaTypes as $media => $declarations )
             {
@@ -137,6 +136,6 @@ class OW_AjaxDocument extends OW_HtmlDocument
     public function render()
     {
         //TODO compile all scripts, styles, assigned vars and send as JSON array
-        return '';
+        return "";
     }
 }

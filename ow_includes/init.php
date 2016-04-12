@@ -23,13 +23,14 @@
  */
 require_once OW_DIR_ROOT . "ow_includes/config.php";
 require_once OW_DIR_ROOT . "ow_includes/define.php";
-require_once OW_DIR_UTIL . "debug.php";
-require_once OW_DIR_UTIL . "string.php";
-require_once OW_DIR_CORE . "autoload.php";
-require_once OW_DIR_CORE . "exception.php";
-require_once OW_DIR_INC . "function.php";
+//require_once OW_DIR_UTIL . "debug.php";
+//require_once OW_DIR_UTIL . "String.php";
+require_once OW_DIR_CORE . "Autoload.php";
+//require_once OW_DIR_CORE . "exception.php";
+//require_once OW_DIR_INC . "function.php";
+require_once OW_DIR_CORE . "OW.php";
 require_once OW_DIR_CORE . "ow.php";
-require_once OW_DIR_CORE . "plugin.php";
+//require_once OW_DIR_CORE . "plugin.php";
 
 mb_internal_encoding("UTF-8");
 
@@ -46,7 +47,7 @@ $platformNamespacePrefixList = array(
     "Oxwall\Base\\" => OW_DIR_SYSTEM_PLUGIN . "base" . DS
 );
 
-$autoloader = OW_Autoload::getInstance();
+$autoloader = \Oxwall\Core\Autoload::getInstance();
 
 foreach ( $platformNamespacePrefixList as $prefix => $mountDir )
 {

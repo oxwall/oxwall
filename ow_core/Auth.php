@@ -22,30 +22,33 @@
  * which combines Covered Code or portions thereof with code not governed by the terms of the CPAL.
  */
 
+namespace Oxwall\Core;
+
 /**
  * The class is a gateway for auth. adapters and provides common API to authenticate users.
  *
  * @author Sardar Madumarov <madumarov@gmail.com>
  * @package ow_core
- * @since 1.0
+ * @since 1.8.3
  */
-class OW_Auth
+class Auth
 {
     /**
-     * @var OW_IAuthenticator
+     * @var IAuthenticator
      */
     private $authenticator;
+
     /**
      * Singleton instance.
      *
-     * @var OW_Auth
+     * @var Auth
      */
     private static $classInstance;
 
     /**
      * Returns an instance of class (singleton pattern implementation).
      *
-     * @return OW_Auth
+     * @return Auth
      */
     public static function getInstance()
     {
@@ -62,11 +65,11 @@ class OW_Auth
      */
     private function __construct()
     {
-
+        
     }
 
     /**
-     * @return OW_IAuthenticator
+     * @return IAuthenticator
      */
     public function getAuthenticator()
     {
@@ -74,9 +77,9 @@ class OW_Auth
     }
 
     /**
-     * @param OW_IAuthenticator $authenticator
+     * @param IAuthenticator $authenticator
      */
-    public function setAuthenticator( OW_IAuthenticator $authenticator )
+    public function setAuthenticator( IAuthenticator $authenticator )
     {
         $this->authenticator = $authenticator;
     }
@@ -84,16 +87,16 @@ class OW_Auth
     /**
      * Tries to authenticate user using provided adapter.
      *
-     * @param OW_AuthAdapter $adapter
-     * @return OW_AuthResult
+     * @param AuthAdapter $adapter
+     * @return AuthResult
      */
-    public function authenticate( OW_AuthAdapter $adapter )
+    public function authenticate( AuthAdapter $adapter )
     {
         $result = $adapter->authenticate();
 
-        if ( !( $result instanceof OW_AuthResult ) )
+        if ( !( $result instanceof AuthResult ) )
         {
-            throw new LogicException('Instance of OW_AuthResult expected!');
+            throw new \LogicException("Instance of OW_AuthResult expected!");
         }
 
         if ( $result->isValid() )
@@ -137,16 +140,16 @@ class OW_Auth
 
         if ( $userId < 1 )
         {
-            throw new InvalidArgumentException('invalid userId');
+            throw new \InvalidArgumentException("invalid userId");
         }
 
-        $event = new OW_Event(OW_EventManager::ON_BEFORE_USER_LOGIN, array('userId' => $userId));
-        OW::getEventManager()->trigger($event);
+        $event = new \OW_Event(EventManager::ON_BEFORE_USER_LOGIN, array("userId" => $userId));
+        \OW::getEventManager()->trigger($event);
 
         $this->authenticator->login($userId);
 
-        $event = new OW_Event(OW_EventManager::ON_USER_LOGIN, array('userId' => $userId));
-        OW::getEventManager()->trigger($event);
+        $event = new \OW_Event(EventManager::ON_USER_LOGIN, array("userId" => $userId));
+        \OW::getEventManager()->trigger($event);
     }
 
     /**
@@ -159,7 +162,7 @@ class OW_Auth
             return;
         }
 
-        $event = new OW_Event(OW_EventManager::ON_USER_LOGOUT, array('userId' => $this->getUserId()));
+        $event = new \OW_Event(EventManager::ON_USER_LOGOUT, array("userId" => $this->getUserId()));
         OW::getEventManager()->trigger($event);
 
         $this->authenticator->logout();

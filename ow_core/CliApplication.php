@@ -22,12 +22,38 @@
  * which combines Covered Code or portions thereof with code not governed by the terms of the CPAL.
  */
 
+namespace Oxwall\Core;
+
 /**
  * @author Sardar Madumarov <madumarov@gmail.com>
- * @package ow_utilities
- * @since 1.0
+ * @since 1.8.3
  */
-class UTIL_Array
+class CliApplication extends Application
 {
-    
+
+    private function __construct()
+    {
+        $this->context = self::CONTEXT_CLI;
+    }
+    /**
+     * Singleton instance.
+     *
+     * @var CliApplication
+     */
+    private static $classInstance;
+
+    /**
+     * Returns an instance of class (singleton pattern implementation).
+     *
+     * @return CliApplication
+     */
+    public static function getInstance()
+    {
+        if ( self::$classInstance === null )
+        {
+            self::$classInstance = new self();
+        }
+
+        return self::$classInstance;
+    }
 }

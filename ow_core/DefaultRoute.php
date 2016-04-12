@@ -22,39 +22,26 @@
  * which combines Covered Code or portions thereof with code not governed by the terms of the CPAL.
  */
 
+namespace Oxwall\Core;
+
+use \Oxwall\Utilities\String;
+
 /**
  * The class is responsible for default stratagy of url generation.
  * All URIs (except URIs working with custom routes) are generated and decomposed by default route.
  * DefaultRoute class can be extended and modified to change whole url generation strategy.
  * 
  * @author Sardar Madumarov <madumarov@gmail.com>
- * @package ow_core
- * @since 1.0
+ * @since 1.8.3
  */
-class OW_DefaultRoute
+class DefaultRoute
 {
-    private $controllerNamePrefix = 'CTRL';
-
-    /**
-     * @return string
-     */
-//    public function getControllerNamePrefix()
-//    {
-//        return $this->controllerNamePrefix;
-//    }
-//
-//    /**
-//     * @param string $controllerNamePrefix
-//     */
-//    public function setControllerNamePrefix( $controllerNamePrefix )
-//    {
-//        $this->controllerNamePrefix = $controllerNamePrefix;
-//    }
+    private $controllerNamePrefix = "CTRL";
 
     /**
      * Generates URI using provided params.
      *
-     * @throws InvalidArgumentException
+     * @throws \InvalidArgumentException
      * @param string $controller
      * @param string $action
      * @param array $params
@@ -64,37 +51,37 @@ class OW_DefaultRoute
     {
         if ( empty($controller) || ( empty($action) && !empty($params) ) )
         {
-            throw new InvalidArgumentException("Can't generate uri for empty controller/action !");
+            throw new \InvalidArgumentException("Cant generate uri for empty controller/action !");
         }
 
-        $ctrlParts = explode('_', $controller);
-        $moduleNamePrefix = str_replace('ctrl', '', strtolower($ctrlParts[1]));
+        $ctrlParts = explode("_", $controller);
+        $moduleNamePrefix = str_replace("ctrl", "", strtolower($ctrlParts[1]));
 
         if ( strlen($moduleNamePrefix) > 0 )
         {
-            $moduleNamePrefix .= '-';
+            $moduleNamePrefix .= "-";
         }
 
         $controller = trim($controller);
         $action = ( $action === null ) ? null : trim($action);
 
-        $paramString = '';
+        $paramString = "";
 
         foreach ( $params as $key => $value )
         {
-            $paramString .= trim($key) . '/' . urlencode(trim($value)) . '/';
+            $paramString .= trim($key) . "/" . urlencode(trim($value)) . "/";
         }
 
-        $className = str_replace(OW::getAutoloader()->getPackagePointer($controller) . '_', '', $controller);
+        $className = str_replace(\OW::getAutoloader()->getPackagePointer($controller) . "_", "", $controller);
 
-        $plugin = OW::getPluginManager()->getPlugin(OW::getAutoloader()->getPluginKey($controller));
+        $plugin = \OW::getPluginManager()->getPlugin(\OW::getAutoloader()->getPluginKey($controller));
 
         if ( $action === null )
         {
-            return strtolower($plugin->getModuleName()) . '/' . substr(UTIL_String::capsToDelimiter($className, '-'), 1);
+            return strtolower($plugin->getModuleName()) . "/" . substr(String::capsToDelimiter($className, "-"), 1);
         }
 
-        return $moduleNamePrefix . strtolower($plugin->getModuleName()) . '/' . substr(UTIL_String::capsToDelimiter($className, '-'), 1) . '/' . UTIL_String::capsToDelimiter($action, '-') . '/' . $paramString;
+        return $moduleNamePrefix . strtolower($plugin->getModuleName()) . "/" . substr(String::capsToDelimiter($className, "-"), 1) . "/" . String::capsToDelimiter($action, "-") . "/" . $paramString;
     }
 
     /**
@@ -106,20 +93,20 @@ class OW_DefaultRoute
      */
     public function getDispatchAttrs( $uri )
     {//TODO check if method is in try/catch
-        $uriString = UTIL_String::removeFirstAndLastSlashes($uri);
+        $uriString = String::removeFirstAndLastSlashes($uri);
 
-        $uriArray = explode('/', $uriString);
+        $uriArray = explode("/", $uriString);
 
         if ( sizeof($uriArray) < 2 )
         {
-            throw new Redirect404Exception('Invalid uri was provided for routing!');
+            throw new \Redirect404Exception("Invalid uri was provided for routing!");
         }
 
-        $controllerNamePrefixAdd = '';
+        $controllerNamePrefixAdd = "";
 
-        if ( strstr($uriArray[0], '-') )
+        if ( strstr($uriArray[0], "-") )
         {
-            $uriPartArray = explode('-', $uriArray[0]);
+            $uriPartArray = explode("-", $uriArray[0]);
             $uriArray[0] = $uriPartArray[1];
             $controllerNamePrefixAdd = strtoupper($uriPartArray[0]);
         }
@@ -136,11 +123,11 @@ class OW_DefaultRoute
             {
                 try
                 {
-                    $classPrefix = strtoupper(OW::getPluginManager()->getPluginKey($uriArray[$i])) . '_' . $controllerNamePrefixAdd . $this->controllerNamePrefix;
+                    $classPrefix = strtoupper(\OW::getPluginManager()->getPluginKey($uriArray[$i])) . "_" . $controllerNamePrefixAdd . $this->controllerNamePrefix;
                 }
-                catch ( InvalidArgumentException $e )
+                catch ( \InvalidArgumentException $e )
                 {
-                    throw new Redirect404Exception('Invalid uri was provided for routing!');
+                    throw new \Redirect404Exception("Invalid uri was provided for routing!");
                 }
 
                 continue;
@@ -150,33 +137,33 @@ class OW_DefaultRoute
             {
                 if ( $classPrefix === null )
                 {
-                    throw new Redirect404Exception('Invalid uri was provided for routing!');
+                    throw new \Redirect404Exception("Invalid uri was provided for routing!");
                 }
 
-                $ctrClass = $classPrefix . '_' . UTIL_String::delimiterToCaps('-' . $uriArray[$i], '-');
+                $ctrClass = $classPrefix . "_" . String::delimiterToCaps("-" . $uriArray[$i], "-");
 
-                if ( !file_exists(OW::getAutoloader()->getClassPath($ctrClass)) )
+                if ( !file_exists(\OW::getAutoloader()->getClassPath($ctrClass)) )
                 {
-                    throw new Redirect404Exception('Invalid uri was provided for routing!');
+                    throw new \Redirect404Exception("Invalid uri was provided for routing!");
                 }
 
-                $dispatchAttrs['controller'] = $ctrClass;
+                $dispatchAttrs["controller"] = $ctrClass;
                 continue;
             }
 
             if ( $i === 2 )
             {
-                $dispatchAttrs['action'] = UTIL_String::delimiterToCaps($uriArray[$i], '-');
+                $dispatchAttrs["action"] = String::delimiterToCaps($uriArray[$i], "-");
                 continue;
             }
 
             if ( $i % 2 !== 0 )
             {
-                $dispatchAttrs['vars'][$uriArray[$i]] = null;
+                $dispatchAttrs["vars"][$uriArray[$i]] = null;
             }
             else
             {
-                $dispatchAttrs['vars'][$uriArray[$i - 1]] = $uriArray[$i];
+                $dispatchAttrs["vars"][$uriArray[$i - 1]] = $uriArray[$i];
             }
         }
 

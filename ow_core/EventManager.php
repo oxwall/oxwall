@@ -22,56 +22,59 @@
  * which combines Covered Code or portions thereof with code not governed by the terms of the CPAL.
  */
 
+namespace Oxwall\Core;
+
+use Oxwall\Utilities\Profiler as Profiler;
+
 /**
  * The class provides access to event system of framework.
  * Works as simple as it can be - plugins add PHP listeners (callbacks) to manager stack.
  * When event triggered the whole stack is called.
  *
  * @author Sardar Madumarov <madumarov@gmail.com>
- * @package ow_core
- * @since 1.0
+ * @since 1.8.3
  */
-class OW_EventManager
+class EventManager
 {
     /* list of predefined system events: application lifecycle */
-    const ON_APPLICATION_INIT = 'core.app_init';
-    const ON_PLUGINS_INIT = 'core.plugins_init';
-    const ON_AFTER_ROUTE = 'core.after_route';
-    const ON_AFTER_REQUEST_HANDLE = 'core.after_dispatch';
-    const ON_BEFORE_DOCUMENT_RENDER = 'core.before_document_render';
-    const ON_AFTER_DOCUMENT_RENDER = 'core.document_render';
-    const ON_FINALIZE = 'core.finalize';
-    const ON_AFTER_PLUGIN_INSTALL = 'core.plugin_install';
-    const ON_BEFORE_PLUGIN_UNINSTALL = 'core.plugin_uninstall';
-    const ON_AFTER_PLUGIN_UNINSTALL = 'core.after_plugin_uninstall';
-    const ON_AFTER_PLUGIN_ACTIVATE = 'core.plugin_activate';
-    const ON_BEFORE_PLUGIN_DEACTIVATE = 'core.plugin_deactivate';
-    const ON_AFTER_PLUGIN_DEACTIVATE = 'core.after_plugin_deactivate';
+    const ON_APPLICATION_INIT = "core.app_init";
+    const ON_PLUGINS_INIT = "core.plugins_init";
+    const ON_AFTER_ROUTE = "core.after_route";
+    const ON_AFTER_REQUEST_HANDLE = "core.after_dispatch";
+    const ON_BEFORE_DOCUMENT_RENDER = "core.before_document_render";
+    const ON_AFTER_DOCUMENT_RENDER = "core.document_render";
+    const ON_FINALIZE = "core.finalize";
+    const ON_AFTER_PLUGIN_INSTALL = "core.plugin_install";
+    const ON_BEFORE_PLUGIN_UNINSTALL = "core.plugin_uninstall";
+    const ON_AFTER_PLUGIN_UNINSTALL = "core.after_plugin_uninstall";
+    const ON_AFTER_PLUGIN_ACTIVATE = "core.plugin_activate";
+    const ON_BEFORE_PLUGIN_DEACTIVATE = "core.plugin_deactivate";
+    const ON_AFTER_PLUGIN_DEACTIVATE = "core.after_plugin_deactivate";
     const ON_AFTER_PLUGIN_UPDATE = "core.plugin_update";
 
-    const ON_CLI_RUN = 'cli.run';
+    const ON_CLI_RUN = "cli.run";
 
     /* list of predefined system events: general events  */
-    const ON_BEFORE_USER_REGISTER = 'base.before_user_register';
-    const ON_BEFORE_USER_LOGIN = 'base.before_user_login';
-    const ON_USER_REGISTER = 'base.user_register';
-    const ON_USER_UNREGISTER = 'base.user_unregister';
-    const ON_USER_LOGIN = 'base.user_login';
-    const ON_USER_LOGOUT = 'base.user_logout';
-    const ON_USER_SUSPEND = 'base.user_suspend';
-    const ON_USER_UNSUSPEND = 'base.user_unsuspend';
-    const ON_USER_EDIT = 'base.user_edit';
-    const ON_USER_EDIT_BY_ADMIN = 'base.user_edit_by_admin';
-    const ON_JOIN_FORM_RENDER = 'base.join_form_render';
-    const ON_USER_BLOCK = 'base.on_user_block';
-    const ON_USER_UNBLOCK = 'base.on_user_unblock';
-    const ON_USER_APPROVE = 'base.on_user_approve';
-    const ON_USER_DISAPPROVE = 'base.on_user_disapprove';
-    const ON_USER_MARK_FEATURED = 'base.on_user_mark_featured';
-    const ON_USER_UNMARK_FEATURED = 'base.on_user_unmark_featured';
-    const ON_BEFORE_USER_COMPLETE_PROFILE = 'base.on_before_user_complete_profile';
-    const ON_AFTER_USER_COMPLETE_PROFILE = 'base.on_after_user_complete_profile';
-    const ON_BEFORE_USER_COMPLETE_ACCOUNT_TYPE = 'base.on_before_user_complete_account_type';
+    const ON_BEFORE_USER_REGISTER = "base.before_user_register";
+    const ON_BEFORE_USER_LOGIN = "base.before_user_login";
+    const ON_USER_REGISTER = "base.user_register";
+    const ON_USER_UNREGISTER = "base.user_unregister";
+    const ON_USER_LOGIN = "base.user_login";
+    const ON_USER_LOGOUT = "base.user_logout";
+    const ON_USER_SUSPEND = "base.user_suspend";
+    const ON_USER_UNSUSPEND = "base.user_unsuspend";
+    const ON_USER_EDIT = "base.user_edit";
+    const ON_USER_EDIT_BY_ADMIN = "base.user_edit_by_admin";
+    const ON_JOIN_FORM_RENDER = "base.join_form_render";
+    const ON_USER_BLOCK = "base.on_user_block";
+    const ON_USER_UNBLOCK = "base.on_user_unblock";
+    const ON_USER_APPROVE = "base.on_user_approve";
+    const ON_USER_DISAPPROVE = "base.on_user_disapprove";
+    const ON_USER_MARK_FEATURED = "base.on_user_mark_featured";
+    const ON_USER_UNMARK_FEATURED = "base.on_user_unmark_featured";
+    const ON_BEFORE_USER_COMPLETE_PROFILE = "base.on_before_user_complete_profile";
+    const ON_AFTER_USER_COMPLETE_PROFILE = "base.on_after_user_complete_profile";
+    const ON_BEFORE_USER_COMPLETE_ACCOUNT_TYPE = "base.on_before_user_complete_account_type";
 
     /**
      * @var array
@@ -103,7 +106,7 @@ class OW_EventManager
     private $eventsLog = array();
 
     /**
-     * @var UTIL_Profiler
+     * @var Profiler
      */
     private $profiler;
 
@@ -119,19 +122,19 @@ class OW_EventManager
      */
     private function __construct()
     {
-        $this->profiler = UTIL_Profiler::getInstance('event_manager');
+        $this->profiler = Profiler::getInstance("event_manager");
     }
     /**
      * Singleton instance.
      *
-     * @var OW_EventManager
+     * @var EventManager
      */
     private static $classInstance;
 
     /**
      * Returns an instance of class (singleton pattern implementation).
      *
-     * @return OW_EventManager
+     * @return EventManager
      */
     public static function getInstance()
     {
@@ -191,7 +194,7 @@ class OW_EventManager
      * @param OW_Event $event
      * @return OW_Event
      */
-    public function trigger( OW_Event $event )
+    public function trigger( \OW_Event $event )
     {
         if ( isset($this->listeners[$event->getName()]) && !empty($this->listeners[$event->getName()]) )
         {
@@ -200,7 +203,7 @@ class OW_EventManager
             // log triggered events for developer mode
             if ( $this->devMode )
             {
-                $startTime = UTIL_Profiler::getInstance()->getTotalTime();
+                $startTime = Profiler::getInstance()->getTotalTime();
                 $this->profiler->reset();
                 foreach ( $this->listeners[$event->getName()] as $priority => $data )
                 {
@@ -215,8 +218,8 @@ class OW_EventManager
 
                 if ( !in_array($event->getName(), $this->eventsToSkip) && count($this->eventsLog) < $this->maxItemsInLog )
                 {
-                    $this->eventsLog[] = array('type' => 'trigger', 'start' => $startTime, 'exec' => $this->profiler->getTotalTime(),
-                        'event' => $event, 'listeners' => $this->listeners[$event->getName()]);
+                    $this->eventsLog[] = array("type" => "trigger", "start" => $startTime, "exec" => $this->profiler->getTotalTime(),
+                        "event" => $event, "listeners" => $this->listeners[$event->getName()]);
                 }
             }
             else
@@ -236,12 +239,12 @@ class OW_EventManager
         else
         {
             // log events with no listeners
-            $startTime = UTIL_Profiler::getInstance()->getTotalTime();
+            $startTime = Profiler::getInstance()->getTotalTime();
 
             if ( $this->devMode && !in_array($event->getName(), $this->eventsToSkip) && count($this->eventsLog) < $this->maxItemsInLog )
             {
-                $this->eventsLog[] = array('type' => 'trigger', 'start' => $startTime, 'event' => $event, 'listeners' => array(),
-                    'exec' => 0);
+                $this->eventsLog[] = array("type" => "trigger", "start" => $startTime, "event" => $event, "listeners" => array(),
+                    "exec" => 0);
             }
         }
 
@@ -249,7 +252,7 @@ class OW_EventManager
     }
 
     /**
-     * Calls last event listener and returns it's result value.
+     * Calls last event listener and returns it"s result value.
      *
      * @param string $eventName
      * @param array $eventParams
@@ -257,7 +260,7 @@ class OW_EventManager
      */
     public function call( $eventName, $eventParams = array() )
     {
-        $event = new OW_Event($eventName, $eventParams);
+        $event = new \OW_Event($eventName, $eventParams);
 
         if ( !empty($this->listeners[$eventName]) )
         {
@@ -266,15 +269,15 @@ class OW_EventManager
             // log triggered events for developer mode
             if ( $this->devMode )
             {
-                $startTime = UTIL_Profiler::getInstance()->getTotalTime();
+                $startTime = Profiler::getInstance()->getTotalTime();
                 $this->profiler->reset();
                 $handlers = reset($this->listeners[$eventName]);
                 $result = call_user_func(end($handlers), $event);
 
                 if ( !in_array($event->getName(), $this->eventsToSkip) && count($this->eventsLog) < $this->maxItemsInLog )
                 {
-                    $this->eventsLog[] = array('type' => 'call', 'start' => $startTime, 'exec' => $this->profiler->getTotalTime(),
-                        'event' => $event, 'listeners' => $this->listeners[$event->getName()]);
+                    $this->eventsLog[] = array("type" => "call", "start" => $startTime, "exec" => $this->profiler->getTotalTime(),
+                        "event" => $event, "listeners" => $this->listeners[$event->getName()]);
                 }
             }
             else
@@ -288,12 +291,12 @@ class OW_EventManager
         else
         {
             // log events with no listeners
-            $startTime = UTIL_Profiler::getInstance()->getTotalTime();
+            $startTime = Profiler::getInstance()->getTotalTime();
 
             if ( $this->devMode && !in_array($event->getName(), $this->eventsToSkip) && count($this->eventsLog) < $this->maxItemsInLog )
             {
-                $this->eventsLog[] = array('type' => 'call', 'start' => $startTime, 'event' => $event, 'listeners' => array(),
-                    'exec' => 0);
+                $this->eventsLog[] = array("type" => "call", "start" => $startTime, "event" => $event, "listeners" => array(),
+                    "exec" => 0);
             }
         }
     }
@@ -311,6 +314,6 @@ class OW_EventManager
      */
     public function getLog()
     {
-        return array('bind' => $this->listeners, 'call' => $this->eventsLog);
+        return array("bind" => $this->listeners, "call" => $this->eventsLog);
     }
 }

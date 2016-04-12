@@ -29,11 +29,7 @@
  * @package ow_core
  * @since 1.0
  */
-interface OW_ICacheBackend
+interface OW_ICacheBackend extends Oxwall\Core\ICacheBackend
 {
-    public function save( $data, $key, array $tags = array(), $expTime );
-    public function load( $key );
-    public function test( $key );
-    public function remove( $key );
-    public function clean( array $tags, $mode );
+    
 }

@@ -22,14 +22,16 @@
  * which combines Covered Code or portions thereof with code not governed by the terms of the CPAL.
  */
 
+namespace Oxwall\Utilities;
+
 /**
  * @author Sardar Madumarov <madumarov@gmail.com>
- * @package ow_utilities
- * @since 1.0
+ * @since 1.8.3
  */
-class UTIL_String
+class String
 {
-    private static $caps = array('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z');
+    private static $caps = array("A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R",
+        "S", "T", "U", "V", "W", "X", "Y", "Z");
 
     /**
      * Replaces upper case chars in string with delimeter + lowercase chars 
@@ -38,33 +40,33 @@ class UTIL_String
      * @param string $divider
      * @return string
      */
-    public static function capsToDelimiter( $string, $delimiter = '_' )
+    public static function capsToDelimiter( $string, $delimiter = "_" )
     {
         static $delimiters = array();
 
         if ( !isset($delimiters[$delimiter]) )
         {
-            $delimiters[$delimiter]['search'] = array();
-            $delimiters[$delimiter]['replace'] = array();
+            $delimiters[$delimiter]["search"] = array();
+            $delimiters[$delimiter]["replace"] = array();
 
             foreach ( self::$caps as $value )
             {
-                $delimiters[$delimiter]['search'][] = $value;
-                $delimiters[$delimiter]['replace'][] = $delimiter . mb_strtolower($value);
+                $delimiters[$delimiter]["search"][] = $value;
+                $delimiters[$delimiter]["replace"][] = $delimiter . mb_strtolower($value);
             }
         }
 
-        return str_replace($delimiters[$delimiter]['search'], $delimiters[$delimiter]['replace'], $string);
+        return str_replace($delimiters[$delimiter]["search"], $delimiters[$delimiter]["replace"], $string);
     }
 
     /**
      * Replaces lowercase case chars + delimiter in string uppercase chars
      *
-     * @param unknown_type $string
-     * @param unknown_type $delimiter
-     * @return unknown
+     * @param string $string
+     * @param string $delimiter
+     * @return string
      */
-    public static function delimiterToCaps( $string, $delimiter = '_' )
+    public static function delimiterToCaps( $string, $delimiter = "_" )
     {
         $searchArray = array();
         $replaceArray = array();
@@ -82,17 +84,15 @@ class UTIL_String
     }
 
     /**
-     * Enter description here...
-     *
      * @param array $array
      * @param string $delimiter
      * @param string $left
      * @param string $right
      * @return string
      */
-    public static function arrayToDelimitedString( array $array, $delimiter = ',', $left = '', $right = '' )
+    public static function arrayToDelimitedString( array $array, $delimiter = ",", $left = "", $right = "" )
     {
-        $result = '';
+        $result = "";
         foreach ( $array as $value )
         {
             $result .= ( $left . $value . $right . $delimiter);
@@ -107,19 +107,18 @@ class UTIL_String
 
     public static function removeFirstAndLastSlashes( $string )
     {
-        if ( mb_substr($string, 0, 1) === '/' )
+        if ( mb_substr($string, 0, 1) === "/" )
         {
             $string = mb_substr($string, 1);
         }
 
-        if ( mb_substr($string, -1) === '/' )
+        if ( mb_substr($string, -1) === "/" )
         {
             $string = mb_substr($string, 0, -1);
         }
         return $string;
     }
 
-    //TODO write description
     public static function replaceVars( $data, array $vars = null )
     {
         if ( !isset($vars) || count($vars) < 1 )
@@ -129,7 +128,7 @@ class UTIL_String
 
         foreach ( $vars as $key => $var )
         {
-            $data = preg_replace('/{\$(' . preg_quote($key) . ')}/i', $var, $data);
+            $data = preg_replace("/{\$(" . preg_quote($key) . ")}/i", $var, $data);
         }
 
         return $data;
@@ -160,7 +159,8 @@ class UTIL_String
      * @param int $strength
      * @return string
      */
-    public static function getRandomStringWithPrefix( $prefix, $length = 8, $strength = self::RND_STR_ALPHA_WITH_CAPS_NUMERIC )
+    public static function getRandomStringWithPrefix( $prefix, $length = 8,
+        $strength = self::RND_STR_ALPHA_WITH_CAPS_NUMERIC )
     {
         return $prefix . self::getRandomString($length, $strength);
     }
@@ -230,7 +230,7 @@ class UTIL_String
             return $string;
         }
 
-        return mb_substr($string, 0, $length) . (empty($ending) ? '' : $ending);
+        return mb_substr($string, 0, $length) . (empty($ending) ? "" : $ending);
     }
 
     /**
@@ -241,12 +241,12 @@ class UTIL_String
      * @param integer $split_length
      * @return string
      */
-    public static function splitWord( $string, $delimiter = ' ', $split_length = 16 )
+    public static function splitWord( $string, $delimiter = " ", $split_length = 16 )
     {
-        $string_array = explode(' ', $string);
+        $string_array = explode(" ", $string);
         foreach ( $string_array as $id => $word )
         {
-            if ( mb_strpos($word, '-') != 0 )
+            if ( mb_strpos($word, "-") != 0 )
                 continue;
 
             if ( mb_strlen($word) > $split_length )
@@ -256,7 +256,7 @@ class UTIL_String
             }
         }
 
-        return implode(' ', $string_array);
+        return implode(" ", $string_array);
     }
 
     /**
@@ -275,13 +275,13 @@ class UTIL_String
         return self::processXmlObject($xml);
     }
 
-    private static function processXmlObject( SimpleXMLElement $el )
+    private static function processXmlObject( \SimpleXMLElement $el )
     {
         $result = (array) $el;
 
         foreach ( $result as $key => $val )
         {
-            if ( is_object($val) && $val instanceof SimpleXMLElement )
+            if ( is_object($val) && $val instanceof \SimpleXMLElement )
             {
                 $result[$key] = self::processXmlObject($val);
             }

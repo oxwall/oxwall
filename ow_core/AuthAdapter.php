@@ -22,20 +22,22 @@
  * which combines Covered Code or portions thereof with code not governed by the terms of the CPAL.
  */
 
+namespace Oxwall\Core;
+
 /**
  * Base abstract class for auth adapters.
  * Used to implement particular type of authentication.
  *
  * @author Sardar Madumarov <madumarov@gmail.com>
- * @package ow_core
- * @since 1.0
+ * @since 1.8.3
  */
-abstract class OW_AuthAdapter
+abstract class AuthAdapter
 {
+
     /**
      * Tries to authenticate user.
      *
-     * @return OW_AuthResult
+     * @return AuthResult
      */
     abstract function authenticate();
 }

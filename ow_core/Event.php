@@ -22,15 +22,16 @@
  * which combines Covered Code or portions thereof with code not governed by the terms of the CPAL.
  */
 
+namespace Oxwall\Core;
+
 /**
  * The base class for events. All events used in event manager should be
  * instance of OW_Event or derived from it.
  * 
  * @author Sardar Madumarov <madumarov@gmail.com>
- * @package ow_core
- * @since 1.0
+ * @since 1.8.3
  */
-class OW_Event
+class Event
 {
     /**
      * Event name.

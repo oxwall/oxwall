@@ -22,14 +22,15 @@
  * which combines Covered Code or portions thereof with code not governed by the terms of the CPAL.
  */
 
+namespace Oxwall\Utilities;
+
 /**
  * Profiler utility.
  * 
- * @author Sardar Madumarov <madumarov@gmail.com>
- * @package ow_utilities
- * @since 1.0
+ * @author Sardar Madumarov <madumarov@gmail.com> 
+ * @since 1.8.3
  */
-class UTIL_Profiler
+class Profiler
 {
     /**
      * @var array
@@ -74,7 +75,7 @@ class UTIL_Profiler
      */
     public function getTotalTime()
     {
-        return (microtime(true) - $this->checkPoints['start']);
+        return (microtime(true) - $this->checkPoints["start"]);
     }
 
     /**
@@ -92,9 +93,9 @@ class UTIL_Profiler
      * Returns "single-tone" instance of class for every $key
      *
      * @param string $key #Profiler object identifier#
-     * @return UTIL_Profiler
+     * @return Profiler
      */
-    public static function getInstance( $key = '_ow_' )
+    public static function getInstance( $key = "_ow_" )
     {
         if ( self::$classInstances === null )
         {
@@ -116,7 +117,7 @@ class UTIL_Profiler
      */
     public function mark( $key = null )
     {
-        $this->checkPoints[( $key === null ? 'chk' . $this->chkCounter++ : $key)] = microtime(true);
+        $this->checkPoints[( $key === null ? "chk" . $this->chkCounter++ : $key)] = microtime(true);
     }
 
     /**
@@ -124,16 +125,16 @@ class UTIL_Profiler
      */
     private function stop()
     {
-        $this->result['marks'] = array();
+        $this->result["marks"] = array();
 
         foreach ( $this->checkPoints as $key => $value )
         {
-            $this->result['marks'][$key] = sprintf('%.3f', $value - $this->checkPoints['start']);
+            $this->result["marks"][$key] = sprintf("%.3f", $value - $this->checkPoints["start"]);
         }
 
-        $endMark = $this->result['marks']['end'] = sprintf('%.3f', microtime(true) - $this->checkPoints['start']);
+        $endMark = $this->result["marks"]["end"] = sprintf("%.3f", microtime(true) - $this->checkPoints["start"]);
 
-        $this->result['total'] = $endMark;
+        $this->result["total"] = $endMark;
     }
 
     /**
@@ -143,7 +144,7 @@ class UTIL_Profiler
     public function reset()
     {
         $this->checkPoints = array();
-        $this->checkPoints['start'] = microtime(true);
+        $this->checkPoints["start"] = microtime(true);
         $this->result = array();
         $this->chkCounter = 0;
     }

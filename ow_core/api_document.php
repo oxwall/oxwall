@@ -30,47 +30,7 @@
  * @package ow.ow_core
  * @since 1.0
  */
-class OW_ApiDocument extends OW_Document
+class OW_ApiDocument extends Oxwall\Core\ApiDocument
 {
-    public function  __construct()
-    {
-        $this->type = OW_Document::JSON;
-    }
-
-    private $body;
-
-    public function getBody()
-    {
-        return $this->body;
-    }
-
-    public function setBody( $body )
-    {
-        $this->body = $body;
-    }
-
-    /**
-     * @return string
-     */
-    public function render()
-    {
-        if( $this->type == OW_Document::JSON )
-        {
-            return $this->renderJson();
-        }
-    }
-
-    private function renderJson()
-    {
-        OW::getResponse()->setHeader(OW_Response::HD_CNT_TYPE, "application/json");
-
-        $body = $this->getBody();
-        
-        $apiResponse = array(
-            "type" => "success",
-            "data" => empty($body) ? new stdClass() : $body
-        );
-        
-        return json_encode($apiResponse);
-    }
+    
 }

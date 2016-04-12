@@ -22,31 +22,31 @@
  * which combines Covered Code or portions thereof with code not governed by the terms of the CPAL.
  */
 
+namespace Oxwall\Core;
+
 /**
- * Class is responsible for...
- *
  * @author Sardar Madumarov <madumarov@gmail.com>
  * @package ow_core
- * @since 1.0
+ * @since 1.8.3
  */
-class OW_ViewRenderer
+class ViewRenderer
 {
     /**
-     * @var OW_Smarty
+     * @var Smarty
      */
     private $smarty;
 
     /**
      * Singleton instance.
      *
-     * @var OW_ViewRenderer
+     * @var ViewRenderer
      */
     private static $classInstance;
 
     /**
      * Returns an instance of class (singleton pattern implementation).
      *
-     * @return OW_ViewRenderer
+     * @return ViewRenderer
      */
     public static function getInstance()
     {
@@ -63,7 +63,7 @@ class OW_ViewRenderer
      */
     private function __construct()
     {
-        $this->smarty = new OW_Smarty();
+        $this->smarty = new Smarty();
     }
 
     /**
@@ -147,9 +147,9 @@ class OW_ViewRenderer
      */
     public function registerFunction( $name, $callback )
     {
-        if ( empty($this->smarty->registered_plugins['function'][$name]) )
+        if ( empty($this->smarty->registered_plugins["function"][$name]) )
         {
-            $this->smarty->registerPlugin('function', $name, $callback);
+            $this->smarty->registerPlugin("function", $name, $callback);
         }
     }
 
@@ -160,7 +160,7 @@ class OW_ViewRenderer
      */
     public function unregisterFunction( $name )
     {
-        $this->smarty->unregisterPlugin('function', $name);
+        $this->smarty->unregisterPlugin("function", $name);
     }
 
     /**
@@ -171,9 +171,9 @@ class OW_ViewRenderer
      */
     public function registerBlock( $name, $callback )
     {
-        if ( empty($this->smarty->registered_plugins['block'][$name]) )
+        if ( empty($this->smarty->registered_plugins["block"][$name]) )
         {
-            $this->smarty->registerPlugin('block', $name, $callback);
+            $this->smarty->registerPlugin("block", $name, $callback);
         }
     }
 
@@ -184,7 +184,7 @@ class OW_ViewRenderer
      */
     public function unregisterBlock( $name )
     {
-        $this->smarty->unregisterPlugin('block', $name);
+        $this->smarty->unregisterPlugin("block", $name);
     }
 
     /**
@@ -195,9 +195,9 @@ class OW_ViewRenderer
      */
     public function registerModifier( $name, $callback )
     {
-        if ( empty($this->smarty->registered_plugins['modifier'][$name]) )
+        if ( empty($this->smarty->registered_plugins["modifier"][$name]) )
         {
-            $this->smarty->registerPlugin('modifier', $name, $callback);
+            $this->smarty->registerPlugin("modifier", $name, $callback);
         }
     }
 
@@ -208,7 +208,7 @@ class OW_ViewRenderer
      */
     public function unregisterModifier( $name )
     {
-        $this->smarty->unregisterPlugin('modifier', $name);
+        $this->smarty->unregisterPlugin("modifier", $name);
     }
 
     /**

@@ -22,12 +22,13 @@
  * which combines Covered Code or portions thereof with code not governed by the terms of the CPAL.
  */
 
+namespace Oxwall\Utilities;
+
 /**
  * @author Sardar Madumarov <madumarov@gmail.com>
- * @package ow_utilities
- * @since 1.0
+ * @since 1.8.3
  */
-class UTIL_HtmlTag
+class HtmlTag
 {
 
     /**
@@ -63,7 +64,7 @@ class UTIL_HtmlTag
     {
         $prefix = ( $prefix === null ) ? 'auto_id' : trim($prefix);
 
-        return $prefix . '_' . UTIL_String::getRandomString(8, UTIL_String::RND_STR_ALPHA_NUMERIC);
+        return $prefix . '_' . String::getRandomString(8, String::RND_STR_ALPHA_NUMERIC); 
     }
     /**
      * @var Jevix
@@ -80,7 +81,7 @@ class UTIL_HtmlTag
         {
             require_once OW_DIR_LIB . 'jevix' . DS . 'jevix.class.php';
 
-            self::$jevix = new Jevix();
+            self::$jevix = new \Jevix();
         }
 
         $tagRules = array();
@@ -90,7 +91,7 @@ class UTIL_HtmlTag
         {
             foreach ( $tagList as $tag )
             {
-                $tagRules[$tag] = array(Jevix::TR_TAG_LIST => true);
+                $tagRules[$tag] = array(\Jevix::TR_TAG_LIST => true);
             }
         }
 
@@ -118,15 +119,15 @@ class UTIL_HtmlTag
 
                     if ( !isset($tagRules[$tag]) )
                     {
-                        $tagRules[$tag] = array(Jevix::TR_TAG_LIST => true);
+                        $tagRules[$tag] = array(\Jevix::TR_TAG_LIST => true);
                     }
 
-                    if ( !isset($tagRules[$tag][Jevix::TR_PARAM_ALLOWED]) )
+                    if ( !isset($tagRules[$tag][\Jevix::TR_PARAM_ALLOWED]) )
                     {
-                        $tagRules[$tag][Jevix::TR_PARAM_ALLOWED] = array();
+                        $tagRules[$tag][\Jevix::TR_PARAM_ALLOWED] = array();
                     }
 
-                    $tagRules[$tag][Jevix::TR_PARAM_ALLOWED][$param] = true;
+                    $tagRules[$tag][\Jevix::TR_PARAM_ALLOWED][$param] = true;
                 }
                 else
                 {
@@ -162,7 +163,7 @@ class UTIL_HtmlTag
         self::$jevix->commonTagParamRules = $commonAttrs;
         self::$jevix->tagsRules = $tagRules;
         self::$jevix->mediaSrcValidate = $mediaSrcValidate;
-        self::$jevix->mediaValidSrc = BOL_TextFormatService::getInstance()->getMediaResourceList();
+        self::$jevix->mediaValidSrc = \BOL_TextFormatService::getInstance()->getMediaResourceList();
 
         return self::$jevix;
     }

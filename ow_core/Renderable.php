@@ -22,14 +22,16 @@
  * which combines Covered Code or portions thereof with code not governed by the terms of the CPAL.
  */
 
+namespace Oxwall\Core;
+
 /**
  * Base class for renderable elements. Allows to assign vars and compile HTML using template engine.
  *
  * @author Sardar Madumarov <madumarov@gmail.com>
  * @package ow_core
- * @since 1.0
+ * @since 1.8.3
  */
-abstract class OW_Renderable
+abstract class Renderable
 {
     /**
      * List of added components.
@@ -146,7 +148,7 @@ abstract class OW_Renderable
      * @param string $key
      * @param OW_Renderable $component
      */
-    public function addComponent( $key, OW_Renderable $component )
+    public function addComponent( $key, $component )
     {
         $this->components[$key] = $component;
     }
@@ -180,7 +182,7 @@ abstract class OW_Renderable
      *
      * @param Form $form
      */
-    public function addForm( Form $form )
+    public function addForm( \Form $form )
     {
         $this->forms[$form->getName()] = $form;
     }
@@ -233,19 +235,20 @@ abstract class OW_Renderable
         $this->onBeforeRender();
         if ( !$this->visible )
         {
-            return '';
+            return "";
         }
 
         // TODO additional check
         if ( $this->template === null )
         {
-            throw new LogicException('No template was provided for render! Class `' . get_class($this) . '`.');
+            throw new \LogicException("No template was provided for render! Class `" . get_class($this) . "`.");
         }
 
         $className = get_class($this);
-        OW::getEventManager()->trigger(new OW_Event("core.performance_test", array("key" => "renderable_render.start", "params" => array("class" => $className))));
+        \OW::getEventManager()->trigger(new \OW_Event("core.performance_test",
+            array("key" => "renderable_render.start", "params" => array("class" => $className))));
 
-        $viewRenderer = OW_ViewRenderer::getInstance();
+        $viewRenderer = ViewRenderer::getInstance();
 
         $prevVars = $viewRenderer->getAllAssignedVars();
 
@@ -255,7 +258,7 @@ abstract class OW_Renderable
 
             foreach ( $this->components as $key => $value )
             {
-                $renderedCmps[$key] = $value->isVisible() ? $value->render() : '';
+                $renderedCmps[$key] = $value->isVisible() ? $value->render() : "";
             }
 
             $viewRenderer->assignVars($renderedCmps);
@@ -263,7 +266,7 @@ abstract class OW_Renderable
 
         if ( !empty($this->forms) )
         {
-            $viewRenderer->assignVar('_owForms_', $this->forms);
+            $viewRenderer->assignVar("_owForms_", $this->forms);
         }
 
         $viewRenderer->assignVars($this->assignedVars);
@@ -280,7 +283,8 @@ abstract class OW_Renderable
             self::$renderedClasses[$className] = $this->template;
         }
 
-        OW::getEventManager()->trigger(new OW_Event("core.performance_test", array("key" => "renderable_render.end", "params" => array("class" => $className))));
+        \OW::getEventManager()->trigger(new \OW_Event("core.performance_test",
+            array("key" => "renderable_render.end", "params" => array("class" => $className))));
 
         return $renderedMarkup;
     }

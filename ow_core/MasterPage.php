@@ -22,25 +22,26 @@
  * which combines Covered Code or portions thereof with code not governed by the terms of the CPAL.
  */
 
+namespace Oxwall\Core;
+
 /**
- * Master page is a common markup "border" for controller's output.
+ * Master page is a common markup "border" for controller"s output.
  * It includes menus, sidebar, header, etc.
  *
  * @author Sardar Madumarov <madumarov@gmail.com>
- * @package ow_core
- * @since 1.0
+ * @since 1.8.3
  */
-class OW_MasterPage extends OW_Renderable
+class MasterPage extends Renderable
 {
     /*
      * List of default master page templates.
      */
-    //const TEMPLATE_HTML_DOCUMENT = 'html_document';
-    const TEMPLATE_GENERAL = 'general';
-    const TEMPLATE_BLANK = 'blank';
-    const TEMPLATE_ADMIN = 'admin';
-    const TEMPLATE_SIGN_IN = 'sign_in';
-    const TEMPLATE_INDEX = 'index';
+    //const TEMPLATE_HTML_DOCUMENT = "html_document";
+    const TEMPLATE_GENERAL = "general";
+    const TEMPLATE_BLANK = "blank";
+    const TEMPLATE_ADMIN = "admin";
+    const TEMPLATE_SIGN_IN = "sign_in";
+    const TEMPLATE_INDEX = "index";
 
     /**
      * @var array
@@ -60,9 +61,9 @@ class OW_MasterPage extends OW_Renderable
      * Adds menu components to master page object.
      * 
      * @param string $name
-     * @param BASE_CMP_Menu $menu Adds
+     * @param \BASE_CMP_Menu $menu Adds
      */
-    public function addMenu( $name, BASE_CMP_Menu $menu )
+    public function addMenu( $name, \BASE_CMP_Menu $menu )
     {
         $this->menus[$name] = $menu;
     }
@@ -71,7 +72,7 @@ class OW_MasterPage extends OW_Renderable
      * Returns master page menu components.
      *
      * @param string $name
-     * @return BASE_CMP_Menu
+     * @return \BASE_CMP_Menu
      */
     public function getMenu( $name )
     {
@@ -95,19 +96,19 @@ class OW_MasterPage extends OW_Renderable
     }
 
     /**
-     * Master page can't handle forms.
+     * Master page can"t handle forms.
      * 
-     * @see OW_Renderable::addForm()
-     * @param Form $form
-     * @throws LogicException
+     * @see Renderable::addForm()
+     * @param \Form $form
+     * @throws \LogicException
      */
-    public function addForm( Form $form )
+    public function addForm( \Form $form )
     {
-        throw new LogicException('Cant add form to master page object!');
+        throw new \LogicException("Cant add form to master page object!");
     }
 
     /**
-     * Master page can't handle forms.
+     * Master page can"t handle forms.
      * 
      * @see OW_Renderable::getForm()
      * @param string $name
@@ -115,7 +116,7 @@ class OW_MasterPage extends OW_Renderable
      */
     public function getForm( $name )
     {
-        throw new LogicException('Master page cant cantain forms!');
+        throw new \LogicException("Master page cant cantain forms!");
     }
 
     /**
@@ -125,28 +126,28 @@ class OW_MasterPage extends OW_Renderable
     protected function init()
     {
         // add main menu
-        $mainMenu = new BASE_CMP_Menu();
-        $mainMenuItems = BOL_NavigationService::getInstance()->findMenuItems(BOL_NavigationService::MENU_TYPE_MAIN);
-        $mainMenu->setMenuItems(BOL_NavigationService::getInstance()->getMenuItems($mainMenuItems));
-        
-        $this->addMenu(BOL_NavigationService::MENU_TYPE_MAIN, $mainMenu);
-        
-        $this->addComponent('main_menu', new BASE_CMP_MainMenu(array(
+        $mainMenu = new \BASE_CMP_Menu();
+        $mainMenuItems = \BOL_NavigationService::getInstance()->findMenuItems(\BOL_NavigationService::MENU_TYPE_MAIN);
+        $mainMenu->setMenuItems(\BOL_NavigationService::getInstance()->getMenuItems($mainMenuItems));
+
+        $this->addMenu(\BOL_NavigationService::MENU_TYPE_MAIN, $mainMenu);
+
+        $this->addComponent("main_menu", new \BASE_CMP_MainMenu(array(
             "responsive" => false
         )));
 
         // add bottom menu
-        $bottomMenu = new BASE_CMP_BottomMenu();
-        $this->addMenu(BOL_NavigationService::MENU_TYPE_BOTTOM, $bottomMenu);
-        $this->addComponent('bottom_menu', $bottomMenu);
+        $bottomMenu = new \BASE_CMP_BottomMenu();
+        $this->addMenu(\BOL_NavigationService::MENU_TYPE_BOTTOM, $bottomMenu);
+        $this->addComponent("bottom_menu", $bottomMenu);
 
         // assign image control values
-        $currentTheme = OW::getThemeManager()->getCurrentTheme()->getDto();
-        $values = json_decode(OW::getConfig()->getValue('base', 'master_page_theme_info'), true);
+        $currentTheme = \OW::getThemeManager()->getCurrentTheme()->getDto();
+        $values = json_decode(\OW::getConfig()->getValue("base", "master_page_theme_info"), true);
 
         if ( isset($values[$currentTheme->getId()]) )
         {
-            $this->assign('imageControlValues', $values[$currentTheme->getId()]);
+            $this->assign("imageControlValues", $values[$currentTheme->getId()]);
         }
     }
 
@@ -154,7 +155,7 @@ class OW_MasterPage extends OW_Renderable
     {
         if ( $this->getTemplate() === null )
         {
-            $this->setTemplate(OW::getThemeManager()->getMasterPageTemplate(self::TEMPLATE_GENERAL));
+            $this->setTemplate(\OW::getThemeManager()->getMasterPageTemplate(self::TEMPLATE_GENERAL));
         }
 
         parent::onBeforeRender();

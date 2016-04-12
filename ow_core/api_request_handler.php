@@ -30,51 +30,7 @@
  * @package ow_core
  * @since 1.0
  */
-final class OW_ApiRequestHandler extends OW_RequestHandler
+class OW_ApiRequestHandler extends Oxwall\Core\ApiRequestHandler
 {
-
-    /**
-     * Constructor.
-     */
-    private function __construct()
-    {
-        
-    }
-    /**
-     * Singleton instance.
-     *
-     * @var OW_ApiRequestHandler
-     */
-    private static $classInstance;
-
-    /**
-     * Returns an instance of class (singleton pattern implementation).
-     *
-     * @return OW_ApiRequestHandler
-     */
-    public static function getInstance()
-    {
-        if ( self::$classInstance === null )
-        {
-            self::$classInstance = new self();
-        }
-
-        return self::$classInstance;
-    }
-
-    /**
-     * @param \ReflectionMethod $action
-     * @param \OW_ActionController $controler
-     */
-    protected function processControllerAction( \ReflectionMethod $action, \OW_ActionController $controler )
-    {
-        $args = array();
-
-        $args[] = $_POST;
-        $args[] = empty($this->handlerAttributes[self::ATTRS_KEY_VARLIST]) ? array() : $this->handlerAttributes[self::ATTRS_KEY_VARLIST];
-
-        $action->invokeArgs($controller, $args);
-
-        OW::getDocument()->setBody($controller->render());
-    }
+    
 }

@@ -21,8 +21,8 @@
  * Display of Attribution Information is required in Larger Works which are defined in the CPAL as a work
  * which combines Covered Code or portions thereof with code not governed by the terms of the CPAL.
  */
-//require_once(OW_DIR_LIB . 'smarty3' . DS . 'Smarty.class.php');
 
+namespace Oxwall\Core;
 
 /**
  * Smarty class.
@@ -31,7 +31,7 @@
  * @package ow_core
  * @since 1.0
  */
-class OW_Smarty extends Smarty
+class Smarty extends \Smarty
 {
 
     public function __construct()
@@ -52,11 +52,11 @@ class OW_Smarty extends Smarty
         $this->cache_dir = OW_DIR_SMARTY . 'cache' . DS;
         $this->compile_dir = OW_DIR_SMARTY . 'template_c' . DS;
         $this->addPluginsDir(OW_DIR_SMARTY . 'plugin' . DS);
-        $this->enableSecurity('OW_Smarty_Security');
+        $this->enableSecurity('Oxwall\Core\SmartySecurity');
     }
 }
 
-class OW_Smarty_Security extends Smarty_Security
+class SmartySecurity extends \Smarty_Security
 {
 
     public function __construct( $smarty )

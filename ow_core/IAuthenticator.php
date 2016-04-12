@@ -22,14 +22,16 @@
  * which combines Covered Code or portions thereof with code not governed by the terms of the CPAL.
  */
 
+namespace Oxwall\Core;
+
 /**
  * The class is a gateway for auth. adapters and provides common API to authenticate users.
  *
  * @author Sardar Madumarov <madumarov@gmail.com>
  * @package ow_core
- * @since 1.0
+ * @since 1.8.3
  */
-interface OW_IAuthenticator
+interface IAuthenticator
 {
     /**
      * Checks if current user is authenticated.

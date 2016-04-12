@@ -22,21 +22,25 @@
  * which combines Covered Code or portions thereof with code not governed by the terms of the CPAL.
  */
 
+namespace Oxwall\Core;
+
+use \Oxwall\Core\OW as OW;
+
 /**
  * The base class for all action controllers.
  *
  * @author Sardar Madumarov <madumarov@gmail.com>
  * @package ow_core
- * @since 1.0
+ * @since 1.8.3
  */
-abstract class OW_ActionController extends OW_Renderable
+abstract class ActionController extends Renderable
 {
     /**
-     * Default controller action (used if action isn't provided).
+     * Default controller action (used if action isn"t provided).
      *
      * @var string
      */
-    protected $defaultAction = 'index';
+    protected $defaultAction = "index";
 
     /**
      * Constructor.
@@ -71,7 +75,7 @@ abstract class OW_ActionController extends OW_Renderable
     {
         $handlerAttrs = OW::getRequestHandler()->getHandlerAttributes();
 
-        OW::getApplication()->redirect(OW::getRouter()->uriFor($handlerAttrs['controller'], trim($action)));
+        OW::getApplication()->redirect(OW::getRouter()->uriFor($handlerAttrs["controller"], trim($action)));
     }
 
     /**

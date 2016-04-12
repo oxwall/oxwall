@@ -30,12 +30,7 @@
  * @package ow_core
  * @since 1.0
  */
-abstract class OW_AuthAdapter
+abstract class OW_AuthAdapter extends Oxwall\Core\AuthAdapter
 {
-    /**
-     * Tries to authenticate user.
-     *
-     * @return OW_AuthResult
-     */
-    abstract function authenticate();
+    
 }
