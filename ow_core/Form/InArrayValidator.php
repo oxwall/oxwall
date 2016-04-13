@@ -22,14 +22,82 @@
  * which combines Covered Code or portions thereof with code not governed by the terms of the CPAL.
  */
 
+namespace Oxwall\Core\Form;
+
+use Oxwall\Core\OW;
+
 /**
- * Base form class.
- * 
- * @author Sardar Madumarov <madumarov@gmail.com>
- * @package ow_core
- * @since 1.0
+ * In array validator
+ *
+ * @author Alex Ermashev <alexermashev@gmail.com>
+ * @since 1.8.3
  */
-class Form extends Oxwall\Core\Form\Form
+class InArrayValidator extends Validator
 {
-    
+    /**
+     * Predefined values
+     *
+     * @var array
+     */
+    protected $predefinedValues = array();
+
+    /**
+     * Class constructor
+     *
+     * @param array $predefinedValues
+     */
+    public function __construct( array $predefinedValues  = array() )
+    {
+        $this->predefinedValues = $predefinedValues;
+        $this->errorMessage = OW::getLanguage()->text('base', 'form_validate_common_error_message');
+    }
+
+    /**
+     * Set predefined values
+     *
+     * @param array $predefinedValues
+     * @return void
+     */
+    public function setPredefinedValues( array $predefinedValues = array() )
+    {
+        $this->predefinedValues = $predefinedValues;
+    }
+
+    /**
+     * Is data valid
+     *
+     * @param mixed $value
+     * @return boolean
+     */
+    public function isValid( $value )
+    {
+        return is_scalar($value) && in_array($value, $this->predefinedValues);
+    }
+
+    /**
+     * Get js validator
+     *
+     * @return string
+     */
+    public function getJsValidator()
+    {
+        $values = json_encode($this->predefinedValues);
+
+        $js = "{
+            validate : function( value )
+        	{
+        	    if ( $.inArray(value, {$values}) == -1 )
+        	    {
+        	        throw this.getErrorMessage();
+        	    }
+        	},
+
+        	getErrorMessage : function()
+        	{
+        		return " . json_encode($this->getError()) . "
+    		}
+        }";
+
+        return $js;
+    }
 }

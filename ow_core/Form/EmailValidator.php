@@ -22,14 +22,33 @@
  * which combines Covered Code or portions thereof with code not governed by the terms of the CPAL.
  */
 
+namespace Oxwall\Core\Form;
+
+use Oxwall\Core\OW;
+
 /**
- * Base form class.
- * 
- * @author Sardar Madumarov <madumarov@gmail.com>
- * @package ow_core
- * @since 1.0
+ * EmailValidator validates Email.
+ *
+ * @author Podyachev Evgeny <joker.OW2@gmail.com>
+ * @since 1.8.3
  */
-class Form extends Oxwall\Core\Form\Form
+class EmailValidator extends RegExpValidator
 {
-    
+
+    /**
+     * Class constructor
+     */
+    public function __construct()
+    {
+        parent::__construct(\Oxwall\Utilities\Validator::EMAIL_PATTERN);
+
+        $errorMessage = OW::getLanguage()->text('base', 'form_validator_email_error_message');
+
+        if ( empty($errorMessage) )
+        {
+            $errorMessage = 'Email Validator Error!';
+        }
+
+        $this->setErrorMessage($errorMessage);
+    }
 }

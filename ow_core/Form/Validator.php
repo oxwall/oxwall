@@ -22,14 +22,66 @@
  * which combines Covered Code or portions thereof with code not governed by the terms of the CPAL.
  */
 
+namespace Oxwall\Core\Form;
+
 /**
- * Base form class.
- * 
+ * Base validator class.
+ *
  * @author Sardar Madumarov <madumarov@gmail.com>
- * @package ow_core
- * @since 1.0
+ * @since 1.8.3
  */
-class Form extends Oxwall\Core\Form\Form
+abstract class Validator
 {
-    
+    /**
+     * Error message.
+     *
+     * @var string
+     */
+    protected $errorMessage;
+
+    /**
+     * Checks if provided value is valid.
+     *
+     * @param mixed $value
+     * @return boolean
+     */
+    abstract function isValid( $value );
+
+    /**
+     * Returns validator error message.
+     *
+     * @return string
+     */
+    public function getError()
+    {
+        return $this->errorMessage;
+    }
+
+    /**
+     * Sets validator error message.
+     *
+     * @param string $errorMessage
+     */
+    public function setErrorMessage( $errorMessage )
+    {
+        if ( $errorMessage === null || mb_strlen(trim($errorMessage)) === 0 )
+        {
+            //throw new InvalidArgumentException('Invalid error message!');
+            return;
+        }
+
+        $this->errorMessage = trim($errorMessage);
+    }
+
+    /**
+     * Returns validator js object code.
+     *
+     * @return string
+     */
+    public function getJsValidator()
+    {
+        return "{
+            validate : function( value ){}
+        }";
+    }
 }

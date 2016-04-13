@@ -22,14 +22,70 @@
  * which combines Covered Code or portions thereof with code not governed by the terms of the CPAL.
  */
 
+namespace Oxwall\Core\Form;
+
+use Oxwall\Core\OW;
+
 /**
- * Base form class.
- * 
+ * Required validator.
+ *
  * @author Sardar Madumarov <madumarov@gmail.com>
- * @package ow_core
- * @since 1.0
+ * @since 1.8.3
  */
-class Form extends Oxwall\Core\Form\Form
+class RequiredValidator extends Validator
 {
-    
+    /**
+     * Constructor.
+     *
+     * @param array $params
+     */
+    public function __construct()
+    {
+        $errorMessage = OW::getLanguage()->text('base', 'form_validator_required_error_message');
+
+        if ( empty($errorMessage) )
+        {
+            $errorMessage = 'Required Validator Error!';
+        }
+
+        $this->setErrorMessage($errorMessage);
+    }
+
+    /**
+     * @see OW_Validator::isValid()
+     *
+     * @param mixed $value
+     */
+    public function isValid( $value )
+    {
+        if ( is_array($value) )
+        {
+            if ( sizeof($value) === 0 )
+            {
+                return false;
+            }
+        }
+        else if ( $value === null || mb_strlen(trim($value)) === 0 )
+        {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * @see OW_Validator::getJsValidator()
+     *
+     * @return string
+     */
+    public function getJsValidator()
+    {
+        return "{
+        	validate : function( value ){
+                if(  $.isArray(value) ){ if(value.length == 0  ) throw " . json_encode($this->getError()) . "; return;}
+                else if( !value || $.trim(value).length == 0 ){ throw " . json_encode($this->getError()) . "; }
+        },
+        	getErrorMessage : function(){ return " . json_encode($this->getError()) . " }
+        }";
+    }
 }

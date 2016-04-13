@@ -22,14 +22,66 @@
  * which combines Covered Code or portions thereof with code not governed by the terms of the CPAL.
  */
 
+namespace Oxwall\Core\Form;
+
+use Oxwall\Core\OW;
+
 /**
- * Base form class.
- * 
- * @author Sardar Madumarov <madumarov@gmail.com>
- * @package ow_core
- * @since 1.0
+ * Wyswyg required validator.
+ *
+ * @author Alex Ermashev <alexermashev@gmail.com>
+ * @since 1.8.3
  */
-class Form extends Oxwall\Core\Form\Form
+class WyswygRequiredValidator extends Validator
 {
-    
+    /**
+     * Constructor.
+     *
+     * @param array $params
+     */
+    public function __construct()
+    {
+        $errorMessage = OW::getLanguage()->text('base', 'form_validator_required_error_message');
+
+        if ( empty($errorMessage) )
+        {
+            $errorMessage = 'Required Validator Error!';
+        }
+
+        $this->setErrorMessage($errorMessage);
+    }
+
+    /**
+     * @see OW_Validator::isValid()
+     *
+     * @param mixed $value
+     */
+    public function isValid( $value )
+    {
+        // process value
+        $value = strip_tags(str_replace(array('&nbsp;', '&nbsp'), array(' ', ' '), $value));
+
+        return mb_strlen(trim($value));
+    }
+
+    /**
+     * @see OW_Validator::getJsValidator()
+     *
+     * @return string
+     */
+    public function getJsValidator()
+    {
+        return "{
+        	validate : function( value ){
+                    // process value
+                    value = value.replace(/\&nbsp;|&nbsp/ig,'');
+                    value = value.replace(/(<([^>]+)>)/ig,''); 
+
+                    if (!$.trim(value).length) {
+                        throw " . json_encode($this->getError()) . ";
+                    }
+        },
+        	getErrorMessage : function(){ return " . json_encode($this->getError()) . " }
+        }";
+    }
 }
