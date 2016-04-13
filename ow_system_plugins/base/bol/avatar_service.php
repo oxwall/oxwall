@@ -537,26 +537,7 @@ class BOL_AvatarService
 
         if ( $avatar )
         {
-            $dir = OW::getPluginManager()->getPlugin('base')->getUserFilesDir() . 'avatars' . DS;
-
-            $hash = isset($hash) ? $hash : $avatar->getHash();
-
-            if ( $checkModerationStatus && $avatar->getStatus() != BOL_ContentService::STATUS_ACTIVE )
-            {
-                return $this->getDefaultAvatarUrl($size);
-            }
-
-            switch ( $size )
-            {
-                case 1:
-                    return OW::getStorage()->getFileUrl($dir . self::AVATAR_PREFIX . $userId . '_' . $hash . '.jpg');
-
-                case 2:
-                    return OW::getStorage()->getFileUrl($dir . self::AVATAR_BIG_PREFIX . $userId . '_' . $hash . '.jpg');
-
-                case 3:
-                    return OW::getStorage()->getFileUrl($dir . self::AVATAR_ORIGINAL_PREFIX . $userId . '_' . $hash . '.jpg');
-            }
+            return $this->getAvatarUrlByAvatarDto($avatar, $size, $hash, $checkModerationStatus);
         }
 
         return null;
@@ -670,7 +651,7 @@ class BOL_AvatarService
      */
     public function getAvatarsUrlList( array $userIds, $size = 1 )
     {
-        if ( empty($userIds) )
+        if ( empty($userIds) || !is_array($userIds) )
         {
             return array();
         }
@@ -688,41 +669,73 @@ class BOL_AvatarService
             return $eventAvatars;
         }
 
-        $urlsList = array();
+        $urlsList = array_fill(0, count($userIds), $this->getDefaultAvatarUrl($size));
+        $urlsList = array_combine($userIds, $urlsList);
 
-        if ( is_array($userIds) )
+        $avatars = $this->avatarDao->getAvatarsList($userIds);
+
+        foreach ( $avatars as $avatar )
         {
-            $avatars = array();
-
-            $prefix = OW::getPluginManager()->getPlugin('base')->getUserFilesDir() . 'avatars' . DS . ($size == 1 ? self::AVATAR_PREFIX : self::AVATAR_BIG_PREFIX);
-            $defAvatarUrl = $this->getDefaultAvatarUrl($size);
-
-            $objList = $this->avatarDao->getAvatarsList($userIds);
-
-            foreach ( $objList as $avatar )
-            {
-                $avatars[$avatar->userId] = $avatar;
-            }
-
-            foreach ( $userIds as $userId )
-            {
-                if ( array_key_exists($userId, $avatars) )
-                {
-                    $urlsList[$userId] = OW::getStorage()->getFileUrl($prefix . $userId . '_' . $avatars[$userId]->hash . '.jpg');
-
-                    if ( $avatars[$userId]->status != BOL_ContentService::STATUS_ACTIVE )
-                    {
-                        $urlsList[$userId] = $defAvatarUrl;
-                    }
-                }
-                else
-                {
-                    $urlsList[$userId] = $defAvatarUrl;
-                }
-            }
+            $urlsList[$avatar->userId] =  $this->getAvatarUrlByAvatarDto($avatar, $size);
         }
 
         return $urlsList;
+    }
+
+    /**
+     * Returns avatar file name for given avatar dto and size
+     *
+     * @param BOL_Avatar $avatar
+     * @param int $size
+     * @param string|null $hash
+     * @param bool|true $checkModerationStatus
+     *
+     * @return null|string
+     */
+    public function getAvatarUrlByAvatarDto( $avatar, $size = 1, $hash = null, $checkModerationStatus = true )
+    {
+        $dir = OW::getPluginManager()->getPlugin('base')->getUserFilesDir() . 'avatars' . DS;
+
+        if ( $checkModerationStatus && $avatar->getStatus() != BOL_ContentService::STATUS_ACTIVE )
+        {
+            return $this->getDefaultAvatarUrl($size);
+        }
+
+        $hash = isset($hash) ? $hash : $avatar->getHash();
+        $avatarFile = $this->getAvatarFileName($avatar->userId, $hash, $size);
+
+        if ( empty($avatarFile) )
+        {
+            return null;
+        }
+
+        return OW::getStorage()->getFileUrl($dir . $avatarFile);
+    }
+
+
+    /**
+     * Composes avatar file name
+     *
+     * @param int $userId
+     * @param int $size
+     * @param null $hash
+     * @return null|string
+     */
+    public function getAvatarFileName( $userId, $hash, $size = 1 )
+    {
+        switch ( $size )
+        {
+            case 1:
+                return self::AVATAR_PREFIX . $userId . '_' . $hash . '.jpg';
+
+            case 2:
+                return self::AVATAR_BIG_PREFIX . $userId . '_' . $hash . '.jpg';
+
+            case 3:
+                return self::AVATAR_ORIGINAL_PREFIX . $userId . '_' . $hash . '.jpg';
+        }
+
+        return null;
     }
 
     /**
@@ -744,19 +757,9 @@ class BOL_AvatarService
             $hash = isset($hash) ? $hash : $avatar->getHash();
         }
 
-        switch ( $size )
-        {
-            case 1:
-                return $dir . self::AVATAR_PREFIX . $userId . '_' . $hash . '.jpg';
+        $fileName = $this->getAvatarFileName($userId, $hash, $size);
 
-            case 2:
-                return $dir . self::AVATAR_BIG_PREFIX . $userId . '_' . $hash . '.jpg';
-
-            case 3:
-                return $dir . self::AVATAR_ORIGINAL_PREFIX . $userId . '_' . $hash . '.jpg';
-        }
-
-        return null;
+        return $fileName ? $dir . $fileName : null;
     }
 
     public function getAvatarPluginFilesPath( $userId, $size = 1, $hash = null )
@@ -770,19 +773,9 @@ class BOL_AvatarService
             $hash = isset($hash) ? $hash : $avatar->getHash();
         }
 
-        switch ( $size )
-        {
-            case 1:
-                return $dir . self::AVATAR_PREFIX . $userId . '_' . $hash . '.jpg';
+        $fileName = $this->getAvatarFileName($userId, $hash, $size);
 
-            case 2:
-                return $dir . self::AVATAR_BIG_PREFIX . $userId . '_' . $hash . '.jpg';
-
-            case 3:
-                return $dir . self::AVATAR_ORIGINAL_PREFIX . $userId . '_' . $hash . '.jpg';
-        }
-
-        return null;
+        return $fileName ? $dir . $fileName : null;
     }
 
     public function getTempAvatarPath( $key, $size = 1 )
