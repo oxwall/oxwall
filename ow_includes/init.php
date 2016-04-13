@@ -23,14 +23,13 @@
  */
 require_once OW_DIR_ROOT . "ow_includes/config.php";
 require_once OW_DIR_ROOT . "ow_includes/define.php";
-//require_once OW_DIR_UTIL . "debug.php";
-//require_once OW_DIR_UTIL . "String.php";
+require_once OW_DIR_UTIL . "Debug.php";
+require_once OW_DIR_UTIL . "String.php";
 require_once OW_DIR_CORE . "Autoload.php";
-//require_once OW_DIR_CORE . "exception.php";
-//require_once OW_DIR_INC . "function.php";
+require_once OW_DIR_CORE . "exception.php";
+require_once OW_DIR_INC . "function.php";
 require_once OW_DIR_CORE . "OW.php";
 require_once OW_DIR_CORE . "ow.php";
-//require_once OW_DIR_CORE . "plugin.php";
 
 mb_internal_encoding("UTF-8");
 
@@ -61,7 +60,6 @@ spl_autoload_register(array($autoloader, "autoload"));
 require_once OW_DIR_LIB_VENDOR . "autoload.php";
 
 // adding standard package pointers
-$autoloader = OW::getAutoloader();
 $autoloader->addPackagePointer("OW", OW_DIR_CORE);
 $autoloader->addPackagePointer("INC", OW_DIR_INC);
 $autoloader->addPackagePointer("UTIL", OW_DIR_UTIL);
@@ -115,12 +113,12 @@ if ( defined("OW_URL_HOME") )
 
 if ( OW_PROFILER_ENABLE )
 {
-    UTIL_Profiler::getInstance();
+    Oxwall\Utilities\Profiler::getInstance();
 }
 
 require_once OW_DIR_SYSTEM_PLUGIN . "base" . DS . "classes" . DS . "file_log_writer.php";
 require_once OW_DIR_SYSTEM_PLUGIN . "base" . DS . "classes" . DS . "db_log_writer.php";
 require_once OW_DIR_SYSTEM_PLUGIN . "base" . DS . "classes" . DS . "err_output.php";
 
-$errorManager = OW_ErrorManager::getInstance(OW_DEBUG_MODE);
-$errorManager->setErrorOutput(new BASE_CLASS_ErrOutput());
+$errorManager = Oxwall\Core\ErrorManager::getInstance(OW_DEBUG_MODE);
+$errorManager->setErrorOutput(new \BASE_CLASS_ErrOutput());

@@ -180,9 +180,9 @@ abstract class Renderable
     /**
      * Adds form to renderable object.
      *
-     * @param Form $form
+     * @param \Oxwall\Core\Form\Form $form
      */
-    public function addForm( \Form $form )
+    public function addForm( $form )
     {
         $this->forms[$form->getName()] = $form;
     }
@@ -191,7 +191,7 @@ abstract class Renderable
      * Returns added form by key.
      *
      * @param string $key
-     * @return Form
+     * @return \Oxwall\Core\Form\Form
      */
     public function getForm( $name )
     {

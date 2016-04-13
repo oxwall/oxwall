@@ -67,12 +67,12 @@ class HtmlTag
         return $prefix . '_' . String::getRandomString(8, String::RND_STR_ALPHA_NUMERIC); 
     }
     /**
-     * @var Jevix
+     * @var \Jevix
      */
     private static $jevix;
 
     /**
-     * @return Jevix
+     * @return \Jevix
      */
     private static function getJevix( $tagList = null, $attrList = null, $blackListMode = false,
         $mediaSrcValidate = true )
@@ -144,7 +144,7 @@ class HtmlTag
                 $tagRules[$shortTag] = array();
             }
 
-            $tagRules[$shortTag][Jevix::TR_TAG_SHORT] = true;
+            $tagRules[$shortTag][\Jevix::TR_TAG_SHORT] = true;
         }
 
         $cutWithContent = array('script', 'embed', 'object', 'style');
@@ -156,7 +156,7 @@ class HtmlTag
                 $tagRules[$cutTag] = array();
             }
 
-            $tagRules[$cutTag][Jevix::TR_TAG_CUT] = true;
+            $tagRules[$cutTag][\Jevix::TR_TAG_CUT] = true;
         }
 
         self::$jevix->blackListMode = $blackListMode;

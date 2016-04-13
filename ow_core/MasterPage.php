@@ -99,7 +99,7 @@ class MasterPage extends Renderable
      * Master page can"t handle forms.
      * 
      * @see Renderable::addForm()
-     * @param \Oxwall\Core\Form $form
+     * @param \Oxwall\Core\Form\Form $form
      * @throws \LogicException
      */
     public function addForm( $form )
