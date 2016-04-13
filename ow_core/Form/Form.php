@@ -571,7 +571,7 @@ class Form
 
         $hiddenFieldString = "";
 
-        /* @var $value OW_FormElement */
+        /* @var $value FormElement */
         foreach ( $this->elements as $value )
         {
             if ( $value instanceof HiddenField )

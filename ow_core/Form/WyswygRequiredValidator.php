@@ -52,7 +52,7 @@ class WyswygRequiredValidator extends Validator
     }
 
     /**
-     * @see OW_Validator::isValid()
+     * @see Validator::isValid()
      *
      * @param mixed $value
      */
@@ -65,7 +65,7 @@ class WyswygRequiredValidator extends Validator
     }
 
     /**
-     * @see OW_Validator::getJsValidator()
+     * @see Validator::getJsValidator()
      *
      * @return string
      */

@@ -89,7 +89,7 @@ class Feedback
      *
      * @param string $message
      * @param string $type
-     * @return OW_Feedback
+     * @return Feedback
      */
     private function addMessage( $message, $type = "info" )
     {

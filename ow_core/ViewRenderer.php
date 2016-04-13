@@ -26,7 +26,6 @@ namespace Oxwall\Core;
 
 /**
  * @author Sardar Madumarov <madumarov@gmail.com>
- * @package ow_core
  * @since 1.8.3
  */
 class ViewRenderer

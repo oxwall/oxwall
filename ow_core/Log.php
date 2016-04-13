@@ -116,7 +116,7 @@ class Log
     /**
      * Sets log writer.
      *
-     * @param OW_LogWriter $logWriter
+     * @param LogWriter $logWriter
      */
     public function setLogWriter( $logWriter )
     {

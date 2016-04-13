@@ -147,7 +147,7 @@ class Theme
     {
         if ( !$this->hasDocumentMasterPage($documentKey) )
         {
-            throw new InvalidArgumentException("Cant find master page for document `{$documentKey}` in current theme!");
+            throw new \InvalidArgumentException("Cant find master page for document `{$documentKey}` in current theme!");
         }
 
         return $this->documentMasterPages[trim($documentKey)];

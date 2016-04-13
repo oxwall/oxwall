@@ -389,7 +389,7 @@ class OW
 
     /**
      *
-     * @return OW_Storage
+     * @return Storage
      */
     public static function getStorage()
     {

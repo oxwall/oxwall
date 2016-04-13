@@ -166,7 +166,7 @@ class BillingGatewaySelectionField extends FormElement
 
         foreach ( $gateways as $gateway )
         {
-            /* @var $adapter OW_BillingAdapter */
+            /* @var $adapter \Oxwall\Core\BillingAdapter */
             if ( $adapter = OW::getClassInstance($gateway->adapterClassName) )
             {
                 $paymentOptions[$gateway->gatewayKey]['dto'] = $gateway;

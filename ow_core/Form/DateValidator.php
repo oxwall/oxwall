@@ -155,7 +155,7 @@ class DateValidator extends Validator
         }
 
         if ( !\Oxwall\Utilities\Validator::isDateValid($date[DateTime::PARSE_DATE_MONTH], $date[DateTime::PARSE_DATE_DAY],
-                $date[UTIL_DateTime::PARSE_DATE_YEAR]) )
+                $date[DateTime::PARSE_DATE_YEAR]) )
         {
             return false;
         }

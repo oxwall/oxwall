@@ -100,7 +100,7 @@ abstract class Renderable
      * Sets vomponent visibility.
      *
      * @param boolean $visible
-     * @return OW_Renderable
+     * @return Renderable
      */
     public function setVisible( $visible )
     {
@@ -146,7 +146,7 @@ abstract class Renderable
      * Adds component to renderable object.
      *
      * @param string $key
-     * @param OW_Renderable $component
+     * @param Renderable $component
      */
     public function addComponent( $key, $component )
     {
@@ -157,7 +157,7 @@ abstract class Renderable
      * Returns added component by key.
      *
      * @param string $key
-     * @return OW_Component
+     * @return Component
      */
     public function getComponent( $key )
     {
@@ -191,7 +191,7 @@ abstract class Renderable
      * Returns added form by key.
      *
      * @param string $key
-     * @return OW_Form
+     * @return Form
      */
     public function getForm( $name )
     {

@@ -101,7 +101,7 @@ class ThemeManager
     /**
      * Returns selected theme name.
      *
-     * @return OW_Theme
+     * @return Theme
      */
     public function getSelectedTheme()
     {
@@ -237,7 +237,7 @@ class ThemeManager
             return $this->themeObjects[self::DEFAULT_THEME]->getMasterPage($masterPage);
         }
 
-        throw new InvalidArgumentException("Cant find master page `{$masterPage}` !");
+        throw new \InvalidArgumentException("Cant find master page `{$masterPage}` !");
     }
 
     /**

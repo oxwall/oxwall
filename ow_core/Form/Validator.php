@@ -66,7 +66,7 @@ abstract class Validator
     {
         if ( $errorMessage === null || mb_strlen(trim($errorMessage)) === 0 )
         {
-            //throw new InvalidArgumentException('Invalid error message!');
+            //throw new \InvalidArgumentException('Invalid error message!');
             return;
         }
 

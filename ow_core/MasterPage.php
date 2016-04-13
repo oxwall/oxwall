@@ -99,10 +99,10 @@ class MasterPage extends Renderable
      * Master page can"t handle forms.
      * 
      * @see Renderable::addForm()
-     * @param \Form $form
+     * @param \Oxwall\Core\Form $form
      * @throws \LogicException
      */
-    public function addForm( \Form $form )
+    public function addForm( $form )
     {
         throw new \LogicException("Cant add form to master page object!");
     }
@@ -110,7 +110,7 @@ class MasterPage extends Renderable
     /**
      * Master page can"t handle forms.
      * 
-     * @see OW_Renderable::getForm()
+     * @see Renderable::getForm()
      * @param string $name
      * @throws LogicException
      */

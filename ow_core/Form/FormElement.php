@@ -268,7 +268,7 @@ abstract class FormElement
     {
         if ( !is_array($attributes) )
         {
-            throw new InvalidArgumentException("Array is expected!");
+            throw new \InvalidArgumentException("Array is expected!");
         }
 
         foreach ( $attributes as $name => $value )

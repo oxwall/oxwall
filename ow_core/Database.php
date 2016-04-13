@@ -226,7 +226,7 @@ class Database
      *
      * @param array $params ( host, username, password, dbname, [socket], [port] )
      *
-     * @return OW_Database
+     * @return Database
      *
      */
     public static function getInstance( $params )
@@ -507,7 +507,7 @@ class Database
 
     /**
      * @param string $tableName
-     * @param OW_Entity $obj
+     * @param Entity $obj
      * @param string $primaryKeyName
      * @return type
      * @throws InvalidArgumentException

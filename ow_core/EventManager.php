@@ -191,10 +191,10 @@ class EventManager
     /**
      * Triggers event listeners.
      *
-     * @param OW_Event $event
-     * @return OW_Event
+     * @param Event $event
+     * @return Event
      */
-    public function trigger( \OW_Event $event )
+    public function trigger( $event )
     {
         if ( isset($this->listeners[$event->getName()]) && !empty($this->listeners[$event->getName()]) )
         {

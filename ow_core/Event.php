@@ -26,7 +26,7 @@ namespace Oxwall\Core;
 
 /**
  * The base class for events. All events used in event manager should be
- * instance of OW_Event or derived from it.
+ * instance of Event or derived from it.
  * 
  * @author Sardar Madumarov <madumarov@gmail.com>
  * @since 1.8.3

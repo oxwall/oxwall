@@ -107,7 +107,7 @@ class StringValidator extends Validator
     }
 
     /**
-     * @see OW_Validator::isValid()
+     * @see Validator::isValid()
      *
      * @param mixed $value
      */

@@ -115,7 +115,7 @@ class HtmlDocument extends Document
     /**
      * Document master page.
      *
-     * @var OW_MasterPage
+     * @var MasterPage
      */
     private $masterPage;
 
@@ -318,7 +318,7 @@ class HtmlDocument extends Document
      * Sets HTML document keywords.
      *
      * @param mixed $keywords
-     * @return OW_HtmlDocument
+     * @return HtmlDocument
      */
     public function setKeywords( $keywords )
     {
@@ -336,7 +336,7 @@ class HtmlDocument extends Document
      * Sets html document body code.
      *
      * @param string $code
-     * @return OW_HtmlDocument
+     * @return HtmlDocument
      */
     public function setBody( $code )
     {
@@ -368,7 +368,7 @@ class HtmlDocument extends Document
     /**
      * Returns document master page.
      *
-     * @return OW_MobileMasterPage
+     * @return MobileMasterPage
      */
     public function getMasterPage()
     {

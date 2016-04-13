@@ -276,9 +276,9 @@ class RequestHandler
 
     /**
      * @param ReflectionMethod $action
-     * @param OW_ActionController $controller
+     * @param ActionController $controller
      */
-    protected function processControllerAction( \ReflectionMethod $action, ActionController $controller )
+    protected function processControllerAction( \ReflectionMethod $action, $controller )
     {
         $args = array(
             self::ATTRS_KEY_VARLIST =>

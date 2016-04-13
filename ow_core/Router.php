@@ -68,7 +68,7 @@ class Router
     private $baseUrl;
 
     /**
-     * @var OW_Route
+     * @var Route
      */
     private $usedRoute;
 
@@ -82,14 +82,14 @@ class Router
     /**
      * Singleton instance.
      *
-     * @var OW_Router
+     * @var Router
      */
     private static $classInstance;
 
     /**
      * Returns an instance of class (singleton pattern implementation).
      *
-     * @return OW_Router
+     * @return Router
      */
     public static function getInstance()
     {
@@ -111,7 +111,7 @@ class Router
 
     /**
      * @param DefaultRoute $defaultRoute
-     * @return OW_Router
+     * @return Router
      */
     public function setDefaultRoute( $defaultRoute )
     {
@@ -129,7 +129,7 @@ class Router
 
     /**
      * @param string $uri
-     * @return OW_Router
+     * @return Router
      */
     public function setUri( $uri )
     {
@@ -147,7 +147,7 @@ class Router
 
     /**
      * @param string $baseUrl
-     * @return OW_Router
+     * @return Router
      */
     public function setBaseUrl( $baseUrl )
     {
@@ -169,8 +169,8 @@ class Router
      * If route with provided name exists exception will be thrown.
      *
      * @throws LogicException
-     * @param OW_RouteAbstract $route
-     * @return OW_Router
+     * @param Route $route
+     * @return Router
      */
     public function addRoute( $route )
     {
@@ -200,7 +200,7 @@ class Router
      * Routes should be removed before routing process starts.
      *
      * @param string $routeName
-     * @return OW_Router
+     * @return Router
      */
     public function removeRoute( $routeName )
     {
@@ -223,7 +223,7 @@ class Router
      * Returns route with provided name.
      *
      * @param string $routeName
-     * @return OW_Route
+     * @return Route
      */
     public function getRoute( $routeName )
     {

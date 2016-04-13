@@ -870,7 +870,7 @@ class Application
                         chmod($staticDir, 0777);
                     }
 
-                    UTIL_File::copyDir($pluginStaticDir, $staticDir);
+                    \Oxwall\Utilities\File::copyDir($pluginStaticDir, $staticDir);
                 }
             }
         }
