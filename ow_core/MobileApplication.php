@@ -24,7 +24,7 @@
 
 namespace Oxwall\Core;
 
-use \OW as OW;
+use Oxwall\Core\OW;
 
 /**
  * @author Sardar Madumarov <madumarov@gmail.com>

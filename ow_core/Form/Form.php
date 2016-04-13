@@ -24,7 +24,7 @@
 
 namespace Oxwall\Core\Form;
 
-use Oxwall\Core\OW as OW;
+use Oxwall\Core\OW;
 
 /**
  * Base form class.

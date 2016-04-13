@@ -24,7 +24,7 @@
 
 namespace Oxwall\Core\Form;
 
-use Oxwall\Core\OW as OW;
+use Oxwall\Core\OW;
 use Oxwall\Utilities\HtmlTag;
 
 /**

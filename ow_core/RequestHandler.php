@@ -24,7 +24,7 @@
 
 namespace Oxwall\Core;
 
-use \Oxwall\Core\OW as OW;
+use \Oxwall\Core\OW;
 
 /**
  * Dispatcher handles request after routing process,

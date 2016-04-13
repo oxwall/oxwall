@@ -25,7 +25,7 @@
 namespace Oxwall\Core;
 
 use \BOL_UserService as BOL_UserService;
-use Oxwall\Core\OW as OW;
+use Oxwall\Core\OW;
 
 /**
  * @author Sardar Madumarov <madumarov@gmail.com>
