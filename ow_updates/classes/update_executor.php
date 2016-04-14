@@ -100,7 +100,7 @@ class UPDATE_UpdateExecutor
     {
         $result = $this->db->queryForList("SELECT * FROM `{$this->dbPrefix}base_plugin` WHERE `update` = :statusVal",
             array("statusVal" => BOL_PluginDao::UPDATE_VAL_MANUAL_UPDATE));
-        
+
         // plugin not found
         if ( empty($result) )
         {
@@ -241,7 +241,7 @@ class UPDATE_UpdateExecutor
                     }
                 }
 
-                $this->writeLog();
+                $this->writeLog($pluginArr["key"]);
             }
 
             $query = "UPDATE `{$this->dbPrefix}base_plugin` SET `build` = :build, `update` = :updateVal, `title` = :title, `description` = :desc WHERE `key` = :key";
@@ -269,7 +269,7 @@ class UPDATE_UpdateExecutor
         return false;
     }
 
-    private function writeLog()
+    private function writeLog( $key )
     {
         $entries = UPDATER::getLogger()->getEntries();
 
@@ -278,8 +278,7 @@ class UPDATE_UpdateExecutor
             $query = "INSERT INTO `{$this->dbPrefix}base_log` (`message`, `type`, `key`, `timeStamp`) VALUES (:message, 'ow_update', :key, :time)";
             try
             {
-                $this->db->query($query,
-                    array("message" => json_encode($entries), "key" => $pluginArr["key"], "time" => time()));
+                $this->db->query($query, array("message" => json_encode($entries), "key" => $key, "time" => time()));
             }
             catch ( Exception $e )
             {

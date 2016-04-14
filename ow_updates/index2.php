@@ -105,7 +105,7 @@ else
             {
                 $count = $updater->updateAllPlugins();
                 $status = UPDATE_UpdateExecutor::STATUS_SUCCESS;
-                $this->message = "Update Complete! {$count} plugins successfully updated.";
+                $message = "Update Complete! {$count} plugins successfully updated.";
             }
             catch ( LogicUpToDateException $ex )
             {
