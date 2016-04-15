@@ -37,7 +37,7 @@ final class OW_ApiRequestHandler extends OW_RequestHandler
      */
     private function __construct()
     {
-        
+
     }
     /**
      * Singleton instance.
@@ -60,12 +60,12 @@ final class OW_ApiRequestHandler extends OW_RequestHandler
 
         return self::$classInstance;
     }
-    
+
 //    protected function processCatchAllRequestsAttrs()
 //    {
 //        return null;
 //    }
-    
+
     /**
      * @param array $dispatchAttributes
      */
@@ -76,40 +76,39 @@ final class OW_ApiRequestHandler extends OW_RequestHandler
         {
             throw new InvalidArgumentException("Can't dispatch request! Empty or invalid controller class provided!");
         }
-        
+
         // set uri params in request object
         if ( !empty($this->handlerAttributes[self::ATTRS_KEY_VARLIST]) )
         {
             OW::getRequest()->setUriParams($this->handlerAttributes[self::ATTRS_KEY_VARLIST]);
         }
-        
+
         $plugin = OW::getPluginManager()->getPlugin(OW::getAutoloader()->getPluginKey($this->handlerAttributes[self::ATTRS_KEY_CTRL]));
-        
+
         $catchAllRequests = $this->processCatchAllRequestsAttrs();
-        
+
         if ( $catchAllRequests !== null )
         {
             $this->handlerAttributes = $catchAllRequests;
         }
-        
+
         try
         {
-            $reflectionClass = new ReflectionClass($this->handlerAttributes[self::ATTRS_KEY_CTRL]);
+            $controller = OW::getClassInstance($this->handlerAttributes[self::ATTRS_KEY_CTRL]);
         }
         catch ( ReflectionException $e )
         {
             throw new Redirect404Exception();
         }
-        
+
         /* @var $controller OW_ActionController */
-        $controller = $reflectionClass->newInstance();
 
         // check if controller exists and is instance of base action controller class
         if ( $controller === null || !$controller instanceof OW_ApiActionController )
         {
             throw new LogicException("Can't dispatch request! Please provide valid controller class!");
         }
-        
+
         // redirect to page 404 if plugin is inactive and isn't instance of admin controller class
         if ( !$plugin->isActive() && !$controller instanceof ADMIN_CTRL_Abstract )
         {
@@ -124,21 +123,16 @@ final class OW_ApiRequestHandler extends OW_RequestHandler
             $this->handlerAttributes[self::ATTRS_KEY_ACTION] = $controller->getDefaultAction();
         }
 
-        try
-        {
-            $action = $reflectionClass->getMethod($this->handlerAttributes[self::ATTRS_KEY_ACTION]);
-        }
-        catch ( Exception $e )
-        {
+        if ( !method_exists($controller, $this->handlerAttributes[self::ATTRS_KEY_ACTION]) ) {
             throw new Redirect404Exception();
         }
 
         $args = array();
-        
+
         $args[] = $_POST;
         $args[] = empty($this->handlerAttributes[self::ATTRS_KEY_VARLIST]) ? array() : $this->handlerAttributes[self::ATTRS_KEY_VARLIST];
-        
-        $action->invokeArgs($controller, $args);
+
+        call_user_func_array(array($controller, $this->handlerAttributes[self::ATTRS_KEY_ACTION]), $args);
 
         OW::getDocument()->setBody($controller->render());
     }
