@@ -28,25 +28,46 @@ define('UPDATE_DIR_ROOT', OW_DIR_ROOT . 'ow_updates' . DS);
 
 require_once OW_DIR_ROOT . 'ow_includes/config.php';
 require_once OW_DIR_ROOT . 'ow_includes/define.php';
+require_once OW_DIR_UTIL . 'Debug.php';
 require_once OW_DIR_UTIL . 'debug.php';
+require_once OW_DIR_UTIL . 'String.php';
 require_once OW_DIR_UTIL . 'string.php';
+require_once OW_DIR_UTIL . 'File.php';
 require_once OW_DIR_UTIL . 'file.php';
-require_once UPDATE_DIR_ROOT . 'classes' . DS . 'autoload.php';
 require_once UPDATE_DIR_ROOT . 'classes' . DS . 'error_manager.php';
 require_once UPDATE_DIR_ROOT . 'classes' . DS . 'updater.php';
+require_once OW_DIR_CORE . 'Autoload.php';
+require_once OW_DIR_CORE . 'autoload.php';
+require_once OW_DIR_CORE . 'OW.php';
 require_once OW_DIR_CORE . 'ow.php';
+require_once OW_DIR_CORE . 'Plugin.php';
 require_once OW_DIR_CORE . 'plugin.php';
 
-spl_autoload_register(array('UPDATE_Autoload', 'autoload'));
+// add predefined namespace loaders
+$platformNamespacePrefixList = array(
+    "Oxwall\Core\\" => OW_DIR_CORE,
+    "Oxwall\Utilities\\" => OW_DIR_UTIL,
+    "Oxwall\Admin\\" => OW_DIR_SYSTEM_PLUGIN . "admin" . DS,
+    "Oxwall\Base\\" => OW_DIR_SYSTEM_PLUGIN . "base" . DS
+);
 
-UPDATE_ErrorManager::getInstance(true);
+$autoloader = \Oxwall\Core\Autoload::getInstance();
 
-$autoloader = UPDATE_Autoload::getInstance();
+foreach ( $platformNamespacePrefixList as $prefix => $mountDir )
+{
+    $autoloader->registerNamespaceLoader($prefix, $mountDir);
+}
+
+// add autoloader for package pointers
+spl_autoload_register(array($autoloader, "autoload"));
+
 $autoloader->addPackagePointer('BOL', OW_DIR_SYSTEM_PLUGIN . 'base' . DS . 'bol' . DS);
 $autoloader->addPackagePointer('BASE_CLASS', OW_DIR_SYSTEM_PLUGIN . 'base' . DS . 'classes' . DS);
 $autoloader->addPackagePointer('OW', OW_DIR_CORE);
 $autoloader->addPackagePointer('UTIL', OW_DIR_UTIL);
 $autoloader->addPackagePointer('UPDATE', UPDATE_DIR_ROOT . 'classes' . DS);
+
+UPDATE_ErrorManager::getInstance(true);
 
 $db = Updater::getDbo();
 
