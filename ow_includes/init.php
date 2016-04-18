@@ -101,7 +101,8 @@ $classesToAutoload = array(
     "Range" => OW_DIR_CORE . "form_element.php",
     "WyswygRequiredValidator" => OW_DIR_CORE . "validator.php",
     "DateField" => OW_DIR_CORE . "form_element.php",
-    "DateRangeInterface" => OW_DIR_CORE . "form_element.php"
+    "DateRangeInterface" => OW_DIR_CORE . "form_element.php",
+    "AgeRange" => OW_DIR_CORE . "form_element.php"
 );
 
 OW::getAutoloader()->addClassArray($classesToAutoload);
