@@ -653,7 +653,7 @@ class Application
                     {
                         $src = OW::getAutoloader()->getClassPath($key);
                     }
-                    catch ( Exception $e )
+                    catch ( \Exception $e )
                     {
                         $src = "not_found";
                     }

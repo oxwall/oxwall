@@ -79,7 +79,7 @@ class Language
             $text = \BOL_LanguageService::getInstance()->getText(\BOL_LanguageService::getInstance()->getCurrent()->getId(),
                 $prefix, $key, $vars);
         }
-        catch ( Exception $e )
+        catch ( \Exception $e )
         {
             return $prefix . "+" . $key;
         }

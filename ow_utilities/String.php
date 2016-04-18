@@ -128,7 +128,7 @@ class String
 
         foreach ( $vars as $key => $var )
         {
-            $data = preg_replace("/{\$(" . preg_quote($key) . ")}/i", $var, $data);
+            $data = preg_replace('/{\$(' . preg_quote($key) . ')}/i', $var, $data);
         }
 
         return $data;
