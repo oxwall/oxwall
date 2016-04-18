@@ -834,6 +834,9 @@ class UserSettingsForm extends Form
         $this->addElement($password);
         // --- //
 
+        $password->addFilter(new TrimFilter());
+        $password->addFilter(new StripTagsFilter());
+        
         //-- profile questions --//
         $userViewPresentationnew = new CheckboxField("user_view_presentation");
         $userViewPresentationnew->setLabel($language->text('base', 'questions_config_user_view_presentation_label'));
@@ -856,7 +859,7 @@ class UserSettingsForm extends Form
     public function process()
     {
         $values = $this->getValues();
-
+pve($values);
         $config = OW::getConfig();
 
         $config->saveConfig('base', 'avatar_size', $values['avatarSize']);
