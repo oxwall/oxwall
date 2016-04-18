@@ -31,6 +31,10 @@ var OwUtils = function(){
         );
     }
 
+    this.escapeRegExp = function(s) {
+        return s.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+    }
+
     this.error = function( message ){
     	this.message(message, 'error');
     };
