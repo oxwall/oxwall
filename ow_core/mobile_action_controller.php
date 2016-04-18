@@ -29,16 +29,7 @@
  * @package ow_core
  * @since 1.0
  */
-abstract class OW_MobileActionController extends OW_ActionController
+abstract class OW_MobileActionController extends Oxwall\Core\MobileActionController
 {
-
-    /**
-     * Constructor.
-     */
-    public function __construct()
-    {
-        
-    }
-
- 
+    
 }

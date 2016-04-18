@@ -29,7 +29,7 @@
  * @package ow_system_plugins.base.class
  * @since 1.0
  */
-class BASE_CLASS_DbLogWriter extends OW_LogWriter
+class BASE_CLASS_DbLogWriter extends Oxwall\Core\LogWriter
 {
 
     /**

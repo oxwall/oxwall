@@ -22,6 +22,8 @@
  * which combines Covered Code or portions thereof with code not governed by the terms of the CPAL.
  */
 
+use Oxwall\Core\Theme;
+
 /**
  * BOL_ThemeService is main class for themes manipulation.
  *
@@ -478,7 +480,7 @@ class BOL_ThemeService
      * Returns theme object by name.
      *
      * @param string $key
-     * @return OW_Theme
+     * @return Theme
      */
     public function getThemeObjectByKey( $key, $mobile = false )
     {
@@ -493,10 +495,10 @@ class BOL_ThemeService
     }
 
     /**
-     * Generates theme object for theme manager (OW_Theme).
+     * Generates theme object for theme manager (Theme).
      *
      * @param BOL_Theme $theme
-     * @return OW_Theme
+     * @return Theme
      */
     private function getThemeObject( BOL_Theme $theme, $mobile = false )
     {
@@ -541,7 +543,7 @@ class BOL_ThemeService
             $documentMasterPages[$value->getDocumentKey()] = $value->getMasterPage();
         }
 
-        $themeObj = new OW_Theme($theme);
+        $themeObj = new Theme($theme);
         $themeObj->setDecorators($decorators);
         $themeObj->setDocumentMasterPages($documentMasterPages);
         $themeObj->setMasterPages($masterPages);

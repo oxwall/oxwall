@@ -21,24 +21,23 @@
  * Display of Attribution Information is required in Larger Works which are defined in the CPAL as a work
  * which combines Covered Code or portions thereof with code not governed by the terms of the CPAL.
  */
-
 function printVar( $var, $exit = false )
 {
-    UTIL_Debug::varDump($var, $exit);
+    Oxwall\Utilities\Debug::varDump($var, $exit);
 }
 
 function pv( $var, $exit = false )
 {
-    UTIL_Debug::varDump($var, $exit);
+    Oxwall\Utilities\Debug::varDump($var, $exit);
 }
 
 function pve( $var, $exit = false )
 {
-    UTIL_Debug::varDump($var, $exit);
+    Oxwall\Utilities\Debug::varDump($var, $exit);
     exit;
 }
 
 function profiler_mark( $markKey = null )
 {
-    UTIL_Profiler::getInstance()->mark($markKey);
+    Oxwall\Utilities\Profiler::getInstance()->mark($markKey);
 }

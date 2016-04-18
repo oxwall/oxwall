@@ -29,32 +29,7 @@
  * @package ow_core
  * @since 1.8.2
  */
-class OW_CliApplication extends OW_Application
+class OW_CliApplication extends \Oxwall\Core\CliApplication
 {
-
-    private function __construct()
-    {
-        $this->context = self::CONTEXT_CLI;
-    }
-    /**
-     * Singleton instance.
-     *
-     * @var OW_ApiApplication
-     */
-    private static $classInstance;
-
-    /**
-     * Returns an instance of class (singleton pattern implementation).
-     *
-     * @return OW_ApiApplication
-     */
-    public static function getInstance()
-    {
-        if ( self::$classInstance === null )
-        {
-            self::$classInstance = new self();
-        }
-
-        return self::$classInstance;
-    }
+    
 }

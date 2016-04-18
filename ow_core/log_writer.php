@@ -27,7 +27,7 @@
  * @package ow_core
  * @since 1.0
  */
-abstract class OW_LogWriter
+abstract class OW_LogWriter extends Oxwall\Core\LogWriter
 {
-    abstract function processEntries( array $entries );
+    
 }

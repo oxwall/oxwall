@@ -22,12 +22,33 @@
  * which combines Covered Code or portions thereof with code not governed by the terms of the CPAL.
  */
 
+namespace Oxwall\Core\Form;
+
+use Oxwall\Core\OW;
+
 /**
- * @author Sardar Madumarov <madumarov@gmail.com>
- * @package ow_utilities
- * @since 1.0
+ * UrlValidator validates Url.
+ *
+ * @author Podyachev Evgeny <joker.OW2@gmail.com>
+ * @since 1.8.3
  */
-class UTIL_Array
+class AlphaNumericValidator extends RegExpValidator
 {
-    
+
+    /**
+     * Class constructor
+     */
+    public function __construct()
+    {
+        parent::__construct(\Oxwall\Utilities\Validator::ALPHA_NUMERIC_PATTERN);
+
+        $errorMessage = OW::getLanguage()->text('base', 'form_validator_url_error_message');
+
+        if ( empty($errorMessage) )
+        {
+            $errorMessage = 'Alphanumeric Validator Error!';
+        }
+
+        $this->setErrorMessage($errorMessage);
+    }
 }
