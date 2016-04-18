@@ -33,17 +33,17 @@ class Form
 {
     const METHOD_POST = 'post';
     const METHOD_GET = 'get';
-
     const ENCTYPE_APP_FORM_URLENCODED = 'application/x-www-form-urlencoded';
     const ENCTYPE_MULTYPART_FORMDATA = 'multipart/form-data';
-
     const BIND_SUCCESS = 'success';
     const BIND_SUBMIT = 'submit';
-
     const AJAX_DATA_TYPE_JSON = 'json';
     const AJAX_DATA_TYPE_SCRIPT = 'script';
     const AJAX_DATA_TYPE_XML = 'xml';
     const AJAX_DATA_TYPE_HTML = 'html';
+    /* -------------------------------------------------------------------------------------------------------------- */
+    const ELEMENT_CSRF_TOKEN = "csrf_token";
+    const ELEMENT_FORM_NAME = "form_name";
 
     /**
      * Form element attributes (id, name, etc).
@@ -51,37 +51,44 @@ class Form
      * @var array
      */
     protected $attributes = array();
+
     /**
      * Form elements list.
      *
      * @var array
      */
     protected $elements = array();
+
     /**
      * Form submit elements list <Submit/Button>.
      * 
      * @var array
      */
     protected $submitElements = array();
+
     /**
      * Form ajax flag.
      *
      * @var boolean
      */
     protected $ajax;
+
     /**
      * @var boolean
      */
     protected $ajaxResetOnSuccess;
+
     /**
      *
      * @var string
      */
     protected $ajaxDataType;
+
     /**
      * @var array
      */
     protected $bindedFunctions;
+
     /**
      * @var string
      */
@@ -102,8 +109,12 @@ class Form
         $this->bindedFunctions = array(self::BIND_SUBMIT => array(), self::BIND_SUCCESS => array());
         $this->setEmptyElementsErrorMessage(OW::getLanguage()->text('base', 'form_validate_common_error_message'));
 
-        $formNameHidden = new HiddenField('form_name');
+        $formNameHidden = new HiddenField(self::ELEMENT_FORM_NAME);
         $formNameHidden->setValue($name);
+        $this->addElement($formNameHidden);
+
+        $formNameHidden = new HiddenField(self::ELEMENT_CSRF_TOKEN);
+        $formNameHidden->setValue(UTIL_Csrf::generateToken());
         $this->addElement($formNameHidden);
 
         $this->setName($name);
@@ -421,6 +432,13 @@ class Form
             throw new InvalidArgumentException('Array should be provided for validation!');
         }
 
+        if ( !isset($data[self::ELEMENT_CSRF_TOKEN]) || !UTIL_Csrf::isTokenValid($data[self::ELEMENT_CSRF_TOKEN]) )
+        {
+            $valid = false;
+            //TODO refactor - remove message adding from Form class
+            OW::getFeedback()->error(OW::getLanguage()->text("base", "invalid_csrf_token_error_message"));
+        }
+
         /* @var $element FormElement */
         foreach ( $this->elements as $element )
         {
@@ -573,6 +591,7 @@ class Form
             }
         }
 
-        return UTIL_HtmlTag::generateTag('form', array_merge($this->attributes, $params), true, PHP_EOL . $hiddenFieldString . $formContent . PHP_EOL);
+        return UTIL_HtmlTag::generateTag('form', array_merge($this->attributes, $params), true,
+                PHP_EOL . $hiddenFieldString . $formContent . PHP_EOL);
     }
 }
