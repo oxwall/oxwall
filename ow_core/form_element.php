@@ -589,10 +589,10 @@ class TextField extends InvitationFormElement
         {
             $this->addAttribute('value', str_replace('"', '&quot;', $this->value));
         }
-        else if ( $this->getHasInvitation() )
+
+        if ( $this->getHasInvitation() )
         {
-            $this->addAttribute('value', $this->invitation);
-            $this->addAttribute('class', 'invitation');
+            $this->addAttribute("placeholder", $this->getInvitation());
         }
 
         return UTIL_HtmlTag::generateTag('input', $this->attributes);
@@ -600,7 +600,7 @@ class TextField extends InvitationFormElement
 
     public function getElementJs()
     {
-        $jsString = "var formElement = new OwTextField(" . json_encode($this->getId()) . ", " . json_encode($this->getName()) . ", " . json_encode(( $this->getHasInvitation() ? $this->getInvitation() : false)) . ");";
+        $jsString = "var formElement = new OwTextField(" . json_encode($this->getId()) . ", " . json_encode($this->getName()) . ");";
 
         /** @var $value Validator  */
         foreach ( $this->validators as $value )
@@ -851,7 +851,7 @@ class Textarea extends InvitationFormElement
 
     public function getElementJs()
     {
-        $jsString = "var formElement = new OwTextArea(" . json_encode($this->getId()) . ", " . json_encode($this->getName()) . ", " . json_encode(( $this->getHasInvitation() ? $this->getInvitation() : false)) . ");";
+        $jsString = "var formElement = new OwTextArea(" . json_encode($this->getId()) . ", " . json_encode($this->getName()) . ");";
 
         /** @var $value Validator  */
         foreach ( $this->validators as $value )
@@ -872,14 +872,14 @@ class Textarea extends InvitationFormElement
     {
         parent::renderInput($params);
 
-        if ( $this->getValue() === null && $this->getHasInvitation() )
-        {
-            $this->addAttribute('value', $this->getInvitation());
-            $this->addAttribute('class', 'invitation');
-        }
-        else if ( $this->getValue() !== null )
+        if ( $this->getValue() !== null )
         {
             $this->addAttribute('value', $this->getValue());
+        }
+
+        if ( $this->getHasInvitation() )
+        {
+            $this->addAttribute('placeholder', $this->getInvitation());
         }
 
         $content = $this->getAttribute('value');
