@@ -1309,3 +1309,24 @@ pre {
     white-space: -moz-pre-wrap; 
     white-space: pre-wrap;
 }
+
+.ow_console_tooltip_btn_wrap > a {
+    color: #a2acb3;
+    display: block;
+    font-size: 14px;
+    line-height: 38px;
+    text-align: center;
+    text-transform: uppercase;
+}
+.ow_console_tooltip_btn_wrap > a:hover {
+    background-color: #4c5358;
+    color: #fff;
+    text-decoration: none;
+}
+.ow_admin_console_update .ow_tooltip .ow_tooltip_body {
+    padding: 0;
+}
+.ow_console_tooltip_btn_wrap.ow_loading a {
+    background: rgba(0, 0, 0, 0) url("images/ajax_preloader_button.gif") no-repeat scroll center center;
+    color: transparent;
+}
