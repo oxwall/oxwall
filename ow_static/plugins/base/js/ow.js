@@ -1423,7 +1423,7 @@ OwForm.prototype = {
             }
             return false;
         }
-//console.log(this.getValues());return false;
+
         var dataToSend = this.getValues();
         if( self.trigger('submit', dataToSend) === false ){
             return false;

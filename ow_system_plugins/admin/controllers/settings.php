@@ -859,7 +859,7 @@ class UserSettingsForm extends Form
     public function process()
     {
         $values = $this->getValues();
-pve($values);
+
         $config = OW::getConfig();
 
         $config->saveConfig('base', 'avatar_size', $values['avatarSize']);
