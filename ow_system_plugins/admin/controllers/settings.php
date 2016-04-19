@@ -833,9 +833,6 @@ class UserSettingsForm extends Form
         }
         $this->addElement($password);
         // --- //
-
-        $password->addFilter(new TrimFilter());
-        $password->addFilter(new StripTagsFilter());
         
         //-- profile questions --//
         $userViewPresentationnew = new CheckboxField("user_view_presentation");
