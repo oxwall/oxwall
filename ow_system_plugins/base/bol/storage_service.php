@@ -531,7 +531,14 @@ class BOL_StorageService
                 {
                     if ( $type == self::URI_VAR_ITEM_TYPE_VAL_THEME && $this->themeService->getSelectedThemeName() == $item->getKey() )
                     {
-                        $this->themeService->setSelectedThemeName(BOL_ThemeService::DEFAULT_THEME);
+                        $defaultTheme = OW::getEventManager()->call("base.get_default_theme");
+                        
+                        if( !$defaultTheme )
+                        {
+                            $defaultTheme = BOL_ThemeService::DEFAULT_THEME;
+                        }
+                        
+                        $this->themeService->setSelectedThemeName($defaultTheme);
                     }
                     else if ( $type == self::URI_VAR_ITEM_TYPE_VAL_PLUGIN && $item->isActive )
                     {
