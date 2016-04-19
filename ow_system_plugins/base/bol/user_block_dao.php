@@ -145,7 +145,7 @@ class BOL_UserBlockDao extends OW_BaseDao
             BASE_CLASS_QueryBuilderEvent::OPTION_METHOD => __METHOD__
         ));
 
-        $query = "SELECT COUNT(DISTINCT u.id) FROM " . $this->getTableName() . " u " . $queryParts["join"]
+        $query = "SELECT COUNT(DISTINCT u.blockedUserId) FROM " . $this->getTableName() . " u " . $queryParts["join"]
             . " WHERE " . $queryParts["where"] . " AND u.userId=:userId";
 
         return $this->dbo->queryForColumn($query, array(
