@@ -599,6 +599,24 @@ final class BOL_UserService
         return !empty($dto);
     }
 
+    public function findBlockedUserList( $userId, $first, $count )
+    {
+        $list =  $this->userBlockDao->findBlockedUserList($userId, $first, $count);
+        $processedList = [];
+
+        foreach($list as $item)
+        {
+            $processedList[] = $item->getBlockedUserId();
+        }
+
+        return $processedList;
+    }
+
+    public function countBlockedUsers($userId)
+    {
+        return  $this->userBlockDao->countBlockedUsers($userId);
+    }
+
     public function isBlocked( $id, $byUserId = null )
     {
         if ( $byUserId === null )

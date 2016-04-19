@@ -129,12 +129,33 @@ class BASE_CLASS_EventHandler
         $eventManager->bind('join.get_captcha_field', array($this, 'getCaptcha'));
         $eventManager->bind(OW_EventManager::ON_FINALIZE, array($this, 'onFinalizeCheckIfSiteFullyInstalled'));
         $eventManager->bind(OW_EventManager::ON_AFTER_ROUTE, array($this, 'onPluginsInitCheckUserStatus'));
+        $eventManager->bind(BASE_CMP_QuickLinksWidget::EVENT_NAME, array($this, 'onCollectQuickLinks'));
 
         $eventManager->bind('class.get_instance', array($this, 'onGetClassInstance'));
 
         if ( defined('OW_ADS_XP_TOP') )
         {
             $eventManager->bind('base.add_page_content', array($this, 'addPageBanner'));
+        }
+    }
+
+    public function onCollectQuickLinks( BASE_CLASS_EventCollector $event )
+    {
+        $userId = OW::getUser()->getId();
+
+        if ( $userId )
+        {
+            $blockedCount = BOL_UserService::getInstance()->countBlockedUsers($userId);
+
+            if ( $blockedCount )
+            {
+                $event->add(array(
+                    BASE_CMP_QuickLinksWidget::DATA_KEY_LABEL => OW::getLanguage()->text('base', 'my_blocked_users'),
+                    BASE_CMP_QuickLinksWidget::DATA_KEY_URL => OW::getRouter()->urlForRoute('users-blocked'),
+                    BASE_CMP_QuickLinksWidget::DATA_KEY_COUNT => $blockedCount,
+                    BASE_CMP_QuickLinksWidget::DATA_KEY_COUNT_URL => OW::getRouter()->urlForRoute('users-blocked')
+                ));
+            }
         }
     }
 
