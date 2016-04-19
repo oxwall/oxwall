@@ -503,7 +503,7 @@ var OwUtils = function(){
 
         $.each(autoClicks, function(i,o){
             var context = $(o);
-            $('textarea.invitation', context)
+            $('textarea.invitation, textarea[placeholder]', context)
             .bind('focus.auto_click', {context:context},
                 function(e){
                     $('.ow_submit_auto_click', e.data.context).show();
