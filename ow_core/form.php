@@ -431,8 +431,10 @@ class Form
         {
             throw new InvalidArgumentException('Array should be provided for validation!');
         }
-
-        if ( !isset($data[self::ELEMENT_CSRF_TOKEN]) || !UTIL_Csrf::isTokenValid($data[self::ELEMENT_CSRF_TOKEN]) )
+        
+        if ( $this->getElement(self::ELEMENT_CSRF_TOKEN) != null 
+            && ( !isset($data[self::ELEMENT_CSRF_TOKEN]) || !UTIL_Csrf::isTokenValid($data[self::ELEMENT_CSRF_TOKEN] )) 
+        )
         {
             $valid = false;
             //TODO refactor - remove message adding from Form class
