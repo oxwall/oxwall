@@ -833,7 +833,7 @@ class UserSettingsForm extends Form
         }
         $this->addElement($password);
         // --- //
-
+        
         //-- profile questions --//
         $userViewPresentationnew = new CheckboxField("user_view_presentation");
         $userViewPresentationnew->setLabel($language->text('base', 'questions_config_user_view_presentation_label'));

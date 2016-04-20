@@ -30,6 +30,7 @@ require_once OW_DIR_CORE . 'exception.php';
 require_once OW_DIR_INC . 'function.php';
 require_once OW_DIR_CORE . 'ow.php';
 require_once OW_DIR_CORE . 'plugin.php';
+require_once OW_DIR_CORE . 'filter.php';
 
 mb_internal_encoding('UTF-8');
 

@@ -52,6 +52,8 @@ $router->addRoute(new OW_Route('users', 'users', 'BASE_CTRL_UserList', 'index', 
 $router->addRoute(new OW_Route('base_user_lists', 'users/:list', 'BASE_CTRL_UserList', 'index'));
 
 $router->addRoute(new OW_Route('users-waiting-for-approval', 'users/waiting-for-approval', 'BASE_CTRL_UserList', 'forApproval'));
+$router->addRoute(new OW_Route('users-blocked', 'users/blocked', 'BASE_CTRL_UserList', 'blocked'));
+
 
 $router->addRoute(new OW_Route('users-search', 'users/search', 'BASE_CTRL_UserSearch', 'index'));
 $router->addRoute(new OW_Route('users-search-result', 'users/search-result', 'BASE_CTRL_UserSearch', 'result'));
