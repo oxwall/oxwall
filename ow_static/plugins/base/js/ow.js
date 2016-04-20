@@ -503,7 +503,7 @@ var OwUtils = function(){
 
         $.each(autoClicks, function(i,o){
             var context = $(o);
-            $('textarea.invitation', context)
+            $('textarea.invitation, textarea[placeholder]', context)
             .bind('focus.auto_click', {context:context},
                 function(e){
                     $('.ow_submit_auto_click', e.data.context).show();
@@ -3226,6 +3226,24 @@ OW_UsersApi = function( _settings )
         return _query("unfeature", {"userId": userId}, callback);
     };
 };
+
+OW.postRequest = function(url, params)
+{
+    var $form = $("<form></form>")
+        .attr({
+            action: url,
+            method: "post"
+        })
+        .appendTo("body");
+
+    $.each(params, function( name, value ) {
+        $('<input type="hidden" />').attr({
+            name: name, value: value
+        }).appendTo($form);
+    });
+
+    $form.submit();
+}
 
 OW.ResponsiveMenu = (function() {
     

@@ -98,6 +98,10 @@ class ADMIN_CLASS_MasterPage extends OW_MasterPage
         $this->assign('version', OW::getConfig()->getValue('base', 'soft_version'));
         $this->assign('build', OW::getConfig()->getValue('base', 'soft_build'));
         $this->assign('softVersion', $verString);
+        
+        $checkUrl = OW::getRouter()->urlFor("ADMIN_CTRL_Storage", "checkUpdates");
+        $params = array(BOL_StorageService::URI_VAR_BACK_URI => urlencode(OW::getRequest()->getRequestUri()));
+        $this->assign("checkUpdatesUrl", OW::getRequest()->buildUrlQueryString($checkUrl, $params));
     }
 
     public function onBeforeRender()

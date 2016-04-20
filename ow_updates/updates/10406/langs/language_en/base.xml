@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<prefix name="base" label="Base" language_tag="en" language_label="English">
+    <key name="blocked_users_browse_page_heading"><value>Browse Blocked Users</value></key>
+    <key name="my_blocked_users"><value>Blocked Users</value></key>
+</prefix>
