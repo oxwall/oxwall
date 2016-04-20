@@ -136,6 +136,10 @@ final class OW_PluginManager
         {
             $initDirPath = $pluginObject->getMobileDir();
         }
+        if ( OW::getApplication()->getContext() == OW::CONTEXT_CLI )
+        {
+            $initDirPath = $pluginObject->getCliDir();
+        }
         else if ( OW::getApplication()->getContext() == OW::CONTEXT_API )
         {
             $initDirPath = $pluginObject->getApiDir();

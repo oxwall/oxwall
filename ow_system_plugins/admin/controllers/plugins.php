@@ -75,7 +75,8 @@ class ADMIN_CTRL_Plugins extends ADMIN_CTRL_StorageAbstract
                 "description" => $plugin->getDescription(),
                 "set_url" => ( $plugin->isActive && $plugin->getAdminSettingsRoute() !== null) ? $router->urlForRoute($plugin->adminSettingsRoute) : false,
                 "update_url" => ((int) $plugin->getUpdate() == 1) ? $router->urlFor(__CLASS__, "updateRequest",
-                        array("key" => $plugin->getKey())) : false
+                        array("key" => $plugin->getKey())) : false,
+                "un_url" => $router->urlFor(__CLASS__, "uninstallRequest", array("key" => $plugin->getKey()))
             );
 
             if ( $plugin->getLicenseCheckTimestamp() > 0 )
@@ -94,7 +95,6 @@ class ADMIN_CTRL_Plugins extends ADMIN_CTRL_StorageAbstract
             if ( $plugin->isActive() )
             {
                 $array["deact_url"] = $router->urlFor(__CLASS__, "deactivate", array("key" => $plugin->getKey()));
-                $array["un_url"] = $router->urlFor(__CLASS__, "uninstallRequest", array("key" => $plugin->getKey()));
 
                 if ( $plugin->getUninstallRoute() !== null )
                 {
@@ -147,7 +147,7 @@ class ADMIN_CTRL_Plugins extends ADMIN_CTRL_StorageAbstract
             $arrayToAssign[$key]["inst_url"] = OW::getRequest()->buildUrlQueryString(OW::getRouter()->urlFor(__CLASS__,
                     "install"), $params);
             $arrayToAssign[$key]["del_url"] = OW::getRouter()->urlFor(__CLASS__, "delete",
-                array("key" => $plugin['key']));
+                array("key" => $plugin["key"]));
         }
 
         $event = new OW_Event("admin.plugins_list_view", array("ctrl" => $this, "type" => "available"), $arrayToAssign);
@@ -327,13 +327,8 @@ class ADMIN_CTRL_Plugins extends ADMIN_CTRL_StorageAbstract
         $pluginDto = $this->getPluginDtoByKeyInParamsArray($params);
         $language = OW::getLanguage();
 
-        // trigger event
-        $event = new OW_Event(OW_EventManager::ON_BEFORE_PLUGIN_DEACTIVATE, array("pluginKey" => $pluginDto->getKey()));
-        OW::getEventManager()->trigger($event);
-
         $this->pluginService->deactivate($pluginDto->getKey());
-        $event = new OW_Event(OW_EventManager::ON_AFTER_PLUGIN_DEACTIVATE, array('pluginKey' => $pluginDto->getKey()));
-        OW::getEventManager()->trigger($event);
+
         OW::getFeedback()->info($language->text('admin', 'manage_plugins_deactivate_success_message',
                 array('plugin' => $pluginDto->getTitle())));
         $this->redirectToAction('index');
@@ -365,10 +360,6 @@ class ADMIN_CTRL_Plugins extends ADMIN_CTRL_StorageAbstract
 
         $this->pluginService->activate($pluginDto->getKey());
 
-        // trigger event
-        $event = new OW_Event(OW_EventManager::ON_AFTER_PLUGIN_ACTIVATE, array("pluginKey" => $pluginDto->getKey()));
-        OW::getEventManager()->trigger($event);
-
         OW::getFeedback()->info($language->text("admin", "manage_plugins_activate_success_message",
                 array("plugin" => $pluginDto->getTitle())));
         $this->redirect($urlRedirect);
@@ -382,6 +373,7 @@ class ADMIN_CTRL_Plugins extends ADMIN_CTRL_StorageAbstract
      */
     public function updateRequest( array $params )
     {
+        //TODO merge method with platform update request
         $pluginDto = $this->getPluginDtoByKeyInParamsArray($params);
         $language = OW::getLanguage();
         $router = OW::getRouter();
@@ -389,6 +381,7 @@ class ADMIN_CTRL_Plugins extends ADMIN_CTRL_StorageAbstract
         $remotePluginInfo = (array) $this->storageService->getItemInfoForUpdate($pluginDto->getKey(),
                 $pluginDto->getDeveloperKey(), $pluginDto->getBuild());
         $this->assign("returnUrl", $router->urlForRoute("admin_plugins_installed"));
+        $this->assign("changeLog", $remotePluginInfo["changeLog"]);
 
         if ( empty($remotePluginInfo) || !empty($remotePluginInfo["error"]) )
         {
@@ -409,7 +402,8 @@ class ADMIN_CTRL_Plugins extends ADMIN_CTRL_StorageAbstract
             if ( !isset($_GET[BOL_StorageService::URI_VAR_LICENSE_CHECK_COMPLETE]) )
             {
                 $get = array(
-                    BOL_StorageService::URI_VAR_BACK_URI => $router->uriFor(__CLASS__, "updateRequest", $params),
+                    BOL_StorageService::URI_VAR_BACK_URI => urlencode($router->uriFor(__CLASS__, "updateRequest",
+                            $params)),
                     BOL_StorageService::URI_VAR_KEY => $pluginDto->getKey(),
                     BOL_StorageService::URI_VAR_ITEM_TYPE => BOL_StorageService::URI_VAR_ITEM_TYPE_VAL_PLUGIN,
                     BOL_StorageService::URI_VAR_DEV_KEY => $pluginDto->getDeveloperKey()
@@ -568,9 +562,22 @@ class ADMIN_CTRL_Plugins extends ADMIN_CTRL_StorageAbstract
      */
     public function manualUpdateRequest( array $params )
     {
-        $pluginDto = $this->getPluginDtoByKeyInParamsArray($params);
         $language = OW::getLanguage();
         $feedback = OW::getFeedback();
+        $urlToRedirect = OW::getRouter()->urlForRoute("admin_plugins_installed");
+        $pluginDto = null;
+
+        // check if plugin key was provided
+        if ( !empty($params["key"]) )
+        {
+            $pluginDto = $this->pluginService->findPluginByKey(trim($params["key"]));
+        }
+
+        // try to get item for manual update from DB
+        if ( !$pluginDto )
+        {
+            $pluginDto = $this->pluginService->findNextManualUpdatePlugin();
+        }
 
         if ( !empty($_GET["mode"]) )
         {
@@ -596,12 +603,14 @@ class ADMIN_CTRL_Plugins extends ADMIN_CTRL_StorageAbstract
                     break;
             }
 
-            $this->redirect(OW::getRouter()->urlForRoute("admin_plugins_installed"));
+            $this->redirect($urlToRedirect);
         }
 
-        if ( (int) $pluginDto->getUpdate() != BOL_PluginService::PLUGIN_STATUS_MANUAL_UPDATE )
+        // if nothing was found for update or everything is up to date
+        if ( !$pluginDto || (int) $pluginDto->getUpdate() != BOL_PluginService::PLUGIN_STATUS_MANUAL_UPDATE )
         {
-            $this->redirect(OW::getRouter()->urlForRoute("admin_plugins_installed"));
+            $feedback->warning(OW::getLanguage()->text("admin", "no_plugins_for_manual_updates"));
+            $this->redirect($urlToRedirect);
         }
 
         $this->assign("text",
@@ -653,7 +662,8 @@ class ADMIN_CTRL_Plugins extends ADMIN_CTRL_StorageAbstract
         {
             if ( !isset($params[BOL_StorageService::URI_VAR_LICENSE_CHECK_COMPLETE]) )
             {
-                $params[BOL_StorageService::URI_VAR_BACK_URI] = OW::getRouter()->uriFor(__CLASS__, "install");
+                $params[BOL_StorageService::URI_VAR_BACK_URI] = urlencode(OW::getRequest()->getRequestUri());
+                $params["back-button-uri"] = urlencode(OW::getRouter()->uriForRoute("admin_plugins_available"));
                 $this->redirect(OW::getRequest()->buildUrlQueryString(OW::getRouter()->urlFor("ADMIN_CTRL_Storage",
                             "checkItemLicense"), $params));
             }
@@ -679,7 +689,7 @@ class ADMIN_CTRL_Plugins extends ADMIN_CTRL_StorageAbstract
                     $pluginDto->setLicenseKey(urldecode($params[BOL_StorageService::URI_VAR_LICENSE_KEY]));
                     $this->pluginService->savePlugin($pluginDto);
                 }
-                
+
                 $feedback->info($language->text("admin", "manage_plugins_install_success_message",
                         array("plugin" => $pluginDto->getTitle())));
             }
@@ -725,6 +735,11 @@ class ADMIN_CTRL_Plugins extends ADMIN_CTRL_StorageAbstract
         {
             OW::getFeedback()->error($language->text('admin', 'manage_plugins_uninstall_error_message'));
             $this->redirect(OW::getRouter()->urlForRoute("admin_plugins_installed"));
+        }
+
+        if ( !$pluginDto->isActive )
+        {
+            $this->pluginService->activate($pluginDto->getKey());
         }
 
         try

@@ -33,11 +33,13 @@ class ADMIN_CLASS_EventHandler
     public function init()
     {
         $eventManager = OW::getEventManager();
-        $eventManager->bind('admin.disable_fields_on_edit_profile_question', array($this, 'onGetDisableActionList'));
-        $eventManager->bind('admin.disable_fields_on_edit_profile_question',
-            array($this, 'onGetJoinStampDisableActionList'), 999);
+        $eventManager->bind("admin.disable_fields_on_edit_profile_question", array($this, "onGetDisableActionList"));
+        $eventManager->bind("admin.disable_fields_on_edit_profile_question",
+            array($this, "onGetJoinStampDisableActionList"), 999);
 
-        $eventManager->bind('admin.add_admin_notification', array($this, 'onAddAdminNotification'));
+        $eventManager->bind("admin.add_admin_notification", array($this, "onAddAdminNotification"));
+        $eventManager->bind(OW_EventManager::ON_AFTER_ROUTE, array($this, "onAfterRoute"));
+        $eventManager->bind("admin.check_if_admin_page", array($this, "checkIfAdminPage"));
     }
 
     public function onAddAdminNotification( ADMIN_CLASS_NotificationCollector $coll )
@@ -87,7 +89,7 @@ class ADMIN_CLASS_EventHandler
 
         if ( !ini_get("allow_url_fopen") )
         {
-            $coll->add($language->text('admin', 'warning_url_fopen_disabled'),
+            $coll->add($language->text("admin", "warning_url_fopen_disabled"),
                 ADMIN_CLASS_NotificationCollector::NOTIFICATION_WARNING);
         }
 
@@ -122,97 +124,97 @@ class ADMIN_CLASS_EventHandler
         $params = $e->getParams();
         $data = $e->getData();
 
-        if ( !empty($params['questionDto']) && $params['questionDto'] instanceof BOL_Question && $params['questionDto']->name != 'joinStamp' )
+        if ( !empty($params["questionDto"]) && $params["questionDto"] instanceof BOL_Question && $params["questionDto"]->name != "joinStamp" )
         {
-            $dto = $params['questionDto'];
+            $dto = $params["questionDto"];
 
             foreach ( $data as $key => $value )
             {
                 switch ( $key )
                 {
-                    case 'disable_account_type' :
+                    case "disable_account_type" :
 
                         if ( $dto->base == 1 )
                         {
-                            $data['disable_account_type'] = true;
+                            $data["disable_account_type"] = true;
                         }
 
                         break;
-                    case 'disable_answer_type' :
+                    case "disable_answer_type" :
 
                         if ( $dto->base == 1 )
                         {
-                            $data['disable_answer_type'] = true;
+                            $data["disable_answer_type"] = true;
                         }
 
                         break;
-                    case 'disable_presentation' :
+                    case "disable_presentation" :
 
                         if ( $dto->base == 1 )
                         {
-                            $data['disable_presentation'] = true;
+                            $data["disable_presentation"] = true;
                         }
 
                         break;
-                    case 'disable_column_count' :
+                    case "disable_column_count" :
 
                         if ( !empty($dto->parent) )
                         {
-                            $data['disable_column_count'] = true;
+                            $data["disable_column_count"] = true;
                         }
 
                         break;
 
-                    case 'disable_possible_values' :
+                    case "disable_possible_values" :
 
                         if ( !empty($dto->parent) )
                         {
-                            $data['disable_possible_values'] = true;
+                            $data["disable_possible_values"] = true;
                         }
 
                         break;
 
-                    case 'disable_display_config' :
+                    case "disable_display_config" :
 
-                        if ( $dto->name == 'joinStamp' )
+                        if ( $dto->name == "joinStamp" )
                         {
-                            $data['disable_display_config'] = true;
+                            $data["disable_display_config"] = true;
                         }
 
                         break;
-                    case 'disable_required' :
+                    case "disable_required" :
 
                         if ( $dto->base == 1 )
                         {
-                            $data['disable_required'] = true;
+                            $data["disable_required"] = true;
                         }
 
 
                         break;
-                    case 'disable_on_join' :
+                    case "disable_on_join" :
 
-                        if ( in_array($dto->name, array('password')) || $dto->base == 1 )
+                        if ( in_array($dto->name, array("password")) || $dto->base == 1 )
                         {
-                            $data['disable_on_join'] = true;
+                            $data["disable_on_join"] = true;
                         }
 
                         break;
-                    case 'disable_on_view' :
-                        if ( in_array($dto->name, array('password')) )
+                    case "disable_on_view" :
+                        if ( in_array($dto->name, array("password")) )
                         {
-                            $data['disable_on_view'] = true;
+                            $data["disable_on_view"] = true;
                         }
                         break;
-                    case 'disable_on_search' :
-                        if ( in_array($dto->name, array('password')) )
+                    case "disable_on_search" :
+                        if ( in_array($dto->name, array("password")) )
                         {
-                            $data['disable_on_search'] = true;
+                            $data["disable_on_search"] = true;
                         }
                         break;
-                    case 'disable_on_edit' :
-                        if ( in_array($dto->name, array('password')) )
+                    case "disable_on_edit" :
+                        if ( in_array($dto->name, array("password")) )
                         {
-                            $data['disable_on_edit'] = true;
+                            $data["disable_on_edit"] = true;
                         }
                         break;
                 }
@@ -227,23 +229,60 @@ class ADMIN_CLASS_EventHandler
         $params = $e->getParams();
         $data = $e->getData();
 
-        if ( !empty($params['questionDto']) && $params['questionDto'] instanceof BOL_Question && $params['questionDto']->name == 'joinStamp' )
+        if ( !empty($params["questionDto"]) && $params["questionDto"] instanceof BOL_Question && $params["questionDto"]->name == "joinStamp" )
         {
             $disableActionList = array(
-                'disable_account_type' => true,
-                'disable_answer_type' => true,
-                'disable_presentation' => true,
-                'disable_column_count' => true,
-                'disable_display_config' => true,
-                'disable_possible_values' => true,
-                'disable_required' => true,
-                'disable_on_join' => true,
-                'disable_on_view' => false,
-                'disable_on_search' => true,
-                'disable_on_edit' => true
+                "disable_account_type" => true,
+                "disable_answer_type" => true,
+                "disable_presentation" => true,
+                "disable_column_count" => true,
+                "disable_display_config" => true,
+                "disable_possible_values" => true,
+                "disable_required" => true,
+                "disable_on_join" => true,
+                "disable_on_view" => false,
+                "disable_on_search" => true,
+                "disable_on_edit" => true
             );
 
             $e->setData($disableActionList);
         }
+    }
+
+    public function onAfterRoute( OW_Event $e )
+    {
+        $pluginService = BOL_PluginService::getInstance();
+        $attrs = OW::getRequestHandler()->getHandlerAttributes();
+
+        if ( is_subclass_of($attrs[OW_RequestHandler::ATTRS_KEY_CTRL], "ADMIN_CTRL_Abstract") )
+        {
+            $pluginService->checkManualUpdates();
+            BOL_ThemeService::getInstance()->checkManualUpdates();
+
+            if ( $pluginService->findNextManualUpdatePlugin() != null )
+            {
+                $params = array(
+                    OW_RequestHandler::ATTRS_KEY_CTRL => "ADMIN_CTRL_Plugins",
+                    OW_RequestHandler::ATTRS_KEY_ACTION => "manualUpdateRequest",
+                    OW_RequestHandler::CATCH_ALL_REQUEST_KEY_REDIRECT => true
+                );
+
+                OW::getRequestHandler()->setCatchAllRequestsAttributes("admin.manual_update", $params);
+                OW::getRequestHandler()->addCatchAllRequestsExclude("admin.manual_update", "ADMIN_CTRL_Plugins",
+                    "manualUpdateAll");
+            }
+        }
+    }
+
+    public function checkIfAdminPage( OW_Event $e )
+    {
+        $attrs = OW::getRequestHandler()->getHandlerAttributes();
+
+        if ( empty($attrs) || empty($attrs[OW_RequestHandler::ATTRS_KEY_CTRL]) )
+        {
+            return null;
+        }
+
+        return is_subclass_of($attrs[OW_RequestHandler::ATTRS_KEY_CTRL], "ADMIN_CTRL_Abstract");
     }
 }

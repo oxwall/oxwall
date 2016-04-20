@@ -41,10 +41,17 @@ abstract class FormElement
 
     /**
      * Added validators.
-     * 
+     *
      * @var array
      */
     protected $validators = array();
+
+    /**
+     * Added filters
+     * 
+     * @var type 
+     */
+    protected $filters = array();
 
     /**
      * Required attribute flag.
@@ -55,27 +62,27 @@ abstract class FormElement
 
     /**
      * Form element value.
-     * 
+     *
      * @var mixed
      */
     protected $value;
 
     /**
      * Validator errors.
-     * 
+     *
      * @var array
      */
     protected $errors = array();
 
     /**
      * Form element label.
-     * 
+     *
      * @var string
      */
     protected $label;
 
     /**
-     * Form element description. 
+     * Form element description.
      *
      * @var string
      */
@@ -83,7 +90,7 @@ abstract class FormElement
 
     /**
      * Form element attributes.
-     * 
+     *
      * @var array
      */
     protected $attributes = array();
@@ -258,7 +265,7 @@ abstract class FormElement
 
     /**
      * Adds form element attributes.
-     * 
+     *
      * @param array $attributes
      * @return FormElement
      * @throws InvalidArgumentException
@@ -292,6 +299,11 @@ abstract class FormElement
         }
 
         return $this;
+    }
+
+    public function addFilter( OW_IFilter $filter )
+    {
+        $this->filters[] = $filter;
     }
 
     /**
@@ -370,6 +382,12 @@ abstract class FormElement
      */
     public function setValue( $value )
     {
+        /* @var $filter OW_IFilter  */
+        foreach ( $this->filters as $filter )
+        {
+            $value = $filter->filter($value);
+        }
+
         $this->value = $value;
 
         return $this;
@@ -377,7 +395,7 @@ abstract class FormElement
 
     /**
      * Returns input label.
-     * 
+     *
      * @return string
      */
     public function renderLabel()
@@ -446,18 +464,35 @@ abstract class FormElement
     }
 
     /**
-     * Returns form element JS. 
-     * 
+     * Returns form element JS.
+     *
      * @return string
      */
     public function getElementJs()
     {
         $jsString = "var formElement = new OwFormElement(" . json_encode($this->getId()) . ", " . json_encode($this->getName()) . ");";
 
-        /** @var $value Validator  */
+        return $jsString . $this->generateValidatorAndFilterJsCode("formElement");
+    }
+
+    /**
+     * @param string $varName
+     * @return string
+     */
+    protected function generateValidatorAndFilterJsCode( $varName )
+    {
+        $jsString = "";
+
+        /** @var $value OW_Validator  */
         foreach ( $this->validators as $value )
         {
-            $jsString .= "formElement.addValidator(" . $value->getJsValidator() . ");";
+            $jsString .= "{$varName}.addValidator(" . $value->getJsValidator() . ");";
+        }
+
+        /** @var $filter OW_IFilter  */
+        foreach ( $this->filters as $filter )
+        {
+            $jsString .= "{$varName}.addFilter(" . $filter->getJsFilter() . ");";
         }
 
         return $jsString;
@@ -555,7 +590,7 @@ abstract class InvitationFormElement extends FormElement
 
 /**
  * Form element: TextField.
- * 
+ *
  * @author Sardar Madumarov <madumarov@gmail.com>
  * @package ow_core
  * @since 1.0
@@ -589,10 +624,10 @@ class TextField extends InvitationFormElement
         {
             $this->addAttribute('value', str_replace('"', '&quot;', $this->value));
         }
-        else if ( $this->getHasInvitation() )
+
+        if ( $this->getHasInvitation() )
         {
-            $this->addAttribute('value', $this->invitation);
-            $this->addAttribute('class', 'invitation');
+            $this->addAttribute("placeholder", $this->getInvitation());
         }
 
         return UTIL_HtmlTag::generateTag('input', $this->attributes);
@@ -600,15 +635,9 @@ class TextField extends InvitationFormElement
 
     public function getElementJs()
     {
-        $jsString = "var formElement = new OwTextField(" . json_encode($this->getId()) . ", " . json_encode($this->getName()) . ", " . json_encode(( $this->getHasInvitation() ? $this->getInvitation() : false)) . ");";
+        $jsString = "var formElement = new OwTextField(" . json_encode($this->getId()) . ", " . json_encode($this->getName()) . ");";
 
-        /** @var $value Validator  */
-        foreach ( $this->validators as $value )
-        {
-            $jsString .= "formElement.addValidator(" . $value->getJsValidator() . ");";
-        }
-
-        return $jsString;
+        return $jsString.$this->generateValidatorAndFilterJsCode("formElement");
     }
 }
 
@@ -735,7 +764,8 @@ class DateField extends FormElement
 
         for ( $i = $this->maxYear; $i >= $this->minYear; $i-- )
         {
-            $attrs = (isset($this->defaultDate['year']) && (string) $i === (string) $this->defaultDate['year']) ? array('selected' => 'selected') : array();
+            $attrs = (isset($this->defaultDate['year']) && (string) $i === (string) $this->defaultDate['year']) ? array(
+                'selected' => 'selected') : array();
 
             $attrs['value'] = $i;
 
@@ -744,7 +774,8 @@ class DateField extends FormElement
 
         for ( $i = 1; $i <= 12; $i++ )
         {
-            $attrs = (isset($this->defaultDate['month']) && (string) $i === (string) $this->defaultDate['month']) ? array('selected' => 'selected') : array();
+            $attrs = (isset($this->defaultDate['month']) && (string) $i === (string) $this->defaultDate['month']) ? array(
+                'selected' => 'selected') : array();
 
             $attrs['value'] = $i;
 
@@ -831,7 +862,7 @@ class DateField extends FormElement
 
 /**
  * Form element: Textarea.
- * 
+ *
  * @author Sardar Madumarov <madumarov@gmail.com>
  * @package ow_core
  * @since 1.0
@@ -851,15 +882,9 @@ class Textarea extends InvitationFormElement
 
     public function getElementJs()
     {
-        $jsString = "var formElement = new OwTextArea(" . json_encode($this->getId()) . ", " . json_encode($this->getName()) . ", " . json_encode(( $this->getHasInvitation() ? $this->getInvitation() : false)) . ");";
+        $jsString = "var formElement = new OwTextArea(" . json_encode($this->getId()) . ", " . json_encode($this->getName()) . ");";
 
-        /** @var $value Validator  */
-        foreach ( $this->validators as $value )
-        {
-            $jsString .= "formElement.addValidator(" . $value->getJsValidator() . ");";
-        }
-
-        return $jsString;
+        return $jsString.$this->generateValidatorAndFilterJsCode("formElement");
     }
 
     /**
@@ -872,14 +897,14 @@ class Textarea extends InvitationFormElement
     {
         parent::renderInput($params);
 
-        if ( $this->getValue() === null && $this->getHasInvitation() )
-        {
-            $this->addAttribute('value', $this->getInvitation());
-            $this->addAttribute('class', 'invitation');
-        }
-        else if ( $this->getValue() !== null )
+        if ( $this->getValue() !== null )
         {
             $this->addAttribute('value', $this->getValue());
+        }
+
+        if ( $this->getHasInvitation() )
+        {
+            $this->addAttribute('placeholder', $this->getInvitation());
         }
 
         $content = $this->getAttribute('value');
@@ -893,7 +918,7 @@ class Textarea extends InvitationFormElement
 
 /**
  * Form element: Hidden.
- * 
+ *
  * @author Sardar Madumarov <madumarov@gmail.com>
  * @package ow_core
  * @since 1.0
@@ -932,7 +957,7 @@ class HiddenField extends FormElement
 
 /**
  * Form element: Submit.
- * 
+ *
  * @author Sardar Madumarov <madumarov@gmail.com>
  * @package ow_core
  * @since 1.0
@@ -1020,7 +1045,7 @@ class Button extends Submit
 
 /**
  * Form element: PasswordField.
- * 
+ *
  * @author Sardar Madumarov <madumarov@gmail.com>
  * @package ow_core
  * @since 1.0
@@ -1061,7 +1086,7 @@ class PasswordField extends TextField
 
 /**
  * Form element: RadioField.
- * 
+ *
  * @author Sardar Madumarov <madumarov@gmail.com>
  * @package ow_core
  * @since 1.0
@@ -1113,7 +1138,7 @@ class RadioField extends FormElement
 
     /**
      * Sets field options.
-     * 
+     *
      * @param array $options
      * @return RadioField
      * @throws InvalidArgumentException
@@ -1132,7 +1157,7 @@ class RadioField extends FormElement
 
     /**
      * Adds field option.
-     * 
+     *
      * @param string $key
      * @param string$value
      * @return RadioField
@@ -1146,7 +1171,7 @@ class RadioField extends FormElement
 
     /**
      * Adds options list.
-     * 
+     *
      * @param array $options
      * @return RadioField
      */
@@ -1182,13 +1207,7 @@ class RadioField extends FormElement
     {
         $js = "var formElement = new OwRadioField(" . json_encode($this->getId()) . ", " . json_encode($this->getName()) . ");";
 
-        /** @var $value Validator  */
-        foreach ( $this->validators as $value )
-        {
-            $js .= "formElement.addValidator(" . $value->getJsValidator() . ");";
-        }
-
-        return $js;
+        return $js.$this->generateValidatorAndFilterJsCode("formElement");
     }
 
     /**
@@ -1232,7 +1251,7 @@ class RadioField extends FormElement
 
 /**
  * Form element: CheckboxGroup.
- * 
+ *
  * @author Sardar Madumarov <madumarov@gmail.com>
  * @package ow_core
  * @since 1.0
@@ -1286,7 +1305,7 @@ class CheckboxGroup extends FormElement
 
     /**
      * Sets field options.
-     * 
+     *
      * @param array $options
      * @return CheckboxGroup
      */
@@ -1304,7 +1323,7 @@ class CheckboxGroup extends FormElement
 
     /**
      * Adds field option.
-     * 
+     *
      * @param string $key
      * @param string$value
      * @return CheckboxGroup
@@ -1318,7 +1337,7 @@ class CheckboxGroup extends FormElement
 
     /**
      * Adds options list.
-     * 
+     *
      * @param array $options
      * @return CheckboxGroup
      */
@@ -1382,13 +1401,7 @@ class CheckboxGroup extends FormElement
     {
         $js = "var formElement = new OwCheckboxGroup(" . json_encode($this->getId()) . ", " . json_encode($this->getName()) . ");";
 
-        /** @var $value Validator  */
-        foreach ( $this->validators as $value )
-        {
-            $js .= "formElement.addValidator(" . $value->getJsValidator() . ");";
-        }
-
-        return $js;
+        return $js.$this->generateValidatorAndFilterJsCode("formElement");
     }
 
     /**
@@ -1432,7 +1445,7 @@ class CheckboxGroup extends FormElement
 
 /**
  * Form element: Selectbox.
- * 
+ *
  * @author Sardar Madumarov <madumarov@gmail.com>
  * @package ow_core
  * @since 1.0
@@ -1469,7 +1482,7 @@ class Selectbox extends InvitationFormElement
 
     /**
      * Sets field options.
-     * 
+     *
      * @param array $options
      * @return Selectbox
      * @throws InvalidArgumentException
@@ -1488,7 +1501,7 @@ class Selectbox extends InvitationFormElement
 
     /**
      * Adds input option.
-     * 
+     *
      * @param string $value
      * @param string $label
      * @return Selectbox
@@ -1502,7 +1515,7 @@ class Selectbox extends InvitationFormElement
 
     /**
      * Adds input options list.
-     * 
+     *
      * @param array $options
      * @return Selectbox
      */
@@ -1553,7 +1566,7 @@ class Selectbox extends InvitationFormElement
 
 /**
  * Form element: CheckboxField.
- * 
+ *
  * @author Sardar Madumarov <madumarov@gmail.com>
  * @package ow_core
  * @since 1.0
@@ -1601,13 +1614,7 @@ class CheckboxField extends FormElement
     {
         $jsString = "var formElement = new OwCheckboxField(" . json_encode($this->getId()) . ", " . json_encode($this->getName()) . ");";
 
-        /** @var $value Validator  */
-        foreach ( $this->validators as $value )
-        {
-            $jsString .= "formElement.addValidator(" . $value->getJsValidator() . ");";
-        }
-
-        return $jsString;
+        return $jsString.$this->generateValidatorAndFilterJsCode("formElement");
     }
 
     /**
@@ -1752,13 +1759,7 @@ class Multiselect extends FormElement
                 formElement.setValue(" . json_encode($this->value) . ");
         ";
 
-        /** @var $value Validator  */
-        foreach ( $this->validators as $value )
-        {
-            $jsString .= "formElement.addValidator(" . $value->getJsValidator() . ");";
-        }
-
-        return $jsString;
+        return $jsString.$this->generateValidatorAndFilterJsCode("formElement");
     }
 }
 
@@ -1882,7 +1883,7 @@ class MultiFileField extends FormElement
 
     /**
      * Constructor.
-     * 
+     *
      * @param string $name
      * @param int $inputs
      */
@@ -1905,10 +1906,7 @@ class MultiFileField extends FormElement
     {
         $js = "var formElement = new OwFormElement('" . $this->getId() . "', '" . $this->getName() . "');";
 
-        foreach ( $this->validators as $value )
-        {
-            $js .= "formElement.addValidator(" . $value->getJsValidator() . ");";
-        }
+        $js .= $this->generateValidatorAndFilterJsCode("formElement");
 
         $js .= "
 			formElement.getValue = function(){
@@ -2053,11 +2051,7 @@ class TagsField extends FormElement
     {
         $js = "var formElement = new OwFormElement('" . $this->getId() . "', '" . $this->getName() . "');";
 
-        /** @var $value Validator  */
-        foreach ( $this->validators as $value )
-        {
-            $js .= "formElement.addValidator(" . $value->getJsValidator() . ");";
-        }
+        $js .= $this->generateValidatorAndFilterJsCode("formElement");
 
         $js .= "
 			formElement.getValue = function(){
@@ -2144,7 +2138,7 @@ class CaptchaField extends FormElement
             $this->addAttribute('value', str_replace('"', '&quot;', $this->value));
         }
 
-        $captchaUrl = OW_URL_HOME.'captcha.php';
+        $captchaUrl = OW_URL_HOME . 'captcha.php';
         $captchaResponderUrl = OW::getRouter()->urlFor('BASE_CTRL_Captcha', 'ajaxResponder');
         $captchaClass = $this->getName() . '_' . $this->getId();
         $uniqueId = md5(time());
@@ -2252,7 +2246,7 @@ class AgeRange extends FormElement implements DateRangeInterface
 
         return $this;
     }
-    
+
     public function getMaxYear()
     {
         return (int) date("Y") - (int) $this->minAge;
@@ -2270,8 +2264,8 @@ class AgeRange extends FormElement implements DateRangeInterface
         OW::getDocument()->addScript(OW::getPluginManager()->getPlugin("base")->getStaticJsUrl() . 'age_range_field.js');
         OW::getDocument()->addOnloadScript(" window." . $this->getName() . " = new AgeRangeField( " . json_encode($this->getName()) . ", " . json_encode($this->minAge) . ", " . ( $this->maxAge ) . " ); ");
 
-        $fromAgeOptionsString = "";//UTIL_HtmlTag::generateTag('option', array('value' => ''), true);
-        $toAgeOptionsString = "";//UTIL_HtmlTag::generateTag('option', array('value' => ''), true);
+        $fromAgeOptionsString = ""; //UTIL_HtmlTag::generateTag('option', array('value' => ''), true);
+        $toAgeOptionsString = ""; //UTIL_HtmlTag::generateTag('option', array('value' => ''), true);
 
         $defaultAgeFrom = isset($this->value['from']) ? (int) $this->value['from'] : $this->minAge;
         $defaultAgeTo = isset($this->value['to']) ? (int) $this->value['to'] : $this->maxAge;
@@ -2326,6 +2320,8 @@ class AgeRange extends FormElement implements DateRangeInterface
     {
         $js = "var formElement = new OwFormElement('" . $this->getId() . "', '" . $this->getName() . "');";
 
+        $js .= $this->generateValidatorAndFilterJsCode("formElement");
+        
         $js .= "
 			formElement.getValue = function(){
 				var value = {};
@@ -2338,7 +2334,6 @@ class AgeRange extends FormElement implements DateRangeInterface
 
         return $js;
     }
-
 }
 
 class MatchAgeRange extends AgeRange
@@ -2398,13 +2393,7 @@ class MatchAgeRange extends AgeRange
     {
         $js = "var formElement = new OwRange(" . json_encode($this->getId()) . ", " . json_encode($this->getName()) . ");";
 
-        /** @var $value Validator  */
-        foreach ( $this->validators as $value )
-        {
-            $js .= "formElement.addValidator(" . $value->getJsValidator() . ");";
-        }
-
-        return $js;
+        return $js.$this->generateValidatorAndFilterJsCode("formElement");
     }
 }
 
@@ -2513,8 +2502,8 @@ class Range extends FormElement
         OW::getDocument()->addScript(OW::getPluginManager()->getPlugin("base")->getStaticJsUrl() . 'range_field.js');
         OW::getDocument()->addOnloadScript(" window." . $this->getName() . " = new RangeField( '" . ( $this->getName() ) . "', " . ( $this->minValue ) . ", " . ( $this->maxValue ) . " ); ");
 
-        $fromValueOptionsString = "";//UTIL_HtmlTag::generateTag('option', array('value' => ''), true);
-        $toValueOptionsString = "";//UTIL_HtmlTag::generateTag('option', array('value' => ''), true);
+        $fromValueOptionsString = ""; //UTIL_HtmlTag::generateTag('option', array('value' => ''), true);
+        $toValueOptionsString = ""; //UTIL_HtmlTag::generateTag('option', array('value' => ''), true);
 
         $defaultValueFrom = isset($this->value['from']) ? (int) $this->value['from'] : $this->minValue;
         $defaultValueTo = isset($this->value['to']) ? (int) $this->value['to'] : $this->maxValue;
@@ -2564,17 +2553,11 @@ class Range extends FormElement
     {
         $js = "var formElement = new OwRange(" . json_encode($this->getId()) . ", " . json_encode($this->getName()) . ");";
 
-        /** @var $value Validator  */
-        foreach ( $this->validators as $value )
-        {
-            $js .= "formElement.addValidator(" . $value->getJsValidator() . ");";
-        }
-
-        return $js;
+        return $js.$this->generateValidatorAndFilterJsCode("formElement");
     }
 }
 
-class DateRange extends FormElement  implements DateRangeInterface
+class DateRange extends FormElement implements DateRangeInterface
 {
     protected $minDate;
     protected $maxDate;
@@ -2705,24 +2688,11 @@ class BillingGatewaySelectionField extends FormElement
 
         $name = $this->getName();
 
-        $billingService = BOL_BillingService::getInstance();
-
-        $gateways = $billingService->getActiveGatewaysList();
-
-        $paymentOptions = array();
+        $gateways = $this->getActiveGatewaysList();
 
         if ( $gateways )
         {
-            foreach ( $gateways as $gateway )
-            {
-                /* @var $adapter OW_BillingAdapter */
-                if ( $adapter = new $gateway->adapterClassName )
-                {
-                    $paymentOptions[$gateway->gatewayKey]['dto'] = $gateway;
-                    $paymentOptions[$gateway->gatewayKey]['orderUrl'] = $adapter->getOrderFormUrl();
-                    $paymentOptions[$gateway->gatewayKey]['logoUrl'] = $adapter->getLogoUrl();
-                }
-            }
+            $paymentOptions = $this->getAdapterData($gateways);
 
             $gatewaysNumber = count($paymentOptions);
 
@@ -2772,9 +2742,8 @@ class BillingGatewaySelectionField extends FormElement
                     $field = UTIL_HtmlTag::generateTag('input', $this->attributes);
                 }
 
-                $renderedString .= '<li style="display: inline-block;">
-                    <label>' . $field . '<img src="' . $option['logoUrl'] . '" alt="' . $option['dto']->gatewayKey . '" /></label>
-                </li>';
+
+                $renderedString .= $this->getItemMarkUp($option, $field);
                 $i++;
                 $this->removeAttribute(self::ATTR_CHECKED);
             }
@@ -2795,6 +2764,72 @@ class BillingGatewaySelectionField extends FormElement
         }
 
         return $renderedString;
+    }
+
+    protected function getItemMarkUp( $option, $field )
+    {
+        return '<li style="display: inline-block;">
+                    <label>' . $field . '<img src="' . $option['logoUrl'] . '" alt="' . $option['dto']->gatewayKey . '" /></label>
+                </li>';
+    }
+
+    protected function getActiveGatewaysList()
+    {
+        return BOL_BillingService::getInstance()->getActiveGatewaysList();
+    }
+
+    protected function getAdapterData( $gateways )
+    {
+        $paymentOptions = array();
+
+        foreach ( $gateways as $gateway )
+        {
+            /* @var $adapter OW_BillingAdapter */
+            if ( $adapter = OW::getClassInstance($gateway->adapterClassName) )
+            {
+                $paymentOptions[$gateway->gatewayKey]['dto'] = $gateway;
+                $paymentOptions[$gateway->gatewayKey]['orderUrl'] = $adapter->getOrderFormUrl();
+                $paymentOptions[$gateway->gatewayKey]['logoUrl'] = $adapter->getLogoUrl();
+            }
+        }
+
+        return $paymentOptions;
+    }
+}
+
+class MobileBillingGatewaySelectionField extends BillingGatewaySelectionField
+{
+
+    protected function getItemMarkUp( $option, $field )
+    {
+        $name = str_replace('billing', '', $option['dto']->gatewayKey);
+
+        return'<div class="owm_payment_provider_item owm_std_margin_bottom">
+                <label class="owm_border owm_' . $name . ' active">' . $field . '</label>
+        </div>';
+    }
+
+    protected function getActiveGatewaysList()
+    {
+        return BOL_BillingService::getInstance()->getActiveGatewaysList(true);
+    }
+
+    protected function getAdapterData( $gateways )
+    {
+        $paymentOptions = array();
+
+        foreach ( $gateways as $gateway )
+        {
+            /* @var $adapter OW_BillingAdapter */
+            if ( $adapter = OW::getClassInstance($gateway->adapterClassName) )
+            {
+                $paymentOptions[$gateway->gatewayKey]['dto'] = $gateway;
+                $paymentOptions[$gateway->gatewayKey]['orderUrl'] = $adapter->getOrderFormUrl(true);
+                $paymentOptions[$gateway->gatewayKey]['logoUrl'] = $adapter->getLogoUrl(true);
+            }
+        }
+
+        return $paymentOptions;
     }
 }
 
@@ -2848,13 +2883,7 @@ class YearRange extends FormElement implements DateRangeInterface
     {
         $jsString = " var formElement = new AgeRangeFormElement(" . json_encode($this->getId()) . ", " . json_encode($this->getName()) . "); ";
 
-        /** @var $value Validator  */
-        foreach ( $this->validators as $value )
-        {
-            $jsString .= "formElement.addValidator(" . $value->getJsValidator() . ");";
-        }
-
-        return $jsString;
+        return $jsString.$this->generateValidatorAndFilterJsCode("formElement");
     }
 
     public function getMinAge()
@@ -2886,7 +2915,7 @@ class YearRange extends FormElement implements DateRangeInterface
     {
         return $this->minYear;
     }
-    
+
     public function renderInput( $params = null )
     {
         parent::renderInput($params);
@@ -2894,8 +2923,8 @@ class YearRange extends FormElement implements DateRangeInterface
         OW::getDocument()->addScript(OW::getPluginManager()->getPlugin("base")->getStaticJsUrl() . 'age_range_field.js');
         OW::getDocument()->addOnloadScript(" window." . $this->getName() . " = new AgeRangeField( " . json_encode($this->getName()) . ", " . json_encode($this->minYear) . ", " . json_encode($this->maxYear) . " ); ");
 
-        $fromAgeOptionsString = "";//UTIL_HtmlTag::generateTag('option', array('value' => ''), true);
-        $toAgeOptionsString = "";//UTIL_HtmlTag::generateTag('option', array('value' => ''), true);
+        $fromAgeOptionsString = ""; //UTIL_HtmlTag::generateTag('option', array('value' => ''), true);
+        $toAgeOptionsString = ""; //UTIL_HtmlTag::generateTag('option', array('value' => ''), true);
 
         $defaultYearFrom = isset($this->value['from']) ? (int) $this->value['from'] : $this->minYear;
         $defaultYearTo = isset($this->value['to']) ? (int) $this->value['to'] : $this->maxYear;
@@ -2943,7 +2972,7 @@ class YearRange extends FormElement implements DateRangeInterface
 
 /**
  * Form element: Textarea.
- * 
+ *
  * @author Alex Ermashev <alexermashev@gmail.com>
  * @package ow_core
  * @since 1.0
@@ -2957,14 +2986,14 @@ class MobileWysiwygTextarea extends Textarea
     protected $pluginKey;
 
     /**
-     * Text format service 
+     * Text format service
      * @var BOL_TextFormatService
      */
     protected $textFormatService;
 
     /**
      * Buttons list
-     * 
+     *
      * @var array
      */
     private $buttons = array(
@@ -3001,14 +3030,14 @@ class MobileWysiwygTextarea extends Textarea
         {
             $imageIndex = array_search(BOL_TextFormatService::WS_BTN_IMAGE, $this->buttons);
 
-            if ( $imageIndex !== false)
+            if ( $imageIndex !== false )
             {
                 unset($this->buttons[$imageIndex]);
             }
 
             $videoIndex = array_search(BOL_TextFormatService::WS_BTN_VIDEO, $this->buttons);
 
-            if ( $videoIndex !== false)
+            if ( $videoIndex !== false )
             {
                 unset($this->buttons[$videoIndex]);
             }
@@ -3028,8 +3057,8 @@ class MobileWysiwygTextarea extends Textarea
      */
     public function renderInput( $params = null )
     {
-        
-	if ( OW::getRegistry()->get('baseWsInit') === null )
+
+        if ( OW::getRegistry()->get('baseWsInit') === null )
         {
             if ( in_array(BOL_TextFormatService::WS_BTN_IMAGE, $this->buttons) )
             {
@@ -3094,7 +3123,7 @@ class MobileWysiwygTextarea extends Textarea
 
 /**
  * Form element: Textarea.
- * 
+ *
  * @author Sardar Madumarov <madumarov@gmail.com>
  * @package ow_core
  * @since 1.0
@@ -3106,7 +3135,7 @@ class WysiwygTextarea extends InvitationFormElement
     const SIZE_L = 300;
 
     /**
-     * @var type 
+     * @var type
      */
     private $init;
 
@@ -3187,7 +3216,7 @@ class WysiwygTextarea extends InvitationFormElement
 
     /**
      * Returns current buttons set.
-     * 
+     *
      * @return array
      */
     public function getButtons()
@@ -3196,7 +3225,7 @@ class WysiwygTextarea extends InvitationFormElement
     }
 
     /**
-     * @param integer $size 
+     * @param integer $size
      */
     public function setSize( $size )
     {
@@ -3205,8 +3234,8 @@ class WysiwygTextarea extends InvitationFormElement
 
     /**
      * Adds custom buttons set.
-     * 
-     * @param array $buttons 
+     *
+     * @param array $buttons
      */
     public function setButtons( array $buttons )
     {
@@ -3437,7 +3466,7 @@ class WysiwygTextarea extends InvitationFormElement
     }
 }
 
-class TagsInputField extends FormElement 
+class TagsInputField extends FormElement
 {
     private $invLabel;
     private $delimiterChars;
@@ -3504,11 +3533,7 @@ class TagsInputField extends FormElement
 $('#" . $this->getId() . "').tagsInput({" . ( $this->jsRegexp ? "'regexp':" . $this->jsRegexp . "," : '' ) . "'pseudoDelimiter':" . json_encode($this->delimiterChars) . ", 'height':'auto', 'width':'auto', 'interactive':true, 'defaultText':'" . $this->invLabel . "', 'removeWithBackspace':true, 'minChars':" . $this->minChars . ", 'maxChars':" . $this->maxChars . ", 'placeholderColor':'#666666'});
 var formElement = new OwFormElement('" . $this->getId() . "', '" . $this->getName() . "');";
 
-        /** @var $value Validator  */
-        foreach ( $this->validators as $value )
-        {
-            $js .= "formElement.addValidator(" . $value->getJsValidator() . ");";
-        }
+        $js .= $this->generateValidatorAndFilterJsCode("formElement");
 
         $js .= "
             formElement.getValue = function(){
@@ -3567,8 +3592,9 @@ var formElement = new OwFormElement('" . $this->getId() . "', '" . $this->getNam
     }
 }
 
-interface DateRangeInterface 
+interface DateRangeInterface
 {
+
     public function getMinYear();
 
     public function getMaxYear();

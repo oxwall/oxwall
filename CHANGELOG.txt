@@ -1,3 +1,37 @@
+Oxwall 1.8.2, Mar 22, 2016
+====================================
+
+Platform [core]:
+- oxwall minimum PHP supported version increased to 5.5;
+- the list of changes is now shown during plugin update request (if the plugin developer added the list of changes to the Store);
+- improved validation system for commercial plugins/themes;
+- added new class definition <body class="ow {$theme-name}"> for each theme, where $thene-name is taken from theme.xml
+- fixed several XSS vulnerabilities (thanks to a report from Tim Coen);
+- added Uninstall option for disabled plugins in the Admin Panel;
+- fixed a bug preventing site admins to upload graphics in Admin Panel > Appearance > Customize > Graphics, in cases when site admins did not have user action ‘upload photos’;
+
+Photos [photo]:
+- added warning message when uploaded photo is bigger than the size defined in the plugin settings;
+- fixed photo thumbs display for photo widget in mobile version;
+- removed duplicate photos in the list of photos on the ‘Most discussed photos’ page;
+
+Events [event]:
+- fixed a bug allowing logged out users to edit events of other users;
+
+Videos [video]:
+- fixed the validation of video embed code during editing;
+
+Friends [friends]:
+- fixed a bug appearing when a user deletes someone from the friends list;
+
+Newsfeed [newsfeed]:
+- outbound links left by users are no longer converted to https, when SSL is active across the entire site;
+- unless a user post features a thumbnail image, the post now fits the full width of the newsfeed;
+
+Import Contacts [contact_importer]:
+- added Send button when selecting Gmail contacts to invite;
+
+
 Oxwall 1.8.1, Jan 12, 2016
 ====================================
 

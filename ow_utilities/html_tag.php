@@ -46,7 +46,7 @@ class UTIL_HtmlTag
         {
             foreach ( $attrs as $key => $value )
             {
-                $attrString .= ' ' . $key . '="' . $value . '"';
+                $attrString .= ' ' . $key . '="' . self::escapeHtmlAttr($value) . '"';
             }
         }
 
@@ -287,13 +287,71 @@ class UTIL_HtmlTag
     }
 
     /**
+     * Escape a string for the URI or Parameter contexts. This should not be used to escape
+     * an entire URI - only a subcomponent being inserted. The function is a simple proxy
+     * to rawurlencode() which now implements RFC 3986 since PHP 5.3 completely.
+     *
+     * @param string $string
+     * @return string
+     */
+    public static function escapeUrl( $string = null )
+    {
+        if ( !$string )
+        {
+            return;
+        }
+
+        return rawurlencode($string);
+    }
+
+    /**
+     * Escape a string for the HTML Body context where there are very few characters
+     * of special meaning. Internally this will use htmlspecialchars().
+     *
+     * @param string $string
+     * @return string
+     */
+    public static function escapeHtml( $string = null )
+    {
+        if ( !$string )
+        {
+            return;
+        }
+
+        return htmlspecialchars($string, ENT_QUOTES);
+    }
+
+    /**
+     * Escape a string for the HTML Attribute context. We use an extended set of characters
+     * to escape that are not covered by htmlspecialchars() to cover cases where an attribute
+     * might be unquoted or quoted illegally (e.g. backticks are valid quotes for IE).
+     *
+     * @param string $string
+     * @return string
+     */
+    public static function escapeHtmlAttr( $string = null )
+    {
+        if ( !$string )
+        {
+            return;
+        }
+
+        return htmlspecialchars($string, ENT_COMPAT);
+    }
+
+    /**
      * Escapes chars to make sure that string doesn't contain valid JS code
      * 
      * @param string $string
      * @return string
      */
-    public static function escapeJs( $string )
+    public static function escapeJs( $string = null )
     {
+        if ( !$string )
+        {
+            return;
+        }
+
         return strtr($string,
             array('\\' => '\\\\', "'" => "\\'", '"' => '\\"', "\r" => '\\r', "\n" => '\\n', '</' => '<\/'));
     }

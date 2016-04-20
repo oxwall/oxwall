@@ -29,7 +29,7 @@
  */
 class BOL_StorageService
 {
-    const UPDATE_SERVER = "https://storage.oxwall.org/"; 
+    const UPDATE_SERVER = "https://storage.oxwall.org/";
     /* ---------------------------------------------------------------------- */
     const URI_CHECK_ITEMS_FOR_UPDATE = "get-items-update-info";
     const URI_GET_ITEM_INFO = "get-item-info";
@@ -99,11 +99,14 @@ class BOL_StorageService
     }
 
     /**
-     * Retrieves update information for all plugins and themes. Cron function.
+     * Retrieves update information for all plugins and themes.
+     * 
+     * @return bool
      */
     public function checkUpdates()
     {
-        $requestArray = array("platform" => array(self::URI_VAR_BUILD => OW::getConfig()->getValue("base", "soft_build")), "items" => array());
+        $requestArray = array("platform" => array(self::URI_VAR_BUILD => OW::getConfig()->getValue("base", "soft_build")),
+            "items" => array());
 
         $plugins = $this->pluginService->findRegularPlugins();
 
@@ -144,9 +147,10 @@ class BOL_StorageService
 
         if ( $response->getStatusCode() != UTIL_HttpClient::HTTP_STATUS_OK )
         {
-            OW::getLogger()->addEntry(__CLASS__ . "::" . __METHOD__ . "#" . __LINE__ . " storage request status is not OK", "core.update");
+            OW::getLogger()->addEntry(__CLASS__ . "::" . __METHOD__ . "#" . __LINE__ . " storage request status is not OK",
+                "core.update");
 
-            return;
+            return false;
         }
 
         $resultArray = array();
@@ -158,9 +162,10 @@ class BOL_StorageService
 
         if ( empty($resultArray) || !is_array($resultArray) )
         {
-            OW::getLogger()->addEntry(__CLASS__ . "::" . __METHOD__ . "#" . __LINE__ . " remote request returned empty result", "core.update");
+            OW::getLogger()->addEntry(__CLASS__ . "::" . __METHOD__ . "#" . __LINE__ . " remote request returned empty result",
+                "core.update");
 
-            return;
+            return false;
         }
 
         if ( !empty($resultArray["update"]) )
@@ -176,10 +181,11 @@ class BOL_StorageService
             }
         }
 
-        if ( !empty($resultArray["invalidLicense"]) )
-        {
-            $this->updateItemsLicenseStatus($resultArray["invalidLicense"]);
-        }
+        $items = !empty($resultArray["invalidLicense"]) ? $resultArray["invalidLicense"] : array();
+
+        $this->updateItemsLicenseStatus($items);
+        
+        return true;
     }
 
     /**
@@ -230,7 +236,8 @@ class BOL_StorageService
         );
 
         $data = array_merge($params, $this->triggerEventBeforeRequest($params));
-        $requestUrl = OW::getRequest()->buildUrlQueryString($this->getStorageUrl(self::URI_DOWNLOAD_PLATFORM_ARCHIVE), $data);
+        $requestUrl = OW::getRequest()->buildUrlQueryString($this->getStorageUrl(self::URI_DOWNLOAD_PLATFORM_ARCHIVE),
+            $data);
 
         $paramsObj = new UTIL_HttpClientParams();
         $paramsObj->addParams($data);
@@ -276,7 +283,7 @@ class BOL_StorageService
             throw new LogicException("Can't download file. Server returned empty file.");
         }
 
-        $fileName = UTIL_String::getRandomString("plugin_archive_", 8, UTIL_String::RND_STR_NUMERIC) . ".zip";
+        $fileName = UTIL_String::getRandomStringWithPrefix("plugin_archive_", 8, UTIL_String::RND_STR_NUMERIC) . ".zip";
         $archivePath = OW_DIR_PLUGINFILES . DS . $fileName;
         file_put_contents($archivePath, $response->getBody());
 
@@ -403,7 +410,8 @@ class BOL_StorageService
      */
     public function findItemsWithInvalidLicense()
     {
-        return array_merge($this->pluginService->findPluginsWithInvalidLicense(), $this->themeService->findItemsWithInvalidLicense());
+        return array_merge($this->pluginService->findPluginsWithInvalidLicense(),
+            $this->themeService->findItemsWithInvalidLicense());
     }
 
     /**
@@ -517,18 +525,24 @@ class BOL_StorageService
             // if the item is on DB
             if ( isset($invalidItems[$type][$item->getKey()]) && $invalidItems[$type][$item->getKey()] == $item->getDeveloperKey() )
             {
-                $dataForNotification[] = array("type" => $type, "title" => $item->getTitle());
-
                 if ( (int) $item->getLicenseCheckTimestamp() == 0 )
                 {
+                    $dataForNotification[] = array("type" => $type, "title" => $item->getTitle());
                     $item->setLicenseCheckTimestamp(time());
                     $this->saveStoreItem($item);
                 }
                 else if ( $this->isItemLicenseCheckPeriodExpired($item->getLicenseCheckTimestamp()) )
                 {
-                    if ( $type == self::URI_VAR_ITEM_TYPE_VAL_THEME && $this->themeService->getSelectedThemeName() )
+                    if ( $type == self::URI_VAR_ITEM_TYPE_VAL_THEME && $this->themeService->getSelectedThemeName() == $item->getKey() )
                     {
-                        $this->themeService->setSelectedThemeName(BOL_ThemeService::DEFAULT_THEME);
+                        $defaultTheme = OW::getEventManager()->call("base.get_default_theme");
+                        
+                        if( !$defaultTheme )
+                        {
+                            $defaultTheme = BOL_ThemeService::DEFAULT_THEME;
+                        }
+                        
+                        $this->themeService->setSelectedThemeName($defaultTheme);
                     }
                     else if ( $type == self::URI_VAR_ITEM_TYPE_VAL_PLUGIN && $item->isActive )
                     {
@@ -548,19 +562,31 @@ class BOL_StorageService
 
     private function notifyAdminAboutInvalidItems( array $items )
     {
+        if ( empty($items) )
+        {
+            return;
+        }
+
         $titleList = array();
 
         foreach ( $items as $item )
         {
-            $titleList[] = "\"" . $item["title"] . "\"";
+            $titleList[] = "\"{$item["title"]}\"";
         }
+
+        $params = array(
+            "itemList" => implode("<br />", $titleList),
+            "siteURL" => OW::getRouter()->getBaseUrl(),
+            "adminUrl" => OW::getRouter()->urlForRoute("admin_plugins_installed")
+        );
 
         $language = OW::getLanguage();
         $mail = OW::getMailer()->createMail();
         $mail->addRecipientEmail(OW::getConfig()->getValue("base", "site_email"));
         $mail->setSubject($language->text("admin", "mail_template_admin_invalid_license_subject"));
-        $mail->setHtmlContent($language->text("admin", "mail_template_admin_invalid_license_content_html", array("itemList" => implode(", ", $titleList), "siteURL" => OW_URL_HOME)));
-        $mail->setTextContent($language->text("admin", "mail_template_admin_invalid_license_content_text", array("itemList" => implode(", ", $titleList), "siteURL" => OW_URL_HOME)));
+        $mail->setHtmlContent($language->text("admin", "mail_template_admin_invalid_license_content_html", $params));
+        $params["itemList"] = implode(PHP_EOL, $titleList);
+        $mail->setTextContent($language->text("admin", "mail_template_admin_invalid_license_content_text", $params));
 
         OW::getMailer()->send($mail);
     }

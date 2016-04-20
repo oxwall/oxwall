@@ -83,6 +83,26 @@ class BOL_UserBlockDao extends OW_BaseDao
         return OW_DB_PREFIX . 'base_user_block';
     }
 
+    public function findBlockedUserList($userId, $first, $count)
+    {
+        $queryParts = BOL_UserService::getInstance()->getQueryFilter(array(
+            BASE_CLASS_QueryBuilderEvent::TABLE_USER => 'u'
+        ), array(
+            BASE_CLASS_QueryBuilderEvent::FIELD_USER_ID => 'blockedUserId'
+        ), array(
+            BASE_CLASS_QueryBuilderEvent::OPTION_METHOD => __METHOD__
+        ));
+
+        $query = "SELECT u.* FROM " . $this->getTableName() . " u " . $queryParts["join"]
+            . " WHERE " . $queryParts["where"] . " AND u.userId=:userId  LIMIT :lf, :lc";
+
+        return $this->dbo->queryForObjectList($query, $this->getDtoClassName(), array(
+            "userId" => $userId,
+            "lf" => $first,
+            "lc" => $count
+        ));
+    }
+
     /**
      * 
      * @param integer $userId
@@ -114,7 +134,25 @@ class BOL_UserBlockDao extends OW_BaseDao
 
         $this->deleteByExample($example);
     }
-    
+
+    public function countBlockedUsers( $userId )
+    {
+        $queryParts = BOL_UserService::getInstance()->getQueryFilter(array(
+            BASE_CLASS_QueryBuilderEvent::TABLE_USER => 'u'
+        ), array(
+            BASE_CLASS_QueryBuilderEvent::FIELD_USER_ID => 'blockedUserId'
+        ), array(
+            BASE_CLASS_QueryBuilderEvent::OPTION_METHOD => __METHOD__
+        ));
+
+        $query = "SELECT COUNT(DISTINCT u.blockedUserId) FROM " . $this->getTableName() . " u " . $queryParts["join"]
+            . " WHERE " . $queryParts["where"] . " AND u.userId=:userId";
+
+        return $this->dbo->queryForColumn($query, array(
+            "userId" => $userId
+        ));
+    }
+
     public function deleteByUserId( $userId )
     {
         $example = new OW_Example();

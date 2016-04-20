@@ -452,3 +452,16 @@ body .ow_photo_album_info_wrap .ow_photo_album_info .ow_photo_album_description 
 {
     margin-bottom: 4px;
 }
+
+.clipboard-button {
+    display: inline-block;
+    line-height: 32px;
+}
+.ow_photo_item_info_url .ow_disabled {
+    display: none;
+    margin-right: 3%;
+    width: 60%;
+}
+.ow_url_input_visible .ow_disabled {
+    display: inline-block;
+}

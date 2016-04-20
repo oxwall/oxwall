@@ -56,6 +56,7 @@ class ADMIN_CTRL_Storage extends ADMIN_CTRL_StorageAbstract
             OW::getFeedback()->error($errMsg);
             $this->redirectToBackUri($params);
             $this->assign("message", $errMsg);
+
             return;
         }
 
@@ -72,6 +73,7 @@ class ADMIN_CTRL_Storage extends ADMIN_CTRL_StorageAbstract
             OW::getFeedback()->error($errMsg);
             $this->redirectToBackUri($params);
             $this->assign("message", $errMsg);
+
             return;
         }
 
@@ -96,8 +98,7 @@ class ADMIN_CTRL_Storage extends ADMIN_CTRL_StorageAbstract
             return;
         }
 
-        $this->assign("text",
-            $language->text("admin", "license_request_text", array("type" => $type, "title" => $data["title"])));
+        $this->assign("text", $language->text("admin", "license_request_text", array("type" => $type, "title" => $data["title"])));
 
         $form = new Form("license-key");
         $licenseKey = new TextField("key");
@@ -109,11 +110,11 @@ class ADMIN_CTRL_Storage extends ADMIN_CTRL_StorageAbstract
         $submit->setValue($language->text("admin", "license_form_button_label"));
         $form->addElement($submit);
 
-        if ( isset($params[BOL_StorageService::URI_VAR_BACK_URI]) )
+        if ( isset($params["back-button-uri"]) )
         {
             $button = new Button("button");
             $button->setValue($language->text("admin", "license_form_back_label"));
-            $redirectUrl = UTIL_HtmlTag::escapeJs(OW_URL_HOME . urldecode($params[BOL_StorageService::URI_VAR_BACK_URI]));
+            $redirectUrl = UTIL_HtmlTag::escapeJs(OW_URL_HOME . urldecode($params["back-button-uri"]));
             $button->addAttribute("onclick", "window.location='{$redirectUrl}'");
             $form->addElement($button);
             $this->assign("backButton", true);
@@ -135,8 +136,7 @@ class ADMIN_CTRL_Storage extends ADMIN_CTRL_StorageAbstract
                     $params[BOL_StorageService::URI_VAR_LICENSE_CHECK_RESULT] = 1;
                     $params[BOL_StorageService::URI_VAR_LICENSE_KEY] = urlencode($licenseKey);
 
-                    $dto = $this->storageService->findStoreItem($key, $devKey,
-                        $params[BOL_StorageService::URI_VAR_ITEM_TYPE]);
+                    $dto = $this->storageService->findStoreItem($key, $devKey, $params[BOL_StorageService::URI_VAR_ITEM_TYPE]);
 
                     if ( $dto != null )
                     {
@@ -184,6 +184,7 @@ class ADMIN_CTRL_Storage extends ADMIN_CTRL_StorageAbstract
         $this->assign("text", OW::getLanguage()->text("admin", "manage_plugins_core_update_request_text", $params));
         $this->assign("redirectUrl", OW::getRouter()->urlFor(__CLASS__, "platformUpdate"));
         $this->assign("returnUrl", OW::getRouter()->urlForRoute("admin_default"));
+        $this->assign("changeLog", $newPlatformInfo["log"]);
     }
 
     /**
@@ -248,6 +249,30 @@ class ADMIN_CTRL_Storage extends ADMIN_CTRL_StorageAbstract
         }
 
         $this->redirect($this->storageService->getUpdaterUrl());
+    }
+
+    /**
+     * Synchronizes with update server and redirects to back URI.
+     */
+    public function checkUpdates()
+    {
+        if ( $this->storageService->checkUpdates() )
+        {
+            OW::getFeedback()->info(OW::getLanguage()->text("admin", "check_updates_success_message"));
+        }
+        else
+        {
+            OW::getFeedback()->error(OW::getLanguage()->text("admin", "check_updates_fail_error_message"));
+        }
+
+        $backUrl = OW::getRouter()->urlForRoute("admin_default");
+
+        if ( isset($_GET[BOL_StorageService::URI_VAR_BACK_URI]) )
+        {
+            $backUrl = OW_URL_HOME . urldecode($_GET[BOL_StorageService::URI_VAR_BACK_URI]);
+        }
+
+        $this->redirect($backUrl);
     }
 
     /**

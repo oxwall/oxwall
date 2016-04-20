@@ -32,6 +32,7 @@ final class OW
     const CONTEXT_MOBILE = OW_Application::CONTEXT_MOBILE;
     const CONTEXT_DESKTOP = OW_Application::CONTEXT_DESKTOP;
     const CONTEXT_API = OW_Application::CONTEXT_API;
+    const CONTEXT_CLI = OW_Application::CONTEXT_CLI;
 
     private static $context;
 
@@ -57,8 +58,13 @@ final class OW
                 case OW_USE_CONTEXT == 1 << 2:
                     self::$context = self::CONTEXT_API;
                     return;
+
+                case OW_USE_CONTEXT == 1 << 3:
+                    self::$context = self::CONTEXT_CLI;
+                    return;
             }
         }
+
 
         $context = self::CONTEXT_DESKTOP;
 
@@ -102,10 +108,10 @@ final class OW
             $context = self::CONTEXT_DESKTOP;
         }
 
-
         //temp API context detection
         //TODO remake
         $uri = UTIL_Url::getRealRequestUri(OW::getRouter()->getBaseUrl(), $_SERVER['REQUEST_URI']);
+
 
         if ( mb_strstr($uri, '/') )
         {
@@ -151,6 +157,9 @@ final class OW
 
             case self::CONTEXT_API:
                 return OW_ApiApplication::getInstance();
+
+            case self::CONTEXT_CLI:
+                return OW_CliApplication::getInstance();
 
             default:
                 return OW_Application::getInstance();

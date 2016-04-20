@@ -12,7 +12,6 @@
  * governing rights and limitations under the License. The Original Code is Oxwall software.
  * The Initial Developer of the Original Code is Oxwall Foundation (http://www.oxwall.org/foundation).
  * All portions of the code written by Oxwall Foundation are Copyright (c) 2011. All Rights Reserved.
-
  * EXHIBIT B. Attribution Information
  * Attribution Copyright Notice: Copyright 2011 Oxwall Foundation. All rights reserved.
  * Attribution Phrase (not exceeding 10 words): Powered by Oxwall community software
@@ -21,6 +20,7 @@
  * Display of Attribution Information is required in Larger Works which are defined in the CPAL as a work
  * which combines Covered Code or portions thereof with code not governed by the terms of the CPAL.
  */
+
 
 /**
  * Base language class.
@@ -76,7 +76,7 @@ class OW_Language
         $text = null;
         try
         {
-            $text = BOL_LanguageService::getInstance()->getText(BOL_LanguageService::getInstance()->getCurrent()->getId(), $prefix, $key);
+            $text = BOL_LanguageService::getInstance()->getText(BOL_LanguageService::getInstance()->getCurrent()->getId(), $prefix, $key, $vars);
         }
         catch ( Exception $e )
         {
@@ -87,29 +87,6 @@ class OW_Language
         {
             return $prefix . '+' . $key;
         }
-
-        if ( !empty($vars) && is_array($vars) ) {
-            foreach ($vars as $key => &$value) {
-                if (UTIL_Serialize::isSerializedObject($value)) {
-                    $object = UTIL_Serialize::unserialize($value);
-                    if (empty($object) || !($object instanceof BASE_CLASS_LanguageParams)) {
-                        $value = '';
-                    }
-
-                    $value = $object->fetch();
-                }
-            }
-        }
-
-        $event = new OW_Event("core.get_text", array("prefix" => $prefix, "key" => $key, "vars" => $vars));
-        $this->eventManager->trigger($event);
-
-        if ( $event->getData() !== null )
-        {
-            return $event->getData();
-        }
-
-        $text = UTIL_String::replaceVars($text, $vars);
 
         return $text;
     }

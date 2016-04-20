@@ -105,6 +105,10 @@ class BOL_BillingSale extends OW_Entity
      * @var string
      */
     public $extraData;
+    /**
+     * @var string
+     */
+    public $periodUnits;
 
 
     public function getExtraData()

@@ -47,6 +47,7 @@ final class BOL_UserService
     const USER_CONTEXT_DESKTOP = BOL_UserOnlineDao::CONTEXT_VAL_DESKTOP;
     const USER_CONTEXT_MOBILE = BOL_UserOnlineDao::CONTEXT_VAL_MOBILE;
     const USER_CONTEXT_API = BOL_UserOnlineDao::CONTEXT_VAL_API;
+    const USER_CONTEXT_CLI = BOL_UserOnlineDao::CONTEXT_VAL_CLI;
     const PASSWORD_RESET_CODE_EXPIRATION_TIME = 3600;
     const PASSWORD_RESET_CODE_UPDATE_TIME = 600;
     
@@ -596,6 +597,24 @@ final class BOL_UserService
         $dto = $this->userFeaturedDao->findByUserId($id);
 
         return !empty($dto);
+    }
+
+    public function findBlockedUserList( $userId, $first, $count )
+    {
+        $list =  $this->userBlockDao->findBlockedUserList($userId, $first, $count);
+        $processedList = [];
+
+        foreach($list as $item)
+        {
+            $processedList[] = $item->getBlockedUserId();
+        }
+
+        return $processedList;
+    }
+
+    public function countBlockedUsers($userId)
+    {
+        return  $this->userBlockDao->countBlockedUsers($userId);
     }
 
     public function isBlocked( $id, $byUserId = null )

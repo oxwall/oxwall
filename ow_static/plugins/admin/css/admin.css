@@ -1065,27 +1065,36 @@ html body .ow_admin_permissions.ow_superwide {
     display: block;
     height: 103px;
 }
-.ow_admin_choose_theme .theme_item.active span.clicked,
-.ow_admin_choose_theme .theme_item .theme_icon.clicked span.clicked {
-  background: transparent url("images/theme_frame_small.png") no-repeat scroll 0 -224px;
-} 
+.ow_admin_choose_theme .theme_item.active span.fake,
+.ow_admin_choose_theme .theme_item.active.theme_clicked span.clicked {
+	background: transparent url("images/theme_frame_small.png") no-repeat scroll 0 -448px;
+}
 .ow_admin_choose_theme .theme_item.theme_update span.fake {
+    background: transparent url("images/theme_frame_small.png") no-repeat scroll 0 -336px;
+}
+.ow_admin_choose_theme .theme_item.theme_update.active span.fake {
+    background: transparent url("images/theme_frame_small.png") no-repeat scroll 0 -224px;
+}
+.ow_admin_choose_theme .theme_item.theme_update.active.theme_clicked span.clicked {
     background: transparent url("images/theme_frame_small.png") no-repeat scroll 0 -448px;
 }
-.ow_admin_choose_theme .theme_item.active.theme_update span.clicked {
- 	background: transparent url("images/theme_frame_small.png") no-repeat scroll 0 -224px;
-}
-.ow_admin_choose_theme .theme_item.theme_clicked span.fake {
- 	background: transparent url("images/theme_frame_small.png") no-repeat scroll 0 -336px;
+.ow_admin_choose_theme .theme_item.theme_update span.clicked {
+    background: transparent url("images/theme_frame_small.png") no-repeat scroll 0 -448px;
 }
 .ow_admin_choose_theme .theme_item.theme_invalid span.fake {
     background: transparent url("images/theme_frame_small.png") no-repeat scroll 0 -112px;
 }
-.ow_admin_choose_theme .theme_item.theme_clicked.theme_invalid span.fake {
- 	background: transparent url("images/theme_frame_small.png") no-repeat scroll 0 -112px;
+.ow_admin_choose_theme .theme_item.theme_invalid.active span.fake {
+    background: transparent url("images/theme_frame_small.png") no-repeat scroll 0 0px;
 }
-.ow_admin_choose_theme .theme_item.active.theme_invalid span.clicked {
- 	background: transparent url("images/theme_frame_small.png") no-repeat scroll 0 0px;
+.ow_admin_choose_theme .theme_item.theme_invalid.active.theme_clicked span.clicked {
+    background: transparent url("images/theme_frame_small.png") no-repeat scroll 0 -448px;
+}
+.ow_admin_choose_theme .theme_item.theme_invalid span.clicked {
+    background: transparent url("images/theme_frame_small.png") no-repeat scroll 0 -448px;
+}
+.ow_admin_choose_theme .theme_item.theme_clicked span.fake {
+ 	background: transparent url("images/theme_frame_small.png") no-repeat scroll 0 -560px;
 }
 html body .ow_admin_choose_theme .selected_theme_info{
     float:right;
@@ -1129,14 +1138,14 @@ html body .ow_admin_choose_theme .selected_theme_info_stick{
     position: absolute;
     right: 14px;
     top: 5px;
-    background: #FFAB48;
-    border-left: 2px solid #FFAB48;
-    border-bottom: 2px solid #FFAB48;
+    background: #36DDB8;
+    border-left: 2px solid #36DDB8;
+    border-bottom: 2px solid #36DDB8;
 }
 .ow_admin_choose_theme .theme_item.theme_clicked .theme_update_label,
-.ow_admin_choose_theme .theme_item.active .theme_update_label {
-    background: none repeat scroll 0 0 #36DDB8;
-    border-color: #36DDB8;
+.ow_admin_choose_theme .theme_item.active.theme_clicked .theme_update_label {
+    background: none repeat scroll 0 0 #C3CED8;
+    border-color: #C3CED8;
 }
 /* Restricted Usernames */
 #restrictedUsernamesForm td {
@@ -1286,10 +1295,38 @@ html body .ow_admin_choose_theme .selected_theme_info_stick{
 .ow_plugin_invalid, 
 .ow_active_plugins .ow_plugin_invalid,
 .ow_inactive_plugins .ow_plugin_invalid {
-background: #fee5e3;
+background: #fff6f6;
 border: 1px solid #ee3d32;
 }
 
 .ow_anno.ow_ic_warning {
-padding-left: 40px;
+	padding-left: 40px;
+}
+
+pre {
+    font-family: 'core_sans_e35_light', "Trebuchet MS", "Helvetica CY", sans-serif;
+    word-wrap: break-word;
+    white-space: -moz-pre-wrap; 
+    white-space: pre-wrap;
+}
+
+.ow_console_tooltip_btn_wrap > a {
+    color: #a2acb3;
+    display: block;
+    font-size: 14px;
+    line-height: 38px;
+    text-align: center;
+    text-transform: uppercase;
+}
+.ow_console_tooltip_btn_wrap > a:hover {
+    background-color: #4c5358;
+    color: #fff;
+    text-decoration: none;
+}
+.ow_admin_console_update .ow_tooltip .ow_tooltip_body {
+    padding: 0;
+}
+.ow_console_tooltip_btn_wrap.ow_loading a {
+    background: rgba(0, 0, 0, 0) url("images/ajax_preloader_button.gif") no-repeat scroll center center;
+    color: transparent;
 }
