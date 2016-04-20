@@ -74,7 +74,7 @@ class OW_Example
      */
     public function setLimitClause( $first, $count )
     {
-        $this->limitClauseString = 'LIMIT ' . (int) $first . ', ' . (int) $count;
+        $this->limitClauseString = 'LIMIT ' . abs( (int) $first ) . ', ' . abs( (int) $count );
 
         return $this;
     }
