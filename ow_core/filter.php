@@ -38,14 +38,14 @@ interface OW_IFilter
      * @param mixed $value
      * @return boolean
      */
-    function filter( $value );
+    public function filter( $value );
 
     /**
      * Returns JS code to validate form element data
      *
      * @return string
      */
-    function getJsFilter();
+    public function getJsFilter();
 }
 
 /**
@@ -92,6 +92,6 @@ class StripTagsFilter implements OW_IFilter
 
     public function getJsFilter()
     {
-        return "{filter : function( data ){console.log('aaaaaaaaaaaaaaaaaa');return $(data).text()}}";
+        return "{filter : function( data ){return $(data).text()}}";
     }
 }
