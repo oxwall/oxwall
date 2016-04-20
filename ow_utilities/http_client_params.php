@@ -116,12 +116,4 @@ class UTIL_HttpClientParams
             $this->addParam($name, $val);
         }
     }
-
-    /**
-     * @return array
-     */
-    public function getParams()
-    {
-        return $this->options["params"];
-    }
 }
