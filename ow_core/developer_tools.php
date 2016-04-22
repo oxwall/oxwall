@@ -90,7 +90,7 @@ class OW_DeveloperTools
         {
             $this->refreshEntitiesCache($configDev);
             OW::getConfig()->saveConfig("base", self::CONFIG_NAME, 0);
-            $this->redirect();
+            OW::getApplication()->redirect();
         }
 
         if ( defined("OW_DEV_MODE") && OW_DEV_MODE )
