@@ -21,15 +21,45 @@
  * Display of Attribution Information is required in Larger Works which are defined in the CPAL as a work
  * which combines Covered Code or portions thereof with code not governed by the terms of the CPAL.
  */
-$keysToDelete = array(
-    "mail_template_admin_invalid_license_subject",
-    "mail_template_admin_invalid_license_content_html",
-    "mail_template_admin_invalid_license_content_text"
-);
 
-foreach ( $keysToDelete as $key )
+$languageService = Updater::getLanguageService();
+
+$languages = $languageService->getLanguages();
+$langId = null;
+
+foreach ( $languages as $lang )
 {
-    Updater::getLanguageService()->deleteLangKey("admin", $key);
+    if ( $lang->tag == "en" )
+    {
+        $langId = $lang->id;
+        break;
+    }
 }
 
-Updater::getLanguageService()->importPrefixFromDir(__DIR__ . DS . "langs");
+if ( $langId !== null )
+{
+    $languageService->addOrUpdateValue($langId, "admin", "mail_template_admin_invalid_license_subject",
+        "Unlicensed Plugin/Theme Notice");
+
+    $value = 'It appears that following plugins/themes obtained through Oxwall Store and installed on your website ({$siteURL}) '
+        . 'have failed license verification check: <br /><br /> {$itemList}<br /><br /> To continue using these plugins/themes, '
+        . 'please make sure that all license keys for the listed plugins/themes are valid. Note that you may need to enter '
+        . 'license keys manually in the Admin Panel: {$adminUrl} <br /><br /> You may find all licenses for purchased plugins/themes in '
+        . 'your Oxwall Store account: http://www.oxwall.org/store/granted-list/plugin <br /><br /> You may also contact '
+        . 'specific plugin/theme developers to obtain a new license key. <br /><br /> IMPORTANT: After three consecutive unsuccessful '
+        . 'license verification checks the plugin/theme may be deactivated. <br /><br /> Please note that all commercial third party '
+        . 'plugins/themes sold through Oxwall Store are covered by Oxwall Store Commercial License (http://www.oxwall.org/store/oscl), '
+        . 'and require a valid license key to operate. <br />';
+
+    $languageService->addOrUpdateValue($langId, "admin", "mail_template_admin_invalid_license_content_html", $value);
+
+    $value = 'It appears that following plugins/themes obtained through Oxwall Store and installed on your website ({$siteURL}) '
+        . 'have failed license verification check: {$itemList} To continue using these plugins/themes, please make sure that all '
+        . 'license keys for the listed plugins/themes are valid. Note that you may need to enter license keys manually in the Admin Panel: '
+        . '{$adminUrl} You may find all licenses for purchased plugins/themes in your Oxwall Store account: http://www.oxwall.org/store/granted-list/plugin '
+        . 'You may also contact specific plugin/theme developers to obtain a new license key. IMPORTANT: After three consecutive unsuccessful '
+        . 'license verification checks the plugin/theme may be deactivated. Please note that all commercial third party plugins/themes sold '
+        . 'through Oxwall Store are covered by Oxwall Store Commercial License (http://www.oxwall.org/store/oscl), and require a valid license key to operate.';
+
+    $languageService->addOrUpdateValue($langId, "admin", "mail_template_admin_invalid_license_content_text", $value);
+}
