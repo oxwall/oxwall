@@ -426,17 +426,7 @@ class JoinForm extends BASE_CLASS_UserQuestionForm
         $joinSubmit->setValue($joinSubmitLabel);
         $this->addElement($joinSubmit);
 
-        if ( $this->displayAccountType )
-        {
-            $joinAccountType = new Selectbox('accountType');
-            $joinAccountType->setLabel(OW::getLanguage()->text('base', 'questions_question_account_type_label'));
-            $joinAccountType->setRequired();
-            $joinAccountType->setOptions($accounts);
-            $joinAccountType->setValue($this->accountType);
-            $joinAccountType->setHasInvitation(false);
-
-            $this->addElement($joinAccountType);
-        }
+        $this->init($accounts);
 
         $this->getQuestions();
 
@@ -481,7 +471,22 @@ class JoinForm extends BASE_CLASS_UserQuestionForm
         $controller->assign('isLastStep', $this->isLastStep);
     }
 
-    public function checkSession()
+    protected function init( array $accounts )
+    {
+        if ( $this->displayAccountType )
+        {
+            $joinAccountType = new Selectbox('accountType');
+            $joinAccountType->setLabel(OW::getLanguage()->text('base', 'questions_question_account_type_label'));
+            $joinAccountType->setRequired();
+            $joinAccountType->setOptions($accounts);
+            $joinAccountType->setValue($this->accountType);
+            $joinAccountType->setHasInvitation(false);
+
+            $this->addElement($joinAccountType);
+        }
+    }
+
+        public function checkSession()
     {
         $stamp = BOL_QuestionService::getInstance()->getQuestionsEditStamp();
         $sessionStamp = OW::getSession()->get(self::SESSION_START_STAMP);
