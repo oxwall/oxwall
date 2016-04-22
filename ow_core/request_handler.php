@@ -128,7 +128,8 @@ class OW_RequestHandler
             $this->catchAllRequestsExcludes[$key] = array();
         }
 
-        $this->catchAllRequestsExcludes[$key][] = array(self::CATCH_ALL_REQUEST_KEY_CTRL => $controller, self::CATCH_ALL_REQUEST_KEY_ACTION => $action, self::CATCH_ALL_REQUEST_KEY_PARAMS => $params);
+        $this->catchAllRequestsExcludes[$key][] = array(self::CATCH_ALL_REQUEST_KEY_CTRL => $controller, self::CATCH_ALL_REQUEST_KEY_ACTION => $action,
+            self::CATCH_ALL_REQUEST_KEY_PARAMS => $params);
     }
 
     /**
@@ -204,19 +205,15 @@ class OW_RequestHandler
      */
     public function dispatch()
     {
-        // check if controller class contains package pointer with plugin key
-        if ( empty($this->handlerAttributes[self::ATTRS_KEY_CTRL]) || !mb_strstr($this->handlerAttributes[self::ATTRS_KEY_CTRL], '_') )
+        if ( empty($this->handlerAttributes[self::ATTRS_KEY_CTRL]) )
         {
-            throw new InvalidArgumentException("Can't dispatch request! Empty or invalid controller class provided!");
+            throw new InvalidArgumentException("Cant dispatch request! Empty or invalid controller class provided!");
         }
-
         // set uri params in request object
         if ( !empty($this->handlerAttributes[self::ATTRS_KEY_VARLIST]) )
         {
             OW::getRequest()->setUriParams($this->handlerAttributes[self::ATTRS_KEY_VARLIST]);
         }
-
-        $plugin = OW::getPluginManager()->getPlugin(OW::getAutoloader()->getPluginKey($this->handlerAttributes[self::ATTRS_KEY_CTRL]));
 
         $catchAllRequests = $this->processCatchAllRequestsAttrs();
 
@@ -225,52 +222,50 @@ class OW_RequestHandler
             $this->handlerAttributes = $catchAllRequests;
         }
 
+        /* @var $controller ActionController */
         try
         {
             $controller = OW::getClassInstance($this->handlerAttributes[self::ATTRS_KEY_CTRL]);
+            $action = new ReflectionMethod($this->handlerAttributes[self::ATTRS_KEY_CTRL],
+                $this->handlerAttributes[self::ATTRS_KEY_ACTION]);
         }
         catch ( ReflectionException $e )
         {
             throw new Redirect404Exception();
         }
 
-        /* @var $controller OW_ActionController */
-
         // check if controller exists and is instance of base action controller class
         if ( $controller === null || !$controller instanceof OW_ActionController )
         {
-            throw new LogicException("Can't dispatch request! Please provide valid controller class!");
-        }
-
-        // redirect to page 404 if plugin is inactive and isn't instance of admin controller class
-        if ( !$plugin->isActive() && !$controller instanceof ADMIN_CTRL_Abstract )
-        {
-            throw new Redirect404Exception();
+            throw new LogicException("Cant dispatch request!Please provide valid controller class!");
         }
 
         // call optional init method
         $controller->init();
 
-        if ( empty($this->handlerAttributes[self::ATTRS_KEY_ACTION]) )
-        {
-            $this->handlerAttributes[self::ATTRS_KEY_ACTION] = $controller->getDefaultAction();
-        }
+        $this->processControllerAction($action, $controller);
+    }
 
-        if ( !method_exists($controller, $this->handlerAttributes[self::ATTRS_KEY_ACTION]) )
-        {
-            throw new Redirect404Exception();
-        }
-        OW::getEventManager()->trigger(new OW_Event("core.performance_test", array("key" => "controller_call.start", "handlerAttrs" => $this->handlerAttributes)));
-        call_user_func_array(array($controller, $this->handlerAttributes[self::ATTRS_KEY_ACTION]), array(
-            self::ATTRS_KEY_VARLIST => ( empty($this->handlerAttributes[self::ATTRS_KEY_VARLIST]) ? array() : $this->handlerAttributes[self::ATTRS_KEY_VARLIST] )
-        ));
-        OW::getEventManager()->trigger(new OW_Event("core.performance_test", array("key" => "controller_call.end", "handlerAttrs" => $this->handlerAttributes)));
-        // set default template for controller action if template wasn't set
+    /**
+     * @param ReflectionMethod $action
+     * @param OW_ActionController $controller
+     */
+    protected function processControllerAction( $action, $controller )
+    {
+        $args = array(
+            self::ATTRS_KEY_VARLIST =>
+            empty($this->handlerAttributes[self::ATTRS_KEY_VARLIST]) ? array() : $this->handlerAttributes[self::ATTRS_KEY_VARLIST]
+        );
+        OW::getEventManager()->trigger(new OW_Event("core.performance_test",
+            array("key" => "controller_call.start", "handlerAttrs" => $this->handlerAttributes)));
+        $action->invokeArgs($controller, $args);
+        OW::getEventManager()->trigger(new OW_Event("core.performance_test",
+            array("key" => "controller_call.end", "handlerAttrs" => $this->handlerAttributes)));
+        // set default template for controller action if template wasn"t set
         if ( $controller->getTemplate() === null )
         {
             $controller->setTemplate($this->getControllerActionDefaultTemplate($controller));
         }
-
         OW::getDocument()->setBody($controller->render());
     }
 
@@ -331,9 +326,11 @@ class OW_RequestHandler
 
                 $redirectUrl = ($route !== null) ?
                     OW::getRouter()->urlForRoute($route, $params) :
-                    OW::getRouter()->urlFor($this->catchAllRequestsAttributes[$lastKey][self::CATCH_ALL_REQUEST_KEY_CTRL], $this->catchAllRequestsAttributes[$lastKey][self::CATCH_ALL_REQUEST_KEY_ACTION], $params);
+                    OW::getRouter()->urlFor($this->catchAllRequestsAttributes[$lastKey][self::CATCH_ALL_REQUEST_KEY_CTRL],
+                        $this->catchAllRequestsAttributes[$lastKey][self::CATCH_ALL_REQUEST_KEY_ACTION], $params);
 
-                $redirectUrl = OW::getRequest()->buildUrlQueryString($redirectUrl, array('back_uri' => OW::getRequest()->getRequestUri()));
+                $redirectUrl = OW::getRequest()->buildUrlQueryString($redirectUrl,
+                    array('back_uri' => OW::getRequest()->getRequestUri()));
 
                 if ( isset($this->catchAllRequestsAttributes[$lastKey][self::CATCH_ALL_REQUEST_KEY_JS]) && (bool) $this->catchAllRequestsAttributes[$lastKey][self::CATCH_ALL_REQUEST_KEY_JS] )
                 {
@@ -341,15 +338,18 @@ class OW_RequestHandler
                     // hotfix for splash screen + members only case
                     if ( array_key_exists('base.members_only', $this->catchAllRequestsAttributes) )
                     {
-                        if ( in_array($this->handlerAttributes[self::CATCH_ALL_REQUEST_KEY_CTRL], array('BASE_CTRL_User', 'BASE_MCTRL_User')) && $this->handlerAttributes[self::CATCH_ALL_REQUEST_KEY_ACTION] === 'standardSignIn' )
+                        if ( in_array($this->handlerAttributes[self::CATCH_ALL_REQUEST_KEY_CTRL],
+                                array('BASE_CTRL_User', 'BASE_MCTRL_User')) && $this->handlerAttributes[self::CATCH_ALL_REQUEST_KEY_ACTION] === 'standardSignIn' )
                         {
                             $backUri = isset($_GET['back_uri']) ? $_GET['back_uri'] : OW::getRequest()->getRequestUri();
-                            OW::getDocument()->addOnloadScript("window.location = '" . OW::getRequest()->buildUrlQueryString($redirectUrl, array('back_uri' => $backUri)) . "'");
+                            OW::getDocument()->addOnloadScript("window.location = '" . OW::getRequest()->buildUrlQueryString($redirectUrl,
+                                    array('back_uri' => $backUri)) . "'");
                             return null;
                         }
                         else
                         {
-                            $ru = OW::getRequest()->buildUrlQueryString(OW::getRouter()->urlForRoute('static_sign_in'), array('back_uri' => OW::getRequest()->getRequestUri()));
+                            $ru = OW::getRequest()->buildUrlQueryString(OW::getRouter()->urlForRoute('static_sign_in'),
+                                array('back_uri' => OW::getRequest()->getRequestUri()));
                             OW::getApplication()->redirect($ru);
                         }
                     }
