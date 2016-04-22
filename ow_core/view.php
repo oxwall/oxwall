@@ -112,10 +112,12 @@ class OW_View
 
     /**
      * @param string $template
+     * @return OW_View
      */
     public function setTemplate( $template )
     {
         $this->template = $template;
+        return $this;
     }
 
     /**
@@ -123,14 +125,17 @@ class OW_View
      *
      * @param string $name
      * @param mixed $value
+     * @return OW_View
      */
     public function assign( $name, $value )
     {
         $this->assignedVars[$name] = $value;
+        return $this;
     }
 
     /**
      * @param string $varName
+     * @return OW_View
      */
     public function clearAssign( $varName )
     {
@@ -138,6 +143,8 @@ class OW_View
         {
             unset($this->assignedVars[$varName]);
         }
+
+        return $this;
     }
 
     public function onBeforeRender()
@@ -191,9 +198,9 @@ class OW_View
 
     protected function onRender()
     {
-    
+        
     }
-    
+
     /**
      * Triggers event using base event class
      * 
