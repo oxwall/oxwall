@@ -93,9 +93,9 @@ class OW_DeveloperTools
             $this->redirect();
         }
 
-        if ( defined('OW_DEV_MODE') && OW_DEV_MODE )
+        if ( defined("OW_DEV_MODE") && OW_DEV_MODE )
         {
-            $this->refreshEntitiesCache($configDev);
+            $this->refreshEntitiesCache(OW_DEV_MODE);
         }
 
         // show profiler only for desktop and if it's enabled
@@ -117,7 +117,7 @@ class OW_DeveloperTools
      */
     public function refreshEntitiesCache( $options = 1 )
     {
-        $options = intval($options) == 1 ? 255 : intval($options);
+        $options = (intval($options) == 1 ? (PHP_INT_MAX - 1) : intval($options));
 
         if ( $options & self::CACHE_ENTITY_TEMPLATE )
         {
