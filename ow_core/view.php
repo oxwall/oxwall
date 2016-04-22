@@ -89,6 +89,7 @@ class OW_View
     public function setVisible( $visible )
     {
         $this->visible = (bool) $visible;
+        
         return $this;
     }
 
@@ -117,6 +118,7 @@ class OW_View
     public function setTemplate( $template )
     {
         $this->template = $template;
+        
         return $this;
     }
 
@@ -130,6 +132,7 @@ class OW_View
     public function assign( $name, $value )
     {
         $this->assignedVars[$name] = $value;
+        
         return $this;
     }
 
