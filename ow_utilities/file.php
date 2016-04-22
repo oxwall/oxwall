@@ -200,31 +200,18 @@ class UTIL_File
     /**
      * @param string $filename
      * @param bool $humanReadable
-     * @param int $decimals
-     * @return null|string
+     * @return int|string
      */
-    public static function getFileSize( $filename, $humanReadable = true, $decimals = 2 )
+    public static function getFileSize( $filename, $humanReadable = true )
     {
-        try
-        {
-            $bytes = filesize($filename);
-        }
-        catch ( Exception $e )
-        {
-            return null;
-        }
+        $bytes = filesize($filename);
+
         if ( !$humanReadable )
         {
             return $bytes;
         }
-        $size = array('B', 'kB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB');
-        $factor = (int) floor((strlen($bytes) - 1) / 3);
-        if ( isset($size[$factor]) )
-        {
-            return sprintf("%.{$decimals}f ", $bytes / pow(1024, $factor)) . $size[$factor];
-        }
 
-        return $bytes;
+        return self::convertBytesToHumanReadable($bytes);
     }
 
     /**
@@ -445,7 +432,13 @@ class UTIL_File
         return $uploadMaxFilesize < $postMaxSize ? $uploadMaxFilesize : $postMaxSize;
     }
 
-    private static function convertToBytes( $value )
+    /**
+     * Converts human readable (10Mb, 20Kb...) in bytes
+     * 
+     * @param string $value
+     * @return int
+     */
+    public static function convertHumanReadableToBytes( $value )
     {
         $value = trim($value);
         $lastChar = strtolower($value[strlen($value) - 1]);
@@ -453,14 +446,35 @@ class UTIL_File
 
         switch ( $lastChar )
         {
-            case 'g':
+            case "g":
                 $value *= 1024;
-            case 'm':
+            case "m":
                 $value *= 1024;
-            case 'k':
+            case "k":
                 $value *= 1024;
         }
 
         return intval($value);
+    }
+
+    /**
+     * Converts bytes in human readable string
+     * 
+     * @param int $bytes
+     * @param int $decimals
+     * @return string
+     */
+    public static function convertBytesToHumanReadable( $bytes, $decimals = 2 )
+    {
+        $size = array("B", "kB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB");
+
+        $factor = (int) floor((strlen($bytes) - 1) / 3);
+
+        if ( isset($size[$factor]) )
+        {
+            return sprintf("%.{$decimals}f ", $bytes / pow(1024, $factor)) . $size[$factor];
+        }
+
+        return $bytes;
     }
 }
