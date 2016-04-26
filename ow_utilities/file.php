@@ -426,8 +426,8 @@ class UTIL_File
      */
     public static function getFileUploadServerLimitInBytes()
     {
-        $uploadMaxFilesize = self::convertToBytes(ini_get("upload_max_filesize"));
-        $postMaxSize = self::convertToBytes(ini_get("post_max_size"));
+        $uploadMaxFilesize = self::convertHumanReadableToBytes(ini_get("upload_max_filesize"));
+        $postMaxSize = self::convertHumanReadableToBytes(ini_get("post_max_size"));
 
         return $uploadMaxFilesize < $postMaxSize ? $uploadMaxFilesize : $postMaxSize;
     }
