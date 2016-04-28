@@ -111,6 +111,7 @@ class OW_Application
     {
         // router init - need to set current page uri and base url
         $router = OW::getRouter();
+        $router->setBaseUrl(OW_URL_HOME);
         $this->urlHostRedirect();
         OW_Auth::getInstance()->setAuthenticator(new OW_SessionAuthenticator());
         $this->userAutoLogin();
@@ -131,9 +132,7 @@ class OW_Application
 
         // synchronize the db's time zone
         OW::getDbo()->setTimezone();
-
-        OW::getRequestHandler()->setIndexPageAttributes('BASE_CTRL_ComponentPanel');
-        OW::getRequestHandler()->setStaticPageAttributes('BASE_CTRL_StaticDocument');
+        $this->initRequestHandler();
         $uri = OW::getRequest()->getRequestUri();
 
         // before setting in router need to remove get params
@@ -143,9 +142,7 @@ class OW_Application
         }
         $router->setUri($uri);
 
-        $defaultRoute = new OW_DefaultRoute();
-        //$defaultRoute->setControllerNamePrefix('CTRL');
-        $router->setDefaultRoute($defaultRoute);
+        $router->setDefaultRoute(new OW_DefaultRoute());
 
         OW::getPluginManager()->initPlugins();
         $event = new OW_Event(OW_EventManager::ON_PLUGINS_INIT);
@@ -172,7 +169,7 @@ class OW_Application
 
         OW_DeveloperTools::getInstance()->init();
 
-        OW::getThemeManager()->initDefaultTheme();
+        OW::getThemeManager()->initDefaultTheme($this->isMobile());
 
         // setting current theme
         $activeThemeName = OW::getEventManager()->call('base.get_active_theme_name');
@@ -180,11 +177,12 @@ class OW_Application
 
         if ( $activeThemeName !== BOL_ThemeService::DEFAULT_THEME && OW::getThemeManager()->getThemeService()->themeExists($activeThemeName) )
         {
-            OW_ThemeManager::getInstance()->setCurrentTheme(BOL_ThemeService::getInstance()->getThemeObjectByKey(trim($activeThemeName)));
+            OW_ThemeManager::getInstance()->setCurrentTheme(BOL_ThemeService::getInstance()->getThemeObjectByKey(trim($activeThemeName),
+                    $this->isMobile()));
         }
 
         // adding static document routes
-        $staticDocs = $navService->findAllStaticDocuments();
+        $staticDocs = $this->findAllStaticDocs();
         $staticPageDispatchAttrs = OW::getRequestHandler()->getStaticPageAttributes();
 
         /* @var $value BOL_Document */
@@ -205,8 +203,8 @@ class OW_Application
         }
 
         //adding index page route
-        $item = BOL_NavigationService::getInstance()->findFirstLocal((OW::getUser()->isAuthenticated() ? BOL_NavigationService::VISIBLE_FOR_MEMBER : BOL_NavigationService::VISIBLE_FOR_GUEST),
-            OW_Navigation::MAIN);
+        $availableFor = OW::getUser()->isAuthenticated() ? BOL_NavigationService::VISIBLE_FOR_MEMBER : BOL_NavigationService::VISIBLE_FOR_GUEST;
+        $item = $this->findFirstMenuItem($availableFor);
 
         if ( $item !== null )
         {
@@ -234,7 +232,7 @@ class OW_Application
         if ( !OW::getRequest()->isAjax() )
         {
             OW::getResponse()->setDocument($this->newDocument());
-            OW::getDocument()->setMasterPage(new OW_MasterPage());
+            OW::getDocument()->setMasterPage($this->getMasterPage());
             OW::getResponse()->setHeader(OW_Response::HD_CNT_TYPE,
                 OW::getDocument()->getMime() . '; charset=' . OW::getDocument()->getCharset());
         }
@@ -251,14 +249,15 @@ class OW_Application
 
         // adding global template vars
         $currentThemeImagesDir = OW::getThemeManager()->getCurrentTheme()->getStaticImagesUrl();
-        $currentThemeStaticDir = OW::getThemeManager()->getCurrentTheme()->getStaticUrl();
+        $currentThemeStaticUrl = OW::getThemeManager()->getCurrentTheme()->getStaticUrl();
 
         $viewRenderer = OW_ViewRenderer::getInstance();
         $viewRenderer->assignVar('themeImagesUrl', $currentThemeImagesDir);
-        $viewRenderer->assignVar('themeStaticUrl', $currentThemeStaticDir);
+        $viewRenderer->assignVar('themeStaticUrl', $currentThemeStaticUrl);
         $viewRenderer->assignVar('siteName', OW::getConfig()->getValue('base', 'site_name'));
         $viewRenderer->assignVar('siteTagline', OW::getConfig()->getValue('base', 'site_tagline'));
         $viewRenderer->assignVar('siteUrl', OW_URL_HOME);
+        $viewRenderer->assignVar('isAuthenticated', OW::getUser()->isAuthenticated());
         $viewRenderer->assignVar('bottomPoweredByLink',
             '<a href="http://www.oxwall.org/" target="_blank" title="Powered by Oxwall Community Software"><img src="' . $currentThemeImagesDir . 'powered-by-oxwall.png" alt="Oxwall Community Software" /></a>');
 
@@ -514,6 +513,32 @@ class OW_Application
 
         UTIL_Url::redirect($redirectTo);
     }
+
+    public function getContext()
+    {
+        return $this->context;
+    }
+
+    public function isMobile()
+    {
+        return $this->context == self::CONTEXT_MOBILE;
+    }
+
+    public function isDesktop()
+    {
+        return $this->context == self::CONTEXT_DESKTOP;
+    }
+
+    public function isApi()
+    {
+        return $this->context == self::CONTEXT_API;
+    }
+
+    public function isCli()
+    {
+        return $this->context == self::CONTEXT_CLI;
+    }
+    /* -------------------------------------------------------------------------------------------------------------- */
     /**
      * Menu item to activate.
      *
@@ -735,28 +760,29 @@ class OW_Application
         }
     }
 
-    public function getContext()
+    protected function initRequestHandler()
     {
-        return $this->context;
+        OW::getRequestHandler()->setIndexPageAttributes('BASE_CTRL_ComponentPanel');
+        OW::getRequestHandler()->setStaticPageAttributes('BASE_CTRL_StaticDocument');
     }
 
-    public function isMobile()
+    protected function findAllStaticDocs()
     {
-        return $this->context == self::CONTEXT_MOBILE;
+        return BOL_NavigationService::getInstance()->findAllStaticDocuments();
     }
 
-    public function isDesktop()
+    protected function findFirstMenuItem( $availableFor )
     {
-        return $this->context == self::CONTEXT_DESKTOP;
+        return BOL_NavigationService::getInstance()->findFirstLocal($availableFor, OW_Navigation::MAIN);
     }
 
-    public function isApi()
+    protected function getSiteRootRoute()
     {
-        return $this->context == self::CONTEXT_API;
+        return new OW_Route('base_default_index', '/', 'BASE_CTRL_ComponentPanel', 'index');
     }
 
-    public function isCli()
+    protected function getMasterPage()
     {
-        return $this->context == self::CONTEXT_CLI;
+        return new OW_MasterPage();
     }
 }
