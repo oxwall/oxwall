@@ -89,11 +89,7 @@ class BASE_CLASS_AvatarField extends FormElement
         );
         $jsString = "var formElement = new OwAvatarField(" . json_encode($this->getId()) . ", " . json_encode($this->getName()) . ", ".json_encode($params).");";
 
-        /** @var $value OW_Validator  */
-        foreach ( $this->validators as $value )
-        {
-            $jsString .= "formElement.addValidator(" . $value->getJsValidator() . ");";
-        }
+        $jsString .= $this->generateValidatorAndFilterJsCode("formElement");
 
         $jsString .= "
 			formElement.getValue = function(){

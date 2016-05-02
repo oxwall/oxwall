@@ -72,6 +72,55 @@ class BASE_CTRL_UserList extends OW_ActionController
         }
     }
 
+    /**
+     * List on blocked users
+     *
+     * @throws AuthenticateException
+     */
+    public function blocked()
+    {
+        $userId = OW::getUser()->getId();
+
+        if ( !OW::getUser()->isAuthenticated() || $userId === null )
+        {
+            throw new AuthenticateException();
+        }
+
+        // unblock action
+        if ( OW::getRequest()->isPost() && !empty($_POST['userId']) )
+        {
+            BOL_UserService::getInstance()->unblock($_POST['userId']);
+
+            // reload the current page
+            OW::getFeedback()->info(OW::getLanguage()->text('base', 'user_feedback_profile_unblocked'));
+
+            $this->redirect();
+        }
+
+        // process pagination params
+        $page = (!empty($_GET['page']) && intval($_GET['page']) > 0 ) ? $_GET['page'] : 1;
+        $perPage = $this->usersPerPage;
+        $first = ($page - 1) * $perPage;
+        $count = $perPage;
+
+        $service = BOL_UserService::getInstance();
+        $listCount = $service->countBlockedUsers($userId);
+
+        $blockedList = $listCount
+            ? $service->findBlockedUserList($userId, $first, $count)
+            : array();
+
+        $listCmp = new BASE_CMP_BlockedUserList(BOL_UserService::
+                getInstance()->findUserListByIdList($blockedList), $listCount, $perPage);
+
+        // init components
+        $this->addComponent('listCmp', $listCmp);
+
+        // set page settings
+        $this->setPageHeading(OW::getLanguage()->text('base', 'blocked_users_browse_page_heading'));
+        $this->setPageTitle(OW::getLanguage()->text('base', 'blocked_users_browse_page_heading'));
+    }
+
     public function forApproval()
     {
         $this->setTemplate(OW::getPluginManager()->getPlugin('base')->getCtrlViewDir() . 'user_list_index.html');

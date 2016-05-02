@@ -99,7 +99,9 @@ class BOL_StorageService
     }
 
     /**
-     * Retrieves update information for all plugins and themes. Cron function.
+     * Retrieves update information for all plugins and themes.
+     * 
+     * @return bool
      */
     public function checkUpdates()
     {
@@ -148,7 +150,7 @@ class BOL_StorageService
             OW::getLogger()->addEntry(__CLASS__ . "::" . __METHOD__ . "#" . __LINE__ . " storage request status is not OK",
                 "core.update");
 
-            return;
+            return false;
         }
 
         $resultArray = array();
@@ -163,7 +165,7 @@ class BOL_StorageService
             OW::getLogger()->addEntry(__CLASS__ . "::" . __METHOD__ . "#" . __LINE__ . " remote request returned empty result",
                 "core.update");
 
-            return;
+            return false;
         }
 
         if ( !empty($resultArray["update"]) )
@@ -182,6 +184,8 @@ class BOL_StorageService
         $items = !empty($resultArray["invalidLicense"]) ? $resultArray["invalidLicense"] : array();
 
         $this->updateItemsLicenseStatus($items);
+        
+        return true;
     }
 
     /**
@@ -531,7 +535,14 @@ class BOL_StorageService
                 {
                     if ( $type == self::URI_VAR_ITEM_TYPE_VAL_THEME && $this->themeService->getSelectedThemeName() == $item->getKey() )
                     {
-                        $this->themeService->setSelectedThemeName(BOL_ThemeService::DEFAULT_THEME);
+                        $defaultTheme = OW::getEventManager()->call("base.get_default_theme");
+                        
+                        if( !$defaultTheme )
+                        {
+                            $defaultTheme = BOL_ThemeService::DEFAULT_THEME;
+                        }
+                        
+                        $this->themeService->setSelectedThemeName($defaultTheme);
                     }
                     else if ( $type == self::URI_VAR_ITEM_TYPE_VAL_PLUGIN && $item->isActive )
                     {

@@ -21,99 +21,77 @@
  * Display of Attribution Information is required in Larger Works which are defined in the CPAL as a work
  * which combines Covered Code or portions thereof with code not governed by the terms of the CPAL.
  */
-use GuzzleHttp\RequestOptions;
+
+/**
+ * Base validator class.
+ *
+ * @author Sardar Madumarov <madumarov@gmail.com>
+ * @package ow_core
+ * @since 1.8.3
+ */
+interface OW_IFilter
+{
+
+    /**
+     * Filters 
+     *
+     * @param mixed $value
+     * @return boolean
+     */
+    public function filter( $value );
+
+    /**
+     * Returns JS code to validate form element data
+     *
+     * @return string
+     */
+    public function getJsFilter();
+}
 
 /**
  * @author Sardar Madumarov <madumarov@gmail.com>
- * @package ow_utilities
- * @since 1.8.1
+ * @package ow_core
+ * @since 1.8.3
  */
-class UTIL_HttpClientParams
+class TrimFilter implements OW_IFilter
+{
+
+    /**
+     * @param string $value
+     * @return string
+     */
+    public function filter( $value )
+    {
+        return trim($value);
+    }
+
+    /**
+     * @return string
+     */
+    public function getJsFilter()
+    {
+        return "{filter : function( data ){return data.trim()}}";
+    }
+}
+
+/**
+ * @author Sardar Madumarov <madumarov@gmail.com>
+ * @package ow_core
+ * @since 1.8.3
+ */
+class StripTagsFilter implements OW_IFilter
 {
     /**
-     * @var array
+     * @param string $value
+     * @return string
      */
-    private $options = array("params" => array());
-
-    public function __construct()
+    public function filter( $value )
     {
-        
+        return strip_tags($value);
     }
 
-    /**
-     * @param bool $allowRedirects
-     */
-    public function setAllowRedirects( $allowRedirects )
+    public function getJsFilter()
     {
-        $this->options[RequestOptions::ALLOW_REDIRECTS] = (bool) $allowRedirects;
-    }
-
-    /**
-     * @param int $timeout
-     */
-    public function setTimeout( $timeout )
-    {
-        $this->options[RequestOptions::CONNECT_TIMEOUT] = (int) $timeout;
-    }
-
-    /**
-     * @param string $headerName
-     * @param string $headerVal
-     */
-    public function setHeader( $headerName, $headerVal )
-    {
-        if ( array_key_exists(RequestOptions::HEADERS, $this->options) )
-        {
-            $this->options[RequestOptions::HEADERS] = array();
-        }
-
-        $this->options[RequestOptions::HEADERS][trim($headerName)] = trim($headerVal);
-    }
-
-    /**
-     * @param array $headers
-     */
-    public function setHeaders( array $headers )
-    {
-        foreach ( $headers as $name => $val )
-        {
-            $this->setHeader($name, $val);
-        }
-    }
-
-    /**
-     * @param string $body
-     */
-    public function setBody( $body )
-    {
-        $this->options[RequestOptions::BODY] = trim($body);
-    }
-
-    /**
-     * @return array
-     */
-    public function getOptions()
-    {
-        return $this->options;
-    }
-
-    /**
-     * @param string $name
-     * @param string $val
-     */
-    public function addParam( $name, $val )
-    {
-        $this->options["params"][trim($name)] = trim($val);
-    }
-
-    /**
-     * @param array $params
-     */
-    public function addParams( array $params )
-    {
-        foreach ( $params as $name => $val )
-        {
-            $this->addParam($name, $val);
-        }
+        return "{filter : function( data ){return $(data).text()}}";
     }
 }

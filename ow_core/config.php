@@ -75,6 +75,8 @@ class OW_Config
     {
         $configs = $this->configService->findAllConfigs();
 
+        $this->cachedConfigs = array();
+        
         /* @var $config BOL_Config */
         foreach ( $configs as $config )
         {
@@ -132,7 +134,7 @@ class OW_Config
     public function deleteConfig( $key, $name )
     {
         $this->configService->removeConfig($key, $name);
-        $this->generateCache();
+        $this->generateCache();        
     }
 
     /**

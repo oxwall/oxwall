@@ -22,56 +22,38 @@
  * which combines Covered Code or portions thereof with code not governed by the terms of the CPAL.
  */
 
-/**
- * Dispatcher handles request after routing process,
- * i.e. creates instance of controller and calls action using provided params.
- *
- * @author Sardar Madumarov <madumarov@gmail.com>
- * @package ow_core
- * @since 1.0
- */
-final class OW_ApiRequestHandler extends OW_RequestHandler
+$adminKeysToDelete = array(
+    "ads_add_banner",
+    "ads_add_banner_code_desc",
+    "ads_add_banner_code_label",
+    "ads_add_banner_country_desc",
+    "ads_add_banner_country_label",
+    "ads_add_banner_submit_label",
+    "ads_add_banner_title_label",
+    "ads_banners_add_floatbox_label",
+    "ads_banners_count_label",
+    "ads_banner_add_success_message",
+    "ads_banner_all_region",
+    "ads_banner_delete_success_message",
+    "ads_banner_edit_success_message",
+    "ads_delete_banner_confirm_message",
+    "ads_delete_button_label",
+    "ads_edit_banner_button_label",
+    "ads_edit_banner_submit_label",
+    "ads_index_list_box_cap_label",
+    "ads_manage_add_banners_message",
+    "ads_manage_global_label",
+    "ads_manage_select_plugin_text",
+    "advertisement_menu_banner_list",
+    "advertisement_menu_manage_banners",
+    "input_settings_allow_photo_upload_label",
+    "page_heading_ads",
+    "page_title_ads",
+    "questions_config_range_label",
+    "sidebar_menu_item_ads"
+);
+
+foreach ( $adminKeysToDelete as $key )
 {
-
-    /**
-     * Constructor.
-     */
-    private function __construct()
-    {
-
-    }
-    /**
-     * Singleton instance.
-     *
-     * @var OW_ApiRequestHandler
-     */
-    private static $classInstance;
-
-    /**
-     * Returns an instance of class (singleton pattern implementation).
-     *
-     * @return OW_ApiRequestHandler
-     */
-    public static function getInstance()
-    {
-        if ( self::$classInstance === null )
-        {
-            self::$classInstance = new self();
-        }
-
-        return self::$classInstance;
-    }
-
-    /**
-     * @param ReflectionMethod $action
-     * @param OW_ActionController $controler
-     */
-    protected function processControllerAction( $action, $controler )
-    {
-        $args = array();
-        $args[] = $_POST;
-        $args[] = empty($this->handlerAttributes[self::ATTRS_KEY_VARLIST]) ? array() : $this->handlerAttributes[self::ATTRS_KEY_VARLIST];
-        $action->invokeArgs($controller, $args);
-        OW::getDocument()->setBody($controller->render());
-    }
+    Updater::getLanguageService()->deleteLangKey("admin", $key);
 }

@@ -23,55 +23,74 @@
  */
 
 /**
- * Dispatcher handles request after routing process,
- * i.e. creates instance of controller and calls action using provided params.
- *
  * @author Sardar Madumarov <madumarov@gmail.com>
  * @package ow_core
- * @since 1.0
+ * @since 1.8.3
  */
-final class OW_ApiRequestHandler extends OW_RequestHandler
+class UTIL_Csrf
 {
+    const SESSION_VAR_NAME = "csrf_tokens";
+    const TOKEN_LIFETIME_IN_MINUTES = 20;
 
     /**
-     * Constructor.
+     * Generates and returns CSRF token with UTIL_Csrf::TOKEN_LIFETIME_IN_MINUTES lifetime
+     * 
+     * @return string
      */
-    private function __construct()
+    public static function generateToken()
     {
+        $tokenList = self::getTokenList();
+        $token = base64_encode(time() . UTIL_String::getRandomString(32));
+        $tokenList[$token] = time();
+        self::saveTokenList($tokenList);
 
+        return $token;
     }
-    /**
-     * Singleton instance.
-     *
-     * @var OW_ApiRequestHandler
-     */
-    private static $classInstance;
 
     /**
-     * Returns an instance of class (singleton pattern implementation).
-     *
-     * @return OW_ApiRequestHandler
+     * Checks if provided token is valid and not expired
+     * 
+     * @param string $token
+     * @return bool
      */
-    public static function getInstance()
+    public static function isTokenValid( $token )
     {
-        if ( self::$classInstance === null )
+        $tokenList = self::getTokenList();
+
+        return !empty($tokenList[$token]);
+    }
+    /* -------------------------------------------------------------------------------------------------------------- */
+
+    private static function getTokenList()
+    {
+        $tokenList = array();
+
+        if ( OW::getSession()->isKeySet(self::SESSION_VAR_NAME) )
         {
-            self::$classInstance = new self();
+            $tokenList = OW::getSession()->get(self::SESSION_VAR_NAME);
         }
 
-        return self::$classInstance;
+        $saveList = false;
+
+        foreach ( $tokenList as $token => $createTs )
+        {
+            if ( $createTs < time() - self::TOKEN_LIFETIME_IN_MINUTES * 60 )
+            {
+                unset($tokenList[$token]);
+                $saveList = true;
+            }
+        }
+
+        if ( $saveList )
+        {
+            self::saveTokenList($tokenList);
+        }
+
+        return $tokenList;
     }
 
-    /**
-     * @param ReflectionMethod $action
-     * @param OW_ActionController $controler
-     */
-    protected function processControllerAction( $action, $controler )
+    private static function saveTokenList( array $list )
     {
-        $args = array();
-        $args[] = $_POST;
-        $args[] = empty($this->handlerAttributes[self::ATTRS_KEY_VARLIST]) ? array() : $this->handlerAttributes[self::ATTRS_KEY_VARLIST];
-        $action->invokeArgs($controller, $args);
-        OW::getDocument()->setBody($controller->render());
+        OW::getSession()->set(self::SESSION_VAR_NAME, $list);
     }
 }

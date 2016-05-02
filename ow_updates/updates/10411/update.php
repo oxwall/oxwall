@@ -22,56 +22,23 @@
  * which combines Covered Code or portions thereof with code not governed by the terms of the CPAL.
  */
 
-/**
- * Dispatcher handles request after routing process,
- * i.e. creates instance of controller and calls action using provided params.
- *
- * @author Sardar Madumarov <madumarov@gmail.com>
- * @package ow_core
- * @since 1.0
- */
-final class OW_ApiRequestHandler extends OW_RequestHandler
+$languageService = Updater::getLanguageService();
+
+$languages = $languageService->getLanguages();
+$langId = null;
+
+foreach ($languages as $lang)
 {
-
-    /**
-     * Constructor.
-     */
-    private function __construct()
+    if ($lang->tag == "en")
     {
-
+        $langId = $lang->id;
+        break;
     }
-    /**
-     * Singleton instance.
-     *
-     * @var OW_ApiRequestHandler
-     */
-    private static $classInstance;
+}
 
-    /**
-     * Returns an instance of class (singleton pattern implementation).
-     *
-     * @return OW_ApiRequestHandler
-     */
-    public static function getInstance()
-    {
-        if ( self::$classInstance === null )
-        {
-            self::$classInstance = new self();
-        }
-
-        return self::$classInstance;
-    }
-
-    /**
-     * @param ReflectionMethod $action
-     * @param OW_ActionController $controler
-     */
-    protected function processControllerAction( $action, $controler )
-    {
-        $args = array();
-        $args[] = $_POST;
-        $args[] = empty($this->handlerAttributes[self::ATTRS_KEY_VARLIST]) ? array() : $this->handlerAttributes[self::ATTRS_KEY_VARLIST];
-        $action->invokeArgs($controller, $args);
-        OW::getDocument()->setBody($controller->render());
-    }
+if ($langId !== null)
+{
+    $languageService->addOrUpdateValue($langId, "admin", "check_updates", "Check Updates");
+    $languageService->addOrUpdateValue($langId, "admin", "check_updates_success_message", "Your site is now synchronized with the remote update serer");
+    $languageService->addOrUpdateValue($langId, "admin", "check_updates_fail_error_message", "Unable to connect to the remote server");
 }
