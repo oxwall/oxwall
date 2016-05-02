@@ -64,14 +64,23 @@ final class OW_ApiRequestHandler extends OW_RequestHandler
 
     /**
      * @param ReflectionMethod $action
-     * @param OW_ActionController $controler
+     * @param OW_ActionController $controller
      */
-    protected function processControllerAction( $action, $controler )
+    protected function processControllerAction( $action, $controller )
     {
         $args = array();
         $args[] = $_POST;
         $args[] = empty($this->handlerAttributes[self::ATTRS_KEY_VARLIST]) ? array() : $this->handlerAttributes[self::ATTRS_KEY_VARLIST];
         $action->invokeArgs($controller, $args);
         OW::getDocument()->setBody($controller->render());
+    }
+
+    /**
+     * @param $controller
+     * @return bool
+     */
+    protected function checkControllerInstance( $controller )
+    {
+        return $controller != null & $controller instanceof OW_ApiActionController;
     }
 }
