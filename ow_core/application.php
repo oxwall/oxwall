@@ -23,14 +23,15 @@
  */
 
 /**
- * Description...
- *
  * @author Sardar Madumarov <madumarov@gmail.com>
  * @package ow_core
  * @since 1.0
+ * @method static OW_Application getInstance()
  */
 class OW_Application
 {
+    use OW_Singleton;
+    
     const CONTEXT_MOBILE = BOL_UserService::USER_CONTEXT_MOBILE;
     const CONTEXT_DESKTOP = BOL_UserService::USER_CONTEXT_DESKTOP;
     const CONTEXT_API = BOL_UserService::USER_CONTEXT_API;
@@ -55,27 +56,6 @@ class OW_Application
     private function __construct()
     {
         $this->context = self::CONTEXT_DESKTOP;
-    }
-    /**
-     * Singleton instance.
-     *
-     * @var OW_Application
-     */
-    private static $classInstance;
-
-    /**
-     * Returns an instance of class (singleton pattern implementation).
-     *
-     * @return OW_Application
-     */
-    public static function getInstance()
-    {
-        if ( self::$classInstance === null )
-        {
-            self::$classInstance = new self();
-        }
-
-        return self::$classInstance;
     }
 
     /**
