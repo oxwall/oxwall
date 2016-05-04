@@ -223,12 +223,17 @@ class OW_RequestHandler
             $this->handlerAttributes = $catchAllRequests;
         }
 
-        /* @var $controller ActionController */
+        /* @var $controller OW_ActionController */
         try
         {
             $controller = OW::getClassInstance($this->handlerAttributes[self::ATTRS_KEY_CTRL]);
-            $action = new ReflectionMethod(get_class($controller),
-                $this->handlerAttributes[self::ATTRS_KEY_ACTION]);
+
+            if ( empty($this->handlerAttributes[self::ATTRS_KEY_ACTION]) )
+            {
+                $this->handlerAttributes[self::ATTRS_KEY_ACTION] = $controller->getDefaultAction();
+            }
+
+            $action = new ReflectionMethod(get_class($controller), $this->handlerAttributes[self::ATTRS_KEY_ACTION]);
         }
         catch ( ReflectionException $e )
         {

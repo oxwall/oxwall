@@ -82,7 +82,6 @@ class ADMIN_CTRL_Users extends ADMIN_CTRL_Abstract
     public function index( array $params )
     {
         $language = OW::getLanguage();
-        $userService = BOL_UserService::getInstance();
         
         OW::getDocument()->getMasterPage()->getMenu(OW_Navigation::ADMIN_USERS)->getElement('sidebar_menu_item_users')->setActive(true);
 
