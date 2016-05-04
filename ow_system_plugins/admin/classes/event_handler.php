@@ -87,12 +87,6 @@ class ADMIN_CLASS_EventHandler
                 ADMIN_CLASS_NotificationCollector::NOTIFICATION_WARNING);
         }
 
-        if ( !ini_get("allow_url_fopen") )
-        {
-            $coll->add($language->text("admin", "warning_url_fopen_disabled"),
-                ADMIN_CLASS_NotificationCollector::NOTIFICATION_WARNING);
-        }
-
         $items = $storageService->findItemsWithInvalidLicense();
         $licenseRequestUrl = OW::getRouter()->urlFor("ADMIN_CTRL_Storage", "checkItemLicense");
         $backUri = OW::getRouter()->getUri();
