@@ -227,7 +227,7 @@ class OW_RequestHandler
         try
         {
             $controller = OW::getClassInstance($this->handlerAttributes[self::ATTRS_KEY_CTRL]);
-            $action = new ReflectionMethod($this->handlerAttributes[self::ATTRS_KEY_CTRL],
+            $action = new ReflectionMethod(get_class($controller),
                 $this->handlerAttributes[self::ATTRS_KEY_ACTION]);
         }
         catch ( ReflectionException $e )
