@@ -185,6 +185,7 @@ class OW_RequestHandler
 
     /**
      * @param array $attributes
+     * @throws Redirect404Exception
      */
     public function setHandlerAttributes( array $attributes )
     {
@@ -201,7 +202,7 @@ class OW_RequestHandler
     }
 
     /**
-     * @param array $dispatchAttributes
+     * @throws Redirect404Exception
      */
     public function dispatch()
     {
@@ -235,7 +236,7 @@ class OW_RequestHandler
         }
 
         // check if controller exists and is instance of base action controller class
-        if ( $controller === null || !$controller instanceof OW_ActionController )
+        if ( !$this->checkControllerInstance($controller) )
         {
             throw new LogicException("Cant dispatch request!Please provide valid controller class!");
         }
@@ -244,6 +245,15 @@ class OW_RequestHandler
         $controller->init();
 
         $this->processControllerAction($action, $controller);
+    }
+
+    /**
+     * @param $controller
+     * @return bool
+     */
+    protected function checkControllerInstance( $controller )
+    {
+        return $controller != null & $controller instanceof OW_ActionController;
     }
 
     /**
@@ -272,9 +282,8 @@ class OW_RequestHandler
     /**
      * Returns template path for provided controller and action.
      *
-     * @param string $controller
-     * @param string $action
-     * @return string<path>
+     * @param OW_ActionController $ctrl
+     * @return string
      */
     protected function getControllerActionDefaultTemplate( OW_ActionController $ctrl )
     {

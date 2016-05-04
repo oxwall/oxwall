@@ -145,7 +145,7 @@ class BOL_StorageService
         $params->addParams($data);
         $response = UTIL_HttpClient::post($this->getStorageUrl(self::URI_CHECK_ITEMS_FOR_UPDATE), $params);
 
-        if ( $response->getStatusCode() != UTIL_HttpClient::HTTP_STATUS_OK )
+        if ( !$response || $response->getStatusCode() != UTIL_HttpClient::HTTP_STATUS_OK )
         {
             OW::getLogger()->addEntry(__CLASS__ . "::" . __METHOD__ . "#" . __LINE__ . " storage request status is not OK",
                 "core.update");
@@ -243,7 +243,7 @@ class BOL_StorageService
         $paramsObj->addParams($data);
         $response = UTIL_HttpClient::get($this->getStorageUrl(self::URI_DOWNLOAD_PLATFORM_ARCHIVE), $paramsObj);
 
-        if ( $response->getStatusCode() != UTIL_HttpClient::HTTP_STATUS_OK || !$response->getBody() )
+        if ( !$response || $response->getStatusCode() != UTIL_HttpClient::HTTP_STATUS_OK || !$response->getBody() )
         {
             throw new LogicException("Can't download file. Server returned empty file.");
         }
@@ -278,7 +278,7 @@ class BOL_StorageService
         $paramsObj->addParams($data);
         $response = UTIL_HttpClient::get($this->getStorageUrl(self::URI_DOWNLOAD_ITEM), $paramsObj);
 
-        if ( $response->getStatusCode() != UTIL_HttpClient::HTTP_STATUS_OK || !$response->getBody() )
+        if ( !$response || $response->getStatusCode() != UTIL_HttpClient::HTTP_STATUS_OK || !$response->getBody() )
         {
             throw new LogicException("Can't download file. Server returned empty file.");
         }
@@ -597,7 +597,7 @@ class BOL_StorageService
         $params->addParams($data);
         $response = UTIL_HttpClient::get($url, $params);
 
-        if ( $response->getStatusCode() != UTIL_HttpClient::HTTP_STATUS_OK || !$response->getBody() )
+        if ( !$response || $response->getStatusCode() != UTIL_HttpClient::HTTP_STATUS_OK || !$response->getBody() )
         {
             return null;
         }
