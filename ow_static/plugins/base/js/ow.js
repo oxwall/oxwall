@@ -1221,7 +1221,7 @@ OwFormElement.prototype = {
         var errorMessage = '';
 
         try{
-            
+
             var data = this.filter(this.getValue());
             
             for( var i = 0; i < this.validators.length; i++ ){
@@ -1372,9 +1372,10 @@ OwForm.prototype = {
 
         $.each(this.elements,
             function( index, data ){
-                values[data.name] = data.filter(data.getValue());
+                //check if filter method is available before using it
+                values[data.name] = $.isFunction(data.filter) ? data.filter(data.getValue()) : data.getValue();
             }
-            );
+        );
 
         return values;
     },
