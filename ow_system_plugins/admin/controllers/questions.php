@@ -960,7 +960,7 @@ class ADMIN_CTRL_Questions extends ADMIN_CTRL_Abstract
                 break;
 
             case 'addQuestion' :
-
+                /* @var $form ADMIN_CLASS_AddQuestionForm */
                 $form = OW::getClassInstance('ADMIN_CLASS_AddQuestionForm', 'qst_add_form', '');
                 $form->process();
 

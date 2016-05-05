@@ -44,7 +44,6 @@ class ADMIN_CLASS_AddQuestionForm extends Form
         $this->bindJsFunction('success', ' function (result) {
             if ( result.result )
             {
-                OW.info(result.message);
                 window.location.reload();
             }
             else
@@ -475,7 +474,9 @@ class ADMIN_CLASS_AddQuestionForm extends Form
 
                 BOL_LanguageService::getInstance()->generateCache( OW::getLanguage()->getCurrentId() );
 
-                echo json_encode( array( 'result' => true, 'errors' => array(), 'message' => OW::getLanguage()->text( 'admin', 'questions_add_question_message' ) ) );
+                OW::getFeedback()->info(OW::getLanguage()->text( 'admin', 'questions_add_question_message' ));
+
+                echo json_encode( array( 'result' => true, 'errors' => array()) );
 
             }
             else
