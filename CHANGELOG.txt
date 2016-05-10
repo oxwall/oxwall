@@ -1,3 +1,46 @@
+Oxwall 1.8.3 beta, May 10, 2016
+====================================
+
+Platform [core]:
+- added CURL support for remote platform requests
+- added blocked users list
+- fixed message appearing during theme upload with missing update server connection
+- added option to use empty database user password during installation
+- fixed bug preventing cash clearing for configs during single script launches
+- added standard placeholder for forms, which displays invalid label
+- added Check Updates button to Admin Panel for manual update checks
+- added ALT HTML attribute for profile avatars on profile list page
+- added support for anti CSFR tokens, which are now used by all forms automatically. Individual usage access is also available. 
+- removed send escaper functions
+- fixed mobile version bug preventing login from any page
+- removed .htaccess file from update pack
+- fixed bug with inverted commas within langs breaking stats on Admin Panel index page
+
+Photos [photo]:
+- photo description is no longer cut due to tag presence
+- added ALT HTML attribute for photo thumbs within photo widget on profile view page, as well as photo lists (latest, top rated, most discussed)
+- added ALT HTML attribute for photos on separate photo view page
+- added GET parameter for temporary photos to prevent caching errors
+
+Newsfeed [newsfeed]:
+- added ALT HTML attribute for displaying thumbs of various content
+
+Messages [mailbox]:
+- blocked users no longer show up in contact list
+- contact list search now displays results with partially typed-in names
+- fixed bug with invitation label not disappearing in chat window
+- fixed JS error “TypeError: element.input is null" appearing while switching operation modes (chat/mail/chat+mail) in plugin settings
+
+Video [video]:
+- added ALT HTML attribute for video thumbs on video listings page
+
+Events [event];
+- added ALT HTML attribute for event thumbs
+
+Groups [groups]:
+- added ALT HTML attribute for group thumbs
+
+
 Oxwall 1.8.2, Mar 22, 2016
 ====================================
 
