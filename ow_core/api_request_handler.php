@@ -38,7 +38,7 @@ final class OW_ApiRequestHandler extends OW_RequestHandler
      */
     private function __construct()
     {
-        
+
     }
     /**
      * Singleton instance.
