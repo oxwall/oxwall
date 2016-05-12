@@ -85,7 +85,7 @@ abstract class OW_ApiActionController
      */
     public function render()
     {
-        if ( define('OW_PROFILER_ENABLE') && OW_PROFILER_ENABLE ) {
+        if ( defined("OW_PROFILER_ENABLE") && OW_PROFILER_ENABLE ) {
             $this->assign('queryLog', OW::getDbo()->getQueryLog());
             $this->assign('queryCount', OW::getDbo()->getQueryCount());
             $this->assign('queryExecutionTime', OW::getDbo()->getTotalQueryExecTime());
