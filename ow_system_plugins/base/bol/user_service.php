@@ -926,7 +926,7 @@ final class BOL_UserService
         return $this->userDao->findListByEmailList($emailList);
     }
 
-    public function createUser( $username, $password, $email, $accountType = null, $emailVerify = false )
+    public function createUser( $username, $password, $email, $accountType = null, $emailVerify = false, $ip = null )
     {
         if ( !UTIL_Validator::isEmailValid($email) )
         {
@@ -974,7 +974,7 @@ final class BOL_UserService
         $user->joinStamp = time();
         $user->activityStamp = time();
         $user->accountType = $userAccountType;
-        $user->joinIp = ip2long(OW::getRequest()->getRemoteAddress());
+        $user->joinIp = $ip ? $ip : ip2long(OW::getRequest()->getRemoteAddress());
 
         if ( $emailVerify === true )
         {
