@@ -34,6 +34,8 @@ OW_ErrorManager::getInstance()->setErrorOutput(new BASE_CLASS_CliErrOutput());
 // setting default time zone
 date_default_timezone_set(OW::getConfig()->getValue('base', 'site_timezone'));
 
+OW_Auth::getInstance()->setAuthenticator(new OW_SessionAuthenticator());
+
 OW::getPluginManager()->initPlugins();
 $event = new OW_Event(OW_EventManager::ON_PLUGINS_INIT);
 OW::getEventManager()->trigger($event);
