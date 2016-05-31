@@ -1324,6 +1324,7 @@ OwForm.prototype = {
             );
 
         if( error ){
+            console.log(element);
             element.input.focus();
 
             if( this.validateErrorMessage ){

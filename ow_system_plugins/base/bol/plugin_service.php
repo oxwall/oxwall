@@ -439,21 +439,25 @@ class BOL_PluginService
         }
 
         // create dir in pluginfiles
-        $pluginfilesDir = $plugin->getPluginFilesDir();
-
-        if ( !file_exists($pluginfilesDir) )
+        if( file_exists($plugin->getInnerPluginFilesDir()) )
         {
-            mkdir($pluginfilesDir);
-            chmod($pluginfilesDir, 0777);
+            UTIL_File::copyDir($plugin->getInnerPluginFilesDir(), $plugin->getPluginFilesDir());
+            UTIL_File::chmodDir($plugin->getPluginFilesDir(), 0777, 0666);
+        }
+        else if ( !file_exists($plugin->getPluginFilesDir()) )
+        {
+            mkdir($plugin->getPluginFilesDir());
+            chmod($plugin->getPluginFilesDir(), 0777);
         }
 
         // create dir in userfiles
-        $userfilesDir = $plugin->getUserFilesDir();
-
-        if ( !file_exists($userfilesDir) )
+        if( file_exists($plugin->getInnerUserFilesDir()) )
         {
-            mkdir($userfilesDir);
-            chmod($userfilesDir, 0777);
+            OW::getStorage()->copyDir($plugin->getInnerUserFilesDir(), $plugin->getUserFilesDir());
+        }
+        else if ( !file_exists($plugin->getUserFilesDir()) )
+        {
+            OW::getStorage()->mkdir($plugin->getUserFilesDir());
         }
     }
 
