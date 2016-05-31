@@ -5,6 +5,7 @@ class UPDATE_LanguageService
     private static $classInstance;
 
     private $service;
+
     /**
      *
      * @param <type> $includeCache
@@ -12,8 +13,7 @@ class UPDATE_LanguageService
      */
     public static function getInstance()
     {
-        if ( !isset(self::$classInstance) )
-        {
+        if (!isset(self::$classInstance)) {
             self::$classInstance = new self();
         }
 
@@ -25,6 +25,10 @@ class UPDATE_LanguageService
         $this->service->importPrefixFromZip($path, $key, false);
     }
 
+    public function replaceLangValue($prefix, $key, $value, $generateCache = false, $lang = 'en')
+    {
+        $this->service->replaceLangValue($prefix, $key, $value, $lang, $generateCache);
+    }
 
     public function importPrefixFromDir($path)
     {
