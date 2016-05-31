@@ -668,7 +668,7 @@ class BOL_QuestionService
         return $result;
     }
 
-    public function createSection($sectionName)
+    public function createSection($sectionName, $label)
     {
         if ( !$this->findSectionBySectionName($sectionName) )
         {
@@ -676,7 +676,7 @@ class BOL_QuestionService
             $sectionLang = $this->
                     getQuestionLangKeyName(BOL_QuestionService::LANG_KEY_TYPE_QUESTION_SECTION, $sectionName);
 
-            BOL_LanguageService::getInstance()->replaceLangValue('base', $sectionLang, $sectionName, true);
+            BOL_LanguageService::getInstance()->replaceLangValue('base', $sectionLang, $label, true);
 
             // create a section
             $section =  new BOL_QuestionSection();
@@ -939,29 +939,30 @@ class BOL_QuestionService
         return $isDelete;
     }
 
-    public function addQuestion(BOL_Question $question, $name, array $values = array(), array $accountTypes = array(), $description = null, $order = 9999, $generateCache = true)
+    public function addQuestion(BOL_Question $question, $label, array $values = array(), array $accountTypes = array(), $description = null, $generateCache = true)
     {
         $this->saveOrUpdateQuestion($question);
 
         // translate the question
-        $this->setQuestionLabel($name, $name);
-        $this->setQuestionDescription($name, $description);
+        $this->setQuestionLabel($question->name, $label);
+        $this->setQuestionDescription($question->name, $description);
 
         // add values
         if ( $values )
         {
-            foreach($values as $value => $label)
-            {
-                $this->addQuestionValue( $name, $value, $label, $order, $generateCache);
-            }
+            $order = 1;
 
-            $order++;
+            foreach($values as $questionValue => $questionLabel)
+            {
+                $this->addQuestionValue( $question->name, $questionValue, $questionLabel, $order, $generateCache);
+                $order++;
+            }
         }
 
         // assign account types
         if ( $accountTypes )
         {
-            $this->addQuestionListToAccountTypeList([$name], $accountTypes);
+            $this->addQuestionListToAccountTypeList([$question->name], $accountTypes);
         }
     }
 
