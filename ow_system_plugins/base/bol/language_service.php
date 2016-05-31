@@ -364,6 +364,31 @@ class BOL_LanguageService
         return $this->valueDao->countKeySearchResultKeys($languageId, $search);
     }
 
+    public function replaceLangValue($prefix, $key, $value, $generateCache = false, $lang = 'en')
+    {
+        $defaultLanguage = BOL_LanguageService::getInstance()->findByTag($lang);
+        $languageId = $defaultLanguage->getId();
+
+        if ( !$languageId )
+        {
+            throw new InvalidArgumentException('Invalid language tag: ' . $lang);
+        }
+
+        $keyDto = BOL_LanguageService::getInstance()->findKey($prefix, $key);
+
+        if ( !empty($keyDto) )
+        {
+            $valueDto = BOL_LanguageService::getInstance()->findValue($languageId, $keyDto->id);
+
+            if ( !empty($valueDto) )
+            {
+                BOL_LanguageService::getInstance()->deleteValue($valueDto, $generateCache);
+            }
+        }
+
+        BOL_LanguageService::getInstance()->addOrUpdateValue($languageId, $prefix, $key, $value, $generateCache);
+    }
+
     /**
      * Add new lang key
      *
