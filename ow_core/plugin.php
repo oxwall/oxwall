@@ -115,7 +115,7 @@ class OW_Plugin
 
     public function getInnerUserFilesDir()
     {
-        return $this->getRootDir() . $this->getDirName() . DS;
+        return $this->getRootDir() . "userfiles" . DS;
     }
 
     public function getUserFilesUrl()
@@ -130,7 +130,7 @@ class OW_Plugin
 
     public function getInnerPluginFilesDir()
     {
-        return $this->getRootDir() . $this->getDirName() . DS;
+        return $this->getRootDir() . "pluginfiles" . DS;
     }
 
     public function getRootDir()
