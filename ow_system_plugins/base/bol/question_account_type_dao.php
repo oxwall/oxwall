@@ -176,4 +176,13 @@ class BOL_QuestionAccountTypeDao extends OW_BaseDao
         
         $this->dbo->query( $sql, array( 'account' => $accountType->name, 'role' => $accountType->roleId ) );
     }
+
+    public function findAccountTypeById( $id )
+    {
+        // get account name
+        $example = new OW_Example();
+        $example->andFieldEqual('id', $id);
+
+        return $this->findObjectByExample($example);
+    }
 }
