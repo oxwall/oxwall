@@ -2049,6 +2049,11 @@ class BOL_QuestionService
         return isset($res[$name]) ? $res[$name] : null;
     }
 
+    public function deleteByQuestionListAndUserId(array $questionNameList, $userId)
+    {
+        $this->dataDao->deleteByQuestionListAndUserId($questionNameList, $userId);
+    }
+
     public function deleteQuestionDataByUserId( $userId )
     {
         $this->dataDao->deleteByUserId($userId);
