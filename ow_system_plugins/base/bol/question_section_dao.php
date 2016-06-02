@@ -180,4 +180,12 @@ class BOL_QuestionSectionDao extends OW_BaseDao
 
         return $this->findListByExample($example);
     }
+
+    public function findSectionById($id)
+    {
+        $example = new OW_Example();
+        $example->andFieldEqual('id', $id);
+
+        return $this->findObjectByExample($example);
+    }
 }
