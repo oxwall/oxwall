@@ -35,6 +35,7 @@ use GuzzleHttp\RequestOptions;
 class UTIL_HttpClient
 {
     const HTTP_STATUS_OK = 200;
+    const CONNECTION_TIMEOUT = 5;
 
     /**
      * @var GuzzleHttp\Client
@@ -96,7 +97,16 @@ class UTIL_HttpClient
     private static function request( $method, $url, array $options )
     {
         $options[RequestOptions::VERIFY] = false;
-        $response = self::getClient()->request($method, $url, $options);
+        $options[RequestOptions::CONNECT_TIMEOUT] = self::CONNECTION_TIMEOUT;
+
+        try
+        {
+            $response = self::getClient()->request($method, $url, $options);
+        }
+        catch ( Exception $e )
+        {
+            return null;
+        }
 
         return new UTIL_HttpClientResponse($response);
     }

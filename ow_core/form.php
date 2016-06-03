@@ -518,7 +518,11 @@ class Form
         /* @var $element FormElement */
         foreach ( $this->elements as $element )
         {
-            $element->setValue(null);
+            //TODO remove temp hardcode to avoid token reset
+            if( $element->getName()  != self::ELEMENT_CSRF_TOKEN )
+            {
+                $element->setValue(null);
+            }
         }
 
         return $this;
