@@ -21,21 +21,5 @@
  * Display of Attribution Information is required in Larger Works which are defined in the CPAL as a work
  * which combines Covered Code or portions thereof with code not governed by the terms of the CPAL.
  */
-$languageService = Updater::getLanguageService();
-
-$languages = $languageService->getLanguages();
-$langId = null;
-
-foreach ( $languages as $lang )
-{
-    if ( $lang->tag == "en" )
-    {
-        $langId = $lang->id;
-        break;
-    }
-}
-
-if ( $langId !== null )
-{
-    $languageService->addOrUpdateValue($langId, 'admin', 'wrong_file_extension', 'These file extensions: "{$extensions}" are disallowed for using');
-}
+Updater::getLanguageService()->
+        replaceLangValue('admin', 'wrong_file_extension', 'These file extensions: "{$extensions}" are disallowed for using');
