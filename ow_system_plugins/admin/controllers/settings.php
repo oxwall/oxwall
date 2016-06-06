@@ -153,6 +153,7 @@ class ADMIN_CTRL_Settings extends ADMIN_CTRL_Abstract
         $attchExtList = new Textarea('attch_ext_list');
         $attchExtList->setLabel($language->text('admin', 'input_settings_attch_ext_list_label'));
         $attchExtList->setDescription($language->text('admin', 'input_settings_attch_ext_list_desc'));
+        $attchExtList->addValidator( new FileExtensionValidator() );
         $settingsForm->addElement($attchExtList);
 
         $submit = new Submit('save');
@@ -189,13 +190,13 @@ class ADMIN_CTRL_Settings extends ADMIN_CTRL_Abstract
                 $config->saveConfig('base', 'attch_ext_list', json_encode(array_map('trim', $extList)));
 
                 OW::getFeedback()->info($language->text('admin', 'settings_submit_success_message'));
+                $this->redirect();
             }
             else
             {
-                OW::getFeedback()->error('Error');
+                OW::getFeedback()->error($language->text('admin', 'settings_submit_error_message'));
             }
 
-            $this->redirect();
         }
 
         $userCustomHtml->setValue($config->getValue('base', 'tf_user_custom_html_disable'));
@@ -931,6 +932,54 @@ class UserSettingsForm extends Form
             : $config->saveConfig('base', 'user_view_presentation', 'table');
 
         return array('result' => true);
+    }
+}
+
+/**
+ * File extension Validator
+ *
+ * @author Alex Ermashev <alexermashev@gmail.com>
+ * @package ow_core
+ * @since 1.8.4
+ */
+class FileExtensionValidator extends OW_Validator
+{
+    /**
+     * List of disallowed extensions
+     *
+     * @var array
+     */
+    protected $disallowedExtensions = array(
+        'php*',
+        'phtml'
+    );
+
+    /**
+     * Class constructor
+     */
+    public function __construct()
+    {
+        $this->errorMessage = OW::getLanguage()->text('admin', 'wrong_file_extension', array(
+            'extensions' => implode(',', $this->disallowedExtensions)
+        ));
+    }
+
+    public function isValid( $value )
+    {
+        $values = explode(PHP_EOL, $value);
+
+        foreach($values as $extension)
+        {
+            foreach($this->disallowedExtensions as $disallowedExtensions)
+            {
+                if ( preg_match('/' . $disallowedExtensions . '/i', $extension) )
+                {
+                    return false;
+                }
+            }
+        }
+
+        return true;
     }
 }
 
