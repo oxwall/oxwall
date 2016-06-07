@@ -30,7 +30,7 @@
  * @method static OW_PluginManager getInstance()
  * @since 1.0
  */
-final class OW_PluginManager
+class OW_PluginManager
 {
     use OW_Singleton;
     

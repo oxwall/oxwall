@@ -30,7 +30,7 @@
  * @method static OW_Feedback getInstance()
  * @since 1.0
  */
-final class OW_Feedback
+class OW_Feedback
 {
     /* feedback messages types */
     const TYPE_ERROR = 'error';

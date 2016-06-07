@@ -28,7 +28,7 @@
  * @method static OW_Response getInstance()
  * @since 1.0
  */
-final class OW_Response
+class OW_Response
 {
     /**
      * HTTP Header constants

@@ -28,7 +28,7 @@
  * @method static OW_ThemeManager getInstance()
  * @since 1.0
  */
-final class OW_ThemeManager
+class OW_ThemeManager
 {
     const DEFAULT_THEME = 'default';
     const CURRENT_THEME = 'current';

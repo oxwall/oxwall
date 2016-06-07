@@ -30,7 +30,7 @@
  * @method static OW_Navigation getInstance()
  * @since 1.0
  */
-final class OW_Navigation
+class OW_Navigation
 {
     const MAIN = BOL_NavigationService::MENU_TYPE_MAIN;
     const BOTTOM = BOL_NavigationService::MENU_TYPE_BOTTOM;

@@ -30,7 +30,7 @@
  * @method static OW_TextSearchManager getInstance()
  * @since 1.0
  */
-final class OW_TextSearchManager
+class OW_TextSearchManager
 {
     /**
      * Sort by date

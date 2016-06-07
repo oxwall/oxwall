@@ -28,7 +28,7 @@
  * @method static OW_Request getInstance()
  * @since 1.0
  */
-final class OW_Request
+class OW_Request
 {
     use OW_Singleton;
     

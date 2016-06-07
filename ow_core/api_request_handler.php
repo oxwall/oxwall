@@ -31,7 +31,7 @@
  * @method static OW_ApiRequestHandler getInstance()
  * @since 1.0
  */
-final class OW_ApiRequestHandler extends OW_RequestHandler
+class OW_ApiRequestHandler extends OW_RequestHandler
 {
     use OW_Singleton;
 

@@ -23,11 +23,5 @@ trait OW_Singleton
 
     private function __construct()
     {
-        $this->init();
-    }
-
-    protected function init()
-    {
-        
     }
 }
