@@ -485,6 +485,8 @@ class UTIL_File
      */
     public static function chmodDir( $dirPath, $dirPermissions = 0755, $filePermissions = 0644 )
     {
+        chmod($dirPath, $dirPermissions);
+
         $dirPath = self::removeLastDS($dirPath);
         $handle = opendir($dirPath);
 
