@@ -668,6 +668,29 @@ class BOL_QuestionService
         return $result;
     }
 
+    public function createSection($sectionName, $label)
+    {
+        if ( !$this->findSectionBySectionName($sectionName) )
+        {
+            // generate a lang value
+            $sectionLang = $this->
+                    getQuestionLangKeyName(BOL_QuestionService::LANG_KEY_TYPE_QUESTION_SECTION, $sectionName);
+
+            BOL_LanguageService::getInstance()->replaceLangValue('base', $sectionLang, $label, true);
+
+            // create a section
+            $section =  new BOL_QuestionSection();
+            $section->name = $sectionName;
+            $section->sortOrder = $this->findLastSectionOrder() + 1;
+            $section->isHidden = false;
+            $section->isDeletable = true;
+
+            $this->saveOrUpdateSection($section);
+
+            return $section;
+        }
+    }
+
     /**
      *
      * @param string $accountType
@@ -875,6 +898,11 @@ class BOL_QuestionService
         return $this->valueDao->findRealQuestionValues($questionName);
     }
 
+    public function findQuestionValueById( $id )
+    {
+        return $this->valueDao->findQuestionValueById($id);
+    }
+
     public function findQuestionValue( $questionId, $value )
     {
         return $this->valueDao->findQuestionValue($questionId, $value);
@@ -911,10 +939,42 @@ class BOL_QuestionService
         return $isDelete;
     }
 
+    public function addQuestion(BOL_Question $question, $label, array $values = array(), array $accountTypes = array(), $description = null, $generateCache = true)
+    {
+        $this->saveOrUpdateQuestion($question);
+
+        // translate the question
+        $this->setQuestionLabel($question->name, $label);
+        $this->setQuestionDescription($question->name, $description);
+
+        // add values
+        if ( $values )
+        {
+            $order = 1;
+
+            foreach($values as $questionValue => $questionLabel)
+            {
+                $this->addQuestionValue( $question->name, $questionValue, $questionLabel, $order, $generateCache);
+                $order++;
+            }
+        }
+
+        // assign account types
+        if ( $accountTypes )
+        {
+            $this->addQuestionListToAccountTypeList([$question->name], $accountTypes);
+        }
+    }
+
     public function saveOrUpdateAccountType( BOL_QuestionAccountType $value )
     {
         $this->accountDao->save($value);
         $this->updateQuestionsEditStamp();
+    }
+
+    public function findAccountTypeById( $id )
+    {
+        return $this->accountDao->findAccountTypeById($id);
     }
 
     public function deleteAccountType( $accountType )
@@ -1022,7 +1082,12 @@ class BOL_QuestionService
         
         return $nearestSection;
     }
-    
+
+    public function findSectionById( $id )
+    {
+        return $this->sectionDao->findSectionById($id);
+    }
+
     public function deleteSection( $sectionName, BOL_QuestionSection &$moveQuestionsToSection = null )
     {
         if ( $sectionName === null || mb_strlen($sectionName) === 0 )
@@ -1984,6 +2049,11 @@ class BOL_QuestionService
         return isset($res[$name]) ? $res[$name] : null;
     }
 
+    public function deleteByQuestionListAndUserId(array $questionNameList, $userId)
+    {
+        $this->dataDao->deleteByQuestionListAndUserId($questionNameList, $userId);
+    }
+
     public function deleteQuestionDataByUserId( $userId )
     {
         $this->dataDao->deleteByUserId($userId);
@@ -2124,6 +2194,8 @@ class BOL_QuestionService
         OW::getEventManager()->trigger($event);
 
         BOL_LanguageService::getInstance()->addOrUpdateValue(OW::getLanguage()->getCurrentId(), 'base', 'questions_question_' . ($questionName) . '_value_' . $value, $label, $generateCache);
+
+        return $questionValue;
     }
 
     public function updateQuestionsEditStamp()

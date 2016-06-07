@@ -182,31 +182,10 @@ class OW_DeveloperTools
         /* @var $pluginDto BOL_Plugin */
         foreach ( $plugins as $pluginDto )
         {
-            $this->updateStructureForPlugin($pluginDto);
+            $this->pluginService->addPluginDirs($pluginDto);
         }
     }
 
-    /**
-     * Updates dir structure for single plugin
-     * 
-     * @param BOL_Plugin $pluginDto
-     */
-    public function updateStructureForPlugin( BOL_Plugin $pluginDto )
-    {
-        $dirsToCopy = array(
-            OW_DIR_PLUGIN . $pluginDto->getModule() . DS . "static" . DS => OW_DIR_STATIC_PLUGIN . $pluginDto->getModule() . DS,
-            OW_DIR_PLUGIN . $pluginDto->getModule() . DS . "pluginfiles" . DS => OW_DIR_PLUGINFILES . $pluginDto->getModule() . DS,
-            OW_DIR_PLUGIN . $pluginDto->getModule() . DS . "userfiles" . DS => OW_DIR_USERFILES . $pluginDto->getModule() . DS,
-        );
-
-        foreach ( $dirsToCopy as $source => $dest )
-        {
-            if ( file_exists($source) )
-            {
-                $this->copyDirWithChmod($source, $dest);
-            }
-        }
-    }
     /* ----------------------- Event handlers ----------------------------------------------------------------------- */
 
     /**
@@ -392,43 +371,5 @@ class OW_DeveloperTools
         }
 
         return array("items" => $viewDataArray, "count" => ( count($viewData) - 2 ));
-    }
-
-    protected function copyDirWithChmod( $sourcePath, $destPath )
-    {
-        $sourcePath = UTIL_File::removeLastDS($sourcePath);
-        $destPath = UTIL_File::removeLastDS($destPath);
-
-        if ( !file_exists($destPath) )
-        {
-            mkdir($destPath);
-        }
-
-        $handle = opendir($sourcePath);
-
-        if ( $handle !== false )
-        {
-            while ( ($item = readdir($handle)) !== false )
-            {
-                if ( $item === '.' || $item === '..' )
-                {
-                    continue;
-                }
-
-                $path = $sourcePath . DS . $item;
-                $dPath = $destPath . DS . $item;
-
-                if ( is_file($path) )
-                {
-                    copy($path, $dPath);
-                }
-                else if ( is_dir($path) )
-                {
-                    $this->copyDirWithChmod($path, $dPath);
-                }
-            }
-
-            closedir($handle);
-        }
     }
 }

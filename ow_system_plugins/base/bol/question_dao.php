@@ -111,6 +111,7 @@ class BOL_QuestionDao extends OW_BaseDao
 
         $example = new OW_Example();
         $example->andFieldInArray('name', $questionNameList);
+        $example->setOrder('sortOrder');
         $dtoList = $this->findListByExample($example);
 
         $result = array();

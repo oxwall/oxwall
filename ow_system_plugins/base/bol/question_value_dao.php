@@ -195,8 +195,15 @@ class BOL_QuestionValueDao extends OW_BaseDao
         
         return array();
     }
-    
-    
+
+    public function findQuestionValueById($id)
+    {
+        $example = new OW_Example();
+        $example->andFieldEqual('id', $id);
+
+        return $this->findObjectByExample($example);
+    }
+
     public function findQuestionValue( $questionName, $value )
     {
         if ( $questionName === null )
