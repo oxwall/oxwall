@@ -100,7 +100,7 @@ class BOL_StorageService
 
     /**
      * Retrieves update information for all plugins and themes.
-     *
+     * 
      * @return bool
      */
     public function checkUpdates()
@@ -122,7 +122,7 @@ class BOL_StorageService
             );
         }
 
-        //check all manual updates before reading builds in DB
+        //check all manual updates before reading builds in DB 
         $this->themeService->checkManualUpdates();
         $themes = $this->themeService->findAllThemes();
 
@@ -184,13 +184,13 @@ class BOL_StorageService
         $items = !empty($resultArray["invalidLicense"]) ? $resultArray["invalidLicense"] : array();
 
         $this->updateItemsLicenseStatus($items);
-
+        
         return true;
     }
 
     /**
      * Returns information from remote storage for store item.
-     *
+     * 
      * @param string $key
      * @param string $devKey
      * @param int $currentBuild
@@ -212,7 +212,7 @@ class BOL_StorageService
 
     /**
      * Returns information from remote storage for platform.
-     *
+     * 
      * @return array
      */
     public function getPlatformInfoForUpdate()
@@ -224,8 +224,8 @@ class BOL_StorageService
 
     /**
      * Downloads platform update archive and puts it to the provided path.
-     *
-     * @return string
+     * 
+     * @return string 
      * @throws LogicException
      */
     public function downloadPlatform()
@@ -257,7 +257,7 @@ class BOL_StorageService
 
     /**
      * Downloads item archive and returns it's local path.
-     *
+     * 
      * @param string $key
      * @param string $devKey
      * @param string $licenseKey
@@ -292,7 +292,7 @@ class BOL_StorageService
 
     /**
      * Checks if license key is valid for store item.
-     *
+     * 
      * @param string $key
      * @param string $developerKey
      * @param string $licenseKey
@@ -324,7 +324,7 @@ class BOL_StorageService
 
     /**
      * Returns platform xml info.
-     *
+     * 
      * @return array
      */
     public function getPlatformXmlInfo()
@@ -395,7 +395,7 @@ class BOL_StorageService
 
     /**
      * Returns URL of local generic update script.
-     *
+     * 
      * @return string
      */
     public function getUpdaterUrl()
@@ -405,7 +405,7 @@ class BOL_StorageService
 
     /**
      * Returns the list of items with invalid license.
-     *
+     * 
      * @return type
      */
     public function findItemsWithInvalidLicense()
@@ -536,12 +536,12 @@ class BOL_StorageService
                     if ( $type == self::URI_VAR_ITEM_TYPE_VAL_THEME && $this->themeService->getSelectedThemeName() == $item->getKey() )
                     {
                         $defaultTheme = OW::getEventManager()->call("base.get_default_theme");
-
+                        
                         if( !$defaultTheme )
                         {
                             $defaultTheme = BOL_ThemeService::DEFAULT_THEME;
                         }
-
+                        
                         $this->themeService->setSelectedThemeName($defaultTheme);
                     }
                     else if ( $type == self::URI_VAR_ITEM_TYPE_VAL_PLUGIN && $item->isActive )

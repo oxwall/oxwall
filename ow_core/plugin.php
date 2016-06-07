@@ -113,11 +113,6 @@ class OW_Plugin
         return OW_DIR_PLUGIN_USERFILES . $this->getDirName() . DS;
     }
 
-    public function getInnerUserFilesDir()
-    {
-        return $this->getRootDir() . "userfiles" . DS;
-    }
-
     public function getUserFilesUrl()
     {
         return OW_URL_PLUGIN_USERFILES . $this->getDirName() . "/";
@@ -126,11 +121,6 @@ class OW_Plugin
     public function getPluginFilesDir()
     {
         return OW_DIR_PLUGINFILES . $this->getDirName() . DS;
-    }
-
-    public function getInnerPluginFilesDir()
-    {
-        return $this->getRootDir() . "pluginfiles" . DS;
     }
 
     public function getRootDir()
