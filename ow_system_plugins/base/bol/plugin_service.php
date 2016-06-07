@@ -427,33 +427,31 @@ class BOL_PluginService
 
         if ( file_exists($plugin->getStaticDir()) )
         {
-            $staticDir = $plugin->getPublicStaticDir();
-
-            if ( !file_exists($staticDir) )
-            {
-                mkdir($staticDir);
-                chmod($staticDir, 0777);
-            }
-
-            UTIL_File::copyDir($plugin->getStaticDir(), $staticDir);
+            UTIL_File::copyDir($plugin->getStaticDir(), $plugin->getPublicStaticDir());
+            UTIL_File::chmodDir($plugin->getPublicStaticDir(), 0777, 0666);
         }
 
         // create dir in pluginfiles
-        $pluginfilesDir = $plugin->getPluginFilesDir();
-
-        if ( !file_exists($pluginfilesDir) )
+        if( file_exists($plugin->getInnerPluginFilesDir()) )
         {
-            mkdir($pluginfilesDir);
-            chmod($pluginfilesDir, 0777);
+            UTIL_File::copyDir($plugin->getInnerPluginFilesDir(), $plugin->getPluginFilesDir());
+            UTIL_File::chmodDir($plugin->getPluginFilesDir(), 0777, 0666);
+        }
+        else if ( !file_exists($plugin->getPluginFilesDir()) )
+        {
+            mkdir($plugin->getPluginFilesDir());
+            chmod($plugin->getPluginFilesDir(), 0777);
         }
 
         // create dir in userfiles
-        $userfilesDir = $plugin->getUserFilesDir();
-
-        if ( !file_exists($userfilesDir) )
+        if( file_exists($plugin->getInnerUserFilesDir()) )
         {
-            mkdir($userfilesDir);
-            chmod($userfilesDir, 0777);
+            OW::getStorage()->copyDir($plugin->getInnerUserFilesDir(), $plugin->getUserFilesDir());
+            UTIL_File::chmodDir($plugin->getUserFilesDir(), 0777, 0666);
+        }
+        else if ( !file_exists($plugin->getUserFilesDir()) )
+        {
+            OW::getStorage()->mkdir($plugin->getUserFilesDir());
         }
     }
 
