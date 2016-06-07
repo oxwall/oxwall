@@ -25,6 +25,7 @@
 /**
  * @author Sardar Madumarov <madumarov@gmail.com>
  * @package ow_core
+ * @method static OW_DeveloperTools getInstance()
  * @since 1.8.3
  */
 class OW_DeveloperTools
@@ -36,6 +37,8 @@ class OW_DeveloperTools
     const EVENT_UPDATE_CACHE_ENTITIES = "base.update_cache_entities";
     const CONFIG_NAME = "dev_mode";
 
+    use OW_Singleton;
+    
     /**
      * @var BOL_PluginService
      */
@@ -59,27 +62,6 @@ class OW_DeveloperTools
         $this->pluginService = BOL_PluginService::getInstance();
         $this->themeService = BOL_ThemeService::getInstance();
         $this->languageService = BOL_LanguageService::getInstance();
-    }
-    /**
-     * Singleton instance.
-     *
-     * @var OW_DeveloperTools
-     */
-    private static $classInstance;
-
-    /**
-     * Returns an instance of class (singleton pattern implementation).
-     *
-     * @return OW_DeveloperTools
-     */
-    public static function getInstance()
-    {
-        if ( self::$classInstance === null )
-        {
-            self::$classInstance = new self();
-        }
-
-        return self::$classInstance;
     }
 
     public function init()

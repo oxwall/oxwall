@@ -27,10 +27,13 @@
  *
  * @author Nurlan Dzhumakaliev <nurlanj@live.com>
  * @package ow_core
+ * @method static OW_Language getInstance()
  * @since 1.0
  */
 class OW_Language
 {
+    use OW_Singleton;
+    
     /**
      * @var OW_EventManager
      */
@@ -43,28 +46,7 @@ class OW_Language
     private function __construct()
     {
         $this->eventManager = OW::getEventManager();
-    }
-    /**
-     * Singleton instance.
-     *
-     * @var OW_Language
-     */
-    private static $classInstance;
-
-    /**
-     * Returns an instance of class (singleton pattern implementation).
-     *
-     * @return OW_Language
-     */
-    public static function getInstance()
-    {
-        if ( self::$classInstance === null )
-        {
-            self::$classInstance = new self();
-        }
-
-        return self::$classInstance;
-    }
+    }    
 
     public function text( $prefix, $key, array $vars = null )
     {

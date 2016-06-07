@@ -27,6 +27,7 @@
  * 
  * @author Sardar Madumarov <madumarov@gmail.com>
  * @package ow_core
+ * @method static OW_Feedback getInstance()
  * @since 1.0
  */
 final class OW_Feedback
@@ -36,30 +37,12 @@ final class OW_Feedback
     const TYPE_INFO = 'info';
     const TYPE_WARNING = 'warning';
 
+    use OW_Singleton;
+    
     /**
      * @var array
      */
     private $feedback;
-    /**
-     * Singleton instance.
-     * 
-     * @var OW_Feedback
-     */
-    private static $classInstance;
-
-    /**
-     * Returns an instance of class (singleton pattern implementation).
-     *
-     * @return OW_Feedback
-     */
-    public static function getInstance()
-    {
-        if ( self::$classInstance === null )
-        {
-            self::$classInstance = new self();
-        }
-        return self::$classInstance;
-    }
 
     /**
      * Constructor.

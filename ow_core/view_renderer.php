@@ -23,40 +23,19 @@
  */
 
 /**
- * Class is responsible for...
- *
  * @author Sardar Madumarov <madumarov@gmail.com>
  * @package ow_core
+ * @method static OW_ViewRenderer getInstance()
  * @since 1.0
  */
 class OW_ViewRenderer
 {
+    use OW_Singleton;
+    
     /**
      * @var OW_Smarty
      */
     private $smarty;
-
-    /**
-     * Singleton instance.
-     *
-     * @var OW_ViewRenderer
-     */
-    private static $classInstance;
-
-    /**
-     * Returns an instance of class (singleton pattern implementation).
-     *
-     * @return OW_ViewRenderer
-     */
-    public static function getInstance()
-    {
-        if ( self::$classInstance === null )
-        {
-            self::$classInstance = new self();
-        }
-
-        return self::$classInstance;
-    }
 
     /**
      * Constructor.

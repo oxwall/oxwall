@@ -25,10 +25,13 @@
 /**
  * @author Sardar Madumarov <madumarov@gmail.com>
  * @package ow_core
+ * @method static OW_Request getInstance()
  * @since 1.0
  */
 final class OW_Request
 {
+    use OW_Singleton;
+    
     /**
      * Request uri.
      *
@@ -36,28 +39,6 @@ final class OW_Request
      */
     private $uri;
     private $uriParams;
-
-    /**
-     * Singleton instance.
-     *
-     * @var OW_Request
-     */
-    private static $classInstance;
-
-    /**
-     * Returns an instance of class (singleton pattern implementation).
-     *
-     * @return OW_Request
-     */
-    public static function getInstance()
-    {
-        if ( self::$classInstance === null )
-        {
-            self::$classInstance = new self();
-        }
-
-        return self::$classInstance;
-    }
 
     /**
      * Constructor.

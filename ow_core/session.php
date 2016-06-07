@@ -27,16 +27,13 @@
  *
  * @author Nurlan Dzhumakaliev <nurlanj@live.com>
  * @package ow_core
+ * @method static OW_Session getInstance()
  * @since 1.0
  */
 class OW_Session
 {
-    /**
-     * Singleton instance.
-     *
-     * @var OW_Session
-     */
-    private static $classInstance;
+    use OW_Singleton;
+    
     private static $protectedKeys = array('session.home_url', 'session.user_agent');
 
     private function __construct()
@@ -53,21 +50,6 @@ class OW_Session
     public function getName()
     {
         return md5(OW_URL_HOME);
-    }
-
-    /**
-     * Returns an instance of class (singleton pattern implementation).
-     *
-     * @return OW_Session
-     */
-    public static function getInstance()
-    {
-        if ( self::$classInstance === null )
-        {
-            self::$classInstance = new self();
-        }
-
-        return self::$classInstance;
     }
 
     public function start()

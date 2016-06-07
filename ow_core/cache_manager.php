@@ -27,10 +27,13 @@
  *
  * @author Sardar Madumarov <madumarov@gmail.com>
  * @package ow_core
+ * @method static OW_CacheManager getInstance()
  * @since 1.0
  */
 class OW_CacheManager
 {
+    use OW_Singleton;
+    
     const CLEAN_ALL = 'all';
     const CLEAN_OLD = 'old';
     const CLEAN_MATCH_TAGS = 'match_tag';
@@ -52,28 +55,6 @@ class OW_CacheManager
      * @var boolean
      */
     private $cacheEnabled;
-
-    /**
-     * Singleton instance.
-     *
-     * @var OW_CacheManager
-     */
-    private static $classInstance;
-
-    /**
-     * Returns an instance of class (singleton pattern implementation).
-     *
-     * @return OW_CacheManager
-     */
-    public static function getInstance()
-    {
-        if ( self::$classInstance === null )
-        {
-            self::$classInstance = new self();
-        }
-
-        return self::$classInstance;
-    }
 
     /**
      * Constructor.

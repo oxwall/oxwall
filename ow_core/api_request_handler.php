@@ -28,10 +28,12 @@
  *
  * @author Sardar Madumarov <madumarov@gmail.com>
  * @package ow_core
+ * @method static OW_ApiRequestHandler getInstance()
  * @since 1.0
  */
 final class OW_ApiRequestHandler extends OW_RequestHandler
 {
+    use OW_Singleton;
 
     /**
      * Constructor.
@@ -39,27 +41,6 @@ final class OW_ApiRequestHandler extends OW_RequestHandler
     private function __construct()
     {
 
-    }
-    /**
-     * Singleton instance.
-     *
-     * @var OW_ApiRequestHandler
-     */
-    private static $classInstance;
-
-    /**
-     * Returns an instance of class (singleton pattern implementation).
-     *
-     * @return OW_ApiRequestHandler
-     */
-    public static function getInstance()
-    {
-        if ( self::$classInstance === null )
-        {
-            self::$classInstance = new self();
-        }
-
-        return self::$classInstance;
     }
 
     /**

@@ -25,6 +25,7 @@
 /**
  * @author Podyachev Evgeny <joker.OW2@gmail.com>
  * @package ow_core
+ * @method static OW_Storage getInstance()
  * @since 1.0
  */
 
