@@ -23,17 +23,18 @@
  */
 
 /**
- * Desc...
- *
  * @author Sardar Madumarov <madumarov@gmail.com>
  * @package ow_core
+ * @method static OW_ThemeManager getInstance()
  * @since 1.0
  */
-final class OW_ThemeManager
+class OW_ThemeManager
 {
     const DEFAULT_THEME = 'default';
     const CURRENT_THEME = 'current';
 
+    use OW_Singleton;
+    
     /**
      * @var BOL_ThemeService
      */
@@ -58,28 +59,7 @@ final class OW_ThemeManager
     {
         $this->decorators = array();
         $this->themeService = BOL_ThemeService::getInstance();
-    }
-    /**
-     * Singleton instance.
-     *
-     * @var OW_ThemeManager
-     */
-    private static $classInstance;
-
-    /**
-     * Returns an instance of class (singleton pattern implementation).
-     *
-     * @return OW_ThemeManager
-     */
-    public static function getInstance()
-    {
-        if ( self::$classInstance === null )
-        {
-            self::$classInstance = new self();
-        }
-
-        return self::$classInstance;
-    }
+    }    
 
     public function initDefaultTheme( $mobile = false )
     {

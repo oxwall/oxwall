@@ -23,13 +23,12 @@
  */
 
 /**
- * Desc...
- *
  * @author Sardar Madumarov <madumarov@gmail.com>
  * @package ow_core
+ * @method static OW_Response getInstance()
  * @since 1.0
  */
-final class OW_Response
+class OW_Response
 {
     /**
      * HTTP Header constants
@@ -44,6 +43,8 @@ final class OW_Response
     const HD_LAST_MODIFIED = 'Last-Modified';
     const HD_LOCATION = 'Location';
 
+    use OW_Singleton;
+    
     /**
      * Headers to send with response
      *
@@ -64,36 +65,6 @@ final class OW_Response
      * @var string
      */
     private $markup = '';
-
-    /**
-     * Singleton instance.
-     *
-     * @var OW_Response
-     */
-    private static $classInstance;
-
-    /**
-     * Returns an instance of class (singleton pattern implementation).
-     *
-     * @return OW_Response
-     */
-    public static function getInstance()
-    {
-        if ( self::$classInstance === null )
-        {
-            self::$classInstance = new self();
-        }
-
-        return self::$classInstance;
-    }
-
-    /**
-     * Constructor.
-     */
-    private function __construct()
-    {
-        
-    }
 
     /**
      * @return OW_Document

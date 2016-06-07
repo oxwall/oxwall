@@ -25,10 +25,12 @@
 /**
  * @author Sardar Madumarov <madumarov@gmail.com>
  * @package ow_core
+ * @method static OW_MobileApplication getInstance()
  * @since 1.0
  */
 class OW_MobileApplication extends OW_Application
 {
+    use OW_Singleton;
 
     /**
      * Constructor.
@@ -36,27 +38,6 @@ class OW_MobileApplication extends OW_Application
     private function __construct()
     {
         $this->context = self::CONTEXT_MOBILE;
-    }
-    /**
-     * Singleton instance.
-     *
-     * @var OW_Application
-     */
-    private static $classInstance;
-
-    /**
-     * Returns an instance of class (singleton pattern implementation).
-     *
-     * @return OW_MobileApplication
-     */
-    public static function getInstance()
-    {
-        if ( self::$classInstance === null )
-        {
-            self::$classInstance = new self();
-        }
-
-        return self::$classInstance;
     }
 
     /**

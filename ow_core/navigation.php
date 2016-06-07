@@ -27,9 +27,10 @@
  * 
  * @author Sardar Madumarov <madumarov@gmail.com>
  * @package ow_core
+ * @method static OW_Navigation getInstance()
  * @since 1.0
  */
-final class OW_Navigation
+class OW_Navigation
 {
     const MAIN = BOL_NavigationService::MENU_TYPE_MAIN;
     const BOTTOM = BOL_NavigationService::MENU_TYPE_BOTTOM;
@@ -51,30 +52,12 @@ final class OW_Navigation
     const VISIBLE_FOR_MEMBER = BOL_NavigationService::VISIBLE_FOR_MEMBER;
     const VISIBLE_FOR_ALL = BOL_NavigationService::VISIBLE_FOR_ALL;
 
+    use OW_Singleton;
+    
     /**
      * @var BOL_NavigationService
      */
     private $navService;
-    /**
-     * Singleton instance.
-     * 
-     * @var OW_Navigation
-     */
-    private static $classInstance;
-
-    /**
-     * Returns an instance of class (singleton pattern implementation).
-     * 
-     * @return OW_Navigation
-     */
-    public static function getInstance()
-    {
-        if ( self::$classInstance === null )
-        {
-            self::$classInstance = new self();
-        }
-        return self::$classInstance;
-    }
 
     /**
      * Constructor.

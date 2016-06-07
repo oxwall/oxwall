@@ -27,10 +27,13 @@
  * 
  * @author Sardar Madumarov <madumarov@gmail.com>
  * @package ow.ow_core
+ * @method static OW_PluginManager getInstance()
  * @since 1.0
  */
-final class OW_PluginManager
+class OW_PluginManager
 {
+    use OW_Singleton;
+    
     /**
      * @var BOL_PluginService
      */
@@ -47,27 +50,6 @@ final class OW_PluginManager
     private function __construct()
     {
         $this->pluginService = BOL_PluginService::getInstance();
-    }
-    /**
-     * Singleton instance.
-     *
-     * @var OW_PluginManager
-     */
-    private static $classInstance;
-
-    /**
-     * Returns an instance of class (singleton pattern implementation).
-     *
-     * @return OW_PluginManager
-     */
-    public static function getInstance()
-    {
-        if ( self::$classInstance === null )
-        {
-            self::$classInstance = new self();
-        }
-
-        return self::$classInstance;
     }
 
     /**

@@ -27,9 +27,10 @@
  * 
  * @author Alex Ermashev <alexermashev@gmail.com>
  * @package ow.ow_core
+ * @method static OW_TextSearchManager getInstance()
  * @since 1.0
  */
-final class OW_TextSearchManager
+class OW_TextSearchManager
 {
     /**
      * Sort by date
@@ -51,11 +52,7 @@ final class OW_TextSearchManager
      */
     CONST ENTITY_STATUS_NOT_ACTIVE = BASE_CLASS_AbstractSearchStorage::ENTITY_STATUS_NOT_ACTIVE;
 
-    /**
-     * Singleton instance.
-     * @var OW_TextSearchManager
-     */
-    private static $classInstance;
+    use OW_Singleton;
 
     /**
      * Default storage instance     
@@ -68,21 +65,6 @@ final class OW_TextSearchManager
      * @var BASE_CLASS_InterfaceSearchStorage
      */
     private $activeStorageInstance;
-
-    /**
-     * Returns an instance of class (singleton pattern implementation).
-     *
-     * @return OW_TextSearchManager
-     */
-    public static function getInstance()
-    {
-        if ( self::$classInstance === null )
-        {
-            self::$classInstance = new self();
-        }
-
-        return self::$classInstance;
-    }
 
     /**
      * Constructor.

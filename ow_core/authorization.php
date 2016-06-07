@@ -25,10 +25,13 @@
 /**
  * @author Sardar Madumarov <madumarov@gmail.com>
  * @package ow_core
+ * @method static OW_Authorization getInstance()
  * @since 1.0
  */
 class OW_Authorization
 {
+    use OW_Singleton;
+    
     /**
      * @var BOL_AuthorizationService
      */
@@ -40,27 +43,6 @@ class OW_Authorization
     private function __construct()
     {
         $this->service = BOL_AuthorizationService::getInstance();
-    }
-    /**
-     * Singleton instance.
-     *
-     * @var OW_EventManager
-     */
-    private static $classInstance;
-
-    /**
-     * Returns an instance of class (singleton pattern implementation).
-     *
-     * @return OW_EventManager
-     */
-    public static function getInstance()
-    {
-        if ( self::$classInstance === null )
-        {
-            self::$classInstance = new self();
-        }
-
-        return self::$classInstance;
     }
 
     /**

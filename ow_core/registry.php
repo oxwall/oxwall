@@ -23,14 +23,15 @@
  */
 
 /**
- * Description...
- *
  * @author Sardar Madumarov <madumarov@gmail.com>
  * @package ow_core
+ * @method static OW_Registry getInstance()
  * @since 1.0
  */
 class OW_Registry
 {
+    use OW_Singleton;
+    
     /**
      * @var array
      */
@@ -47,27 +48,6 @@ class OW_Registry
     {
         $this->data = array();
         $this->arrayData = array();
-    }
-    /**
-     * Singleton instance.
-     *
-     * @var OW_Registry
-     */
-    private static $classInstance;
-
-    /**
-     * Returns an instance of class (singleton pattern implementation).
-     *
-     * @return OW_Registry
-     */
-    public static function getInstance()
-    {
-        if ( self::$classInstance === null )
-        {
-            self::$classInstance = new self();
-        }
-
-        return self::$classInstance;
     }
 
     public function set( $key, $value )

@@ -28,6 +28,7 @@
  *
  * @author Sardar Madumarov <madumarov@gmail.com>
  * @package ow_core
+ * @method static OW_Dispatcher getInstance()
  * @since 1.0
  */
 class OW_Dispatcher
@@ -43,6 +44,8 @@ class OW_Dispatcher
     const CATCH_ALL_REQUEST_KEY_ROUTE = 'route';
     const CATCH_ALL_REQUEST_KEY_PARAMS = 'params';
 
+    use OW_Singleton;
+    
     /**
      * @var array
      */
@@ -63,35 +66,6 @@ class OW_Dispatcher
      * @var array
      */
     private $catchAllRequestsExcludes = array();
-
-    /**
-     * Constructor.
-     */
-    private function __construct()
-    {
-        
-    }
-    /**
-     * Singleton instance.
-     *
-     * @var OW_Router
-     */
-    private static $classInstance;
-
-    /**
-     * Returns an instance of class (singleton pattern implementation).
-     *
-     * @return OW_Router
-     */
-    public static function getInstance()
-    {
-        if ( self::$classInstance === null )
-        {
-            self::$classInstance = new self();
-        }
-
-        return self::$classInstance;
-    }
 
     /**
      * @return array

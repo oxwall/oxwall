@@ -27,10 +27,13 @@
  * 
  * @author Sardar Madumarov <madumarov@gmail.com>
  * @package ow_core
+ * @method static OW_Config getInstance()
  * @since 1.0
  */
 class OW_Config
 {
+    use OW_Singleton;
+    
     /**
      * @var BOL_ConfigService
      */
@@ -48,27 +51,6 @@ class OW_Config
         $this->configService = BOL_ConfigService::getInstance();
 
         $this->generateCache();
-    }
-    /**
-     * Singleton instance.
-     *
-     * @var OW_Config
-     */
-    private static $classInstance;
-
-    /**
-     * Returns an instance of class (singleton pattern implementation).
-     *
-     * @return OW_Config
-     */
-    public static function getInstance()
-    {
-        if ( self::$classInstance === null )
-        {
-            self::$classInstance = new self();
-        }
-
-        return self::$classInstance;
     }
 
     public function generateCache()
