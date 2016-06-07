@@ -23,7 +23,7 @@ $(document).ready(function(){
 		stop: function(event, ui){
 
 			$set = $('#roles tr.role td input:checkbox[name="role[]"]');
-			 
+
 			$set.attr('disabled', false);
 
 			$( $set[0] ).attr('disabled', 'disabled').attr('checked', false);
@@ -31,7 +31,7 @@ $(document).ready(function(){
 			$('td span.default-role:visible', this).hide();
 
 			$('td input:checkbox[name]')
-			
+
 			$( $(this).sortable('option', 'items'), this ).each(function(i){
 				if(i == 0)
 					$('td span.default-role', this).show();
@@ -40,7 +40,7 @@ $(document).ready(function(){
 
 				remClass = isEven ? 'ow_alt1':'ow_alt2';
 				addClass = isEven ? 'ow_alt2':'ow_alt1';
-				
+
 				if( $(this).hasClass(remClass) )
 					$(this).removeClass( remClass );
 
@@ -55,8 +55,8 @@ $(document).ready(function(){
 	    var roleId = $(this).attr("rel");
 
 	    editRoleFloatBox = OW.ajaxFloatBox(
-	    	"ADMIN_CMP_AuthorizationRoleEdit", 
-	    	{ roleId: roleId }, 
+	    	"ADMIN_CMP_AuthorizationRoleEdit",
+	    	{ roleId: roleId },
 	    	{ width:400, iconClass: "ow_ic_edit", title: OW.getLanguageText('admin', 'permissions_edit_role_btn') }
 	    );
 	});
@@ -97,7 +97,7 @@ tr.placeholder td{
 		            	<input type="checkbox" name="role[]" value="{$role->id}" {if $smarty.foreach.roles.first}disabled="disabled"{/if} />
 		            </td>
 		            <td class="ow_txtleft">
-		            	{text_edit key="base+authorization_role_`$role->name`"}  
+		            	{text_edit key="base+authorization_role_`$role->name`"}
 		            	<span class="ow_mild_green ow_small default-role" style="display:{if $smarty.foreach.roles.first}inline{else}none{/if};">
 		            		{text key='admin+permissions_default_role'}
 		            	</span>
@@ -126,10 +126,10 @@ tr.placeholder td{
 					<form>
                                                 {capture name="selectRoleAlert"}{text key='admin+permissions_please_select_role'}{/capture}
                                                 {capture name="areYouSure"}{text key='admin+permissions_please_select_role'}{/capture}
-                                            
+
 						<script type="text/javascript">
 							window.delRoles = function(){
-								if( $('#roles tr.role td input:checkbox:checked').size() == 0 ){ 
+								if( $('#roles tr.role td input:checkbox:checked').size() == 0 ){
 									alert('{$smarty.capture.selectRoleAlert|escape:"quotes"}');
 									return false;
 								}
@@ -138,7 +138,7 @@ tr.placeholder td{
 							};
 						</script>
 						{decorator name='button' type='submit' langLabel='admin+permissions_delete_role' class='ow_button ow_red ow_ic_delete' onclick="return delRoles()"}
-					</form>									
+					</form>
 				</td>
 			</tr>
 	    </table>
@@ -165,7 +165,7 @@ tr.placeholder td{
 		<th width='1'>{text key="base+authorization_role_`$role->name`"}</th>
 		{/foreach}
 	</tr>
-	{foreach from=$groupActionList item='groupAction' name='groupAction'}	
+	{foreach from=$groupActionList item='groupAction' name='groupAction'}
 	<tr>
 		<th colspan="{$colspanForRoles}">{if !empty($labels[$groupAction.name].label)}{$labels[$groupAction.name].label}{else}{$groupAction.name}{/if}</th>
 	</tr>
@@ -173,10 +173,10 @@ tr.placeholder td{
 	<tr class="{cycle values='ow_alt1,ow_alt2'}  {if $smarty.foreach.groupAction.last && $smarty.foreach.action.last}ow_tr_last{/if}">
         {assign var='actionName' value=$action->name}
 		<td class="ow_label ow_autowidth">{if !empty($labels[$groupAction.name].actions[$actionName])}{$labels[$groupAction.name].actions[$actionName]}{else}{$actionName}{/if}</td>
-		{assign var='actionId' value=$action->id}		
+		{assign var='actionId' value=$action->id}
 		{foreach from=$roles item='role'}
-			{assign var='roleId' value=$role->id}		
-		<td>{if !($action->availableForGuest == false && $roleId == $guestRoleId)}<input type="checkbox" name="perm[]" value="{$actionId}:{$roleId}" {if isset($perms.$actionId.$roleId)} checked="checked"{/if} />{/if}</td>
+			{assign var='roleId' value=$role->id}
+		<td>{if !($action->availableForGuest == false && $roleId == $guestRoleId)}<label for="action-{$actionId}-{$roleId}"></label><input type="checkbox" id="action-{$actionId}-{$roleId}" name="perm[]" value="{$actionId}:{$roleId}" {if isset($perms.$actionId.$roleId)} checked="checked"{/if} />{/if}</td>
 		{/foreach}
 	</tr>
 	{/foreach}
