@@ -81,6 +81,9 @@ $router->addRoute(new OW_Route('admin_settings_user', 'admin/settings/user', 'AD
 $router->addRoute(new OW_Route('admin_settings_mail', 'admin/settings/smtp', 'ADMIN_CTRL_Settings', 'mail'));
 $router->addRoute(new OW_Route('admin_settings_page', 'admin/settings/page', 'ADMIN_CTRL_Settings', 'page'));
 $router->addRoute(new OW_Route('admin_settings_user_input', 'admin/settings/content', 'ADMIN_CTRL_Settings', 'userInput'));
+$router->addRoute(new OW_Route('admin_settings_seo', 'admin/settings/seo', 'ADMIN_CTRL_Seo', 'index'));
+$router->addRoute(new OW_Route('admin_settings_seo_sitemap', 'admin/settings/seo/sitemap', 'ADMIN_CTRL_Seo', 'sitemap'));
+$router->addRoute(new OW_Route('admin_settings_seo_social_meta', 'admin/settings/seo/social-meta', 'ADMIN_CTRL_Seo', 'socialMeta'));
 
 $router->addRoute(new OW_Route('admin_massmailing', 'admin/users/mass-mailing', 'ADMIN_CTRL_MassMailing', 'index'));
 $router->addRoute(new OW_Route('admin_restrictedusernames', 'admin/users/restricted-usernames', 'ADMIN_CTRL_RestrictedUsernames', 'index'));

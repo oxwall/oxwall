@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<prefix name="admin" label="Admin" language_tag="en" language_label="English">
+    <key name="sidebar_menu_item_seo_settings">
+        <value>SEO</value>
+    </key>
+    <key name="seo_page_heading">
+        <value>SEO settings</value>
+    </key>
+    <key name="seo_page">
+        <value>SEO page</value>
+    </key>
+    <key name="seo_sitemap">
+        <value>Sitemap</value>
+    </key>
+    <key name="seo_social_meta">
+        <value>Social meta</value>
+    </key>
+</prefix>
