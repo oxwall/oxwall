@@ -292,6 +292,16 @@ final class OW
     }
 
     /**
+     * Returns seo object.
+     *
+     * @return OW_Seo
+     */
+    public static function getSeo()
+    {
+        return OW_Seo::getInstance();
+    }
+
+    /**
      * Returns system router object.
      *
      * @return OW_Router
