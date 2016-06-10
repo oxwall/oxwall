@@ -62,4 +62,21 @@ class BASE_CTRL_Base extends OW_ActionController
 
         throw new Redirect404Exception();
     }
+
+    /**
+     * Sitemap
+     */
+    public function sitemap()
+    {
+        $sitemap = OW::getSeoManager()->getSitemapPath();
+
+        if ( file_exists($sitemap) )
+        {
+            header("Content-Type: text/xml");
+            echo file_get_contents($sitemap);
+            exit;
+        }
+
+        throw new Redirect404Exception();
+    }
 }

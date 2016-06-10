@@ -59,6 +59,34 @@ class ADMIN_CTRL_Seo extends ADMIN_CTRL_Abstract
      */
     public function sitemap()
     {
+        $form = new ADMIN_CLASS_SeoSitemapForm();
+        $this->addForm($form);
+
+        // validate and save config
+        if ( OW::getRequest()->isPost() && $form->isValid($_POST) )
+        {
+            $entities = OW::getSeoManager()->getSitemapEntities();
+            $formValues = $form->getValues();
+
+            // save entities status
+            foreach ( $entities as $entity => $entityData )
+            {
+                $formValues[$entity]
+                    ? OW::getSeoManager()->enableSitemapEntity($entity)
+                    : OW::getSeoManager()->disableSitemapEntity($entity);
+            }
+
+            // save schedule
+            OW::getConfig()->saveConfig('base', 'seo_sitemap_schedule_update', $formValues['schedule']);
+
+            // reload the current page
+            OW::getFeedback()->info(OW::getLanguage()->text('admin', 'seo_sitemap_settings_updated'));
+            $this->redirect();
+        }
+
+        // assign view variables
+        $this->assign('formEntitites', $form->getEntities());
+        $this->assign('sitemapUrl', OW::getSeoManager()->getSitemapUrl());
     }
 
     /**
@@ -104,3 +132,4 @@ class ADMIN_CTRL_Seo extends ADMIN_CTRL_Abstract
         return new BASE_CMP_ContentMenu($items);
     }
 }
+

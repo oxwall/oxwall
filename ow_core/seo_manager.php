@@ -12,7 +12,6 @@
  * governing rights and limitations under the License. The Original Code is Oxwall software.
  * The Initial Developer of the Original Code is Oxwall Foundation (http://www.oxwall.org/foundation).
  * All portions of the code written by Oxwall Foundation are Copyright (c) 2011. All Rights Reserved.
-
  * EXHIBIT B. Attribution Information
  * Attribution Copyright Notice: Copyright 2011 Oxwall Foundation. All rights reserved.
  * Attribution Phrase (not exceeding 10 words): Powered by Oxwall community software
@@ -22,38 +21,92 @@
  * which combines Covered Code or portions thereof with code not governed by the terms of the CPAL.
  */
 
-$config = OW::getConfig();
-
-// add configs
-if ( !$config->configExists('base', 'seo_sitemap_entities') )
+/**
+ * Base SEO manager class.
+ *
+ * @author Alex Ermashev <alexermashev@gmail.com>
+ * @package ow_core
+ * @method static OW_SeoManager getInstance()
+ * @since 1.8.4
+ */
+class OW_SeoManager
 {
-    $config->addConfig('base', 'seo_sitemap_entities', json_encode(array()));
-}
+    use OW_Singleton;
 
-if ( !$config->configExists('base', 'seo_sitemap_schedule_update') )
-{
-    $config->addConfig('base', 'seo_sitemap_schedule_update', 'weekly');
-}
+    /**
+     * Service
+     *
+     * @var BOL_SeoService
+     */
+    protected $service;
 
-// register sitemap entities
-Updater::getSeoService()->addSitemapEntity('admin', 'seo_sitemap_users', 'users', array(
-    'user_list'
-), 'seo_sitemap_users_desc');
+    /**
+     * Constructor
+     */
+    private function __construct()
+    {
+        $this->service = BOL_SeoService::getInstance();
+    }
 
-// add the SEO admin menu
-try
-{
-    OW::getNavigation()->addMenuItem(
-        OW_Navigation::ADMIN_SETTINGS,
-        'admin_settings_seo',
-        'admin',
-        'sidebar_menu_item_seo_settings',
-        OW_Navigation::VISIBLE_FOR_ALL);
-}
-catch ( Exception $e )
-{
-    Updater::getLogger()->addEntry(json_encode($e));
-}
+    /**
+     * Enable sitemap entity
+     *
+     * @param string $entityType
+     * @return void
+     */
+    public function enableSitemapEntity($entityType)
+    {
+        return $this->service->enableSitemapEntity($entityType);
+    }
 
-// import langs
-Updater::getLanguageService()->importPrefixFromDir(__DIR__ . DS . 'langs');
+    /**
+     * Disable sitemap entity
+     *
+     * @param string $entityType
+     * @return void
+     */
+    public function disableSitemapEntity($entityType)
+    {
+        return $this->service->disableSitemapEntity($entityType);
+    }
+
+    /**
+     * Get sitemap entities
+     *
+     * @return array
+     */
+    public function getSitemapEntities()
+    {
+        return $this->service->getSitemapEntities();
+    }
+
+    /**
+     * Get base sitemap path
+     *
+     * @return string
+     */
+    public function getBaseSitemapPath()
+    {
+        return $this->service->getBaseSitemapPath();
+    }
+
+    /**
+     * Get sitemap url
+     *
+     * @return string
+     */
+    public function getSitemapUrl()
+    {
+        return $this->service->getSitemapUrl();
+    }
+
+    /**
+     * Get sitemap path
+     *
+     * @return string
+     */
+    public function getSitemapPath()
+    {
+        return $this->service->getSitemapPath();
+    }
+}
