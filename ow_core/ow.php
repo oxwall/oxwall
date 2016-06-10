@@ -292,13 +292,13 @@ final class OW
     }
 
     /**
-     * Returns seo object.
+     * Returns seo manager object.
      *
      * @return OW_Seo
      */
-    public static function getSeo()
+    public static function getSeoManager()
     {
-        return OW_Seo::getInstance();
+        return OW_SeoManager::getInstance();
     }
 
     /**

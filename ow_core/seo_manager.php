@@ -21,16 +21,15 @@
  * which combines Covered Code or portions thereof with code not governed by the terms of the CPAL.
  */
 
-
 /**
- * Base SEO class.
+ * Base SEO manager class.
  *
  * @author Alex Ermashev <alexermashev@gmail.com>
  * @package ow_core
- * @method static OW_Seo getInstance()
+ * @method static OW_SeoManager getInstance()
  * @since 1.8.4
  */
-class OW_Seo
+class OW_SeoManager
 {
     use OW_Singleton;
 

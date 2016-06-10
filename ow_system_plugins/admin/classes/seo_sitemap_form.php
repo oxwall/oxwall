@@ -56,7 +56,7 @@ class ADMIN_CLASS_SeoSitemapForm extends Form
      */
     protected function generateEntities()
     {
-        $entities = OW::getSeo()->getSitemapEntities();
+        $entities = OW::getSeoManager()->getSitemapEntities();
 
         if ( $entities )
         {
