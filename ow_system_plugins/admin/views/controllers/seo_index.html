@@ -1,1 +1,61 @@
+<style>
+    .ow_info_icon {
+        width: 20px;
+        height: 20px;
+        display: inline-block;
+    }
+    .ow_info_icon:hover {
+        cursor: pointer;
+    }
+    .ow_letter_count {
+        padding-top: 7px;
+    }
+    .ow_letter_count input {
+        width: 44px;
+        height: 24px;
+    }
+    </style>
 {$menu}
+<div class="seo_admin_select ow_stdmargin">
+    <span>Choose pages: </span><select id="" name="group"><option value="base_pages" selected="selected">Base pages</option><option value="users">Users</option><option value="photo">Photos</option><option value="video">Videos</option><option value="event">Events</option><option value="blogs">Blogs</option><option value="groups">Groups</option><option value="forum">Forum</option><option value="membership">Membership</option></select>
+</div>
+<form method="post" action="" name="configSaveForm">
+    <table class="ow_table_1 ow_form">
+        <tbody>
+        <tr class="ow_tr_first">
+            <th class="ow_name ow_txtleft" colspan="3">
+                <span class="ow_section_icon ow_ic_house">Homepage</span>
+            </th>
+        </tr>
+        <tr class="ow_alt1">
+            <td class="ow_label">Title</td>
+            <td class="ow_value"><input name="" id="" value="" type="text">
+                <div class="ow_letter_count ow_txtright ow_small"><input readonly="" type="text" name="" size="3" maxlength="3" value="31"></div>
+                <span id="" style="display:none;" class="error"></span>
+            </td>
+            <td class="ow_desc ow_small"><span class="ow_info_icon ow_ic_info"><span></td>
+        </tr>
+        <tr class="ow_alt2">
+            <td class="ow_label">Meta description</td>
+            <td class="ow_value"><textarea name="" id="">{$site_name} dating website with dating apps and robust online community. Meet the love of your life here today!</textarea>
+                <div class="ow_letter_count ow_txtright ow_small"><input readonly="" type="text" name="" size="3" maxlength="3" value="112"></div>
+                <span id="" style="display:none;" class="error"></span>
+            </td>
+            <td class="ow_desc ow_small"><span class="ow_info_icon ow_ic_info"><span></td>
+        </tr>
+        <tr class="ow_alt1">
+            <td class="ow_label">Meta keywords</td>
+            <td class="ow_value"><textarea name="" id=""></textarea>
+                <span id="" style="display:none;" class="error"></span>
+            </td>
+            <td class="ow_desc ow_small"></td>
+        </tr>
+        <tr class="ow_alt2 ow_tr_last">
+            <td class="ow_label">Allow for indexing</td>
+            <td class="ow_value"><input name="" id="" checked="checked" type="checkbox"> <span id="" style="display:none;" class="error"></span></td>
+            <td class="ow_desc"></td>
+        </tr>
+        <tr class="ow_tr_delimiter"><td></td></tr>
+</tbody>
+</table>
+</form>

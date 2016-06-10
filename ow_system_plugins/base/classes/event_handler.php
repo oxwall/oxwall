@@ -96,6 +96,7 @@ class BASE_CLASS_EventHandler
         $eventManager->bind("base.user_list.get_displayed_fields", array($this, 'onGetUserListFields'));
         $eventManager->bind("base.user_list.get_questions", array($this, 'onGetUserListQuestions'));
         $eventManager->bind("base.user_list.get_field_data", array($this, 'onGetUserListFieldValue'));
+        $eventManager->bind("base.collect_seo_meta_data", array($this, 'onCollectMetaData'));
     }
 
     public function init()
@@ -1810,5 +1811,16 @@ class BASE_CLASS_EventHandler
                 BOL_AvatarService::getInstance()->trackAvatarChangeActivity($params['userId'], $params['avatarId']);
             }
         }
+    }
+
+    public function onCollectMetaData( BASE_CLASS_EventCollector $e )
+    {
+        $e->add(
+            array(
+                "pluginKey" => "base",
+                "key" => "homepage",
+                "route"
+            )
+        );
     }
 }
