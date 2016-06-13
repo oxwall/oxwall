@@ -59,21 +59,22 @@ class ADMIN_CTRL_Seo extends ADMIN_CTRL_Abstract
      */
     public function sitemap()
     {
+        $service = BOL_SeoService::getInstance();
         $form = new ADMIN_CLASS_SeoSitemapForm();
         $this->addForm($form);
 
         // validate and save config
         if ( OW::getRequest()->isPost() && $form->isValid($_POST) )
         {
-            $entities = OW::getSeoManager()->getSitemapEntities();
+            $entities = $service->getSitemapEntities();
             $formValues = $form->getValues();
 
             // save entities status
             foreach ( $entities as $entity => $entityData )
             {
                 $formValues[$entity]
-                    ? OW::getSeoManager()->enableSitemapEntity($entity)
-                    : OW::getSeoManager()->disableSitemapEntity($entity);
+                    ? $service->enableSitemapEntity($entity)
+                    : $service->disableSitemapEntity($entity);
             }
 
             // save schedule
@@ -86,7 +87,7 @@ class ADMIN_CTRL_Seo extends ADMIN_CTRL_Abstract
 
         // assign view variables
         $this->assign('formEntitites', $form->getEntities());
-        $this->assign('sitemapUrl', OW::getSeoManager()->getSitemapUrl());
+        $this->assign('sitemapUrl', $service->getSitemapUrl());
     }
 
     /**

@@ -32,14 +32,14 @@
 class BOL_SeoService
 {
     /**
-     * Sitemap entity update weekly
+     * Sitemap item update weekly
      */
-    const SITEMAP_ENTITY_UPDATE_WEEKLY = 'weekly';
+    const SITEMAP_ITEM_UPDATE_WEEKLY = 'weekly';
 
     /**
-     * Sitemap entity update daily
+     * Sitemap item update daily
      */
-    const SITEMAP_ENTITY_UPDATE_DAILY = 'daily';
+    const SITEMAP_ITEM_UPDATE_DAILY = 'daily';
 
     /**
      * Sitemap file name
@@ -74,10 +74,19 @@ class BOL_SeoService
     private static $classInstance;
 
     /**
+     * Sitemap
+     *
+     * @var BOL_SitemapDao
+     */
+    protected $sitemapDao;
+
+    /**
      * Constructor.
      */
     private function __construct()
-    {}
+    {
+        $this->sitemapDao = BOL_SitemapDao::getInstance();
+    }
 
     /**
      * Returns an instance of class (singleton pattern implementation).
@@ -125,6 +134,41 @@ class BOL_SeoService
     }
 
     /**
+     * Is sitemap ready for the next build
+     *
+     * @return boolean
+     */
+    public function isSitemapReadyForNextBuild()
+    {
+        $lastStart  = (int) OW::getConfig()->getValue('base', 'seo_sitemap_last_start');
+        $scheduleUpdate = OW::getConfig()->getValue('base', 'seo_sitemap_schedule_update');
+
+        if ( !$lastStart )
+        {
+            return true;
+        }
+
+        $secondsInDay = 86400;
+
+        switch($scheduleUpdate)
+        {
+            case self::SITEMAP_UPDATE_MONTHLY :
+                $delaySeconds = $secondsInDay * 30;
+                break;
+
+            case self::SITEMAP_UPDATE_WEEKLY :
+                $delaySeconds = $secondsInDay * 6;
+                break;
+
+            case self::SITEMAP_UPDATE_DAILY:
+            default:
+                $delaySeconds = $secondsInDay;
+        }
+
+        return $lastStart - time() >= $delaySeconds;
+    }
+
+    /**
      * Get sitemap entities
      *
      * @return array
@@ -141,21 +185,21 @@ class BOL_SeoService
      * @param string $label
      * @param string $entityType
      * @param string $description
-     * @param array $entityItems
+     * @param array $items
      * @param float $priority
      * @param string $changeFreq
      * @return void
      */
-    public function addSitemapEntity($langPrefix, $label, $entityType, array $entityItems, $description = null, $priority = 0.5, $changeFreq = self::SITEMAP_ENTITY_UPDATE_WEEKLY)
+    public function addSitemapEntity($langPrefix, $label, $entityType, array $items, $description = null, $priority = 0.5, $changeFreq = self::SITEMAP_ITEM_UPDATE_WEEKLY)
     {
         $entities = $this->getSitemapEntities();
 
         if ( !array_key_exists($entityType, $entities) )
         {
-            // process entity items
-            $processedEntityItems = array();
-            foreach ($entityItems as $item) {
-                $processedEntityItems[] = array(
+            // process items
+            $processedItems = array();
+            foreach ($items as $item) {
+                $processedItems[] = array(
                     'name' => $item,
                     'data_fetched' => false,
                     'offset' => null
@@ -166,7 +210,7 @@ class BOL_SeoService
                 'lang_prefix' => $langPrefix,
                 'label' => $label,
                 'description' => $description,
-                'entities' => $processedEntityItems,
+                'items' => $processedItems,
                 'enabled' => true,
                 'priority' => $priority,
                 'changefreq' => $changeFreq
@@ -230,6 +274,54 @@ class BOL_SeoService
         if ( array_key_exists($entityType, $entities) )
         {
             $entities[$entityType]['enabled'] = $enabled;
+
+            OW::getConfig()->saveConfig('base', 'seo_sitemap_entities', json_encode($entities));
+        }
+    }
+
+    /**
+     * Add sitemap url
+     *
+     * @param string $url
+     * @param string $entityType
+     * @return void
+     */
+    public function addSiteMapUrl($url, $entityType)
+    {
+        $sitemapDto = new BOL_Sitemap();
+        $sitemapDto->url = $url;
+        $sitemapDto->entityType = $entityType;
+
+
+        $this->sitemapDao->save($sitemapDto);
+    }
+
+    /**
+     * Update sitemap entity item
+     *
+     * @param string $entityType
+     * @param string $itemName
+     * @param boolean $dataFetched
+     * @param integer $offset
+     * @return void
+     */
+    public function updateSitemapEntityItem($entityType, $itemName, $dataFetched, $offset = null)
+    {
+        $entities = $this->getSitemapEntities();
+
+        if ( array_key_exists($entityType, $entities) )
+        {
+            foreach( $entities[$entityType]['items'] as &$item )
+            {
+
+                if ($itemName == $item['name'])
+                {
+                    $item['data_fetched'] = $dataFetched;
+                    $item['offset'] = $offset;
+
+                    break;
+                }
+            }
 
             OW::getConfig()->saveConfig('base', 'seo_sitemap_entities', json_encode($entities));
         }

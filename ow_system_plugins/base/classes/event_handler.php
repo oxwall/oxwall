@@ -96,6 +96,7 @@ class BASE_CLASS_EventHandler
         $eventManager->bind("base.user_list.get_displayed_fields", array($this, 'onGetUserListFields'));
         $eventManager->bind("base.user_list.get_questions", array($this, 'onGetUserListQuestions'));
         $eventManager->bind("base.user_list.get_field_data", array($this, 'onGetUserListFieldValue'));
+        $eventManager->bind("base.sitemap.get_urls", array($this, 'onSitemapGetUrls'));
     }
 
     public function init()
@@ -156,6 +157,53 @@ class BASE_CLASS_EventHandler
                     BASE_CMP_QuickLinksWidget::DATA_KEY_COUNT_URL => OW::getRouter()->urlForRoute('users-blocked')
                 ));
             }
+        }
+    }
+
+    /**
+     * Get sitemap urls
+     *
+     * @param OW_Event $event
+     * @return void
+     */
+    public function onSitemapGetUrls( OW_Event $event )
+    {
+        $params = $event->getParams();
+
+        switch( $params['entity'] )
+        {
+            // users
+            case 'users' :
+                $urls   = [];
+                $limit  = (int) $params['limit'];
+                $offset = (int) $params['offset'];
+                $users  = BOL_UserService::getInstance()->findList($offset, $limit, true);
+
+                foreach ( $users as $user )
+                {
+                    $urls[] = BOL_UserService::getInstance()->getUserUrl($user->id);
+                }
+
+                $event->setData($urls);
+                break;
+
+            // base user list
+            case 'user_list' :
+                $event->setData(array(
+                    OW::getRouter()->urlForRoute('base_user_lists', array(
+                        'list' => 'latest'
+                    )),
+                    OW::getRouter()->urlForRoute('base_user_lists', array(
+                        'list' => 'featured'
+                    )),
+                    OW::getRouter()->urlForRoute('base_user_lists', array(
+                            'list' => 'online'
+                    )),
+                    OW::getRouter()->urlForRoute('base_user_lists', array(
+                        'list' => 'search'
+                    ))
+                ));
+                break;
         }
     }
 
