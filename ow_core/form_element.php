@@ -3603,3 +3603,21 @@ interface DateRangeInterface
 
     public function setMinYear( $year );
 }
+
+class CsrfHiddenField extends HiddenField
+{
+    /**
+     * Returns form element JS.
+     *
+     * @return string
+     */
+    public function getElementJs()
+    {
+        $jsString = "
+            var formElement = new OwFormElement(" . json_encode($this->getId()) . ", " . json_encode($this->getName()) . ");
+            formElement.resetValue = function(){};
+        ";
+
+        return $jsString . $this->generateValidatorAndFilterJsCode("formElement");
+    }
+}

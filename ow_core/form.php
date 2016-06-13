@@ -113,7 +113,7 @@ class Form
         $formNameHidden->setValue($name);
         $this->addElement($formNameHidden);
 
-        $formNameHidden = new HiddenField(self::ELEMENT_CSRF_TOKEN);
+        $formNameHidden = new CsrfHiddenField(self::ELEMENT_CSRF_TOKEN);
         $formNameHidden->setValue(UTIL_Csrf::generateToken());
         $this->addElement($formNameHidden);
 
