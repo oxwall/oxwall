@@ -50,9 +50,94 @@ class BASE_Cron extends OW_Cron
         $this->addJob('dropLogFile', 60 * 24);
         $this->addJob('clearMySqlSearchIndex', 60 * 24);
         $this->addJob('expireSearchResultList', 1);
+        $this->addJob('generateSitemap', 1);
 
 
         $this->addJob('checkRealCron');
+    }
+
+    /**
+     * Generate sitemap
+     */
+    public function generateSitemap()
+    {
+        $service = BOL_SeoService::getInstance();
+        $inProgress = (int) OW::getConfig()->getValue('base', 'seo_sitemap_in_progress');
+
+        // is it possible to start sitemap generating
+        if ( !$inProgress && $service->isSitemapReadyForNextBuild() )
+        {
+            OW::getConfig()->saveConfig('base', 'seo_sitemap_in_progress', 1);
+
+            // get sitemap entities
+            $entities = $service->getSitemapEntities();
+            $limit = (int) OW::getConfig()->getValue('base', 'seo_sitemap_entitites_limit');
+            $urlsFetched = false;
+
+            if ( $entities )
+            {
+                // fetch urls
+                foreach( $entities as $entityType => $entityData )
+                {
+                    // skip all disabled entities
+                    if ( !$entityData['enabled'] )
+                    {
+                        continue;
+                    }
+
+                    // get sitemap items
+                    foreach( $entityData['items'] as $item )
+                    {
+                        // skip already fetched items
+                        if ( $item['data_fetched'] )
+                        {
+                            continue;
+                        }
+
+                        // get urls
+                        $event = new OW_Event('base.sitemap.get_urls', array(
+                            'entity' => $item['name'],
+                            'offset' => $item['offset'],
+                            'limit' => $limit,
+                        ));
+
+                        OW::getEventManager()->trigger($event);
+
+                        if ( !$event->getData() )
+                        {
+                            // mark item as data fetched
+                            $service->updateSitemapEntityItem($entityType, $item['name'], true);
+                        }
+                        else
+                        {
+                            $urlsFetched = true;
+
+                            // process received urls
+                            foreach($event->getData() as $url)
+                            {
+                                $service->addSiteMapUrl($url, $entityType);
+                            }
+
+                            count($event->getData()) == $limit
+                                ? $service->updateSitemapEntityItem($entityType, $item['name'], false, $item['offset'] + $limit)
+                                : $service->updateSitemapEntityItem($entityType, $item['name'], true);
+                        }
+
+                        // we process at a time only one entity item
+                        break 2;
+                    }
+                }
+            }
+
+            // build sitemap
+            if ( !$urlsFetched )
+            {
+                //TODO: build sitemap
+                echo 'build';
+            }
+
+            OW::getConfig()->saveConfig('base', 'seo_sitemap_in_progress', 0);
+        }
     }
 
     public function run()

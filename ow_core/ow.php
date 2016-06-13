@@ -292,16 +292,6 @@ final class OW
     }
 
     /**
-     * Returns seo manager object.
-     *
-     * @return OW_Seo
-     */
-    public static function getSeoManager()
-    {
-        return OW_SeoManager::getInstance();
-    }
-
-    /**
      * Returns system router object.
      *
      * @return OW_Router

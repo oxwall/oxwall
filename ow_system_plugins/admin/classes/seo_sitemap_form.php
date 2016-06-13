@@ -29,8 +29,8 @@ class ADMIN_CLASS_SeoSitemapForm extends Form
         $this->generateEntities();
 
         $scheduleOptions = array(
-            BOL_SeoService::SITEMAP_ENTITY_UPDATE_DAILY => OW::getLanguage()->text('admin', 'seo_sitemap_update_daily'),
-            BOL_SeoService::SITEMAP_ENTITY_UPDATE_WEEKLY => OW::getLanguage()->text('admin', 'seo_sitemap_update_weekly'),
+            BOL_SeoService::SITEMAP_UPDATE_DAILY => OW::getLanguage()->text('admin', 'seo_sitemap_update_daily'),
+            BOL_SeoService::SITEMAP_UPDATE_WEEKLY => OW::getLanguage()->text('admin', 'seo_sitemap_update_weekly'),
             BOL_SeoService::SITEMAP_UPDATE_MONTHLY => OW::getLanguage()->text('admin', 'seo_sitemap_update_monthly'),
         );
 
@@ -56,7 +56,7 @@ class ADMIN_CLASS_SeoSitemapForm extends Form
      */
     protected function generateEntities()
     {
-        $entities = OW::getSeoManager()->getSitemapEntities();
+        $entities = BOL_SeoService::getInstance()->getSitemapEntities();
 
         if ( $entities )
         {

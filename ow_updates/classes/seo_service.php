@@ -3,14 +3,14 @@
 class UPDATE_SeoService
 {
     /**
-     * Sitemap entity update weekly
+     * Sitemap item update weekly
      */
-    const SITEMAP_ENTITY_UPDATE_WEEKLY = BOL_SeoService::SITEMAP_ENTITY_UPDATE_WEEKLY;
+    const SITEMAP_ITEM_UPDATE_WEEKLY = BOL_SeoService::SITEMAP_ITEM_UPDATE_WEEKLY;
 
     /**
-     * Sitemap entity update daily
+     * Sitemap item update daily
      */
-    const SITEMAP_ENTITY_UPDATE_DAILY = BOL_SeoService::SITEMAP_ENTITY_UPDATE_DAILY;
+    const SITEMAP_ITEM_UPDATE_DAILY = BOL_SeoService::SITEMAP_ITEM_UPDATE_DAILY;
 
     /**
      * Instance
@@ -52,15 +52,15 @@ class UPDATE_SeoService
      * @param string $langPrefix
      * @param string $label
      * @param string $entityType
-     * @param array $entityItems
+     * @param array $items
      * @param string $description
      * @param float $priority
      * @param string $changeFreq
      * @return void
      */
-    public function addSitemapEntity($langPrefix, $label, $entityType, array $entityItems, $description = null, $priority = 0.5, $changeFreq = self::SITEMAP_ENTITY_UPDATE_WEEKLY)
+    public function addSitemapEntity($langPrefix, $label, $entityType, array $items, $description = null, $priority = 0.5, $changeFreq = self::SITEMAP_ITEM_UPDATE_WEEKLY)
     {
-        $this->service->addSitemapEntity($langPrefix, $label, $entityType, $entityItems, $description, $priority, $changeFreq);
+        $this->service->addSitemapEntity($langPrefix, $label, $entityType, $items, $description, $priority, $changeFreq);
     }
 
     /**
