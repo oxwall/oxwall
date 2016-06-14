@@ -68,12 +68,15 @@ class BASE_CTRL_Base extends OW_ActionController
      */
     public function sitemap()
     {
-        $sitemap = BOL_SeoService::getInstance()->getSitemapPath();
+        $part = isset($_GET['part']) ? (int) $_GET['part'] : null;
+
+        $sitemap = BOL_SeoService::getInstance()->getSitemapPath($part);
 
         if ( file_exists($sitemap) )
         {
-            header("Content-Type: text/xml");
+            header('Content-Type: application/gzip');
             echo file_get_contents($sitemap);
+
             exit;
         }
 

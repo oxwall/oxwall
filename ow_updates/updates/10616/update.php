@@ -53,12 +53,17 @@ $config = OW::getConfig();
 // add configs
 if ( !$config->configExists('base', 'seo_sitemap_entitites_limit') )
 {
-    $config->addConfig('base', 'seo_sitemap_entitites_limit', 50000);
+    $config->addConfig('base', 'seo_sitemap_entitites_limit', 200000);
 }
 
 if ( !$config->configExists('base', 'seo_sitemap_in_progress') )
 {
     $config->addConfig('base', 'seo_sitemap_in_progress', 0);
+}
+
+if ( !$config->configExists('base', 'seo_sitemap_in_progress_time') )
+{
+    $config->addConfig('base', 'seo_sitemap_in_progress_time', 0);
 }
 
 if ( !$config->configExists('base', 'seo_sitemap_last_build') )
@@ -79,6 +84,11 @@ if ( !$config->configExists('base', 'seo_sitemap_entities') )
 if ( !$config->configExists('base', 'seo_sitemap_schedule_update') )
 {
     $config->addConfig('base', 'seo_sitemap_schedule_update', 'weekly');
+}
+
+if ( !$config->configExists('base', 'seo_sitemap_index') )
+{
+    $config->addConfig('base', 'seo_sitemap_index', 0);
 }
 
 // register sitemap entities

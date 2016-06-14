@@ -70,4 +70,19 @@ class BOL_SitemapDao extends OW_BaseDao
     {
         return OW_DB_PREFIX . 'base_sitemap';
     }
+
+    /**
+     * Find url list
+     *
+     * @param integer $count
+     * @return array
+     */
+    public function findUrlList( $count )
+    {
+        $example = new OW_Example();
+        $example->setOrder('id')
+            ->setLimitClause(0, $count);
+
+        return $this->findListByExample($example);
+    }
 }

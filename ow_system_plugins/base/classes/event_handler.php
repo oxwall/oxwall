@@ -175,9 +175,7 @@ class BASE_CLASS_EventHandler
             // users
             case 'users' :
                 $urls   = [];
-                $limit  = (int) $params['limit'];
-                $offset = (int) $params['offset'];
-                $users  = BOL_UserService::getInstance()->findList($offset, $limit, true);
+                $users  = BOL_UserService::getInstance()->findList(0, $params['limit'], true);
 
                 foreach ( $users as $user )
                 {
@@ -187,7 +185,7 @@ class BASE_CLASS_EventHandler
                 $event->setData($urls);
                 break;
 
-            // base user list
+            // base user pages
             case 'user_list' :
                 $event->setData(array(
                     OW::getRouter()->urlForRoute('base_user_lists', array(
@@ -201,7 +199,8 @@ class BASE_CLASS_EventHandler
                     )),
                     OW::getRouter()->urlForRoute('base_user_lists', array(
                         'list' => 'search'
-                    ))
+                    )),
+                    OW::getRouter()->urlForRoute('base_join')
                 ));
                 break;
         }

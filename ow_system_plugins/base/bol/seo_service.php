@@ -32,6 +32,11 @@
 class BOL_SeoService
 {
     /**
+     * Sitemap max urls per file
+     */
+    const SITEMAP_MAX_URLS_IN_FILE = 50000;
+
+    /**
      * Sitemap item update weekly
      */
     const SITEMAP_ITEM_UPDATE_WEEKLY = 'weekly';
@@ -44,7 +49,7 @@ class BOL_SeoService
     /**
      * Sitemap file name
      */
-    const SITEMAP_FILE_NAME = 'sitemap.xml';
+    const SITEMAP_FILE_NAME = 'sitemap%s.xml.gz';
 
     /**
      * Sitemap dir name
@@ -106,21 +111,30 @@ class BOL_SeoService
     /**
      * Get sitemap url
      *
+     * @param integer $part
      * @return string
      */
-    public function getSitemapUrl()
+    public function getSitemapUrl($part = null)
     {
-        return OW::getRouter()->urlForRoute('base.sitemap');
+        $url =  OW::getRouter()->urlForRoute('base.sitemap');
+
+        return $part
+            ? $url . '?part=' . $part
+            : $url;
     }
 
     /**
      * Get sitemap path
      *
+     * @param integer $part
      * @return string
      */
-    public function getSitemapPath()
+    public function getSitemapPath($part = null)
     {
-        return $this->getBaseSitemapPath() . self::SITEMAP_FILE_NAME;
+        $sitemapBuild = (int) OW::getConfig()->getValue('base', 'seo_sitemap_last_build');
+        $sitemapPath = $this->getBaseSitemapPath() . $sitemapBuild . '/';
+
+        return $sitemapPath . sprintf(self::SITEMAP_FILE_NAME, $part);
     }
 
     /**
@@ -130,7 +144,160 @@ class BOL_SeoService
      */
     public function getBaseSitemapPath()
     {
-        return OW::getPluginManager()->getPlugin('base')->getUserFilesDir() . self::SITEMAP_DIR_NAME . '/';
+        $path = OW::getPluginManager()->getPlugin('base')->getUserFilesDir() . self::SITEMAP_DIR_NAME . '/';
+
+        if ( !file_exists($path) )
+        {
+            mkdir($path, 0777);
+        }
+
+        return $path;
+    }
+
+    /**
+     * Build sitemap
+     *
+     * @return void
+     */
+    public function buildSitemap()
+    {
+        $urls = $this->sitemapDao->findUrlList(self::SITEMAP_MAX_URLS_IN_FILE);
+        $sitemapBuild = (int) OW::getConfig()->getValue('base', 'seo_sitemap_last_build') + 1;
+        $entities = $this->getSitemapEntities();
+        $sitemapIndex = (int) OW::getConfig()->getValue('base', 'seo_sitemap_index');
+        $sitemapPath = $this->getBaseSitemapPath() . $sitemapBuild . '/';
+
+        if ( !file_exists($sitemapPath) )
+        {
+            mkdir($sitemapPath, 0777);
+        }
+
+        if ( $urls )
+        {
+            // generate parts of sitemap
+            $processedUrls = [];
+            $allLanguages    = BOL_LanguageService::getInstance()->getLanguages();
+            $currentLanguage = null;
+
+            // get active languages
+            $activeLanguages = array();
+            foreach($allLanguages as $language)
+            {
+                if ( $language->status == 'active' )
+                {
+                    $activeLanguages[] = $language;
+
+                    if ( $language->order == 1 )
+                    {
+                        $currentLanguage = $language->id;
+                    }
+                }
+            }
+
+            $activeLanguagesCount = count($activeLanguages);
+
+            // process urls
+            foreach( $urls as $urlDto )
+            {
+                if ( !isset($entities[$urlDto->entityType]) )
+                {
+                    continue;
+                }
+
+                $languageList = array();
+
+                if ( $activeLanguagesCount > 1 )
+                {
+                    foreach( $activeLanguages as $language )
+                    {
+                        if ( $language->id !== $currentLanguage )
+                        {
+                            $languageList[] = array(
+                                'url' => strstr($urlDto->url, '?')
+                                    ? $urlDto->url . '&language_id=' . $language->id
+                                    : $urlDto->url . '?language_id=' . $language->id,
+                                'code' => $language->tag
+                            );
+                        }
+                        else
+                        {
+                            $languageList[] = array(
+                                'url' => $urlDto->url,
+                                'code' => $language->tag
+                            );
+                        }
+                    }
+                }
+
+                $processedUrls[] = array(
+                    'url' => $urlDto->url,
+                    'changefreq' => $entities[$urlDto->entityType]['changefreq'],
+                    'priority' => $entities[$urlDto->entityType]['priority'],
+                    'languageList' => $languageList
+                );
+
+                $this->sitemapDao->deleteById($urlDto->id);
+            }
+
+            if ( $processedUrls )
+            {
+                $view = new OW_View();
+                $view->setTemplate(OW::getPluginManager()->getPlugin('base')->getViewDir() . 'sitemap_part.xml');
+                $view->assign('urls', $processedUrls);
+
+                // save data in a file
+                file_put_contents($sitemapPath .
+                        sprintf(self::SITEMAP_FILE_NAME, $sitemapIndex + 1), gzencode($view->render()));
+
+                OW::getConfig()->saveConfig('base', 'seo_sitemap_index', $sitemapIndex + 1);
+            }
+
+            return;
+        }
+
+        // generate a main sitemap file
+        $sitemapParts = array();
+
+        if ( $sitemapIndex )
+        {
+            $lastModDate = date('c', time());
+
+            for ($i = 1; $i <= $sitemapIndex; $i++) {
+                $sitemapParts[] = array(
+                    'url' => $this->getSitemapUrl($i),
+                    'lastmod' => $lastModDate
+                );
+            }
+        }
+
+        $view = new OW_View();
+        $view->setTemplate(OW::getPluginManager()->getPlugin('base')->getViewDir() . 'sitemap.xml');
+        $view->assign('urls', $sitemapParts);
+
+        // save data in a file
+        file_put_contents($sitemapPath .
+                sprintf(self::SITEMAP_FILE_NAME, ''), gzencode($view->render()));
+
+        // update configs
+        OW::getConfig()->saveConfig('base', 'seo_sitemap_index', 0);
+        OW::getConfig()->saveConfig('base', 'seo_sitemap_last_start', time());
+        OW::getConfig()->saveConfig('base', 'seo_sitemap_last_build', $sitemapBuild);
+
+        // remove a previous build
+        $previousBuldPath = $this->getBaseSitemapPath() . ($sitemapBuild - 1) . '/';
+        if ( file_exists($previousBuldPath) )
+        {
+            UTIL_File::removeDir($previousBuldPath);
+        }
+
+        // clear entities
+        foreach ($entities as $entityType => $entityData)
+        {
+            foreach ($entityData['items'] as $item)
+            {
+                $this->setSitemapEntityDataFetched($entityType, $item['name'], false);
+            }
+        }
     }
 
     /**
@@ -201,8 +368,7 @@ class BOL_SeoService
             foreach ($items as $item) {
                 $processedItems[] = array(
                     'name' => $item,
-                    'data_fetched' => false,
-                    'offset' => null
+                    'data_fetched' => false
                 );
             }
 
@@ -297,15 +463,14 @@ class BOL_SeoService
     }
 
     /**
-     * Update sitemap entity item
+     * Set sitemap entity data fetched
      *
      * @param string $entityType
      * @param string $itemName
      * @param boolean $dataFetched
-     * @param integer $offset
      * @return void
      */
-    public function updateSitemapEntityItem($entityType, $itemName, $dataFetched, $offset = null)
+    public function setSitemapEntityDataFetched($entityType, $itemName, $dataFetched)
     {
         $entities = $this->getSitemapEntities();
 
@@ -317,7 +482,6 @@ class BOL_SeoService
                 if ($itemName == $item['name'])
                 {
                     $item['data_fetched'] = $dataFetched;
-                    $item['offset'] = $offset;
 
                     break;
                 }

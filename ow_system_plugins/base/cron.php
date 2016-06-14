@@ -63,11 +63,13 @@ class BASE_Cron extends OW_Cron
     {
         $service = BOL_SeoService::getInstance();
         $inProgress = (int) OW::getConfig()->getValue('base', 'seo_sitemap_in_progress');
+        $inProgressTime = (int) OW::getConfig()->getValue('base', 'seo_sitemap_in_progress_time');
 
         // is it possible to start sitemap generating
-        if ( !$inProgress && $service->isSitemapReadyForNextBuild() )
+        if ( (!$inProgress || time() - $inProgressTime >= 3600) && $service->isSitemapReadyForNextBuild() )
         {
             OW::getConfig()->saveConfig('base', 'seo_sitemap_in_progress', 1);
+            OW::getConfig()->saveConfig('base', 'seo_sitemap_in_progress_time', time());
 
             // get sitemap entities
             $entities = $service->getSitemapEntities();
@@ -97,30 +99,20 @@ class BASE_Cron extends OW_Cron
                         // get urls
                         $event = new OW_Event('base.sitemap.get_urls', array(
                             'entity' => $item['name'],
-                            'offset' => $item['offset'],
-                            'limit' => $limit,
+                            'limit' => $limit
                         ));
 
                         OW::getEventManager()->trigger($event);
+                        $service->setSitemapEntityDataFetched($entityType, $item['name'], true);
+                        $urlsFetched = true;
 
-                        if ( !$event->getData() )
+                        if ( $event->getData() )
                         {
-                            // mark item as data fetched
-                            $service->updateSitemapEntityItem($entityType, $item['name'], true);
-                        }
-                        else
-                        {
-                            $urlsFetched = true;
-
                             // process received urls
                             foreach($event->getData() as $url)
                             {
                                 $service->addSiteMapUrl($url, $entityType);
                             }
-
-                            count($event->getData()) == $limit
-                                ? $service->updateSitemapEntityItem($entityType, $item['name'], false, $item['offset'] + $limit)
-                                : $service->updateSitemapEntityItem($entityType, $item['name'], true);
                         }
 
                         // we process at a time only one entity item
@@ -132,8 +124,7 @@ class BASE_Cron extends OW_Cron
             // build sitemap
             if ( !$urlsFetched )
             {
-                //TODO: build sitemap
-                echo 'build';
+                $service->buildSitemap();
             }
 
             OW::getConfig()->saveConfig('base', 'seo_sitemap_in_progress', 0);
