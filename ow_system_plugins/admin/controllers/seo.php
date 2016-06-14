@@ -55,6 +55,8 @@ class ADMIN_CTRL_Seo extends ADMIN_CTRL_Abstract
         $event = new BASE_CLASS_EventCollector("base.collect_seo_meta_data");
         OW::getEventManager()->trigger($event);
         $metaList = $event->getData();
+
+        
     }
 
     /**

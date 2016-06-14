@@ -1817,9 +1817,15 @@ class BASE_CLASS_EventHandler
     {
         $e->add(
             array(
-                "pluginKey" => "base",
-                "key" => "homepage",
-                "route"
+                "sectionLabel" => "base+section1",
+                "entityType" => "homepage",
+                "uri" => "",
+                "langs" => array(
+                    "title" => "base+title",
+                    "desc" => "base+title",
+                    "keywords" => "base+keywords"
+                ),
+                "vars" => array( "a1", "a2" )
             )
         );
     }

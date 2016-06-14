@@ -37,7 +37,7 @@ class BASE_CTRL_UserList extends OW_ActionController
         OW::getNavigation()->activateMenuItem(OW_Navigation::MAIN, 'base', 'users_main_menu_item');
 
         $this->setPageHeading(OW::getLanguage()->text('base', 'users_browse_page_heading'));
-        $this->setPageTitle(OW::getLanguage()->text('base', 'users_browse_page_heading'));
+        //$this->setPageTitle(OW::getLanguage()->text('base', 'users_browse_page_heading'));
         $this->setPageHeadingIconClass('ow_ic_user');
         $this->usersPerPage = (int)OW::getConfig()->getValue('base', 'users_count_on_page');
     }
@@ -210,6 +210,13 @@ class BASE_CTRL_UserList extends OW_ActionController
         }
 
         return $menu;
+    }
+
+    protected function setMetaForListType( array $vars ){
+        $language = OW::getLanguage();
+        $this->setPageTitle($language->text("base", "meta_title_user_list", $vars));
+        $this->setPageDescription($language->text("base", "meta_desc_user_list", $vars));
+        $this->setKeywords($language->text("base", "meta_desc_user_list", $vars));
     }
 }
 
