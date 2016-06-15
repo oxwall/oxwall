@@ -415,7 +415,7 @@ class BOL_SeoService
 
         if ( array_key_exists($entityType, $entities) )
         {
-            unset($entities[$entities]);
+            unset($entities[$entityType]);
 
             OW::getConfig()->saveConfig('base', 'seo_sitemap_entities', json_encode($entities));
         }
