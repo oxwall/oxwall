@@ -97,6 +97,10 @@ Updater::getSeoService()->addSitemapEntity('admin', 'seo_sitemap_users', 'users'
     'users'
 ), 'seo_sitemap_users_desc');
 
+Updater::getSeoService()->addSitemapEntity('admin', 'seo_sitemap_base_pages', 'base_pages', array(
+    'base_pages'
+), null, 1);
+
 // add the SEO admin menu
 try
 {

@@ -45,4 +45,7 @@
     <key name="seo_sitemap_update_monthly">
         <value>Monthly</value>
     </key>
+    <key name="seo_sitemap_base_pages">
+        <value>Base Pages</value>
+    </key>
 </prefix>

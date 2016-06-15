@@ -172,6 +172,17 @@ class BASE_CLASS_EventHandler
 
         switch( $params['entity'] )
         {
+            // base pages
+            case 'base_pages' :
+                $event->setData(array(
+                    OW::getRouter()->urlForRoute('base_join'),
+                    OW::getRouter()->urlForRoute('static_sign_in'),
+                    OW::getRouter()->urlForRoute('base_forgot_password'),
+                    OW_URL_HOME . 'terms-of-use',
+                    OW_URL_HOME . 'privacy-policy'
+                ));
+                break;
+
             // users
             case 'users' :
                 $urls   = [];
@@ -199,8 +210,7 @@ class BASE_CLASS_EventHandler
                     )),
                     OW::getRouter()->urlForRoute('base_user_lists', array(
                         'list' => 'search'
-                    )),
-                    OW::getRouter()->urlForRoute('base_join')
+                    ))
                 ));
                 break;
         }
