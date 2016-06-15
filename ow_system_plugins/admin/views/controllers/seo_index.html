@@ -17,11 +17,13 @@
     </style>
 {$menu}
 <div class="seo_admin_select ow_stdmargin">
-    <span>Choose pages: </span><select id="" name="group"><option value="base_pages" selected="selected">Base pages</option><option value="users">Users</option><option value="photo">Photos</option><option value="video">Videos</option><option value="event">Events</option><option value="blogs">Blogs</option><option value="groups">Groups</option><option value="forum">Forum</option><option value="membership">Membership</option></select>
+    {html_options name=foo options=$sections selected=$currentSection onchange="alert(10)"}
+    {*<span>Choose pages: </span><select id="" name="group"><option value="base_pages" selected="selected">Base pages</option><option value="users">Users</option><option value="photo">Photos</option><option value="video">Videos</option><option value="event">Events</option><option value="blogs">Blogs</option><option value="groups">Groups</option><option value="forum">Forum</option><option value="membership">Membership</option></select>*}
 </div>
-<form method="post" action="" name="configSaveForm">
-    <table class="ow_table_1 ow_form">
-        <tbody>
+{form name="meta_form"}
+<table class="ow_table_1 ow_form">
+     <tbody>
+     {foreach from=$entities item="item"}
         <tr class="ow_tr_first">
             <th class="ow_name ow_txtleft" colspan="3">
                 <span class="ow_section_icon ow_ic_house">Homepage</span>
@@ -56,6 +58,6 @@
             <td class="ow_desc"></td>
         </tr>
         <tr class="ow_tr_delimiter"><td></td></tr>
-</tbody>
+    </tbody>
 </table>
-</form>
+{/form}

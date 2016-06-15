@@ -1815,17 +1815,21 @@ class BASE_CLASS_EventHandler
 
     public function onCollectMetaData( BASE_CLASS_EventCollector $e )
     {
+        $language = OW::getLanguage();
+
         $e->add(
             array(
-                "sectionLabel" => "base+section1",
-                "entityType" => "homepage",
+                "sectionLabel" => $language->text("base", "seo_meta_section_users"),
+                "pluginKey" => "base",
+                "entityKey" => "userLists",
+                "entityLabel" => $language->text("base", "seo_meta_user_list_label"),
                 "uri" => "",
                 "langs" => array(
-                    "title" => "base+title",
-                    "desc" => "base+title",
-                    "keywords" => "base+keywords"
+                    "title" => "base+meta_title_user_list",
+                    "desc" => "base+meta_desc_user_list",
+                    "keywords" => "base+meta_keywords_user_list"
                 ),
-                "vars" => array( "a1", "a2" )
+                "vars" => array( "user_list" )
             )
         );
     }

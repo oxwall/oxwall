@@ -36,19 +36,25 @@ foreach ( $languages as $lang )
     }
 }
 
-$languagaesToAdd = array(
+$languagesToAdd = array(
     array( 'base', 'meta_title_user_list', '{$user_list} users | {$site_name}' ),
     array( 'base', 'meta_desc_user_list', 'View {$user_list} users at {$site_name}. Join us and meet the love your life today!' ),
-    array( 'base', 'meta_keywords_user_list', '' )
+    array( 'base', 'meta_keywords_user_list', '' ),
+    array( 'base', 'user_list_type_latest', 'Latest' ),
+    array( 'base', 'user_list_type_online', 'Online' ),
+    array( 'base', 'seo_meta_section_users', 'Users' )
 
 );
 
 if ( $langId !== null )
 {
-    $languageService->addOrUpdateValue($langId, 'base', 'invalid_csrf_token_error_message',
-        'CSRF token is invalid or expired');
+    foreach ( $languagesToAdd as $entry ){
+        $languageService->addOrUpdateValue($langId, $entry[0], $entry[1]);
+    }
 }
 
-$languagesToRemove = array(
-    array()
-);
+if( Updater::getConfigService()->configExists("base", "seo_meta_info") ){
+    Updater::getConfigService()->addConfig("base", "seo_meta_info", json_encode(array()));
+}
+
+

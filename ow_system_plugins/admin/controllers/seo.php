@@ -56,7 +56,39 @@ class ADMIN_CTRL_Seo extends ADMIN_CTRL_Abstract
         OW::getEventManager()->trigger($event);
         $metaList = $event->getData();
 
-        
+        $sections = array();
+        $formData = array();
+
+        if( empty($_GET["section"]) ){
+            $pluginKey = current($metaList)["pluginKey"];
+            $entityKey = current($metaList)["entityKey"];
+            $currentSection = $pluginKey."+".$entityKey;
+        }
+        else
+        {
+            $currentSection = trim($_GET["section"]);
+            list($pluginKey, $entityKey) = explode("+", $currentSection);
+        }
+
+        foreach ( $metaList as $item ){
+            $sections[$item["pluginKey"]."+".$item["entityKey"]] = $item["sectionLabel"];
+
+            if( $item["pluginKey"] = $pluginKey && $item["entityKey"] == $entityKey ){
+                $formData[] = $item;
+            }
+        }
+
+        $this->assign("sections", $sections);
+        $this->assign("currentSection", $currentSection);
+
+        $form = new ADMIN_CLASS_SeoMetaForm($formData);
+        $this->addForm($form);
+        $this->assign("entities", $form->getEntities());
+
+
+
+
+
     }
 
     /**

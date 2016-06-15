@@ -37,13 +37,14 @@ class BASE_CTRL_UserList extends OW_ActionController
         OW::getNavigation()->activateMenuItem(OW_Navigation::MAIN, 'base', 'users_main_menu_item');
 
         $this->setPageHeading(OW::getLanguage()->text('base', 'users_browse_page_heading'));
-        //$this->setPageTitle(OW::getLanguage()->text('base', 'users_browse_page_heading'));
         $this->setPageHeadingIconClass('ow_ic_user');
         $this->usersPerPage = (int)OW::getConfig()->getValue('base', 'users_count_on_page');
     }
 
     public function index( $params )
     {
+        $language = OW::getLanguage();
+
         $listType = empty($params['list']) ? 'latest' : strtolower(trim($params['list']));
         $this->addComponent('menu', self::getMenu($listType));
 
@@ -51,25 +52,12 @@ class BASE_CTRL_UserList extends OW_ActionController
         list($list, $itemCount) = $this->getData($listType, (($page - 1) * $this->usersPerPage), $this->usersPerPage);
 
         $cmp = OW::getClassInstance("BASE_Members", $list, $itemCount, $this->usersPerPage, true, $listType);
-        
+
         $this->addComponent('cmp', $cmp);
 
         $this->assign('listType', $listType);
 
-        $description = '';
-        try
-        {
-            $description = BOL_LanguageService::getInstance()->getText(BOL_LanguageService::getInstance()->getCurrent()->getId(), 'base', 'users_list_'.$listType.'_meta_description');
-        }
-        catch ( Exception $e )
-        {
-
-        }
-
-        if ( !empty($description) )
-        {
-            OW::getDocument()->setDescription($description);
-        }
+        $this->setMetaForListType(array("user_list" => $language->text("base", "user_list_type_".$listType)));
     }
 
     /**
