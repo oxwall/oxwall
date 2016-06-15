@@ -142,7 +142,7 @@ class BOL_SeoService
      *
      * @return string
      */
-    public function getBaseSitemapPath()
+    protected function getBaseSitemapPath()
     {
         $path = OW::getPluginManager()->getPlugin('base')->getUserFilesDir() . self::SITEMAP_DIR_NAME . '/';
 
@@ -152,6 +152,17 @@ class BOL_SeoService
         }
 
         return $path;
+    }
+
+    /**
+     * Escape url
+     *
+     * @param string $url
+     * @return string
+     */
+    protected function escapeSitemapUrl($url)
+    {
+        return htmlspecialchars($url, ENT_QUOTES | ENT_XML1);
     }
 
     /**
@@ -175,26 +186,21 @@ class BOL_SeoService
         if ( $urls )
         {
             // generate parts of sitemap
-            $processedUrls = [];
-            $allLanguages    = BOL_LanguageService::getInstance()->getLanguages();
-            $currentLanguage = null;
+            $processedUrls   = [];
+            $activeLanguages = BOL_LanguageService::getInstance()->findActiveList();
+            $activeLanguagesCount = count($activeLanguages);
+            $defaultLanguage = null;
 
-            // get active languages
-            $activeLanguages = array();
-            foreach($allLanguages as $language)
+            // get default language
+            foreach($activeLanguages as $language)
             {
-                if ( $language->status == 'active' )
+                if ( $language->order == 1 )
                 {
-                    $activeLanguages[] = $language;
+                    $defaultLanguage = $language->id;
 
-                    if ( $language->order == 1 )
-                    {
-                        $currentLanguage = $language->id;
-                    }
+                    break;
                 }
             }
-
-            $activeLanguagesCount = count($activeLanguages);
 
             // process urls
             foreach( $urls as $urlDto )
@@ -210,19 +216,19 @@ class BOL_SeoService
                 {
                     foreach( $activeLanguages as $language )
                     {
-                        if ( $language->id !== $currentLanguage )
+                        if ( $language->id !== $defaultLanguage )
                         {
                             $languageList[] = array(
                                 'url' => strstr($urlDto->url, '?')
-                                    ? $urlDto->url . '&language_id=' . $language->id
-                                    : $urlDto->url . '?language_id=' . $language->id,
+                                    ? $this->escapeSitemapUrl($urlDto->url . '&language_id=' . $language->id)
+                                    : $this->escapeSitemapUrl($urlDto->url . '?language_id=' . $language->id),
                                 'code' => $language->tag
                             );
                         }
                         else
                         {
                             $languageList[] = array(
-                                'url' => $urlDto->url,
+                                'url' => $this->escapeSitemapUrl($urlDto->url),
                                 'code' => $language->tag
                             );
                         }
@@ -230,7 +236,7 @@ class BOL_SeoService
                 }
 
                 $processedUrls[] = array(
-                    'url' => $urlDto->url,
+                    'url' => $this->escapeSitemapUrl($urlDto->url),
                     'changefreq' => $entities[$urlDto->entityType]['changefreq'],
                     'priority' => $entities[$urlDto->entityType]['priority'],
                     'languageList' => $languageList
@@ -264,7 +270,7 @@ class BOL_SeoService
 
             for ($i = 1; $i <= $sitemapIndex; $i++) {
                 $sitemapParts[] = array(
-                    'url' => $this->getSitemapUrl($i),
+                    'url' => $this->escapeSitemapUrl($this->getSitemapUrl($i)),
                     'lastmod' => $lastModDate
                 );
             }
