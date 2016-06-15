@@ -843,6 +843,24 @@ class BOL_LanguageService
         return OW::getPluginManager()->getPlugin('admin')->getPluginFilesDir() . 'languages' . DS . 'tmp' . DS;
     }
 
+    /**
+     * Find default language
+     *
+     * @return BOL_Language
+     */
+    public function findDefaultLanguage()
+    {
+        $activeLanguages = $this->findActiveList();
+
+        foreach($activeLanguages as $language)
+        {
+            if ( $language->order == 1 )
+            {
+                return $language;
+            }
+        }
+    }
+
     public function findActiveList()
     {
 
