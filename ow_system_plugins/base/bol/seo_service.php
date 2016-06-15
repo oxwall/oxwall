@@ -187,20 +187,9 @@ class BOL_SeoService
         {
             // generate parts of sitemap
             $processedUrls   = [];
+            $defaultLanguage = BOL_LanguageService::getInstance()->findDefaultLanguage();
             $activeLanguages = BOL_LanguageService::getInstance()->findActiveList();
             $activeLanguagesCount = count($activeLanguages);
-            $defaultLanguage = null;
-
-            // get default language
-            foreach($activeLanguages as $language)
-            {
-                if ( $language->order == 1 )
-                {
-                    $defaultLanguage = $language->id;
-
-                    break;
-                }
-            }
 
             // process urls
             foreach( $urls as $urlDto )
@@ -216,7 +205,7 @@ class BOL_SeoService
                 {
                     foreach( $activeLanguages as $language )
                     {
-                        if ( $language->id !== $defaultLanguage )
+                        if ( $language->id !== $defaultLanguage->id )
                         {
                             $languageList[] = array(
                                 'url' => strstr($urlDto->url, '?')
@@ -253,7 +242,7 @@ class BOL_SeoService
 
                 // save data in a file
                 file_put_contents($sitemapPath .
-                        sprintf(self::SITEMAP_FILE_NAME, $sitemapIndex + 1), gzencode($view->render()));
+                        sprintf(self::SITEMAP_FILE_NAME, $sitemapIndex + 1), gzencode($view->render(), 6));
 
                 OW::getConfig()->saveConfig('base', 'seo_sitemap_index', $sitemapIndex + 1);
             }
@@ -282,7 +271,7 @@ class BOL_SeoService
 
         // save data in a file
         file_put_contents($sitemapPath .
-                sprintf(self::SITEMAP_FILE_NAME, ''), gzencode($view->render()));
+                sprintf(self::SITEMAP_FILE_NAME, ''), gzencode($view->render(), 6));
 
         // update configs
         OW::getConfig()->saveConfig('base', 'seo_sitemap_index', 0);
