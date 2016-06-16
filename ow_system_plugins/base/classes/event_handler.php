@@ -174,13 +174,29 @@ class BASE_CLASS_EventHandler
         {
             // base pages
             case 'base_pages' :
-                $event->setData(array(
+                // list of basic pages
+                $basePages = array(
+                    OW_URL_HOME,
                     OW::getRouter()->urlForRoute('base_join'),
                     OW::getRouter()->urlForRoute('static_sign_in'),
-                    OW::getRouter()->urlForRoute('base_forgot_password'),
-                    OW_URL_HOME . 'terms-of-use',
-                    OW_URL_HOME . 'privacy-policy'
-                ));
+                    OW::getRouter()->urlForRoute('base_forgot_password')
+                );
+
+                // get all public static docs
+                $staticDocs = BOL_NavigationService::getInstance()->findAllStaticDocuments();
+
+                foreach($staticDocs as $doc)
+                {
+                    $menuItem = BOL_NavigationService::getInstance()->findMenuItemByDocumentKey($doc->key);
+
+                    // is the page public
+                    if ( $menuItem && $menuItem->visibleFor == BOL_NavigationService::VISIBLE_FOR_ALL)
+                    {
+                        $basePages[] = OW_URL_HOME . $doc->uri;
+                    }
+                }
+
+                $event->setData($basePages);
                 break;
 
             // users

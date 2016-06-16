@@ -91,15 +91,15 @@ if ( !$config->configExists('base', 'seo_sitemap_index') )
     $config->addConfig('base', 'seo_sitemap_index', 0);
 }
 
+Updater::getSeoService()->addSitemapEntity('admin', 'seo_sitemap_base_pages', 'base_pages', array(
+    'base_pages'
+), null, 1);
+
 // register sitemap entities
 Updater::getSeoService()->addSitemapEntity('admin', 'seo_sitemap_users', 'users', array(
     'user_list',
     'users'
 ), 'seo_sitemap_users_desc');
-
-Updater::getSeoService()->addSitemapEntity('admin', 'seo_sitemap_base_pages', 'base_pages', array(
-    'base_pages'
-), null, 1);
 
 // add the SEO admin menu
 try
