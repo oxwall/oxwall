@@ -190,7 +190,8 @@ class BASE_CLASS_EventHandler
                     $menuItem = BOL_NavigationService::getInstance()->findMenuItemByDocumentKey($doc->key);
 
                     // is the page public
-                    if ( $menuItem && $menuItem->visibleFor == BOL_NavigationService::VISIBLE_FOR_ALL)
+                    if ( $menuItem && in_array($menuItem->visibleFor,
+                            array(BOL_NavigationService::VISIBLE_FOR_ALL, BOL_NavigationService::VISIBLE_FOR_GUEST)) )
                     {
                         $basePages[] = OW_URL_HOME . $doc->uri;
                     }
