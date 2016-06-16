@@ -31,7 +31,8 @@ $simpleQueryList = array(
         url VARCHAR(255) NOT NULL,
         entityType VARCHAR(20) NOT NULL,
         PRIMARY KEY (id),
-        UNIQUE KEY url (url)
+        UNIQUE KEY url (url),
+        KEY entityType (entityType)
     )
     ENGINE = MYISAM CHARACTER SET utf8 COLLATE utf8_general_ci"
 );
@@ -54,6 +55,11 @@ $config = OW::getConfig();
 if ( !$config->configExists('base', 'seo_sitemap_entitites_limit') )
 {
     $config->addConfig('base', 'seo_sitemap_entitites_limit', 200000);
+}
+
+if ( !$config->configExists('base', 'seo_sitemap_build_in_progress') )
+{
+    $config->addConfig('base', 'seo_sitemap_build_in_progress', 0);
 }
 
 if ( !$config->configExists('base', 'seo_sitemap_in_progress') )

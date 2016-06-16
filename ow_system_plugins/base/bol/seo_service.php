@@ -194,11 +194,6 @@ class BOL_SeoService
             // process urls
             foreach( $urls as $urlDto )
             {
-                if ( !isset($entities[$urlDto->entityType]) )
-                {
-                    continue;
-                }
-
                 $languageList = array();
 
                 if ( $activeLanguagesCount > 1 )
@@ -257,7 +252,8 @@ class BOL_SeoService
         {
             $lastModDate = date('c', time());
 
-            for ($i = 1; $i <= $sitemapIndex; $i++) {
+            for ( $i = 1; $i <= $sitemapIndex; $i++ )
+            {
                 $sitemapParts[] = array(
                     'url' => $this->escapeSitemapUrl($this->getSitemapUrl($i)),
                     'lastmod' => $lastModDate
@@ -277,6 +273,7 @@ class BOL_SeoService
         OW::getConfig()->saveConfig('base', 'seo_sitemap_index', 0);
         OW::getConfig()->saveConfig('base', 'seo_sitemap_last_start', time());
         OW::getConfig()->saveConfig('base', 'seo_sitemap_last_build', $sitemapBuild);
+        OW::getConfig()->saveConfig('base', 'seo_sitemap_build_in_progress', 0);
 
         // remove a previous build
         $previousBuldPath = $this->getBaseSitemapPath() . ($sitemapBuild - 1) . '/';
@@ -401,6 +398,23 @@ class BOL_SeoService
     public function disableSitemapEntity($entityType)
     {
         $this->setSitemapEntityStatus($entityType, false);
+
+        // delete already collected data
+        $this->deleteSitemapUrls($entityType);
+
+        // clear entities
+        foreach ($this->getSitemapEntities() as $type => $entityData)
+        {
+            if ( $type == $entityType )
+            {
+                foreach ($entityData['items'] as $item)
+                {
+                    $this->setSitemapEntityDataFetched($entityType, $item['name'], false);
+                }
+
+                break;
+            }
+        }
     }
 
     /**
@@ -418,7 +432,24 @@ class BOL_SeoService
             unset($entities[$entityType]);
 
             OW::getConfig()->saveConfig('base', 'seo_sitemap_entities', json_encode($entities));
+
+            // delete already collected data
+            $this->deleteSitemapUrls($entityType);
         }
+    }
+
+    /**
+     * Delete sitemap urls
+     *
+     * @param string $entityType
+     * @return void
+     */
+    protected function deleteSitemapUrls($entityType)
+    {
+        $example = new OW_Example();
+        $example->andFieldEqual('entityType', $entityType);
+
+        $this->sitemapDao->deleteByExample($example);
     }
 
     /**
