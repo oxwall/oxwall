@@ -60,35 +60,33 @@ class ADMIN_CTRL_Seo extends ADMIN_CTRL_Abstract
         $formData = array();
 
         if( empty($_GET["section"]) ){
-            $pluginKey = current($metaList)["pluginKey"];
-            $entityKey = current($metaList)["entityKey"];
-            $currentSection = $pluginKey."+".$entityKey;
+            $currentSection = current($metaList)["sectionKey"];
         }
         else
         {
             $currentSection = trim($_GET["section"]);
-            list($pluginKey, $entityKey) = explode("+", $currentSection);
         }
 
         foreach ( $metaList as $item ){
-            $sections[$item["pluginKey"]."+".$item["entityKey"]] = $item["sectionLabel"];
+            $sections[$item["sectionKey"]] = $item["sectionLabel"];
 
-            if( $item["pluginKey"] = $pluginKey && $item["entityKey"] == $entityKey ){
+            if( $item["sectionKey"] == $currentSection ){
                 $formData[] = $item;
             }
         }
 
         $this->assign("sections", $sections);
         $this->assign("currentSection", $currentSection);
+        $this->assign("currentUrl", OW::getRouter()->urlForRoute("admin_settings_seo")."?section=#sec#");
 
         $form = new ADMIN_CLASS_SeoMetaForm($formData);
         $this->addForm($form);
         $this->assign("entities", $form->getEntities());
 
-
-
-
-
+        if( OW::getRequest()->isPost() ){
+            $form->processData($_POST);
+            $this->redirect();
+        }
     }
 
     /**

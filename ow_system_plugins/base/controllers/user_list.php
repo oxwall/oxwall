@@ -30,6 +30,11 @@
 class BASE_CTRL_UserList extends OW_ActionController
 {
     private $usersPerPage;
+    
+    /**
+     * @var BOL_SeoService
+     */
+    protected $seoService;
 
     public function __construct()
     {
@@ -39,6 +44,7 @@ class BASE_CTRL_UserList extends OW_ActionController
         $this->setPageHeading(OW::getLanguage()->text('base', 'users_browse_page_heading'));
         $this->setPageHeadingIconClass('ow_ic_user');
         $this->usersPerPage = (int)OW::getConfig()->getValue('base', 'users_count_on_page');
+        $this->seoService = BOL_SeoService::getInstance();
     }
 
     public function index( $params )

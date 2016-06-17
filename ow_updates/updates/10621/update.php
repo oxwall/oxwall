@@ -42,19 +42,31 @@ $languagesToAdd = array(
     array( 'base', 'meta_keywords_user_list', '' ),
     array( 'base', 'user_list_type_latest', 'Latest' ),
     array( 'base', 'user_list_type_online', 'Online' ),
-    array( 'base', 'seo_meta_section_users', 'Users' )
+    array( 'base', 'seo_meta_section_users', 'Users' ),
+    array( 'base', 'seo_meta_form_element_title_label', 'Title' ),
+    array( 'base', 'seo_meta_form_element_title_desc', 'Recommended title length is up to 70 symbols' ),
+    array( 'base', 'seo_meta_form_element_desc_label', 'Meta description' ),
+    array( 'base', 'seo_meta_form_element_desc_desc', 'Recommended description length is up to 150 symbols' ),
+    array( 'base', 'seo_meta_form_element_keywords_label', 'Meta keywords' ),
+    array( 'base', 'seo_meta_form_element_index_label', 'Allow for indexing' ),
+    array( 'base', 'seo_meta_choose_pages_label', 'Choose pages:' ),
+    array( 'base', 'seo_meta_user_list_label', 'All Site Members by List (Online / Latest) Page' ),
+
+
+
+
 
 );
 
 if ( $langId !== null )
 {
     foreach ( $languagesToAdd as $entry ){
-        $languageService->addOrUpdateValue($langId, $entry[0], $entry[1]);
+        $languageService->addOrUpdateValue($langId, $entry[0], $entry[1], $entry[2]);
     }
 }
 
-if( Updater::getConfigService()->configExists("base", "seo_meta_info") ){
-    Updater::getConfigService()->addConfig("base", "seo_meta_info", json_encode(array()));
+if( !Updater::getConfigService()->configExists("base", "seo_meta_info") ){
+    Updater::getConfigService()->addConfig("base", "seo_meta_info", json_encode(array("disabledEntities" => array())));
 }
 
 

@@ -1820,7 +1820,7 @@ class BASE_CLASS_EventHandler
         $e->add(
             array(
                 "sectionLabel" => $language->text("base", "seo_meta_section_users"),
-                "pluginKey" => "base",
+                "sectionKey" => "base.users",
                 "entityKey" => "userLists",
                 "entityLabel" => $language->text("base", "seo_meta_user_list_label"),
                 "uri" => "",
@@ -1829,7 +1829,23 @@ class BASE_CLASS_EventHandler
                     "desc" => "base+meta_desc_user_list",
                     "keywords" => "base+meta_keywords_user_list"
                 ),
-                "vars" => array( "user_list" )
+                "vars" => array( "user_list", "site_name" )
+            )
+        );
+
+        $e->add(
+            array(
+                "sectionLabel" => $language->text("base", "seo_meta_section_base_pages"),
+                "sectionKey" => "base.base_pages",
+                "entityKey" => "index",
+                "entityLabel" => $language->text("base", "seo_meta_index_label"),
+                "uri" => "",
+                "langs" => array(
+                    "title" => "base+meta_title_index",
+                    "desc" => "base+meta_desc_index",
+                    "keywords" => "base+meta_keywords_index"
+                ),
+                "vars" => array( "site_name" )
             )
         );
     }

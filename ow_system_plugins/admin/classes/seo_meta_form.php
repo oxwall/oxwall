@@ -28,29 +28,91 @@
  */
 class ADMIN_CLASS_SeoMetaForm extends Form
 {
+    const META_TITLE_MAX_LENGTH = 70;
+    const META_DESC_MAX_LENGTH = 150;
+
+    /**
+     * @var array
+     */
     private $entities = array();
 
     /**
-     * Class constructor
+     * @var array
+     */
+    private $data;
+
+    /**
+     * @var array
+     */
+    private $seoData;
+
+    /**
+     * @var BOL_SeoService
+     */
+    private $seoService;
+
+    /**
+     * ADMIN_CLASS_SeoMetaForm constructor.
+     * @param array $data
      */
     public function __construct( array $data )
     {
         parent::__construct("meta_form");
+        $this->seoService = BOL_SeoService::getInstance();
+        $this->data = $data;
+        $this->seoData = $this->seoService->getMetaData();
+        $language = OW::getLanguage();
+        $langService = BOL_LanguageService::getInstance();
+        $langId = $langService->getCurrent()->getId();
 
-        $entities = array();
+        $disabledItems = isset($this->seoData["disabledEntities"][current($this->data)["sectionKey"]]) ? $this->seoData["disabledEntities"][current($this->data)["sectionKey"]] : array();
 
-        foreach( $data as $item ){
-            $this->addElement( new TextField("title_{$item["entityKey"]}") );
-            $this->addElement( new Textarea("desc_{$item["entityKey"]}") );
-            $this->addElement( new Textarea("keywords_{$item["entityKey"]}") );
-            $this->entities[] = $item["entityKey"];
+        foreach( $this->data as $item ){
+
+            $title = new TextField("seo_title_{$item["entityKey"]}");
+            list($prefix, $key) = explode("+", $item["langs"]["title"]);
+            $valDto = $langService->getValue($langId, $prefix, $key);
+            $title->setValue($valDto ? $valDto->getValue() : $prefix ."+". $key);
+            $title->setLabel($language->text("base", "seo_meta_form_element_title_label"));
+            $title->setDescription($language->text("base", "seo_meta_form_element_title_desc"));
+            $this->addElement($title);
+
+            $desc = new Textarea("seo_desc_{$item["entityKey"]}");
+            list($prefix, $key) = explode("+",$item["langs"]["desc"]);
+            $valDto = $langService->getValue($langId, $prefix, $key);
+            $desc->setValue($valDto ? $valDto->getValue() : $prefix ."+". $key);
+            $desc->setLabel($language->text("base", "seo_meta_form_element_desc_label"));
+            $desc->setDescription($language->text("base", "seo_meta_form_element_desc_desc"));
+            $this->addElement($desc);
+
+            $keywords = new Textarea("seo_keywords_{$item["entityKey"]}");
+            list($prefix, $key) = explode("+",$item["langs"]["keywords"]);
+            $valDto = $langService->getValue($langId, $prefix, $key);
+            $keywords->setValue($valDto ? $valDto->getValue() : $prefix ."+". $key);
+            $keywords->setLabel($language->text("base", "seo_meta_form_element_keywords_label"));
+            $this->addElement($keywords);
+
+            $indexCheckbox = new CheckboxField("seo_index_{$item["entityKey"]}");
+            $indexCheckbox->setValue(!in_array($item["entityKey"], $disabledItems));
+            $indexCheckbox->setLabel($language->text("base", "seo_meta_form_element_index_label"));
+            $this->addElement($indexCheckbox);
+
+            $this->entities[$item["entityKey"]] = array(
+                "label" => $item["entityLabel"],
+                "iconClass" => empty($item["iconClass"]) ? "" : $item["iconClass"],
+                "title" => array(
+                    "length" => mb_strlen($title->getValue()),
+                    "max" => self::META_TITLE_MAX_LENGTH,
+                    "isRed" => mb_strlen($title->getValue()) > self::META_TITLE_MAX_LENGTH
+                ),
+                "desc" => array(
+                    "length" => mb_strlen($desc->getValue()),
+                    "max" => self::META_DESC_MAX_LENGTH,
+                    "isRed" => mb_strlen($desc->getValue()) > self::META_DESC_MAX_LENGTH
+                )
+            );
         }
 
-
-        pve($data);
-
-
-        // submit
         $submit = new Submit("save");
         $submit->setValue(OW::getLanguage()->text("base", "edit_button"));
         $this->addElement($submit);
@@ -62,5 +124,101 @@ class ADMIN_CLASS_SeoMetaForm extends Form
     public function getEntities()
     {
         return $this->entities;
+    }
+
+    public function processData( $post )
+    {
+        $langService = BOL_LanguageService::getInstance();
+
+        if( $this->isValid($post) ){
+            $values = $this->getValues();
+            $dataToUpdate = array();
+            reset($this->data);
+
+            $this->seoData["disabledEntities"][current($this->data)["sectionKey"]] = array();
+
+            foreach( $values as $key => $val )
+            {
+                if( strstr($key, "seo") )
+                {
+                    $arr = explode("_", $key);
+                    array_shift($arr);
+                    $attribute = array_shift($arr);
+                    $entity = implode("_", $arr);
+
+                    if( !isset($dataToUpdate[$entity]) )
+                    {
+                        $dataToUpdate[$entity] = array();
+                    }
+
+                    $dataToUpdate[$entity][$attribute] = $val;
+                }
+            }
+
+            foreach ( $dataToUpdate as $entity => $items )
+            {
+                if(empty($items["index"]))
+                {
+                    $this->seoData["disabledEntities"][current($this->data)["sectionKey"]][] = $entity;
+                }
+            }
+
+            $this->seoService->setMetaData($this->seoData);
+
+            foreach ($this->data as $item)
+            {
+                if( empty($dataToUpdate[$item["entityKey"]]) )
+                {
+                    continue;
+                }
+
+                foreach ( $item["langs"] as $type => $langKey )
+                {
+                    if( empty($dataToUpdate[$item["entityKey"]][$type]) )
+                    {
+                        continue;
+                    }
+
+                    list($prefix, $key) = explode("+", $langKey);
+
+                    $keyDto = $langService->findKey($prefix, $key);
+
+                    if( $keyDto === null )
+                    {
+                        $prefixDto = $langService->findPrefix($prefix);
+                        $keyDto = new BOL_LanguageKey();
+                        $keyDto->setKey($key);
+                        $keyDto->setPrefixId($prefixDto->getId());
+                        $langService->saveKey($keyDto);
+                    }
+
+                    $valueDto = $langService->findValue($langService->getCurrent()->getId(), $keyDto->getId());
+
+                    if ( $valueDto === null )
+                    {
+                        $valueDto = new BOL_LanguageValue();
+                        $valueDto->setKeyId($keyDto->getId());
+                        $valueDto->setLanguageId($langService->getCurrent()->getId());
+                    }
+
+                    $valueDto->setValue($dataToUpdate[$item["entityKey"]][$type]);
+                    $langService->saveValue($valueDto);
+
+                }
+            }
+
+            OW_DeveloperTools::getInstance()->clearLanguagesCache();
+        }
+
+
+
+
+
+
+
+
+
+
+
     }
 }
