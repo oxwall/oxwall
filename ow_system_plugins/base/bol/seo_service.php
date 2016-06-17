@@ -166,11 +166,81 @@ class BOL_SeoService
     }
 
     /**
+     * Generate sitemap
+     *
+     * @return void
+     */
+    public function generateSitemap()
+    {
+        $urlsFetched = false;
+
+        // don't collect urls while sitemap is building
+        if ( !(int) OW::getConfig()->getValue('base', 'seo_sitemap_build_in_progress') )
+        {
+            // get sitemap entities
+            $entities = $this->getSitemapEntities();
+            $limit = (int) OW::getConfig()->getValue('base', 'seo_sitemap_entitites_limit');
+
+            if ( $entities )
+            {
+                // fetch urls
+                foreach ( $entities as $entityType => $entityData )
+                {
+                    // skip all disabled entities
+                    if ( !$entityData['enabled'] )
+                    {
+                        continue;
+                    }
+
+                    // get sitemap items
+                    foreach ( $entityData['items'] as $item )
+                    {
+                        // skip already fetched items
+                        if ( $item['data_fetched'] )
+                        {
+                            continue;
+                        }
+
+                        // get urls
+                        $event = new OW_Event('base.sitemap.get_urls', array(
+                            'entity' => $item['name'],
+                            'limit' => $limit
+                        ));
+
+                        OW::getEventManager()->trigger($event);
+                        $this->setSitemapEntityDataFetched($entityType, $item['name'], true);
+                        $urlsFetched = true;
+
+                        if ( $event->getData() )
+                        {
+                            // process received urls
+                            foreach ( $event->getData() as $url )
+                            {
+                                $this->addSiteMapUrl($url, $entityType);
+                            }
+                        }
+
+                        // we process at a time only one entity item
+                        break 2;
+                    }
+                }
+            }
+        }
+
+        // build sitemap
+        if ( !$urlsFetched )
+        {
+            OW::getConfig()->saveConfig('base', 'seo_sitemap_build_in_progress', 1);
+            $this->buildSitemap();
+        }
+    }
+
+    /**
      * Build sitemap
      *
      * @return void
      */
-    public function buildSitemap()
+    protected function buildSitemap()
     {
         $urls = $this->sitemapDao->findUrlList(self::SITEMAP_MAX_URLS_IN_FILE);
         $sitemapBuild = (int) OW::getConfig()->getValue('base', 'seo_sitemap_last_build') + 1;
@@ -401,20 +471,6 @@ class BOL_SeoService
 
         // delete already collected data
         $this->deleteSitemapUrls($entityType);
-
-        // clear entities
-        foreach ($this->getSitemapEntities() as $type => $entityData)
-        {
-            if ( $type == $entityType )
-            {
-                foreach ($entityData['items'] as $item)
-                {
-                    $this->setSitemapEntityDataFetched($entityType, $item['name'], false);
-                }
-
-                break;
-            }
-        }
     }
 
     /**
@@ -478,7 +534,7 @@ class BOL_SeoService
      * @param string $entityType
      * @return void
      */
-    public function addSiteMapUrl($url, $entityType)
+    protected function addSiteMapUrl($url, $entityType)
     {
         $sitemapDto = new BOL_Sitemap();
         $sitemapDto->url = $url;
@@ -496,7 +552,7 @@ class BOL_SeoService
      * @param boolean $dataFetched
      * @return void
      */
-    public function setSitemapEntityDataFetched($entityType, $itemName, $dataFetched)
+    protected function setSitemapEntityDataFetched($entityType, $itemName, $dataFetched)
     {
         $entities = $this->getSitemapEntities();
 
