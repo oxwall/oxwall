@@ -1823,7 +1823,7 @@ class BASE_CLASS_EventHandler
                 "sectionKey" => "base.users",
                 "entityKey" => "userLists",
                 "entityLabel" => $language->text("base", "seo_meta_user_list_label"),
-                "uri" => "",
+                "iconClass" => "",
                 "langs" => array(
                     "title" => "base+meta_title_user_list",
                     "desc" => "base+meta_desc_user_list",
@@ -1839,11 +1839,59 @@ class BASE_CLASS_EventHandler
                 "sectionKey" => "base.base_pages",
                 "entityKey" => "index",
                 "entityLabel" => $language->text("base", "seo_meta_index_label"),
-                "uri" => "",
+                "iconClass" => "ow_ic_house",
                 "langs" => array(
                     "title" => "base+meta_title_index",
                     "desc" => "base+meta_desc_index",
                     "keywords" => "base+meta_keywords_index"
+                ),
+                "vars" => array( "site_name" )
+            )
+        );
+
+        $e->add(
+            array(
+                "sectionLabel" => $language->text("base", "seo_meta_section_base_pages"),
+                "sectionKey" => "base.base_pages",
+                "entityKey" => "join",
+                "entityLabel" => $language->text("base", "seo_meta_join_label"),
+                "iconClass" => "ow_ic_add",
+                "langs" => array(
+                    "title" => "base+meta_title_join",
+                    "desc" => "base+meta_desc_join",
+                    "keywords" => "base+meta_keywords_join"
+                ),
+                "vars" => array( "site_name" )
+            )
+        );
+
+        $e->add(
+            array(
+                "sectionLabel" => $language->text("base", "seo_meta_section_base_pages"),
+                "sectionKey" => "base.base_pages",
+                "entityKey" => "sign_in",
+                "entityLabel" => $language->text("base", "seo_meta_sign_in_label"),
+                "iconClass" => "ow_ic_key",
+                "langs" => array(
+                    "title" => "base+meta_title_sign_in",
+                    "desc" => "base+meta_desc_sign_in",
+                    "keywords" => "base+meta_keywords_sign_in"
+                ),
+                "vars" => array( "site_name" )
+            )
+        );
+
+        $e->add(
+            array(
+                "sectionLabel" => $language->text("base", "seo_meta_section_base_pages"),
+                "sectionKey" => "base.base_pages",
+                "entityKey" => "forgot_pass",
+                "entityLabel" => $language->text("base", "seo_meta_forgot_pass_label"),
+                "iconClass" => "ow_ic_key",
+                "langs" => array(
+                    "title" => "base+meta_title_forgot_pass",
+                    "desc" => "base+meta_desc_forgot_pass",
+                    "keywords" => "base+meta_keywords_forgot_pass"
                 ),
                 "vars" => array( "site_name" )
             )

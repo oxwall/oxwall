@@ -222,7 +222,7 @@ class BOL_SeoService
      */
     public function isMetaDisabledForEntity( $sectionKey, $entityKey )
     {
-        return in_array($entityKey, $this->getMetaData()["disabledEntities"][$sectionKey]);
+        return  isset($this->getMetaData()["disabledEntities"][$sectionKey]) && in_array($entityKey, $this->getMetaData()["disabledEntities"][$sectionKey]);
     }
 
     /**

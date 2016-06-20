@@ -121,6 +121,25 @@ class BASE_MCTRL_User extends OW_MobileActionController
 
         OW::getDocument()->getMasterPage()->setRButtonData(array('extraString' => ' style="display:none;"'));
         $this->addComponent('signIn', new BASE_MCMP_SignIn(false));
+
+        // set meta info
+        $language = OW::getLanguage();
+
+        if( BOL_SeoService::getInstance()->isMetaDisabledForEntity("base.base_pages", "sign_in") )
+        {
+            OW::getDocument()->addMetaInfo("robots", "noindex");
+        }
+        else
+        {
+            $this->setPageTitle($language->text("base", "meta_title_sign_in"));
+            $this->setPageDescription($language->text("base", "meta_desc_sign_in"));
+            $keywords = trim($language->text("base", "meta_keywords_sign_in"));
+
+            if( $keywords )
+            {
+                $this->setKeywords($keywords);
+            }
+        }
     }
 
     /**
@@ -269,6 +288,25 @@ class BASE_MCTRL_User extends OW_MobileActionController
             {
                 OW::getFeedback()->error($language->text('base', 'forgot_password_general_error_message'));
                 $this->redirect();
+            }
+        }
+
+        // set meta info
+        $language = OW::getLanguage();
+
+        if( BOL_SeoService::getInstance()->isMetaDisabledForEntity("base.base_pages", "forgot_pass") )
+        {
+            OW::getDocument()->addMetaInfo("robots", "noindex");
+        }
+        else
+        {
+            $this->setPageTitle($language->text("base", "meta_title_forgot_pass"));
+            $this->setPageDescription($language->text("base", "meta_desc_forgot_pass"));
+            $keywords = trim($language->text("base", "meta_keywords_forgot_pass"));
+
+            if( $keywords )
+            {
+                $this->setKeywords($keywords);
             }
         }
     }

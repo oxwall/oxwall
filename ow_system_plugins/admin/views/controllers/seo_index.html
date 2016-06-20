@@ -38,7 +38,7 @@ addInputCounter = function( $input, $counter, $count ){
      {foreach from=$entities item="item" key="key"}
         <tr class="ow_tr_first">
             <th class="ow_name ow_txtleft" colspan="3">
-                <span class="ow_section_icon ow_ic_house">{$item.label}</span>
+                <span class="ow_section_icon {if !empty($item.iconClass)}{$item.iconClass}{else}ow_ic_file{/if}">{$item.label}</span>
             </th>
         </tr>
         <tr class="ow_alt1">

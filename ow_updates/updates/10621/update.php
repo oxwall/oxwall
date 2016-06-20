@@ -51,10 +51,28 @@ $languagesToAdd = array(
     array( 'base', 'seo_meta_form_element_index_label', 'Allow for indexing' ),
     array( 'base', 'seo_meta_choose_pages_label', 'Choose pages:' ),
     array( 'base', 'seo_meta_user_list_label', 'All Site Members by List (Online / Latest) Page' ),
+    array( 'base', 'seo_meta_section_base_pages', 'Base Pages' ),
 
-
-
-
+    // index
+    array( 'base', 'meta_title_index', '{$site_name} - Find Dates Here!' ),
+    array( 'base', 'meta_desc_index', '{$site_name} dating website with dating apps and robust online community. Meet the love of your life here today!' ),
+    array( 'base', 'meta_keywords_index', '' ),
+    array( 'base', 'seo_meta_index_label', 'Index' ),
+    // join
+    array( 'base', 'meta_title_join', 'Join {$site_name} - Find Dates Here!' ),
+    array( 'base', 'meta_desc_join', 'Join {$site_name} to meet new people and chat with other signles. Find your love today!' ),
+    array( 'base', 'meta_keywords_join', '' ),
+    array( 'base', 'seo_meta_join_label', 'Join' ),
+    // Sign-in
+    array( 'base', 'meta_title_sign_in', 'Sign in to {$site_name} - Find Dates Here!' ),
+    array( 'base', 'meta_desc_sign_in', 'Sign in to your {$site_name} site and meet new people!' ),
+    array( 'base', 'meta_keywords_sign_in', '' ),
+    array( 'base', 'seo_meta_sign_in_label', 'Sign-In Page' ),
+    // Forgot
+    array( 'base', 'meta_title_forgot_pass', 'Forgot password for {$site_name}?' ),
+    array( 'base', 'meta_desc_forgot_pass', 'Enter the email you used during registration for {$site_name} to receive a new password.' ),
+    array( 'base', 'meta_keywords_forgot_pass', '' ),
+    array( 'base', 'seo_meta_forgot_pass_label', 'Forgot Password Page' ),
 
 );
 

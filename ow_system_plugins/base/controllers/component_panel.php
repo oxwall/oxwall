@@ -476,9 +476,10 @@ class BASE_CTRL_ComponentPanel extends OW_ActionController
         {
             $this->setPageTitle($language->text("base", "meta_title_index"));
             $this->setPageDescription($language->text("base", "meta_desc_index"));
-            $keywords = $language->text("base", "meta_keywords_index");
+            $keywords = trim($language->text("base", "meta_keywords_index"));
 
-            if( $keywords ){
+            if( $keywords )
+            {
                 $this->setKeywords($keywords);
             }
         }
