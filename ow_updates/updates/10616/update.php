@@ -22,6 +22,92 @@
  * which combines Covered Code or portions thereof with code not governed by the terms of the CPAL.
  */
 
+$tblPrefix = OW_DB_PREFIX;
+$db = Updater::getDbo();
+
+$simpleQueryList = array(
+    "CREATE TABLE IF NOT EXISTS `{$tblPrefix}base_sitemap` (
+        id INT(11) NOT NULL AUTO_INCREMENT,
+        url VARCHAR(255) NOT NULL,
+        entityType VARCHAR(20) NOT NULL,
+        PRIMARY KEY (id),
+        UNIQUE KEY url (url),
+        KEY entityType (entityType)
+    )
+    ENGINE = MYISAM CHARACTER SET utf8 COLLATE utf8_general_ci"
+);
+
+foreach ( $simpleQueryList as $query )
+{
+    try
+    {
+        $db->query($query);
+    }
+    catch ( Exception $e )
+    {
+        Updater::getLogger()->addEntry(json_encode($e));
+    }
+}
+
+$config = OW::getConfig();
+
+// add configs
+if ( !$config->configExists('base', 'seo_sitemap_entitites_limit') )
+{
+    $config->addConfig('base', 'seo_sitemap_entitites_limit', 200000);
+}
+
+if ( !$config->configExists('base', 'seo_sitemap_build_in_progress') )
+{
+    $config->addConfig('base', 'seo_sitemap_build_in_progress', 0);
+}
+
+if ( !$config->configExists('base', 'seo_sitemap_in_progress') )
+{
+    $config->addConfig('base', 'seo_sitemap_in_progress', 0);
+}
+
+if ( !$config->configExists('base', 'seo_sitemap_in_progress_time') )
+{
+    $config->addConfig('base', 'seo_sitemap_in_progress_time', 0);
+}
+
+if ( !$config->configExists('base', 'seo_sitemap_last_build') )
+{
+    $config->addConfig('base', 'seo_sitemap_last_build', 0);
+}
+
+if ( !$config->configExists('base', 'seo_sitemap_last_start') )
+{
+    $config->addConfig('base', 'seo_sitemap_last_start', 0);
+}
+
+if ( !$config->configExists('base', 'seo_sitemap_entities') )
+{
+    $config->addConfig('base', 'seo_sitemap_entities', json_encode(array()));
+}
+
+if ( !$config->configExists('base', 'seo_sitemap_schedule_update') )
+{
+    $config->addConfig('base', 'seo_sitemap_schedule_update', 'weekly');
+}
+
+if ( !$config->configExists('base', 'seo_sitemap_index') )
+{
+    $config->addConfig('base', 'seo_sitemap_index', 0);
+}
+
+Updater::getSeoService()->addSitemapEntity('admin', 'seo_sitemap_base_pages', 'base_pages', array(
+    'base_pages'
+), null, 1);
+
+// register sitemap entities
+Updater::getSeoService()->addSitemapEntity('admin', 'seo_sitemap_users', 'users', array(
+    'user_list',
+    'users'
+), 'seo_sitemap_users_desc');
+
+// add the SEO admin menu
 try
 {
     OW::getNavigation()->addMenuItem(
@@ -36,4 +122,5 @@ catch ( Exception $e )
     Updater::getLogger()->addEntry(json_encode($e));
 }
 
+// import langs
 Updater::getLanguageService()->importPrefixFromDir(__DIR__ . DS . 'langs');

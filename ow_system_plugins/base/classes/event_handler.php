@@ -96,6 +96,7 @@ class BASE_CLASS_EventHandler
         $eventManager->bind("base.user_list.get_displayed_fields", array($this, 'onGetUserListFields'));
         $eventManager->bind("base.user_list.get_questions", array($this, 'onGetUserListQuestions'));
         $eventManager->bind("base.user_list.get_field_data", array($this, 'onGetUserListFieldValue'));
+        $eventManager->bind("base.sitemap.get_urls", array($this, 'onSitemapGetUrls'));
     }
 
     public function init()
@@ -156,6 +157,81 @@ class BASE_CLASS_EventHandler
                     BASE_CMP_QuickLinksWidget::DATA_KEY_COUNT_URL => OW::getRouter()->urlForRoute('users-blocked')
                 ));
             }
+        }
+    }
+
+    /**
+     * Get sitemap urls
+     *
+     * @param OW_Event $event
+     * @return void
+     */
+    public function onSitemapGetUrls( OW_Event $event )
+    {
+        $params = $event->getParams();
+
+        switch( $params['entity'] )
+        {
+            // base pages
+            case 'base_pages' :
+                // list of basic pages
+                $basePages = array(
+                    OW_URL_HOME,
+                    OW::getRouter()->urlForRoute('base.mobile_version'),
+                    OW::getRouter()->urlForRoute('base_join'),
+                    OW::getRouter()->urlForRoute('static_sign_in'),
+                    OW::getRouter()->urlForRoute('base_forgot_password')
+                );
+
+                // get all public static docs
+                $staticDocs = BOL_NavigationService::getInstance()->findAllStaticDocuments();
+
+                foreach($staticDocs as $doc)
+                {
+                    $menuItem = BOL_NavigationService::getInstance()->findMenuItemByDocumentKey($doc->key);
+
+                    // is the page public
+                    if ( $menuItem && in_array($menuItem->visibleFor,
+                            array(BOL_NavigationService::VISIBLE_FOR_ALL, BOL_NavigationService::VISIBLE_FOR_GUEST)) )
+                    {
+                        $basePages[] = OW_URL_HOME . $doc->uri;
+                    }
+                }
+
+                $event->setData($basePages);
+                break;
+
+            // users
+            case 'users' :
+                $urls   = [];
+                $users  = BOL_UserService::getInstance()->findList(0, $params['limit'], true);
+
+                foreach ( $users as $user )
+                {
+                    $urls[] = BOL_UserService::getInstance()->getUserUrl($user->id);
+                }
+
+                $event->setData($urls);
+                break;
+
+            // base user pages
+            case 'user_list' :
+                $event->setData(array(
+                    OW::getRouter()->urlForRoute('users'),
+                    OW::getRouter()->urlForRoute('base_user_lists', array(
+                        'list' => 'latest'
+                    )),
+                    OW::getRouter()->urlForRoute('base_user_lists', array(
+                        'list' => 'featured'
+                    )),
+                    OW::getRouter()->urlForRoute('base_user_lists', array(
+                            'list' => 'online'
+                    )),
+                    OW::getRouter()->urlForRoute('base_user_lists', array(
+                        'list' => 'search'
+                    ))
+                ));
+                break;
         }
     }
 
