@@ -12,6 +12,7 @@
  * governing rights and limitations under the License. The Original Code is Oxwall software.
  * The Initial Developer of the Original Code is Oxwall Foundation (http://www.oxwall.org/foundation).
  * All portions of the code written by Oxwall Foundation are Copyright (c) 2011. All Rights Reserved.
+
  * EXHIBIT B. Attribution Information
  * Attribution Copyright Notice: Copyright 2011 Oxwall Foundation. All rights reserved.
  * Attribution Phrase (not exceeding 10 words): Powered by Oxwall community software
@@ -22,91 +23,66 @@
  */
 
 /**
- * Base SEO manager class.
+ * Data Access Object for `base_sitemap` table.
  *
  * @author Alex Ermashev <alexermashev@gmail.com>
- * @package ow_core
- * @method static OW_SeoManager getInstance()
+ * @package ow.ow_system_plugins.base.bol
  * @since 1.8.4
  */
-class OW_SeoManager
+class BOL_SitemapDao extends OW_BaseDao
 {
-    use OW_Singleton;
-
     /**
-     * Service
+     * Singleton instance.
      *
-     * @var BOL_SeoService
+     * @var BOL_SitemapDao
      */
-    protected $service;
+    private static $classInstance;
 
     /**
-     * Constructor
+     * Returns an instance of class (singleton pattern implementation).
+     *
+     * @return BOL_SitemapDao
      */
-    private function __construct()
+    public static function getInstance()
     {
-        $this->service = BOL_SeoService::getInstance();
+        if ( self::$classInstance === null )
+        {
+            self::$classInstance = new self();
+        }
+
+        return self::$classInstance;
     }
 
     /**
-     * Enable sitemap entity
+     * @see OW_BaseDao::getDtoClassName()
      *
-     * @param string $entityType
-     * @return void
      */
-    public function enableSitemapEntity($entityType)
+    public function getDtoClassName()
     {
-        return $this->service->enableSitemapEntity($entityType);
+        return 'BOL_Sitemap';
     }
 
     /**
-     * Disable sitemap entity
+     * @see OW_BaseDao::getTableName()
      *
-     * @param string $entityType
-     * @return void
      */
-    public function disableSitemapEntity($entityType)
+    public function getTableName()
     {
-        return $this->service->disableSitemapEntity($entityType);
+        return OW_DB_PREFIX . 'base_sitemap';
     }
 
     /**
-     * Get sitemap entities
+     * Find url list
      *
+     * @param integer $count
      * @return array
      */
-    public function getSitemapEntities()
+    public function findUrlList( $count )
     {
-        return $this->service->getSitemapEntities();
-    }
+        $example = new OW_Example();
+        $example->setOrder('id')
+            ->setLimitClause(0, $count);
 
-    /**
-     * Get base sitemap path
-     *
-     * @return string
-     */
-    public function getBaseSitemapPath()
-    {
-        return $this->service->getBaseSitemapPath();
-    }
-
-    /**
-     * Get sitemap url
-     *
-     * @return string
-     */
-    public function getSitemapUrl()
-    {
-        return $this->service->getSitemapUrl();
-    }
-
-    /**
-     * Get sitemap path
-     *
-     * @return string
-     */
-    public function getSitemapPath()
-    {
-        return $this->service->getSitemapPath();
+        return $this->findListByExample($example);
     }
 }
