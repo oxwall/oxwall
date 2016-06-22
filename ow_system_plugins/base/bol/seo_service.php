@@ -35,7 +35,7 @@ class BOL_SeoService
     /**
      * Sitemap max urls per file
      */
-    const SITEMAP_MAX_URLS_IN_FILE = 50000;
+    const SITEMAP_MAX_URLS_IN_FILE = 30000;
 
     /**
      * Sitemap item update weekly
@@ -50,7 +50,7 @@ class BOL_SeoService
     /**
      * Sitemap file name
      */
-    const SITEMAP_FILE_NAME = 'sitemap%s.xml.gz';
+    const SITEMAP_FILE_NAME = 'sitemap%s.xml';
 
     /**
      * Sitemap dir name
@@ -198,7 +198,10 @@ class BOL_SeoService
                             // process received urls
                             foreach ( $event->getData() as $url )
                             {
-                                $this->addSiteMapUrl($url, $entityType);
+                                if ( $this->isSitemapUrlUnique($url) )
+                                {
+                                    $this->addSiteMapUrl($url, $entityType);
+                                }
                             }
                         }
 
@@ -289,7 +292,7 @@ class BOL_SeoService
 
                 // save data in a file
                 file_put_contents($sitemapPath .
-                        sprintf(self::SITEMAP_FILE_NAME, $sitemapIndex + 1), gzencode($view->render(), 6));
+                        sprintf(self::SITEMAP_FILE_NAME, $sitemapIndex + 1), $view->render());
 
                 OW::getConfig()->saveConfig('base', 'seo_sitemap_index', $sitemapIndex + 1);
             }
@@ -319,7 +322,7 @@ class BOL_SeoService
 
         // save data in a file
         file_put_contents($sitemapPath .
-                sprintf(self::SITEMAP_FILE_NAME, ''), gzencode($view->render(), 6));
+                sprintf(self::SITEMAP_FILE_NAME, ''), $view->render());
 
         // update configs
         OW::getConfig()->saveConfig('base', 'seo_sitemap_index', 0);
@@ -541,6 +544,20 @@ class BOL_SeoService
 
             OW::getConfig()->saveConfig('base', 'seo_sitemap_entities', json_encode($entities));
         }
+    }
+
+    /**
+     * Is sitemap url unique
+     *
+     * @param $url
+     * @return bool
+     */
+    protected function isSitemapUrlUnique($url)
+    {
+        $example = new OW_Example();
+        $example->andFieldEqual('url', $url);
+
+        return !$this->sitemapDao->countByExample($example);
     }
 
     /**

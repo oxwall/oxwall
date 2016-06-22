@@ -172,68 +172,102 @@ class BASE_CLASS_EventHandler
     {
         $params = $event->getParams();
 
-        switch( $params['entity'] )
+        $urls = [];
+        $urlsCount = 0;
+        $globalLimit = (int)$params['limit'];
+        $localLimit = 500;
+        $offset = 0;
+        $isViewProfileAllowed = OW::getUser()->isAuthorized('base', 'view_profile');
+
+        do
         {
-            // base pages
-            case 'base_pages' :
-                // list of basic pages
-                $basePages = array(
-                    OW_URL_HOME,
-                    OW::getRouter()->urlForRoute('base.mobile_version'),
-                    OW::getRouter()->urlForRoute('base_join'),
-                    OW::getRouter()->urlForRoute('static_sign_in'),
-                    OW::getRouter()->urlForRoute('base_forgot_password')
-                );
+            $isDataEmpty = true;
 
-                // get all public static docs
-                $staticDocs = BOL_NavigationService::getInstance()->findAllStaticDocuments();
+            if ( $urlsCount + $localLimit > $globalLimit )
+            {
+                $localLimit = $globalLimit < $localLimit
+                    ? $globalLimit
+                    : $globalLimit - $urlsCount;
+            }
 
-                foreach($staticDocs as $doc)
-                {
-                    $menuItem = BOL_NavigationService::getInstance()->findMenuItemByDocumentKey($doc->key);
+            switch ( $params['entity'] )
+            {
+                // base pages
+                case 'base_pages' :
+                    // list of basic pages
+                    $urls = array(
+                        OW_URL_HOME,
+                        OW::getRouter()->urlForRoute('base.mobile_version'),
+                        OW::getRouter()->urlForRoute('base_join'),
+                        OW::getRouter()->urlForRoute('static_sign_in'),
+                        OW::getRouter()->urlForRoute('base_forgot_password')
+                    );
 
-                    // is the page public
-                    if ( $menuItem && in_array($menuItem->visibleFor,
-                            array(BOL_NavigationService::VISIBLE_FOR_ALL, BOL_NavigationService::VISIBLE_FOR_GUEST)) )
+                    // get all public static docs
+                    $staticDocs = BOL_NavigationService::getInstance()->findAllStaticDocuments();
+
+                    foreach( $staticDocs as $doc )
                     {
-                        $basePages[] = OW_URL_HOME . $doc->uri;
+                        $menuItem = BOL_NavigationService::getInstance()->findMenuItemByDocumentKey($doc->key);
+
+                        // is the page public
+                        if ( $menuItem && in_array($menuItem->visibleFor,
+                                array(BOL_NavigationService::VISIBLE_FOR_ALL, BOL_NavigationService::VISIBLE_FOR_GUEST)) )
+                        {
+                            $urls[] = OW_URL_HOME . $doc->uri;
+                        }
                     }
-                }
+                    break;
 
-                $event->setData($basePages);
-                break;
+                // users
+                case 'users' :
+                    if ( $isViewProfileAllowed )
+                    {
+                        $users = BOL_UserService::getInstance()->findList($offset, $params['limit'], true);
 
-            // users
-            case 'users' :
-                $urls   = [];
-                $users  = BOL_UserService::getInstance()->findList(0, $params['limit'], true);
+                        if ( $users )
+                        {
+                            foreach ( $users as $user )
+                            {
+                                $urls[] = BOL_UserService::getInstance()->getUserUrl($user->id);
+                            }
 
-                foreach ( $users as $user )
-                {
-                    $urls[] = BOL_UserService::getInstance()->getUserUrl($user->id);
-                }
+                            $isDataEmpty = count($users) != $localLimit;
+                        }
+                    }
+                    break;
 
-                $event->setData($urls);
-                break;
+                // base user pages
+                case 'user_list' :
+                    if ( $isViewProfileAllowed )
+                    {
+                        $urls = array(
+                            OW::getRouter()->urlForRoute('users'),
+                            OW::getRouter()->urlForRoute('base_user_lists', array(
+                                'list' => 'latest'
+                            )),
+                            OW::getRouter()->urlForRoute('base_user_lists', array(
+                                'list' => 'featured'
+                            )),
+                            OW::getRouter()->urlForRoute('base_user_lists', array(
+                                'list' => 'online'
+                            )),
+                            OW::getRouter()->urlForRoute('base_user_lists', array(
+                                'list' => 'search'
+                            ))
+                        );
+                    }
+                    break;
+            }
 
-            // base user pages
-            case 'user_list' :
-                $event->setData(array(
-                    OW::getRouter()->urlForRoute('users'),
-                    OW::getRouter()->urlForRoute('base_user_lists', array(
-                        'list' => 'latest'
-                    )),
-                    OW::getRouter()->urlForRoute('base_user_lists', array(
-                        'list' => 'featured'
-                    )),
-                    OW::getRouter()->urlForRoute('base_user_lists', array(
-                            'list' => 'online'
-                    )),
-                    OW::getRouter()->urlForRoute('base_user_lists', array(
-                        'list' => 'search'
-                    ))
-                ));
-                break;
+            $urlsCount = count($urls);
+            $offset += $localLimit;
+        }
+        while ($urlsCount < $globalLimit && !$isDataEmpty);
+
+        if ( $urls )
+        {
+            $event->setData($urls);
         }
     }
 
