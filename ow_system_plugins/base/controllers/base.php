@@ -75,7 +75,6 @@ class BASE_CTRL_Base extends OW_ActionController
         if ( file_exists($sitemap) )
         {
             header('Content-Type: text/xml');
-            header('Content-Encoding: gzip');
 
             echo file_get_contents($sitemap);
             exit;

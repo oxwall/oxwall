@@ -130,7 +130,8 @@ class BOL_SeoService
 
         if ( !file_exists($path) )
         {
-            mkdir($path, 0777);
+            mkdir($path);
+            @chmod($path, 0777);
         }
 
         return $path;
@@ -235,7 +236,8 @@ class BOL_SeoService
 
         if ( !file_exists($sitemapPath) )
         {
-            mkdir($sitemapPath, 0777);
+            mkdir($sitemapPath);
+            @chmod($sitemapPath, 0777);
         }
 
         if ( $urls )
