@@ -35,7 +35,7 @@ class BOL_SeoService
     /**
      * Sitemap max urls per file
      */
-    const SITEMAP_MAX_URLS_IN_FILE = 30000;
+    const SITEMAP_MAX_URLS_IN_FILE = 15000;
 
     /**
      * Sitemap item update weekly
