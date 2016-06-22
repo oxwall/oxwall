@@ -237,7 +237,7 @@ final class BOL_TagService
      * @param integer $offset
      * @return array
      */
-    public function findMostPopularTags( $entityType, $limit, $offset  = null )
+    public function findMostPopularTags( $entityType, $limit, $offset  = 0 )
     {
         return $this->tagDao->findMostPopularTags($entityType, $limit, $offset);
     }

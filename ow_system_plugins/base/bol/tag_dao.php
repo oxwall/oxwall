@@ -113,24 +113,8 @@ class BOL_TagDao extends OW_BaseDao
      * @param integer $offset
      * @return array
      */
-    public function findMostPopularTags( $entityType, $limit, $offset  = null)
+    public function findMostPopularTags( $entityType, $limit, $offset  = 0)
     {
-        if ( is_null($offset) )
-        {
-            $query = "SELECT * FROM
-	    		(
-	    			SELECT `et`.*, COUNT(*) AS `count`, `t`.`label` AS `label` FROM `" . BOL_EntityTagDao::getInstance()->getTableName() . "` AS `et`
-					LEFT JOIN `" . $this->getTableName() . "` AS `t` ON ( `et`.`tagId` = `t`.`id`	)
-					WHERE `et`.`entityType` = :entityType AND `et`.`active` = 1
-					GROUP BY `tagId`
-                                        ORDER BY `count` DESC
-                                        LIMIT :limit
-				) AS `t`
-				ORDER BY `t`.`label`";
-
-            return $this->dbo->queryForList($query, array('limit' => (int) $limit, 'entityType' => $entityType));
-        }
-
         $query = "SELECT * FROM
             (
                 SELECT `et`.*, COUNT(*) AS `count`, `t`.`label` AS `label` FROM `" . BOL_EntityTagDao::getInstance()->getTableName() . "` AS `et`
