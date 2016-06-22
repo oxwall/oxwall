@@ -170,6 +170,106 @@ class BASE_CLASS_EventHandler
     {
         $params = $event->getParams();
 
+        $urls = [];
+        $urlsCount = 0;
+        $globalLimit = (int)$params['limit'];
+        $localLimit = 500;
+        $offset = 0;
+        $isViewProfileAllowed = OW::getUser()->isAuthorized('base', 'view_profile');
+
+        do
+        {
+            $isDataEmpty = true;
+
+            if ( $urlsCount + $localLimit > $globalLimit )
+            {
+                $localLimit = $globalLimit < $localLimit
+                    ? $globalLimit
+                    : $globalLimit - $urlsCount;
+            }
+
+            switch ( $params['entity'] )
+            {
+                // base pages
+                case 'base_pages' :
+                    // list of basic pages
+                    $urls = array(
+                        OW_URL_HOME,
+                        OW::getRouter()->urlForRoute('base.mobile_version'),
+                        OW::getRouter()->urlForRoute('base_join'),
+                        OW::getRouter()->urlForRoute('static_sign_in'),
+                        OW::getRouter()->urlForRoute('base_forgot_password')
+                    );
+
+                    // get all public static docs
+                    $staticDocs = BOL_NavigationService::getInstance()->findAllStaticDocuments();
+
+                    foreach( $staticDocs as $doc )
+                    {
+                        $menuItem = BOL_NavigationService::getInstance()->findMenuItemByDocumentKey($doc->key);
+
+                        // is the page public
+                        if ( $menuItem && in_array($menuItem->visibleFor,
+                                array(BOL_NavigationService::VISIBLE_FOR_ALL, BOL_NavigationService::VISIBLE_FOR_GUEST)) )
+                        {
+                            $urls[] = OW_URL_HOME . $doc->uri;
+                        }
+                    }
+                    break;
+
+                // users
+                case 'users' :
+                    if ( $isViewProfileAllowed )
+                    {
+                        $users = BOL_UserService::getInstance()->findList($offset, $params['limit'], true);
+
+                        if ( $users )
+                        {
+                            foreach ( $users as $user )
+                            {
+                                $urls[] = BOL_UserService::getInstance()->getUserUrl($user->id);
+                            }
+
+                            $isDataEmpty = count($users) != $localLimit;
+                        }
+                    }
+                    break;
+
+                // base user pages
+                case 'user_list' :
+                    if ( $isViewProfileAllowed )
+                    {
+                        $urls = array(
+                            OW::getRouter()->urlForRoute('users'),
+                            OW::getRouter()->urlForRoute('base_user_lists', array(
+                                'list' => 'latest'
+                            )),
+                            OW::getRouter()->urlForRoute('base_user_lists', array(
+                                'list' => 'featured'
+                            )),
+                            OW::getRouter()->urlForRoute('base_user_lists', array(
+                                'list' => 'online'
+                            )),
+                            OW::getRouter()->urlForRoute('base_user_lists', array(
+                                'list' => 'search'
+                            ))
+                        );
+                    }
+                    break;
+            }
+
+            $urlsCount = count($urls);
+            $offset += $localLimit;
+        }
+        while ($urlsCount < $globalLimit && !$isDataEmpty);
+
+        if ( $urls )
+        {
+            $event->setData($urls);
+        }
+
+        /*$params = $event->getParams();
+
         switch( $params['entity'] )
         {
             // base pages
@@ -232,7 +332,7 @@ class BASE_CLASS_EventHandler
                     ))
                 ));
                 break;
-        }
+        }*/
     }
 
     public function onAfterAdd( OW_Event $event )
