@@ -1128,6 +1128,14 @@ class BOL_LanguageService
         UTIL_File::removeDir($importDir);
     }
 
+    /**
+     *
+     * @return BOL_Language
+     */
+    public function findDefault()
+    {
+        return $this->languageDao->getCurrent();
+    }
 
     /**
      *

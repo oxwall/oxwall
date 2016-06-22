@@ -242,7 +242,7 @@ class BOL_SeoService
         {
             // generate parts of sitemap
             $processedUrls   = [];
-            $defaultLanguage = BOL_LanguageService::getInstance()->findDefaultLanguage();
+            $defaultLanguage = BOL_LanguageService::getInstance()->findDefault();
             $activeLanguages = BOL_LanguageService::getInstance()->findActiveList();
             $activeLanguagesCount = count($activeLanguages);
 
