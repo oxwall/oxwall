@@ -2,7 +2,7 @@
 
 trait OW_Singleton
 {
-    protected static $instance;
+    private static $instance;
 
     public static function getInstance()
     {

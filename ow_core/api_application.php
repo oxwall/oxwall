@@ -66,7 +66,9 @@ class OW_ApiApplication extends OW_Application
                 BOL_LanguageService::getInstance()->setCurrentLanguage($languageDto);
             }
         }
-        
+
+        $this->detectLanguage();
+
         // setting default time zone
         date_default_timezone_set(OW::getConfig()->getValue('base', 'site_timezone'));
 

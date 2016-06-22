@@ -27,6 +27,7 @@
  *
  * @author Alex Ermashev <alexermashev@gmail.com>
  * @package ow_system_plugins.base.bol
+ * @method static BOL_SeoService getInstance()
  * @since 1.8.4
  */
 class BOL_SeoService
@@ -71,12 +72,8 @@ class BOL_SeoService
      */
     const SITEMAP_UPDATE_MONTHLY = 'monthly';
 
-    /**
-     * Singleton instance.
-     *
-     * @var BOL_SeoService
-     */
-    private static $classInstance;
+
+    use OW_Singleton;
 
     /**
      * Sitemap
@@ -91,21 +88,6 @@ class BOL_SeoService
     private function __construct()
     {
         $this->sitemapDao = BOL_SitemapDao::getInstance();
-    }
-
-    /**
-     * Returns an instance of class (singleton pattern implementation).
-     *
-     * @return BOL_SeoService
-     */
-    public static function getInstance()
-    {
-        if ( self::$classInstance === null )
-        {
-            self::$classInstance = new self();
-        }
-
-        return self::$classInstance;
     }
 
     /**
@@ -495,6 +477,40 @@ class BOL_SeoService
             // delete already collected data
             $this->deleteSitemapUrls($entityType);
         }
+    }
+
+    protected $metaData;
+
+    /**
+     * @return array
+     */
+    public function getMetaData()
+    {
+        if( $this->metaData === null )
+        {
+            $this->metaData = json_decode(OW::getConfig()->getValue("base", "seo_meta_info"), true);
+        }
+
+        return $this->metaData;
+    }
+
+    /**
+     * @param array $data
+     */
+    public function setMetaData( array $data )
+    {
+        $this->metaData = $data;
+        OW::getConfig()->saveConfig("base", "seo_meta_info", json_encode($data));
+    }
+
+    /**
+     * @param $sectionKey
+     * @param string $entityKey
+     * @return bool
+     */
+    public function isMetaDisabledForEntity( $sectionKey, $entityKey )
+    {
+        return  isset($this->getMetaData()["disabledEntities"][$sectionKey]) && in_array($entityKey, $this->getMetaData()["disabledEntities"][$sectionKey]);
     }
 
     /**

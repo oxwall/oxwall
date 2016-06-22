@@ -485,7 +485,7 @@ class UTIL_File
      */
     public static function chmodDir( $dirPath, $dirPermissions = 0755, $filePermissions = 0644 )
     {
-        chmod($dirPath, $dirPermissions);
+        @chmod($dirPath, $dirPermissions);
 
         $dirPath = self::removeLastDS($dirPath);
         $handle = opendir($dirPath);
@@ -503,7 +503,7 @@ class UTIL_File
 
                 if ( is_file($path) )
                 {
-                    chmod($path, $filePermissions);
+                    @chmod($path, $filePermissions);
                 }
                 else if ( is_dir($path) )
                 {

@@ -1396,10 +1396,7 @@ OwForm.prototype = {
     resetForm: function(){
         $.each( this.elements,
             function( index, data ){
-                //TODO remove temp hardcode to avoid token reset
-                if( data.name != 'csrf_token' ){
-                    data.resetValue();
-                }
+                data.resetValue();
             }
         );
     },

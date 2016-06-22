@@ -30,10 +30,9 @@
 class UTIL_Csrf
 {
     const SESSION_VAR_NAME = "csrf_tokens";
-    const TOKEN_LIFETIME_IN_MINUTES = 20;
 
     /**
-     * Generates and returns CSRF token with UTIL_Csrf::TOKEN_LIFETIME_IN_MINUTES lifetime
+     * Generates and returns CSRF token
      * 
      * @return string
      */
@@ -63,30 +62,7 @@ class UTIL_Csrf
 
     private static function getTokenList()
     {
-        $tokenList = array();
-
-        if ( OW::getSession()->isKeySet(self::SESSION_VAR_NAME) )
-        {
-            $tokenList = OW::getSession()->get(self::SESSION_VAR_NAME);
-        }
-
-        $saveList = false;
-
-        foreach ( $tokenList as $token => $createTs )
-        {
-            if ( $createTs < time() - self::TOKEN_LIFETIME_IN_MINUTES * 60 )
-            {
-                unset($tokenList[$token]);
-                $saveList = true;
-            }
-        }
-
-        if ( $saveList )
-        {
-            self::saveTokenList($tokenList);
-        }
-
-        return $tokenList;
+        return OW::getSession()->isKeySet(self::SESSION_VAR_NAME) ? OW::getSession()->get(self::SESSION_VAR_NAME) : array();
     }
 
     private static function saveTokenList( array $list )

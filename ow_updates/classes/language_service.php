@@ -20,9 +20,9 @@ class UPDATE_LanguageService
         return self::$classInstance;
     }
 
-    public function importPrefixFromZip($path, $key)
+    public function importPrefixFromZip($path, $key, $updateValues = false)
     {
-        $this->service->importPrefixFromZip($path, $key, false);
+        $this->service->importPrefixFromZip($path, $key, false, false, $updateValues);
     }
 
     public function replaceLangValue($prefix, $key, $value, $generateCache = false, $lang = 'en')
@@ -30,9 +30,9 @@ class UPDATE_LanguageService
         $this->service->replaceLangValue($prefix, $key, $value, $lang, $generateCache);
     }
 
-    public function importPrefixFromDir($path)
+    public function importPrefixFromDir($path, $updateValues = false)
     {
-        $this->service->importPrefixFromDir($path, false);
+        $this->service->importPrefixFromDir($path, false, false, $updateValues);
     }
 
         public function getCurrent()
