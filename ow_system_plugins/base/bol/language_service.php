@@ -31,52 +31,99 @@
  */
 class BOL_LanguageService
 {
-    private static $currentLanguage = null;
-    private $languageCacheDir; // = OW_DIR_ROOT.'ow_plugin_files'.DS;
-    private $language = array();
-    private $languageDao;
-    private $prefixDao;
-    private $keyDao;
-    private $valueDao;
+    const LANG_ID_VAR_NAME = "base_language_id";
+
+    /**
+     * @var BOL_Language
+     */
+    protected $currentLanguage;
+
+    /**
+     * @var int
+     */
+    protected $currentLanguageId;
+
+    /**
+     * @var array
+     */
+    protected $language = array();
+
+    /**
+     * @var BOL_LanguageDao
+     */
+    protected $languageDao;
+
+    /**
+     * @var BOL_LanguagePrefixDao
+     */
+    protected $prefixDao;
+
+    /**
+     * @var BOL_LanguageKeyDao
+     */
+    protected $keyDao;
+
+    /**
+     * @var BOL_LanguageValueDao
+     */
+    protected $valueDao;
+
+    /**
+     * @var array
+     */
     private $exceptionPrefixes = array( "mobile", "nav", "ow_custom" ); // section which importing without checking plugin key
 
+    /**
+     * Class instance
+     *
+     * @var BOL_LanguageService
+     */
+    private static $classInstance;
+
+    /**
+     * Returns class instance
+     * @param $includeCache bool
+     * @return BOL_LanguageService
+     */
+    public static function getInstance( $includeCache = true )
+    {
+        if ( !isset(self::$classInstance) )
+        {
+            try
+            {
+                self::$classInstance = OW::getClassInstance(self::class, $includeCache);
+            }
+            catch ( ReflectionException $ex )
+            {
+                self::$classInstance = new self($includeCache);
+            }
+        }
+
+        return self::$classInstance;
+    }
+
+    /**
+     * BOL_LanguageService constructor.
+     * @param bool $includeCache
+     */
     private function __construct( $includeCache = true )
     {
         $this->languageDao = BOL_LanguageDao::getInstance();
         $this->prefixDao = BOL_LanguagePrefixDao::getInstance();
         $this->keyDao = BOL_LanguageKeyDao::getInstance();
         $this->valueDao = BOL_LanguageValueDao::getInstance();
-        $this->languageCacheDir = OW::getPluginManager()->getPlugin('base')->getPluginFilesDir();
 
         if ( $includeCache )
         {
-            $this->loadFromCahce();
+            $this->loadFromCache();
         }
     }
 
-    private function loadFromCahce()
-    {
-        $allLanguages = $this->getLanguages();
-
-        // exit if no active laguages
-        if ( empty($allLanguages) ) {
-            return;
-        }
-
-        $filename = $this->languageCacheDir . $this->getCacheFilename($this->getCurrent()->getId());
-        $language = array();
-
-        // include cache file
-        include $filename;
-
-        $this->language = $language;
-    }
-
-    private function getCacheFilename( $languageId )
-    {
-        return "lang_{$languageId}.php";
-    }
-
+    /**
+     * Generates cache for provided language
+     *
+     * @param int $languageId
+     */
     public function generateCache( $languageId )
     {
         $event = new BASE_CLASS_EventCollector('base.add_global_lang_keys');
@@ -95,43 +142,25 @@ class BOL_LanguageService
         }
 
         $cacheContent = "<?php\n\$language[{$languageId}] = " . var_export($result, true) . ";\n?>";
-        $filename = $this->languageCacheDir . 'lang_' . $languageId . '.php';
+        $filename = $this->getLanguageCacheDir() . 'lang_' . $languageId . '.php';
 
         file_put_contents($filename, $cacheContent);
         @chmod($filename, 0666);
 
-        $this->loadFromCahce();
+        $this->loadFromCache();
     }
 
+    /**
+     * Generates cache for all languages
+     */
     public function generateCacheForAllActiveLanguages()
     {
-        $langs = $this->findActiveList();
-        foreach ( $langs as $lang )
+        $languages = $this->findActiveList();
+        foreach ( $languages as $lang )
         {
             /* @var $lang BOL_Language */
             $this->generateCache($lang->id);
         }
-    }
-    /**
-     * Class instance
-     *
-     * @var BOL_LanguageService
-     */
-    private static $classInstance;
-
-    /**
-     * Returns class instance
-     *
-     * @return BOL_LanguageService
-     */
-    public static function getInstance( $includeCache = true )
-    {
-        if ( !isset(self::$classInstance) )
-        {
-            self::$classInstance = new self($includeCache);
-        }
-
-        return self::$classInstance;
     }
 
     /**
@@ -142,28 +171,25 @@ class BOL_LanguageService
      * @param string $key
      * @param string $value
      *
+     * @param bool $generateCache
      * @return BOL_LanguageValue
-     *
-     * @throws 'Such prefix doesn\'t exist..' Exception
      */
     public function addValue( $languageId, $prefix, $key, $value, $generateCache = true )
     {
-        $list = array();
-
         $prefixDto = $this->prefixDao->findByPrefix($prefix);
 
-        $prefixId = $prefixDto->id;
-
-        $keyDao = $this->keyDao;
+        if( !$prefixDto )
+        {
+            throw new LogicException("Prefix `$prefix` not found!");
+        }
 
         if ( null === ( $keyDto = $this->findKey($prefix, $key) ) )
         {
             $keyDto = new BOL_LanguageKey();
 
-            $keyDto->setPrefixId($prefixId)
-                ->setKey($key);
-
-            $keyDao->save($keyDto);
+            $keyDto->setPrefixId($prefixDto->id);
+            $keyDto->setKey($key);
+            $this->keyDao->save($keyDto);
         }
 
         $valueDto = new BOL_LanguageValue();
@@ -172,57 +198,9 @@ class BOL_LanguageService
             ->setKeyId($keyDto->getId())
             ->setValue($value);
 
-        $valueDao = $this->valueDao;
-        $valueDao->save($valueDto);
-
-        if ( $generateCache === true )
-        {
-            $this->generateCache($valueDto->languageId);
-        }
-
-        return $valueDto;
-    }
-
-    /**
-     * Adds or updates new key and value
-     *
-     * @param int $languageId
-     * @param string $prefix
-     * @param string $key
-     * @param string $value
-     *
-     * @return BOL_LanguageValue
-     *
-     * @throws 'Such prefix doesn\'t exist..' Exception
-     */
-    public function addOrUpdateValue( $languageId, $prefix, $key, $value, $generateCache = true )
-    {
-        $prefixDto = $this->prefixDao->findByPrefix($prefix);
-
-        if ( null === ( $keyDto = $this->findKey($prefix, $key) ) )
-        {
-            $keyDto = new BOL_LanguageKey();
-
-            $keyDto->setPrefixId($prefixDto->id)
-                ->setKey($key);
-
-            $this->keyDao->save($keyDto);
-        }
-
-        $valueDto = $this->findValue($languageId, $keyDto->id);
-
-        if ( $valueDto === null )
-        {
-            $valueDto = new BOL_LanguageValue();
-        }
-
-        $valueDto->setLanguageId($languageId)
-            ->setKeyId($keyDto->getId())
-            ->setValue($value);
-
         $this->valueDao->save($valueDto);
 
-        if ( $generateCache === true )
+        if ( $generateCache )
         {
             $this->generateCache($valueDto->languageId);
         }
@@ -233,11 +211,14 @@ class BOL_LanguageService
     /**
      * Adds new Prefix
      *
-     * @throws 'Duplicated prefix..' exception
+     * @param string $prefix
+     * @param string $label
+     * @return BOL_LanguagePrefix
+     * @throws Exception
      */
     public function addPrefix( $prefix, $label )
     {
-        if ( self::isPrefixExist($prefix) )
+        if ( $this->prefixExists($prefix) )
         {
             throw new Exception('Duplicated prefix..');
         }
@@ -252,27 +233,35 @@ class BOL_LanguageService
         return $prefixDto;
     }
 
-    private function isPrefixExist( $prefix )
-    {
-        $prefixDto = $this->prefixDao->findPrefixId($prefix);
-
-        return ( $prefixDto !== null);
-    }
-
+    /**
+     * @param int $first
+     * @param int $count
+     * @param string $prefix
+     * @return array
+     * @throws Exception
+     */
     public function findLastKeyList( $first, $count, $prefix = null )
     {
         return $this->valueDao->findLastKeyList($first, $count, $prefix);
     }
 
+    /**
+     * @param string $prefix
+     * @return int
+     */
     public function countKeyByPrefix( $prefix )
     {
-        $keyDao = BOL_LanguageKeyDao::getInstance();
-
         $prefixId = $this->findPrefixId($prefix);
 
-        return $keyDao->countKeyByPrefix($prefixId);
+        return $this->keyDao->countKeyByPrefix($prefixId);
     }
 
+    /**
+     * @param int $languageId
+     * @param string $prefix
+     * @param string $key
+     * @return string
+     */
     public function getTextTemplate( $languageId, $prefix, $key )
     {
         OW::getEventManager()->trigger( new OW_Event('servicelangtools.lang_used_log', array( 'prefix' => $prefix, 'key' => $key)) );
@@ -280,7 +269,13 @@ class BOL_LanguageService
         return ( isset($this->language[$languageId][$prefix . '+' . $key]) ) ? $this->language[$languageId][$prefix . '+' . $key] : null;
     }
 
-
+    /**
+     * @param int $languageId
+     * @param string $prefix
+     * @param string $key
+     * @param array $vars
+     * @return string
+     */
     public function getText( $languageId, $prefix, $key, $vars = array() )
     {
         $text = $this->getTextTemplate($languageId, $prefix, $key);
@@ -315,6 +310,12 @@ class BOL_LanguageService
         return $text;
     }
 
+    /**
+     * @param int $languageId
+     * @param string $prefix
+     * @param string $key
+     * @return BOL_LanguageValue
+     */
     public function getValue( $languageId, $prefix, $key )
     {
         $prefixDto = $this->findPrefix($prefix);
@@ -334,39 +335,76 @@ class BOL_LanguageService
         return $this->valueDao->findValue($languageId, $keyId);
     }
 
+    /**
+     * @return array<BOL_LanguagePrefix>
+     */
     public function getPrefixList()
     {
         return $this->prefixDao->findAll();
     }
 
+    /**
+     * @return array<BOL_Language>
+     */
     public function getLanguages()
     {
         return $this->languageDao->findAll();
     }
 
+    /**
+     * @param int $languageId
+     * @param int $first
+     * @param int $count
+     * @param string $search
+     * @return array
+     */
     public function findSearchResultKeyList( $languageId, $first, $count, $search )
     {
         return $this->valueDao->findSearchResultKeyList($languageId, $first, $count, $search);
     }
 
+    /**
+     * @param int $languageId
+     * @param string $search
+     * @return int mixed
+     */
     public function countSearchResultKeys( $languageId, $search )
     {
         return $this->valueDao->countSearchResultKeys($languageId, $search);
     }
 
+    /**
+     * @param int $languageId
+     * @param int $first
+     * @param int $count
+     * @param string $search
+     * @return array
+     */
     public function findKeySearchResultKeyList( $languageId, $first, $count, $search )
     {
         return $this->valueDao->findKeySearchResultKeyList($languageId, $first, $count, $search);
     }
 
+    /**
+     * @param int $languageId
+     * @param string $search
+     * @return int
+     */
     public function countKeySearchResultKeys( $languageId, $search )
     {
         return $this->valueDao->countKeySearchResultKeys($languageId, $search);
     }
 
+    /**
+     * @param string $prefix
+     * @param string $key
+     * @param string $value
+     * @param bool $generateCache
+     * @param string $lang
+     */
     public function replaceLangValue($prefix, $key, $value, $generateCache = false, $lang = 'en')
     {
-        $defaultLanguage = BOL_LanguageService::getInstance()->findByTag($lang);
+        $defaultLanguage = $this->findByTag($lang);
         $languageId = $defaultLanguage->getId();
 
         if ( !$languageId )
@@ -374,19 +412,19 @@ class BOL_LanguageService
             throw new InvalidArgumentException('Invalid language tag: ' . $lang);
         }
 
-        $keyDto = BOL_LanguageService::getInstance()->findKey($prefix, $key);
+        $keyDto = $this->findKey($prefix, $key);
 
         if ( !empty($keyDto) )
         {
-            $valueDto = BOL_LanguageService::getInstance()->findValue($languageId, $keyDto->id);
+            $valueDto = $this->findValue($languageId, $keyDto->id);
 
             if ( !empty($valueDto) )
             {
-                BOL_LanguageService::getInstance()->deleteValue($valueDto, $generateCache);
+                $this->deleteValue($valueDto, $generateCache);
             }
         }
 
-        BOL_LanguageService::getInstance()->addOrUpdateValue($languageId, $prefix, $key, $value, $generateCache);
+        $this->addOrUpdateValue($languageId, $prefix, $key, $value, $generateCache);
     }
 
     /**
@@ -402,16 +440,24 @@ class BOL_LanguageService
         $dto->setKey($key);
         $dto->setPrefixId($prefixId);
 
-        BOL_LanguageKeyDao::getInstance()->save($dto);
+        $this->keyDao->save($dto);
 
         return $dto;
     }
 
+    /**
+     * @param string $prefix
+     * @return int
+     */
     public function findPrefixId( $prefix )
     {
         return $this->prefixDao->findPrefixId($prefix);
     }
 
+    /**
+     * @param int $keyId
+     * @param bool $refreshCache
+     */
     public function deleteKey( $keyId, $refreshCache = false )
     {
         if ( empty($keyId) )
@@ -429,26 +475,10 @@ class BOL_LanguageService
         }
     }
 
-    public function exportLanguage( $languageId )
-    {
-        $xml = new DOMDocument('1.0', 'utf-8');
-
-        $rootElement = $xml->createElement("language");
-
-        $prefixes = $this->getPrefixList();
-
-        /* @var $prefix BOL_LanguagePrefix */
-        foreach ( $prefixes as $prefix )
-        {
-            /* @var $prefixElement DOMElement */
-            $prefixElement = $xml->createElement('prefix');
-            $prefixElement->setAttribute('name', $prefix->getPrefix());
-            $rootElement->appendChild($prefixElement);
-        }
-
-        $xml->appendChild($rootElement);
-    }
-
+    /**
+     * @param int $id
+     * @return string
+     */
     public function getLanguageXML( $id )
     {
         $dto = $this->findById($id);
@@ -467,12 +497,19 @@ class BOL_LanguageService
         return $xml->saveXML();
     }
 
+    /**
+     * @param int $id
+     * @param int $languageId
+     * @return string
+     * @throws Exception
+     */
     public function getPrefixXML( $id, $languageId )
     {
-
         /* @var $prefix BOL_LanguagePrefix */
-        if ( ($prefix = BOL_LanguagePrefixDao::getInstance()->findById($id)) == null )
+        if ( ($prefix = $this->prefixDao->findById($id)) == null )
+        {
             throw new Exception("Prefix with id: {$id}, doesn't exist");
+        }
 
         $xml = new DOMDocument('1.0', 'utf-8');
 
@@ -515,17 +552,21 @@ class BOL_LanguageService
         return $XML;
     }
 
-    public function importPrefix( $xml, $refreshCache=false, $importOnlyActivePluginPrefix = false )
+    /**
+     * @param string $xml
+     * @param bool $refreshCache
+     * @param bool $importOnlyActivePluginPrefix
+     * @param bool $updateValues
+     * @return bool
+     */
+    public function importPrefix( $xml, $refreshCache=false, $importOnlyActivePluginPrefix = false, $updateValues = false )
     {
         if ( false === ( $prefixesXml = $xml->xpath("/prefix") ) )
         {
             return false;
         }
 
-        $service = $this;
-
         $languageTag = (string) $prefixesXml[0]->attributes()->language_tag;
-
         $prefixName = strval($prefixesXml[0]->attributes()->name);
 
         if ( $importOnlyActivePluginPrefix && !in_array($prefixName, $this->getExceptionPrefixes()) )
@@ -537,56 +578,61 @@ class BOL_LanguageService
                 return false;
             }
         }
-        if ( null === ( $language = $service->findByTag($languageTag) ) )
+        if ( null === ( $language = $this->findByTag($languageTag) ) )
         {
             $language = new BOL_Language();
             $language->
                 setTag($languageTag)->setLabel((string) $prefixesXml[0]->attributes()->language_label)
-                ->setOrder($service->findMaxOrder() + 1)
+                ->setOrder($this->findMaxOrder() + 1)
                 ->setStatus('inactive');
 
             $language->setRtl((string) $prefixesXml[0]->attributes()->language_rtl);
-
-            $service->save($language);
+            $this->save($language);
         }
 
-        if ( null === ( $prefix = $service->findPrefix($prefixName) ))
+        if ( null === ( $prefix = $this->findPrefix($prefixName) ))
         {
             $prefix = new BOL_LanguagePrefix();
 
             $prefix->setPrefix($prefixName)
                 ->setLabel(strval($prefixesXml[0]->attributes()->label));
 
-            $service->savePrefix($prefix);
+            $this->savePrefix($prefix);
         }
 
         $keysXml = $prefixesXml[0]->xpath('child::key');
 
         foreach ( $keysXml as $keyXml )
         {
-
-            if ( null === ($key = $service->findKey((string) $prefixesXml[0]->attributes()->name, (string) $keyXml->attributes()->name)) )
+            if ( null === ($key = $this->findKey((string) $prefixesXml[0]->attributes()->name, (string) $keyXml->attributes()->name)) )
             {
                 $key = new BOL_LanguageKey();
-                $key->setKey((string) $keyXml->attributes()->name)->
-                    setPrefixId($prefix->getId());
-                $service->saveKey($key);
+                $key->setKey((string) $keyXml->attributes()->name);
+                $key->setPrefixId($prefix->getId());
+                $this->saveKey($key);
             }
 
-            if ( null === ( $value = $service->findValue($language->getId(), $key->getId()) ) )
+            $valueDto = $this->findValue($language->getId(), $key->getId());
+
+            if( $valueDto !== null && !$updateValues )
             {
-                $value = new BOL_LanguageValue();
-                $value->setLanguageId($language->getId())->
-                    setKeyId($key->getId())->
-                    setValue((string) $keyXml->value);
-
-                $service->saveValue($value, false);
+                continue;
             }
 
-            if ( $refreshCache )
+            if ( $valueDto === null )
             {
-                $this->generateCache($language->getId());
+                $valueDto = new BOL_LanguageValue();
+                $valueDto->setLanguageId($language->getId());
+                $valueDto->setKeyId($key->getId());
             }
+
+            $valueDto->setValue((string) $keyXml->value);
+            $this->saveValue($valueDto, false);
+        }
+
+        if ( $refreshCache )
+        {
+            $this->generateCache($language->getId());
         }
     }
 
@@ -599,93 +645,55 @@ class BOL_LanguageService
         return $this->languageDao->findById($id);
     }
 
-    public function save( $dto )
+    /**
+     * @param BOL_Language $dto
+     */
+    public function save( BOL_Language $dto )
     {
         return $this->languageDao->save($dto);
     }
 
+    /**
+     * @return int
+     */
     public function findMaxOrder()
     {
         return $this->languageDao->findMaxOrder();
     }
 
     /**
-     *
-     * @return BOL_Language
+     * @return array
      */
-    public function getCurrent()
-    {
-        //printVar(self::$currentLanguage);
-        if ( self::$currentLanguage === null )
-        {
-            if ( !empty($_GET['language_id']) )
-            {
-                OW::getSession()->set('base.language_id', $_GET['language_id']);
-            }
-            else if ( !empty($_COOKIE['base_language_id']) )
-            {
-                OW::getSession()->set('base.language_id', $_COOKIE['base_language_id']);
-            }
-
-            $session_language_id = OW::getSession()->get('base.language_id');
-            //printVar($session_language_id);
-            if ( !empty($session_language_id) )
-            {
-                /* @var $languageDto BOL_Language */
-                $languageDto = $this->findById($session_language_id);
-
-                if ( $languageDto === null || $languageDto->getStatus() !== 'active' )
-                {
-                    $languageDto = $this->languageDao->getCurrent();
-                }
-            }
-            else
-            {
-                $languageDto = $this->languageDao->getCurrent();
-            }
-
-            setcookie('base_language_id', (string) $languageDto->getId(), time() + 60 * 60 * 24 * 30, "/");
-
-            $this->setCurrentLanguage($languageDto, false);
-        }
-        //printVar(self::$currentLanguage);
-        return self::$currentLanguage;
-    }
-
-    public function setCurrentLanguage( BOL_Language $language, $loadFromCache = true )
-    {
-        self::$currentLanguage = $language;
-
-        if ( $loadFromCache )
-        {
-            $this->loadFromCahce();
-        }
-    }
-
-    public function resetCurrentLanguage()
-    {
-        unset($_COOKIE['base_language_id']);
-        OW::getSession()->delete('base.language_id');
-        self::$currentLanguage = null;
-
-        $this->getCurrent();
-    }
-
     public function findAll()
     {
         return $this->languageDao->findAll();
     }
 
+    /**
+     * @param int $languageId
+     * @param int $first
+     * @param int $count
+     * @return array
+     */
     public function findMissingKeys( $languageId, $first, $count )
     {
         return $this->keyDao->findMissingKeys($languageId, $first, $count);
     }
 
+    /**
+     * @param int $languageId
+     * @return int
+     */
     public function findMissingKeyCount( $languageId )
     {
         return $this->keyDao->findMissingKeyCount($languageId);
     }
 
+    /**
+     * @param string $prefix
+     * @param string $key
+     * @return bool
+     */
     public function isKeyUnique( $prefix, $key )
     {
         $prefixId = $this->findPrefixId($prefix);
@@ -703,14 +711,20 @@ class BOL_LanguageService
         return $this->languageDao->findByTag($tag);
     }
 
+    /**
+     * @param BOL_Language $language
+     */
     public function delete( BOL_Language $language )
     {
-
         $this->valueDao->deleteValues($language->getId());
         $this->languageDao->delete($language);
         $this->generateCache($language->getId());
     }
 
+    /**
+     * @param BOL_LanguageValue $value
+     * @param bool $generateCache
+     */
     public function deleteValue( BOL_LanguageValue $value, $generateCache = true )
     {
         $this->valueDao->delete($value);
@@ -722,7 +736,6 @@ class BOL_LanguageService
     }
 
     /**
-     *
      * @param string $prefix
      * @param string $key
      * @return BOL_LanguageKey
@@ -741,6 +754,11 @@ class BOL_LanguageService
         return $this->keyDao->findById($id);
     }
 
+    /**
+     * @param int $id
+     * @param string $label
+     * @param string $tag
+     */
     public function cloneLanguage( $id, $label, $tag )
     {
 
@@ -773,18 +791,25 @@ class BOL_LanguageService
         $this->generateCache($languageClone->getId());
     }
 
+    /**
+     * @param int $prefixId
+     * @return array
+     */
     public function findAllPrefixKeys( $prefixId )
     {
         return $this->keyDao->findAllPrefixKeys($prefixId);
     }
 
+    /**
+     * @param int $prefixId
+     * @return int
+     */
     public function coundAllPrefixKeys( $prefixId )
     {
         return $this->keyDao->countAllPrefixKeys($prefixId);
     }
 
     /**
-     *
      * @param int $languageId
      * @param int $keyId
      * @return BOL_LanguageValue
@@ -794,6 +819,10 @@ class BOL_LanguageService
         return $this->valueDao->findValue($languageId, $keyId);
     }
 
+    /**
+     * @param BOL_LanguageValue $dto
+     * @param bool $generateCache
+     */
     public function saveValue( BOL_LanguageValue $dto, $generateCache = true )
     {
         $this->valueDao->save($dto);
@@ -804,12 +833,18 @@ class BOL_LanguageService
         }
     }
 
+    /**
+     * @return int
+     */
     public function countActiveLanguages()
     {
         return $this->languageDao->countActiveLanguages();
     }
 
-    public function savePrefix( $dto )
+    /**
+     * @param BOL_LanguagePrefix $dto
+     */
+    public function savePrefix( BOL_LanguagePrefix $dto )
     {
         $this->prefixDao->save($dto);
     }
@@ -823,50 +858,26 @@ class BOL_LanguageService
         return $this->prefixDao->findByPrefix($prefix);
     }
 
-    public function saveKey( $dto )
+    /**
+     * @param BOL_LanguageKey $dto
+     */
+    public function saveKey( BOL_LanguageKey $dto )
     {
         $this->keyDao->save($dto);
     }
 
-    public static function getImportDirPath()
-    {
-        return OW::getPluginManager()->getPlugin('admin')->getPluginFilesDir() . 'languages' . DS . 'import' . DS;
-    }
-
-    public static function getExportDirPath()
-    {
-        return OW::getPluginManager()->getPlugin('admin')->getPluginFilesDir() . 'languages' . DS . 'export' . DS;
-    }
-
-    public static function getTmpDirPath()
-    {
-        return OW::getPluginManager()->getPlugin('admin')->getPluginFilesDir() . 'languages' . DS . 'tmp' . DS;
-    }
-
     /**
-     * Find default language
-     *
-     * @return BOL_Language
+     * @return array
      */
-    public function findDefaultLanguage()
-    {
-        $activeLanguages = $this->findActiveList();
-
-        foreach($activeLanguages as $language)
-        {
-            if ( $language->order == 1 )
-            {
-                return $language;
-            }
-        }
-    }
-
     public function findActiveList()
     {
-
         return $this->languageDao->findActiveList();
     }
 
+    /**
+     * @param string $value
+     * @return string
+     */
     public function generateCustomKey( $value )
     {
         $value = trim($value);
@@ -880,26 +891,38 @@ class BOL_LanguageService
 
         $key = preg_replace("/(_)+/u", '_', $key);
 
-
-
         return mb_strtolower($key);
     }
 
+    /**
+     * @return int
+     */
     public function countAllKeys()
     {
         return $this->keyDao->countAll();
     }
 
+    /**
+     * @param int $id
+     * @return BOL_LanguagePrefix
+     */
     public function findPrefixById( $id )
     {
         return $this->prefixDao->findById($id);
     }
 
+    /**
+     * @return array
+     */
     public function findAllPrefixes()
     {
         return $this->prefixDao->findAll();
     }
 
+    /**
+     * @param int $id
+     * @param bool $refreshCache
+     */
     public function deletePrefix( $id, $refreshCache = false )
     {
         $keys = $this->keyDao->findAllPrefixKeys($id);
@@ -916,7 +939,68 @@ class BOL_LanguageService
         }
     }
 
-    public function importPrefixFromDir( $path, $refreshCache=true, $addLanuage=false )
+    /**
+     * Adds or updates new key and value
+     *
+     * @param int $languageId
+     * @param string $prefix
+     * @param string $key
+     * @param string $value
+     * @param bool $generateCache
+     *
+     * @return BOL_LanguageValue
+     *
+     * @throws LogicException
+     */
+    public function addOrUpdateValue( $languageId, $prefix, $key, $value, $generateCache = true )
+    {
+        $prefixDto = $this->prefixDao->findByPrefix($prefix);
+
+        if( $prefixDto == null )
+        {
+            throw new LogicException("Prefix `$prefix` not found!");
+        }
+
+        $keyDto = $this->findKey($prefix, $key);
+
+        if ( $keyDto === null )
+        {
+            $keyDto = new BOL_LanguageKey();
+
+            $keyDto->setPrefixId($prefixDto->id)
+                ->setKey($key);
+
+            $this->keyDao->save($keyDto);
+        }
+
+        $valueDto = $this->findValue($languageId, $keyDto->id);
+
+        if ( $valueDto === null )
+        {
+            $valueDto = new BOL_LanguageValue();
+        }
+
+        $valueDto->setLanguageId($languageId)
+            ->setKeyId($keyDto->getId())
+            ->setValue($value);
+
+        $this->valueDao->save($valueDto);
+
+        if ( $generateCache )
+        {
+            $this->generateCache($valueDto->languageId);
+        }
+
+        return $valueDto;
+    }
+
+    /**
+     * @param string $path
+     * @param bool $refreshCache
+     * @param bool $addLanguage
+     * @param bool $updateValues
+     */
+    public function importPrefixFromDir( $path, $refreshCache = true, $addLanguage = false, $updateValues = false )
     {
         $path = UTIL_File::removeLastDS($path) .DS;
 
@@ -939,7 +1023,7 @@ class BOL_LanguageService
                 continue;
             }
 
-            $langXmlE = simplexml_load_file($dir . DS . 'language.xml'); /* @var $xmlElement SimpleXMLElement */
+            $langXmlE = simplexml_load_file($dir . DS . 'language.xml');
 
             $l = array('label' => strval($langXmlE->attributes()->label), 'tag' => strval($langXmlE->attributes()->tag), 'path' => $dir . DS);
 
@@ -948,38 +1032,26 @@ class BOL_LanguageService
                 $langsToImport[] = $l;
             }
 
+            /* @var $xmlElement SimpleXMLElement */
             while ( false !== ( $file = readdir($dh) ) )
             {
-                if ( $file == '.' || $file == '..' )
+                if ( $file == '.' || $file == '..' || is_dir($dir.DS.$file) || $file == 'language.xml' || !file_exists($dir.DS.$file) )
+                {
                     continue;
-
-                if ( is_dir($dir.DS.$file) )
-                {
-                    //printVar("$file/");
                 }
-                else
+
+                $xmlElement = simplexml_load_file($dir.DS.$file);
+                $tmp = $xmlElement->xpath('/prefix');
+                $prefixElement = $tmp[0];
+
+                $prefixItem = array(
+                    'label' => strval($prefixElement->attributes()->label),
+                    'prefix' => strval($prefixElement->attributes()->name)
+                );
+
+                if ( !in_array($prefixItem, $prefixesToImport) )
                 {
-                    if ( $file == 'language.xml' )
-                    {
-                        continue;
-                    }
-
-                    if ( !file_exists($dir.DS.$file) )
-                    {
-                        continue;
-                    }
-
-                    $xmlElement = simplexml_load_file($dir.DS.$file); /* @var $xmlElement SimpleXMLElement */
-
-                    $arr = $xmlElement->xpath('/prefix/key');
-                    $tmp = $xmlElement->xpath('/prefix');
-
-                    $prefixElement = $tmp[0];
-
-                    $p = array('label' => strval($prefixElement->attributes()->label), 'prefix' => strval($prefixElement->attributes()->name));
-
-                    if ( !in_array($p, $prefixesToImport) )
-                        $prefixesToImport[] = $p;
+                    $prefixesToImport[] = $prefixItem;
                 }
             }
         }
@@ -992,21 +1064,19 @@ class BOL_LanguageService
         {
             if ( !$this->findByTag($langToImport['tag']) )
             {
-                if ( $addLanuage )
-                {
-                    $dto = new BOL_Language();
-                    $dto->setLabel($langToImport['label'])
-                        ->setTag($langToImport['tag'])
-                        ->setStatus( ($activateFirstLang ? 'active' : 'inactive') )
-                        ->setOrder($this->findMaxOrder() + 1);
-                    $this->save($dto);
-
-                    $activateFirstLang = false;
-                }
-                else
+                if ( !$addLanguage )
                 {
                     continue;
                 }
+
+                $dto = new BOL_Language();
+                $dto->setLabel($langToImport['label'])
+                    ->setTag($langToImport['tag'])
+                    ->setStatus( ($activateFirstLang ? 'active' : 'inactive') )
+                    ->setOrder($this->findMaxOrder() + 1);
+                $this->save($dto);
+
+                $activateFirstLang = false;
             }
 
             foreach ( $prefixesToImport as $prefixToImport )
@@ -1019,17 +1089,17 @@ class BOL_LanguageService
                 }
 
                 $xml = simplexml_load_file($filePath);
-                $this->importPrefix($xml, false);
+                $this->importPrefix($xml, false, false, $updateValues);
             }
+        }
 
-            if ( $refreshCache )
-            {
-                $this->generateCacheForAllActiveLanguages();
-            }
+        if ( $refreshCache )
+        {
+            $this->generateCacheForAllActiveLanguages();
         }
     }
 
-    public function importPrefixFromZip( $path, $key, $refreshCache=true, $addLanuage=false )
+    public function importPrefixFromZip($path, $key, $refreshCache = true, $addLanguage = false, $updateValues = false )
     {
         $importDir = $this->getImportDirPath() . $key . DS;
         @mkdir($importDir);
@@ -1053,9 +1123,55 @@ class BOL_LanguageService
             $langsDir = $importDir . 'langs' . DS;
         }
 
-        $this->importPrefixFromDir($langsDir, $refreshCache, $addLanuage);
+        $this->importPrefixFromDir($langsDir, $refreshCache, $addLanguage, $updateValues);
 
         UTIL_File::removeDir($importDir);
+    }
+
+
+    /**
+     *
+     * @return BOL_Language
+     */
+    public function getCurrent()
+    {
+        if ( $this->currentLanguage === null )
+        {
+            $this->currentLanguage = $this->languageDao->getCurrent();
+        }
+
+        return $this->currentLanguage;
+    }
+
+    /**
+     * @param BOL_Language $language
+     * @param bool $loadFromCache     *
+     */
+    public function setCurrentLanguage( BOL_Language $language, $loadFromCache = true )
+    {
+        $this->currentLanguage = $language;
+
+        if ( $loadFromCache )
+        {
+            $this->loadFromCache();
+        }
+    }
+
+    /* ---------------------- TODO  replace logic with temp dirs -------------------- */
+
+    public static function getImportDirPath()
+    {
+        return OW::getPluginManager()->getPlugin('admin')->getPluginFilesDir() . 'languages' . DS . 'import' . DS;
+    }
+
+    public static function getExportDirPath()
+    {
+        return OW::getPluginManager()->getPlugin('admin')->getPluginFilesDir() . 'languages' . DS . 'export' . DS;
+    }
+
+    public static function getTmpDirPath()
+    {
+        return OW::getPluginManager()->getPlugin('admin')->getPluginFilesDir() . 'languages' . DS . 'tmp' . DS;
     }
 
     private function cleanImportDir( $dir )
@@ -1077,8 +1193,53 @@ class BOL_LanguageService
         }
     }
 
+    /* ---------------------- \TODO  replace logic with temp dirs -------------------- */
+
+    /**
+     * @return array
+     */
     public function getExceptionPrefixes()
     {
         return $this->exceptionPrefixes;
+    }
+
+
+    protected function loadFromCache()
+    {
+        $allLanguages = $this->getLanguages();
+
+        // exit if no active languages
+        if ( empty($allLanguages) ) {
+            return;
+        }
+
+        $filename = $this->getLanguageCacheDir() . $this->getCacheFilename($this->getCurrent()->getId());
+        $language = array();
+
+        // include cache file
+        include $filename;
+
+        $this->language = $language;
+    }
+
+    protected function getCacheFilename( $languageId )
+    {
+        return "lang_{$languageId}.php";
+    }
+
+    protected function getLanguageCacheDir()
+    {
+        return OW::getPluginManager()->getPlugin('base')->getPluginFilesDir();
+    }
+
+    /**
+     * @param $prefix string
+     * @return bool
+     */
+    protected function prefixExists( $prefix )
+    {
+        $prefixDto = $this->prefixDao->findPrefixId($prefix);
+
+        return ( $prefixDto !== null);
     }
 }

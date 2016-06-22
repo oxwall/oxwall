@@ -95,6 +95,7 @@ class OW_Application
         $this->urlHostRedirect();
         OW_Auth::getInstance()->setAuthenticator(new OW_SessionAuthenticator());
         $this->userAutoLogin();
+        $this->detectLanguage();
 
         // setting default time zone
         date_default_timezone_set(OW::getConfig()->getValue('base', 'site_timezone'));
@@ -125,6 +126,7 @@ class OW_Application
         $router->setDefaultRoute(new OW_DefaultRoute());
 
         OW::getPluginManager()->initPlugins();
+
         $event = new OW_Event(OW_EventManager::ON_PLUGINS_INIT);
         OW::getEventManager()->trigger($event);
 
@@ -764,5 +766,41 @@ class OW_Application
     protected function getMasterPage()
     {
         return new OW_MasterPage();
+    }
+
+    protected function detectLanguage()
+    {
+        $languageId = 0;
+
+        if ( !empty($_GET['language_id']) )
+        {
+            $languageId = intval($_GET['language_id']);
+        }
+        else if ( !empty($_COOKIE[BOL_LanguageService::LANG_ID_VAR_NAME]) )
+        {
+            $languageId = intval($_COOKIE[BOL_LanguageService::LANG_ID_VAR_NAME]);
+        }
+
+        if( $languageId > 0 )
+        {
+            OW::getSession()->set(BOL_LanguageService::LANG_ID_VAR_NAME, $languageId);
+        }
+
+        $session_language_id = OW::getSession()->get(BOL_LanguageService::LANG_ID_VAR_NAME);
+        $languageService = BOL_LanguageService::getInstance();
+
+        if( $session_language_id  )
+        {
+            $dto = $languageService->findById($session_language_id);
+
+            if( $dto !== null && $dto->getStatus() == "active" )
+            {
+                $languageService->setCurrentLanguage($dto);
+            }
+        }
+
+        $languageService->getCurrent();
+
+        setcookie(BOL_LanguageService::LANG_ID_VAR_NAME, (string) $dto->getId(), time() + 60 * 60 * 24 * 30, "/");
     }
 }
