@@ -96,9 +96,8 @@ class BASE_CLASS_EventHandler
         $eventManager->bind("base.user_list.get_displayed_fields", array($this, 'onGetUserListFields'));
         $eventManager->bind("base.user_list.get_questions", array($this, 'onGetUserListQuestions'));
         $eventManager->bind("base.user_list.get_field_data", array($this, 'onGetUserListFieldValue'));
-        $eventManager->bind("base.collect_seo_meta_data", array($this, 'onCollectMetaData'));
         $eventManager->bind("base.sitemap.get_urls", array($this, 'onSitemapGetUrls'));
-
+        $eventManager->bind("base.provide_page_meta_info", array($this, 'onProvideMetaInfoForPage'));
     }
 
     public function init()
@@ -133,7 +132,7 @@ class BASE_CLASS_EventHandler
         $eventManager->bind(OW_EventManager::ON_FINALIZE, array($this, 'onFinalizeCheckIfSiteFullyInstalled'));
         $eventManager->bind(OW_EventManager::ON_AFTER_ROUTE, array($this, 'onPluginsInitCheckUserStatus'));
         $eventManager->bind(BASE_CMP_QuickLinksWidget::EVENT_NAME, array($this, 'onCollectQuickLinks'));
-
+        $eventManager->bind("base.collect_seo_meta_data", array($this, 'onCollectMetaData'));
         $eventManager->bind('class.get_instance', array($this, 'onGetClassInstance'));
 
         if ( defined('OW_ADS_XP_TOP') )
@@ -1973,5 +1972,56 @@ class BASE_CLASS_EventHandler
                 "vars" => array( "site_name" )
             )
         );
+    }
+
+    public function onProvideMetaInfoForPage( OW_Event $event )
+    {
+        $document = OW::getDocument();
+        $language = OW::getLanguage();
+
+        if( !$document || !$document instanceof OW_HtmlDocument )
+        {
+            return;
+        }
+
+        $params = $event->getParams();
+        $vars = empty($params["vars"]) ? array() : $params["vars"];
+
+        if( !empty($params["title"]) )
+        {
+            $parts = explode($params["title"]);
+            $text = trim($language->text($parts[0], $parts[1], $vars));
+
+            if( $text )
+            {
+                $document->setTitle($text);
+            }
+        }
+
+        if( !empty($params["description"]) )
+        {
+            $parts = explode($params["description"]);
+            $text = trim($language->text($parts[0], $parts[1], $vars));
+
+            if( $text )
+            {
+                $document->setDescription($text);
+            }
+        }
+
+        if( !empty($params["keywords"]) )
+        {
+            $parts = explode($params["keywords"]);
+            $text = trim($language->text($parts[0], $parts[1], $vars));
+
+            if( $text )
+            {
+                $document->setKeywords($text);
+            }
+        }
+
+
+
+
     }
 }
