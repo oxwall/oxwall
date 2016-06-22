@@ -53,6 +53,25 @@ class BASE_MCTRL_Join extends BASE_CTRL_Join
 
             BASE_MCLASS_JoinFormUtlis::addOnloadJs($form->getName());
         }
+
+        // set meta info
+        $language = OW::getLanguage();
+
+        if( BOL_SeoService::getInstance()->isMetaDisabledForEntity("base.base_pages", "join") )
+        {
+            OW::getDocument()->addMetaInfo("robots", "noindex");
+        }
+        else
+        {
+            $this->setPageTitle($language->text("base", "meta_title_join"));
+            $this->setPageDescription($language->text("base", "meta_desc_join"));
+            $keywords = trim($language->text("base", "meta_keywords_join"));
+
+            if( $keywords )
+            {
+                $this->setKeywords($keywords);
+            }
+        }
     }
 
     protected function presentationToCssClass()

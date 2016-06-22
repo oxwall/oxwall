@@ -82,6 +82,25 @@ class BASE_CTRL_User extends OW_ActionController
                 $this->redirect();
             }
         }
+
+        // set meta info
+        $language = OW::getLanguage();
+
+        if( BOL_SeoService::getInstance()->isMetaDisabledForEntity("base.base_pages", "forgot_pass") )
+        {
+            OW::getDocument()->addMetaInfo("robots", "noindex");
+        }
+        else
+        {
+            $this->setPageTitle($language->text("base", "meta_title_forgot_pass"));
+            $this->setPageDescription($language->text("base", "meta_desc_forgot_pass"));
+            $keywords = trim($language->text("base", "meta_keywords_forgot_pass"));
+
+            if( $keywords )
+            {
+                $this->setKeywords($keywords);
+            }
+        }
     }
 
     public function resetPasswordRequest()
@@ -245,6 +264,25 @@ class BASE_CTRL_User extends OW_ActionController
         }
 
         $this->setDocumentKey('base_sign_in');
+
+        // set meta info
+        $language = OW::getLanguage();
+
+        if( BOL_SeoService::getInstance()->isMetaDisabledForEntity("base.base_pages", "sign_in") )
+        {
+            OW::getDocument()->addMetaInfo("robots", "noindex");
+        }
+        else
+        {
+            $this->setPageTitle($language->text("base", "meta_title_sign_in"));
+            $this->setPageDescription($language->text("base", "meta_desc_sign_in"));
+            $keywords = trim($language->text("base", "meta_keywords_sign_in"));
+
+            if( $keywords )
+            {
+                $this->setKeywords($keywords);
+            }
+        }
     }
 
     public function ajaxSignIn()

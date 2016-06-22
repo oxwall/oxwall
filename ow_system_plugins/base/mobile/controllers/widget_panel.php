@@ -147,5 +147,24 @@ class BASE_MCTRL_WidgetPanel extends OW_MobileActionController
             'entityId' => null,
             'entity' => 'site'
         ));
+
+        // set meta info
+        $language = OW::getLanguage();
+
+        if( BOL_SeoService::getInstance()->isMetaDisabledForEntity("base.base_pages", "index") )
+        {
+            OW::getDocument()->addMetaInfo("robots", "noindex");
+        }
+        else
+        {
+            $this->setPageTitle($language->text("base", "meta_title_index"));
+            $this->setPageDescription($language->text("base", "meta_desc_index"));
+            $keywords = trim($language->text("base", "meta_keywords_index"));
+
+            if( $keywords )
+            {
+                $this->setKeywords($keywords);
+            }
+        }
     }
 }

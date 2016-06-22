@@ -30,6 +30,11 @@
 class ADMIN_CTRL_Seo extends ADMIN_CTRL_Abstract
 {
     /**
+     * @var BASE_CMP_ContentMenu
+     */
+    protected $menu;
+
+    /**
      * Constructor
      */
     public function __construct()
@@ -44,7 +49,8 @@ class ADMIN_CTRL_Seo extends ADMIN_CTRL_Abstract
         $this->setPageHeadingIconClass('ow_ic_edit');
 
         // register components
-        $this->addComponent('menu', $this->getMenu());
+        $this->menu = $this->getMenu();
+        $this->addComponent('menu', $this->menu);
     }
 
     /**
@@ -52,6 +58,47 @@ class ADMIN_CTRL_Seo extends ADMIN_CTRL_Abstract
      */
     public function index()
     {
+        $this->menu->getElement("seo_page")->setActive(true);
+
+        $event = new BASE_CLASS_EventCollector("base.collect_seo_meta_data");
+        OW::getEventManager()->trigger($event);
+        $metaList = $event->getData();
+
+        usort($metaList, function( array $item1, array $item2 ){
+            return $item1["sectionLabel"] > $item2["sectionLabel"] ? 1 : -1;
+        });
+
+        $sections = array();
+        $formData = array();
+
+        if( empty($_GET["section"]) ){
+            $currentSection = current($metaList)["sectionKey"];
+        }
+        else
+        {
+            $currentSection = trim($_GET["section"]);
+        }
+
+        foreach ( $metaList as $item ){
+            $sections[$item["sectionKey"]] = $item["sectionLabel"];
+
+            if( $item["sectionKey"] == $currentSection ){
+                $formData[] = $item;
+            }
+        }
+
+        $this->assign("sections", $sections);
+        $this->assign("currentSection", $currentSection);
+        $this->assign("currentUrl", OW::getRouter()->urlForRoute("admin_settings_seo")."?section=#sec#");
+
+        $form = new ADMIN_CLASS_SeoMetaForm($formData);
+        $this->addForm($form);
+        $this->assign("entities", $form->getEntities());
+
+        if( OW::getRequest()->isPost() ){
+            $form->processData($_POST);
+            $this->redirect();
+        }
     }
 
     /**

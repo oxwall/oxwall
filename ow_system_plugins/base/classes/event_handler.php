@@ -96,7 +96,9 @@ class BASE_CLASS_EventHandler
         $eventManager->bind("base.user_list.get_displayed_fields", array($this, 'onGetUserListFields'));
         $eventManager->bind("base.user_list.get_questions", array($this, 'onGetUserListQuestions'));
         $eventManager->bind("base.user_list.get_field_data", array($this, 'onGetUserListFieldValue'));
+        $eventManager->bind("base.collect_seo_meta_data", array($this, 'onCollectMetaData'));
         $eventManager->bind("base.sitemap.get_urls", array($this, 'onSitemapGetUrls'));
+
     }
 
     public function init()
@@ -1886,5 +1888,90 @@ class BASE_CLASS_EventHandler
                 BOL_AvatarService::getInstance()->trackAvatarChangeActivity($params['userId'], $params['avatarId']);
             }
         }
+    }
+
+    public function onCollectMetaData( BASE_CLASS_EventCollector $e )
+    {
+        $language = OW::getLanguage();
+
+        $e->add(
+            array(
+                "sectionLabel" => $language->text("base", "seo_meta_section_users"),
+                "sectionKey" => "base.users",
+                "entityKey" => "userLists",
+                "entityLabel" => $language->text("base", "seo_meta_user_list_label"),
+                "iconClass" => "",
+                "langs" => array(
+                    "title" => "base+meta_title_user_list",
+                    "desc" => "base+meta_desc_user_list",
+                    "keywords" => "base+meta_keywords_user_list"
+                ),
+                "vars" => array( "user_list", "site_name" )
+            )
+        );
+
+        $e->add(
+            array(
+                "sectionLabel" => $language->text("base", "seo_meta_section_base_pages"),
+                "sectionKey" => "base.base_pages",
+                "entityKey" => "index",
+                "entityLabel" => $language->text("base", "seo_meta_index_label"),
+                "iconClass" => "ow_ic_house",
+                "langs" => array(
+                    "title" => "base+meta_title_index",
+                    "desc" => "base+meta_desc_index",
+                    "keywords" => "base+meta_keywords_index"
+                ),
+                "vars" => array( "site_name" )
+            )
+        );
+
+        $e->add(
+            array(
+                "sectionLabel" => $language->text("base", "seo_meta_section_base_pages"),
+                "sectionKey" => "base.base_pages",
+                "entityKey" => "join",
+                "entityLabel" => $language->text("base", "seo_meta_join_label"),
+                "iconClass" => "ow_ic_add",
+                "langs" => array(
+                    "title" => "base+meta_title_join",
+                    "desc" => "base+meta_desc_join",
+                    "keywords" => "base+meta_keywords_join"
+                ),
+                "vars" => array( "site_name" )
+            )
+        );
+
+        $e->add(
+            array(
+                "sectionLabel" => $language->text("base", "seo_meta_section_base_pages"),
+                "sectionKey" => "base.base_pages",
+                "entityKey" => "sign_in",
+                "entityLabel" => $language->text("base", "seo_meta_sign_in_label"),
+                "iconClass" => "ow_ic_key",
+                "langs" => array(
+                    "title" => "base+meta_title_sign_in",
+                    "desc" => "base+meta_desc_sign_in",
+                    "keywords" => "base+meta_keywords_sign_in"
+                ),
+                "vars" => array( "site_name" )
+            )
+        );
+
+        $e->add(
+            array(
+                "sectionLabel" => $language->text("base", "seo_meta_section_base_pages"),
+                "sectionKey" => "base.base_pages",
+                "entityKey" => "forgot_pass",
+                "entityLabel" => $language->text("base", "seo_meta_forgot_pass_label"),
+                "iconClass" => "ow_ic_key",
+                "langs" => array(
+                    "title" => "base+meta_title_forgot_pass",
+                    "desc" => "base+meta_desc_forgot_pass",
+                    "keywords" => "base+meta_keywords_forgot_pass"
+                ),
+                "vars" => array( "site_name" )
+            )
+        );
     }
 }
