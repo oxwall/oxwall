@@ -801,6 +801,6 @@ class OW_Application
 
         $languageService->getCurrent();
 
-        setcookie(BOL_LanguageService::LANG_ID_VAR_NAME, (string) $dto->getId(), time() + 60 * 60 * 24 * 30, "/");
+        setcookie(BOL_LanguageService::LANG_ID_VAR_NAME, strval($languageService->getCurrent()->getId()), time() + 60 * 60 * 24 * 30, "/");
     }
 }
