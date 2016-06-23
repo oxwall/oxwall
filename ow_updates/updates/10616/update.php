@@ -52,9 +52,14 @@ foreach ( $simpleQueryList as $query )
 $config = OW::getConfig();
 
 // add configs
+if ( !$config->configExists('base', 'seo_sitemap_entitites_max_count') )
+{
+    $config->addConfig('base', 'seo_sitemap_entitites_max_count', 200000);
+}
+
 if ( !$config->configExists('base', 'seo_sitemap_entitites_limit') )
 {
-    $config->addConfig('base', 'seo_sitemap_entitites_limit', 200000);
+    $config->addConfig('base', 'seo_sitemap_entitites_limit', 500);
 }
 
 if ( !$config->configExists('base', 'seo_sitemap_build_in_progress') )
