@@ -72,17 +72,17 @@ class BOL_SitemapDao extends OW_BaseDao
     }
 
     /**
-     * Find url list
+     * Find url ids list
      *
      * @param integer $count
      * @return array
      */
-    public function findUrlList( $count )
+    public function findUrlIdsList( $count )
     {
         $example = new OW_Example();
         $example->setOrder('id')
             ->setLimitClause(0, $count);
 
-        return $this->findListByExample($example);
+        return $this->findIdListByExample($example);
     }
 }

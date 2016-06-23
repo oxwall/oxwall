@@ -172,102 +172,78 @@ class BASE_CLASS_EventHandler
     {
         $params = $event->getParams();
 
-        $urls = [];
-        $urlsCount = 0;
-        $globalLimit = (int)$params['limit'];
-        $localLimit = 500;
-        $offset = 0;
-        $isViewProfileAllowed = OW::getUser()->isAuthorized('base', 'view_profile');
-
-        do
+        switch ( $params['entity'] )
         {
-            $isDataEmpty = true;
+            // users
+            case 'users' :
+                if ( OW::getUser()->isAuthorized('base', 'view_profile') )
+                {
+                    $offset = (int) $params['offset'];
+                    $limit  = (int) $params['limit'];
 
-            if ( $urlsCount + $localLimit > $globalLimit )
-            {
-                $localLimit = $globalLimit < $localLimit
-                    ? $globalLimit
-                    : $globalLimit - $urlsCount;
-            }
+                    $users = BOL_UserService::getInstance()->findList($offset, $limit, true);
+                    $urls = array();
 
-            switch ( $params['entity'] )
-            {
-                // base pages
-                case 'base_pages' :
-                    // list of basic pages
-                    $urls = array(
-                        OW_URL_HOME,
-                        OW::getRouter()->urlForRoute('base.mobile_version'),
-                        OW::getRouter()->urlForRoute('base_join'),
-                        OW::getRouter()->urlForRoute('static_sign_in'),
-                        OW::getRouter()->urlForRoute('base_forgot_password')
-                    );
-
-                    // get all public static docs
-                    $staticDocs = BOL_NavigationService::getInstance()->findAllStaticDocuments();
-
-                    foreach( $staticDocs as $doc )
+                    // collect users urls
+                    foreach ( $users as $user )
                     {
-                        $menuItem = BOL_NavigationService::getInstance()->findMenuItemByDocumentKey($doc->key);
-
-                        // is the page public
-                        if ( $menuItem && in_array($menuItem->visibleFor,
-                                array(BOL_NavigationService::VISIBLE_FOR_ALL, BOL_NavigationService::VISIBLE_FOR_GUEST)) )
-                        {
-                            $urls[] = OW_URL_HOME . $doc->uri;
-                        }
+                        $urls[] = BOL_UserService::getInstance()->getUserUrl($user->id);
                     }
-                    break;
 
-                // users
-                case 'users' :
-                    if ( $isViewProfileAllowed )
+                    $event->setData($urls);
+                }
+                break;
+
+            // base pages
+            case 'base_pages' :
+                // list of basic pages
+                $urls = array(
+                    OW_URL_HOME,
+                    OW::getRouter()->urlForRoute('base.mobile_version'),
+                    OW::getRouter()->urlForRoute('base_join'),
+                    OW::getRouter()->urlForRoute('static_sign_in'),
+                    OW::getRouter()->urlForRoute('base_forgot_password')
+                );
+
+                // get all public static docs
+                $staticDocs = BOL_NavigationService::getInstance()->findAllStaticDocuments();
+
+                foreach( $staticDocs as $doc )
+                {
+                    $menuItem = BOL_NavigationService::getInstance()->findMenuItemByDocumentKey($doc->key);
+
+                    // is the page public
+                    if ( $menuItem && in_array($menuItem->visibleFor,
+                            array(BOL_NavigationService::VISIBLE_FOR_ALL, BOL_NavigationService::VISIBLE_FOR_GUEST)) )
                     {
-                        $users = BOL_UserService::getInstance()->findList($offset, $params['limit'], true);
-
-                        if ( $users )
-                        {
-                            foreach ( $users as $user )
-                            {
-                                $urls[] = BOL_UserService::getInstance()->getUserUrl($user->id);
-                            }
-
-                            $isDataEmpty = count($users) != $localLimit;
-                        }
+                        $urls[] = OW_URL_HOME . $doc->uri;
                     }
-                    break;
+                }
 
-                // base user pages
-                case 'user_list' :
-                    if ( $isViewProfileAllowed )
-                    {
-                        $urls = array(
-                            OW::getRouter()->urlForRoute('users'),
-                            OW::getRouter()->urlForRoute('base_user_lists', array(
-                                'list' => 'latest'
-                            )),
-                            OW::getRouter()->urlForRoute('base_user_lists', array(
-                                'list' => 'featured'
-                            )),
-                            OW::getRouter()->urlForRoute('base_user_lists', array(
-                                'list' => 'online'
-                            )),
-                            OW::getRouter()->urlForRoute('base_user_lists', array(
-                                'list' => 'search'
-                            ))
-                        );
-                    }
-                    break;
-            }
+                $event->setData($urls);
+                break;
 
-            $urlsCount = count($urls);
-            $offset += $localLimit;
-        }
-        while ($urlsCount < $globalLimit && !$isDataEmpty);
-
-        if ( $urls )
-        {
-            $event->setData($urls);
+            // base user pages
+            case 'user_list' :
+                if ( OW::getUser()->isAuthorized('base', 'view_profile') )
+                {
+                    $event->setData(array(
+                        OW::getRouter()->urlForRoute('users'),
+                        OW::getRouter()->urlForRoute('base_user_lists', array(
+                            'list' => 'latest'
+                        )),
+                        OW::getRouter()->urlForRoute('base_user_lists', array(
+                            'list' => 'featured'
+                        )),
+                        OW::getRouter()->urlForRoute('base_user_lists', array(
+                            'list' => 'online'
+                        )),
+                        OW::getRouter()->urlForRoute('base_user_lists', array(
+                            'list' => 'search'
+                        ))
+                    ));
+                }
+                break;
         }
     }
 
