@@ -78,7 +78,7 @@ class ADMIN_CLASS_SeoMetaForm extends Form
             $this->addElement($title);
 
             $desc = new Textarea("seo_desc_{$item["entityKey"]}");
-            list($prefix, $key) = explode("+",$item["langs"]["desc"]);
+            list($prefix, $key) = explode("+",$item["langs"]["description"]);
             $valDto = $langService->getValue($langId, $prefix, $key);
             $desc->setValue($valDto ? $valDto->getValue() : $prefix ."+". $key);
             $desc->setLabel($language->text("base", "seo_meta_form_element_desc_label"));

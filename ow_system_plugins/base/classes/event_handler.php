@@ -1902,7 +1902,7 @@ class BASE_CLASS_EventHandler
                 "iconClass" => "",
                 "langs" => array(
                     "title" => "base+meta_title_user_list",
-                    "desc" => "base+meta_desc_user_list",
+                    "description" => "base+meta_desc_user_list",
                     "keywords" => "base+meta_keywords_user_list"
                 ),
                 "vars" => array( "user_list", "site_name" )
@@ -1918,7 +1918,7 @@ class BASE_CLASS_EventHandler
                 "iconClass" => "ow_ic_house",
                 "langs" => array(
                     "title" => "base+meta_title_index",
-                    "desc" => "base+meta_desc_index",
+                    "description" => "base+meta_desc_index",
                     "keywords" => "base+meta_keywords_index"
                 ),
                 "vars" => array( "site_name" )
@@ -1934,7 +1934,7 @@ class BASE_CLASS_EventHandler
                 "iconClass" => "ow_ic_add",
                 "langs" => array(
                     "title" => "base+meta_title_join",
-                    "desc" => "base+meta_desc_join",
+                    "description" => "base+meta_desc_join",
                     "keywords" => "base+meta_keywords_join"
                 ),
                 "vars" => array( "site_name" )
@@ -1950,7 +1950,7 @@ class BASE_CLASS_EventHandler
                 "iconClass" => "ow_ic_key",
                 "langs" => array(
                     "title" => "base+meta_title_sign_in",
-                    "desc" => "base+meta_desc_sign_in",
+                    "description" => "base+meta_desc_sign_in",
                     "keywords" => "base+meta_keywords_sign_in"
                 ),
                 "vars" => array( "site_name" )
@@ -1966,7 +1966,7 @@ class BASE_CLASS_EventHandler
                 "iconClass" => "ow_ic_key",
                 "langs" => array(
                     "title" => "base+meta_title_forgot_pass",
-                    "desc" => "base+meta_desc_forgot_pass",
+                    "description" => "base+meta_desc_forgot_pass",
                     "keywords" => "base+meta_keywords_forgot_pass"
                 ),
                 "vars" => array( "site_name" )
@@ -1986,10 +1986,10 @@ class BASE_CLASS_EventHandler
 
         $params = $event->getParams();
         $vars = empty($params["vars"]) ? array() : $params["vars"];
-
+        
         if( !empty($params["title"]) )
         {
-            $parts = explode($params["title"]);
+            $parts = explode("+", $params["title"]);
             $text = trim($language->text($parts[0], $parts[1], $vars));
 
             if( $text )
@@ -2000,7 +2000,7 @@ class BASE_CLASS_EventHandler
 
         if( !empty($params["description"]) )
         {
-            $parts = explode($params["description"]);
+            $parts = explode("+", $params["description"]);
             $text = trim($language->text($parts[0], $parts[1], $vars));
 
             if( $text )
@@ -2011,7 +2011,7 @@ class BASE_CLASS_EventHandler
 
         if( !empty($params["keywords"]) )
         {
-            $parts = explode($params["keywords"]);
+            $parts = explode("+", $params["keywords"]);
             $text = trim($language->text($parts[0], $parts[1], $vars));
 
             if( $text )
