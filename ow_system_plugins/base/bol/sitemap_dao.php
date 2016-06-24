@@ -72,17 +72,37 @@ class BOL_SitemapDao extends OW_BaseDao
     }
 
     /**
-     * Find url ids list
+     * Truncate table
+     *
+     * @return void
+     */
+    public function truncate()
+    {
+        $this->dbo->query('TRUNCATE TABLE  `' . $this->getTableName() . '`');
+    }
+
+    /**
+     * Find url list
      *
      * @param integer $count
      * @return array
      */
-    public function findUrlIdsList( $count )
+    public function findUrlList( $count )
     {
-        $example = new OW_Example();
-        $example->setOrder('id')
-            ->setLimitClause(0, $count);
+        $query = "
+			SELECT
+			    `id`,
+			    `url`,
+			    `entityType`
+			FROM
+			    `{$this->getTableName()}`
+			ORDER BY
+			    `id`
+			LIMIT
+			    ?";
 
-        return $this->findIdListByExample($example);
+        return $this->dbo->queryForList($query, array(
+            $count
+        ));
     }
 }

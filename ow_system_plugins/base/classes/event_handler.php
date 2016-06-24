@@ -181,16 +181,13 @@ class BASE_CLASS_EventHandler
                     $offset = (int) $params['offset'];
                     $limit  = (int) $params['limit'];
 
-                    $users = BOL_UserService::getInstance()->findList($offset, $limit, true);
-                    $urls = array();
+                    $users = BOL_UserService::getInstance()->findLatestUserIdsList($offset, $limit);
+                    $urls = BOL_UserService::getInstance()->getUserUrlsForList($users);
 
-                    // collect users urls
-                    foreach ( $users as $user )
+                    if ( $urls )
                     {
-                        $urls[] = BOL_UserService::getInstance()->getUserUrl($user->id);
+                        $event->setData($urls);
                     }
-
-                    $event->setData($urls);
                 }
                 break;
 
