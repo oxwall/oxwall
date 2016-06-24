@@ -171,12 +171,32 @@ class BASE_CLASS_EventHandler
     {
         $params = $event->getParams();
 
-        switch( $params['entity'] )
+        switch ( $params['entity'] )
         {
+            // users
+            case 'users' :
+                if ( OW::getUser()->isAuthorized('base', 'view_profile') )
+                {
+                    $offset = (int) $params['offset'];
+                    $limit  = (int) $params['limit'];
+
+                    $users = BOL_UserService::getInstance()->findList($offset, $limit, true);
+                    $urls = array();
+
+                    // collect users urls
+                    foreach ( $users as $user )
+                    {
+                        $urls[] = BOL_UserService::getInstance()->getUserUrl($user->id);
+                    }
+
+                    $event->setData($urls);
+                }
+                break;
+
             // base pages
             case 'base_pages' :
                 // list of basic pages
-                $basePages = array(
+                $urls = array(
                     OW_URL_HOME,
                     OW::getRouter()->urlForRoute('base.mobile_version'),
                     OW::getRouter()->urlForRoute('base_join'),
@@ -187,7 +207,7 @@ class BASE_CLASS_EventHandler
                 // get all public static docs
                 $staticDocs = BOL_NavigationService::getInstance()->findAllStaticDocuments();
 
-                foreach($staticDocs as $doc)
+                foreach( $staticDocs as $doc )
                 {
                     $menuItem = BOL_NavigationService::getInstance()->findMenuItemByDocumentKey($doc->key);
 
@@ -195,21 +215,8 @@ class BASE_CLASS_EventHandler
                     if ( $menuItem && in_array($menuItem->visibleFor,
                             array(BOL_NavigationService::VISIBLE_FOR_ALL, BOL_NavigationService::VISIBLE_FOR_GUEST)) )
                     {
-                        $basePages[] = OW_URL_HOME . $doc->uri;
+                        $urls[] = OW_URL_HOME . $doc->uri;
                     }
-                }
-
-                $event->setData($basePages);
-                break;
-
-            // users
-            case 'users' :
-                $urls   = [];
-                $users  = BOL_UserService::getInstance()->findList(0, $params['limit'], true);
-
-                foreach ( $users as $user )
-                {
-                    $urls[] = BOL_UserService::getInstance()->getUserUrl($user->id);
                 }
 
                 $event->setData($urls);
@@ -217,21 +224,24 @@ class BASE_CLASS_EventHandler
 
             // base user pages
             case 'user_list' :
-                $event->setData(array(
-                    OW::getRouter()->urlForRoute('users'),
-                    OW::getRouter()->urlForRoute('base_user_lists', array(
-                        'list' => 'latest'
-                    )),
-                    OW::getRouter()->urlForRoute('base_user_lists', array(
-                        'list' => 'featured'
-                    )),
-                    OW::getRouter()->urlForRoute('base_user_lists', array(
+                if ( OW::getUser()->isAuthorized('base', 'view_profile') )
+                {
+                    $event->setData(array(
+                        OW::getRouter()->urlForRoute('users'),
+                        OW::getRouter()->urlForRoute('base_user_lists', array(
+                            'list' => 'latest'
+                        )),
+                        OW::getRouter()->urlForRoute('base_user_lists', array(
+                            'list' => 'featured'
+                        )),
+                        OW::getRouter()->urlForRoute('base_user_lists', array(
                             'list' => 'online'
-                    )),
-                    OW::getRouter()->urlForRoute('base_user_lists', array(
-                        'list' => 'search'
-                    ))
-                ));
+                        )),
+                        OW::getRouter()->urlForRoute('base_user_lists', array(
+                            'list' => 'search'
+                        ))
+                    ));
+                }
                 break;
         }
     }

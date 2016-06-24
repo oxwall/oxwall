@@ -35,7 +35,7 @@ class BOL_SeoService
     /**
      * Sitemap max urls per file
      */
-    const SITEMAP_MAX_URLS_IN_FILE = 50000;
+    const SITEMAP_MAX_URLS_IN_FILE = 15000;
 
     /**
      * Sitemap item update weekly
@@ -50,7 +50,7 @@ class BOL_SeoService
     /**
      * Sitemap file name
      */
-    const SITEMAP_FILE_NAME = 'sitemap%s.xml.gz';
+    const SITEMAP_FILE_NAME = 'sitemap%s.xml';
 
     /**
      * Sitemap dir name
@@ -130,7 +130,8 @@ class BOL_SeoService
 
         if ( !file_exists($path) )
         {
-            mkdir($path, 0777);
+            mkdir($path);
+            @chmod($path, 0777);
         }
 
         return $path;
@@ -154,13 +155,14 @@ class BOL_SeoService
      */
     public function generateSitemap()
     {
-        $urlsFetched = false;
+        $isAllEntitiesFetched = true;
 
         // don't collect urls while sitemap is building
         if ( !(int) OW::getConfig()->getValue('base', 'seo_sitemap_build_in_progress') )
         {
             // get sitemap entities
             $entities = $this->getSitemapEntities();
+            $maxCount = (int) OW::getConfig()->getValue('base', 'seo_sitemap_entitites_max_count');
             $limit = (int) OW::getConfig()->getValue('base', 'seo_sitemap_entitites_limit');
 
             if ( $entities )
@@ -183,22 +185,39 @@ class BOL_SeoService
                             continue;
                         }
 
+                        // correct the limit value
+                        if ( $item['urls_count'] + $limit > $maxCount )
+                        {
+                            $limit = $maxCount - $item['urls_count'];
+                        }
+
                         // get urls
                         $event = new OW_Event('base.sitemap.get_urls', array(
                             'entity' => $item['name'],
-                            'limit' => $limit
+                            'limit' => $limit,
+                            'offset' => $item['urls_count']
                         ));
 
                         OW::getEventManager()->trigger($event);
-                        $this->setSitemapEntityDataFetched($entityType, $item['name'], true);
-                        $urlsFetched = true;
 
-                        if ( $event->getData() )
+                        $newUrlsCount = count($event->getData());
+                        $totalUrlsCount = (int) $item['urls_count'] + $newUrlsCount;
+                        $isAllEntitiesFetched = false;
+
+                        !$newUrlsCount || $newUrlsCount != $limit || $totalUrlsCount >= $maxCount
+                            ? $this->updateSitemapEntityItem($entityType, $item['name'], true, $totalUrlsCount)
+                            : $this->updateSitemapEntityItem($entityType, $item['name'], false, $totalUrlsCount);
+
+                        // add new urls
+                        if ( $newUrlsCount )
                         {
                             // process received urls
                             foreach ( $event->getData() as $url )
                             {
-                                $this->addSiteMapUrl($url, $entityType);
+                                if ( $this->isSitemapUrlUnique($url) )
+                                {
+                                    $this->addSiteMapUrl($url, $entityType);
+                                }
                             }
                         }
 
@@ -210,9 +229,8 @@ class BOL_SeoService
         }
 
         // build sitemap
-        if ( !$urlsFetched )
+        if ( $isAllEntitiesFetched )
         {
-            OW::getConfig()->saveConfig('base', 'seo_sitemap_build_in_progress', 1);
             $this->buildSitemap();
         }
     }
@@ -224,28 +242,33 @@ class BOL_SeoService
      */
     protected function buildSitemap()
     {
-        $urls = $this->sitemapDao->findUrlList(self::SITEMAP_MAX_URLS_IN_FILE);
-        $sitemapBuild = (int) OW::getConfig()->getValue('base', 'seo_sitemap_last_build') + 1;
+        OW::getConfig()->saveConfig('base', 'seo_sitemap_build_in_progress', 1);
+
+        $urls = $this->sitemapDao->findUrlIdsList(self::SITEMAP_MAX_URLS_IN_FILE);
+        $newSitemapBuild = (int) OW::getConfig()->getValue('base', 'seo_sitemap_last_build') + 1;
         $entities = $this->getSitemapEntities();
         $sitemapIndex = (int) OW::getConfig()->getValue('base', 'seo_sitemap_index');
-        $sitemapPath = $this->getBaseSitemapPath() . $sitemapBuild . '/';
+        $newSitemapPath = $this->getBaseSitemapPath() . $newSitemapBuild . '/';
 
-        if ( !file_exists($sitemapPath) )
+        if ( !file_exists($newSitemapPath) )
         {
-            mkdir($sitemapPath, 0777);
+            mkdir($newSitemapPath);
+            @chmod($newSitemapPath, 0777);
         }
 
+        // generate list of sitemaps
         if ( $urls )
         {
             // generate parts of sitemap
             $processedUrls   = [];
-            $defaultLanguage = BOL_LanguageService::getInstance()->findDefaultLanguage();
+            $defaultLanguage = BOL_LanguageService::getInstance()->findDefault();
             $activeLanguages = BOL_LanguageService::getInstance()->findActiveList();
             $activeLanguagesCount = count($activeLanguages);
 
             // process urls
-            foreach( $urls as $urlDto )
+            foreach( $urls as $urlId )
             {
+                $urlDto = $this->sitemapDao->findById($urlId);
                 $languageList = array();
 
                 if ( $activeLanguagesCount > 1 )
@@ -288,8 +311,7 @@ class BOL_SeoService
                 $view->assign('urls', $processedUrls);
 
                 // save data in a file
-                file_put_contents($sitemapPath .
-                        sprintf(self::SITEMAP_FILE_NAME, $sitemapIndex + 1), gzencode($view->render(), 6));
+                file_put_contents($newSitemapPath . sprintf(self::SITEMAP_FILE_NAME, $sitemapIndex + 1), $view->render());
 
                 OW::getConfig()->saveConfig('base', 'seo_sitemap_index', $sitemapIndex + 1);
             }
@@ -297,11 +319,10 @@ class BOL_SeoService
             return;
         }
 
-        // generate a main sitemap file
-        $sitemapParts = array();
-
+        // generate a main sitemap index file
         if ( $sitemapIndex )
         {
+            $sitemapParts = array();
             $lastModDate = date('c', time());
 
             for ( $i = 1; $i <= $sitemapIndex; $i++ )
@@ -311,37 +332,38 @@ class BOL_SeoService
                     'lastmod' => $lastModDate
                 );
             }
-        }
 
-        $view = new OW_View();
-        $view->setTemplate(OW::getPluginManager()->getPlugin('base')->getViewDir() . 'sitemap.xml');
-        $view->assign('urls', $sitemapParts);
+            $view = new OW_View();
+            $view->setTemplate(OW::getPluginManager()->getPlugin('base')->getViewDir() . 'sitemap.xml');
+            $view->assign('urls', $sitemapParts);
 
-        // save data in a file
-        file_put_contents($sitemapPath .
-                sprintf(self::SITEMAP_FILE_NAME, ''), gzencode($view->render(), 6));
+            // save data in a file
+            file_put_contents($newSitemapPath . sprintf(self::SITEMAP_FILE_NAME, ''), $view->render());
 
-        // update configs
-        OW::getConfig()->saveConfig('base', 'seo_sitemap_index', 0);
-        OW::getConfig()->saveConfig('base', 'seo_sitemap_last_start', time());
-        OW::getConfig()->saveConfig('base', 'seo_sitemap_last_build', $sitemapBuild);
-        OW::getConfig()->saveConfig('base', 'seo_sitemap_build_in_progress', 0);
-
-        // remove a previous build
-        $previousBuldPath = $this->getBaseSitemapPath() . ($sitemapBuild - 1) . '/';
-        if ( file_exists($previousBuldPath) )
-        {
-            UTIL_File::removeDir($previousBuldPath);
+            // update configs
+            OW::getConfig()->saveConfig('base', 'seo_sitemap_index', 0);
+            OW::getConfig()->saveConfig('base', 'seo_sitemap_last_start', time());
+            OW::getConfig()->saveConfig('base', 'seo_sitemap_last_build', $newSitemapBuild);
         }
 
         // clear entities
-        foreach ($entities as $entityType => $entityData)
+        foreach ( $entities as $entityType => $entityData )
         {
-            foreach ($entityData['items'] as $item)
+            foreach ( $entityData['items'] as $item )
             {
-                $this->setSitemapEntityDataFetched($entityType, $item['name'], false);
+                $this->updateSitemapEntityItem($entityType, $item['name'], false, 0);
             }
         }
+
+        // remove a previous build
+        $previousBuildPath = $this->getBaseSitemapPath() . ($newSitemapBuild - 1) . '/';
+
+        if ( file_exists($previousBuildPath) )
+        {
+            UTIL_File::removeDir($previousBuildPath);
+        }
+
+        OW::getConfig()->saveConfig('base', 'seo_sitemap_build_in_progress', 0);
     }
 
     /**
@@ -412,7 +434,8 @@ class BOL_SeoService
             foreach ($items as $item) {
                 $processedItems[] = array(
                     'name' => $item,
-                    'data_fetched' => false
+                    'data_fetched' => false,
+                    'urls_count' => 0,
                 );
             }
 
@@ -572,6 +595,20 @@ class BOL_SeoService
     }
 
     /**
+     * Is sitemap url unique
+     *
+     * @param $url
+     * @return bool
+     */
+    protected function isSitemapUrlUnique($url)
+    {
+        $example = new OW_Example();
+        $example->andFieldEqual('url', $url);
+
+        return !$this->sitemapDao->countByExample($example);
+    }
+
+    /**
      * Add sitemap url
      *
      * @param string $url
@@ -589,25 +626,27 @@ class BOL_SeoService
     }
 
     /**
-     * Set sitemap entity data fetched
+     * Update sitemap entity item
      *
      * @param string $entityType
      * @param string $itemName
-     * @param boolean $dataFetched
+     * @param boolean $isDataFetched
+     * @param integer $urlsCount
      * @return void
      */
-    protected function setSitemapEntityDataFetched($entityType, $itemName, $dataFetched)
+    protected function updateSitemapEntityItem($entityType, $itemName, $isDataFetched, $urlsCount = 0)
     {
         $entities = $this->getSitemapEntities();
 
         if ( array_key_exists($entityType, $entities) )
         {
-            foreach( $entities[$entityType]['items'] as &$item )
+            foreach ( $entities[$entityType]['items'] as &$item )
             {
 
-                if ($itemName == $item['name'])
+                if ( $itemName == $item['name'] )
                 {
-                    $item['data_fetched'] = $dataFetched;
+                    $item['data_fetched'] = $isDataFetched;
+                    $item['urls_count'] = $urlsCount;
 
                     break;
                 }
