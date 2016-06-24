@@ -1996,7 +1996,7 @@ class BASE_CLASS_EventHandler
 
         $params = $event->getParams();
         $vars = empty($params["vars"]) ? array() : $params["vars"];
-        
+
         if( !empty($params["title"]) )
         {
             $parts = explode("+", $params["title"]);
@@ -2016,6 +2016,7 @@ class BASE_CLASS_EventHandler
             if( $text )
             {
                 $document->setDescription($text);
+                //UTIL_String::truncate(strip_tags($event->getDescription()), 200, '...')
             }
         }
 
