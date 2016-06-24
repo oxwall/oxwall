@@ -52,6 +52,11 @@ foreach ( $simpleQueryList as $query )
 $config = OW::getConfig();
 
 // add configs
+if ( !$config->configExists('base', 'seo_sitemap_max_urls_in_file') )
+{
+    $config->addConfig('base', 'seo_sitemap_max_urls_in_file', 10000);
+}
+
 if ( !$config->configExists('base', 'seo_sitemap_entitites_max_count') )
 {
     $config->addConfig('base', 'seo_sitemap_entitites_max_count', 200000);
