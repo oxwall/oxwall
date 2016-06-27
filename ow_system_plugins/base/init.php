@@ -113,6 +113,7 @@ $router->addRoute(new OW_Route('base_user_privacy_no_permission', 'profile/:user
 $router->addRoute(new OW_Route('base-api-server', 'api-server', 'BASE_CTRL_ApiServer', 'request'));
 $router->addRoute(new OW_Route('base.robots_txt', 'robots.txt', 'BASE_CTRL_Base', 'robotsTxt'));
 $router->addRoute(new OW_Route('base.sitemap', 'sitemap.xml', 'BASE_CTRL_Base', 'sitemap'));
+$router->addRoute(new OW_Route('base.sitemap_generate', 'generate-sitemap', 'BASE_CTRL_Base', 'generateSitemap'));
 
 $router->addRoute(new OW_Route('base.complete_account_type', 'fill/account_type', 'BASE_CTRL_CompleteProfile', 'fillAccountType'));
 $router->addRoute(new OW_Route('base.complete_required_questions', 'fill/profile_questions', 'BASE_CTRL_CompleteProfile', 'fillRequiredQuestions'));
