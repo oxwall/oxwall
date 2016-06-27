@@ -44,12 +44,35 @@ class ADMIN_CTRL_Base extends ADMIN_CTRL_Abstract
      */
     public function generateSitemap()
     {
-        $currentBuild = (int) OW::getConfig()->getValue('base', 'seo_sitemap_last_build');
+        $isEntityEnabled = false;
+        $entities = BOL_SeoService::getInstance()->getSitemapEntities();
 
-        while($currentBuild == (int) OW::getConfig()->getValue('base', 'seo_sitemap_last_build'))
+        // search enabled entity
+        foreach( $entities as $entity )
         {
-            BOL_SeoService::getInstance()->generateSitemap();
+            if ( $entity['enabled'] )
+            {
+                $isEntityEnabled = true;
+
+                break;
+            }
         }
+
+        // is there any active entity?
+        if ( $isEntityEnabled )
+        {
+            $currentBuild = (int) OW::getConfig()->getValue('base', 'seo_sitemap_last_build');
+
+            // call the function several times
+            while($currentBuild == (int) OW::getConfig()->getValue('base', 'seo_sitemap_last_build'))
+            {
+                BOL_SeoService::getInstance()->generateSitemap();
+            }
+
+            exit;
+        }
+
+        BOL_SeoService::getInstance()->generateSitemap();
 
         exit;
     }
