@@ -43,6 +43,8 @@ OW::getAutoloader()->addClass('ADMIN_UserListParams', $plugin->getCmpDir() . 'us
 
 $router = OW::getRouter();
 
+$router->addRoute(new OW_Route('base.sitemap_generate', 'admin/generate-sitemap', 'ADMIN_CTRL_Base', 'generateSitemap'));
+
 $router->addRoute(new OW_Route('admin_permissions_moderators', 'admin/users/moderators', 'ADMIN_CTRL_Permissions', 'moderators'));
 $router->addRoute(new OW_Route('admin_user_roles', 'admin/users/roles', 'ADMIN_CTRL_Users', 'roles'));
 $router->addRoute(new OW_Route('admin_users_browse_membership_owners', 'admin/users/role/:roleId', 'ADMIN_CTRL_Users', 'role'));

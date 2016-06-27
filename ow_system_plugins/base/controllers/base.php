@@ -64,26 +64,6 @@ class BASE_CTRL_Base extends OW_ActionController
     }
 
     /**
-     * Generate sitemap
-     */
-    public function generateSitemap()
-    {
-        if ( OW::getUser()->isAdmin() )
-        {
-            $currentBuild = (int) OW::getConfig()->getValue('base', 'seo_sitemap_last_build');
-
-            while($currentBuild == (int) OW::getConfig()->getValue('base', 'seo_sitemap_last_build'))
-            {
-                BOL_SeoService::getInstance()->generateSitemap();
-            }
-
-            exit;
-        }
-
-        throw new Redirect404Exception();
-    }
-
-    /**
      * Sitemap
      */
     public function sitemap()
