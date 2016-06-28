@@ -82,6 +82,17 @@ class BASE_CTRL_User extends OW_ActionController
                 $this->redirect();
             }
         }
+
+        // set meta info
+        $params = array(
+            "sectionKey" => "base.base_pages",
+            "entityKey" => "forgotPass",
+            "title" => "base+meta_title_forgot_pass",
+            "description" => "base+meta_desc_forgot_pass",
+            "keywords" => "base+meta_keywords_forgot_pass"
+        );
+
+        OW::getEventManager()->trigger(new OW_Event("base.provide_page_meta_info", $params));
     }
 
     public function resetPasswordRequest()
@@ -245,6 +256,17 @@ class BASE_CTRL_User extends OW_ActionController
         }
 
         $this->setDocumentKey('base_sign_in');
+
+        // set meta info
+        $params = array(
+            "sectionKey" => "base.base_pages",
+            "entityKey" => "sign_in",
+            "title" => "base+meta_title_sign_in",
+            "description" => "base+meta_desc_sign_in",
+            "keywords" => "base+meta_keywords_sign_in"
+        );
+
+        OW::getEventManager()->trigger(new OW_Event("base.provide_page_meta_info", $params));
     }
 
     public function ajaxSignIn()

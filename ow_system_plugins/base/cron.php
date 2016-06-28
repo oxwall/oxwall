@@ -50,9 +50,31 @@ class BASE_Cron extends OW_Cron
         $this->addJob('dropLogFile', 60 * 24);
         $this->addJob('clearMySqlSearchIndex', 60 * 24);
         $this->addJob('expireSearchResultList', 1);
+        $this->addJob('generateSitemap', 1);
 
 
         $this->addJob('checkRealCron');
+    }
+
+    /**
+     * Generate sitemap
+     */
+    public function generateSitemap()
+    {
+        $service = BOL_SeoService::getInstance();
+        $inProgress = (int) OW::getConfig()->getValue('base', 'seo_sitemap_in_progress');
+        $inProgressTime = (int) OW::getConfig()->getValue('base', 'seo_sitemap_in_progress_time');
+
+        // is it possible to start sitemap generating?
+        if ( (!$inProgress || time() - $inProgressTime >= 3600) && $service->isSitemapReadyForNextBuild() )
+        {
+            OW::getConfig()->saveConfig('base', 'seo_sitemap_in_progress', 1);
+            OW::getConfig()->saveConfig('base', 'seo_sitemap_in_progress_time', time());
+
+            $service->generateSitemap();
+
+            OW::getConfig()->saveConfig('base', 'seo_sitemap_in_progress', 0);
+        }
     }
 
     public function run()

@@ -53,6 +53,17 @@ class BASE_MCTRL_Join extends BASE_CTRL_Join
 
             BASE_MCLASS_JoinFormUtlis::addOnloadJs($form->getName());
         }
+
+        // set meta info
+        $params = array(
+            "sectionKey" => "base.base_pages",
+            "entityKey" => "join",
+            "title" => "base+meta_title_join",
+            "description" => "base+meta_desc_join",
+            "keywords" => "base+meta_keywords_join"
+        );
+
+        OW::getEventManager()->trigger(new OW_Event("base.provide_page_meta_info", $params));
     }
 
     protected function presentationToCssClass()

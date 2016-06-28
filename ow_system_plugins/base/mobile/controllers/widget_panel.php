@@ -147,5 +147,16 @@ class BASE_MCTRL_WidgetPanel extends OW_MobileActionController
             'entityId' => null,
             'entity' => 'site'
         ));
+
+        // set meta info
+        $params = array(
+            "sectionKey" => "base.base_pages",
+            "entityKey" => "index",
+            "title" => "base+meta_title_index",
+            "description" => "base+meta_desc_index",
+            "keywords" => "base+meta_keywords_index"
+        );
+
+        OW::getEventManager()->trigger(new OW_Event("base.provide_page_meta_info", $params));
     }
 }

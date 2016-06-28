@@ -317,6 +317,10 @@ final class BOL_UserService
         return $returnArray;
     }
 
+    /**
+     * @param string $username
+     * @return BOL_User
+     */
     public function findByUsername( $username )
     {
         return $this->userDao->findByUsername($username);
@@ -375,6 +379,18 @@ final class BOL_UserService
     public function findLoginCookieByUserId( $userId )
     {
         return $this->loginCookieDao->findByUserId($userId);
+    }
+
+    /**
+     * Find latest user ids list
+     *
+     * @param integer $offset
+     * @param integer $count
+     * @return array
+     */
+    public function findLatestUserIdsList( $offset, $count )
+    {
+        return $this->userDao->findLatestUserIdsList($offset, $count);
     }
 
     public function findList( $first, $count, $isAdmin = false )

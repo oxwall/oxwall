@@ -137,6 +137,17 @@ class BASE_CTRL_Join extends OW_ActionController
         }
 
         $this->setDocumentKey('base_user_join');
+
+        // set meta info
+        $params = array(
+            "sectionKey" => "base.base_pages",
+            "entityKey" => "join",
+            "title" => "base+meta_title_join",
+            "description" => "base+meta_desc_join",
+            "keywords" => "base+meta_keywords_join"
+        );
+
+        OW::getEventManager()->trigger(new OW_Event("base.provide_page_meta_info", $params));
     }
 
     public function joinFormSubmit( $params )

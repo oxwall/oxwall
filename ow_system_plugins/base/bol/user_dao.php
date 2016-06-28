@@ -208,6 +208,22 @@ class BOL_UserDao extends OW_BaseDao
         return $this->findObjectByExample($ex);
     }
 
+    /**
+     * Find latest user ids list
+     *
+     * @param integer $offset
+     * @param integer $count
+     * @return array
+     */
+    public function findLatestUserIdsList( $offset, $count )
+    {
+        $example = new OW_Example();
+        $example->setOrder('joinStamp DESC')
+            ->setLimitClause($offset, $count);
+
+        return $this->findIdListByExample($example);
+    }
+
     public function findList( $first, $count, $admin = false )
     {
         if ( $admin === true )

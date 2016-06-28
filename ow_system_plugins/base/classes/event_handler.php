@@ -96,6 +96,8 @@ class BASE_CLASS_EventHandler
         $eventManager->bind("base.user_list.get_displayed_fields", array($this, 'onGetUserListFields'));
         $eventManager->bind("base.user_list.get_questions", array($this, 'onGetUserListQuestions'));
         $eventManager->bind("base.user_list.get_field_data", array($this, 'onGetUserListFieldValue'));
+        $eventManager->bind("base.sitemap.get_urls", array($this, 'onSitemapGetUrls'));
+        $eventManager->bind("base.provide_page_meta_info", array($this, 'onProvideMetaInfoForPage'));
     }
 
     public function init()
@@ -130,7 +132,7 @@ class BASE_CLASS_EventHandler
         $eventManager->bind(OW_EventManager::ON_FINALIZE, array($this, 'onFinalizeCheckIfSiteFullyInstalled'));
         $eventManager->bind(OW_EventManager::ON_AFTER_ROUTE, array($this, 'onPluginsInitCheckUserStatus'));
         $eventManager->bind(BASE_CMP_QuickLinksWidget::EVENT_NAME, array($this, 'onCollectQuickLinks'));
-
+        $eventManager->bind("base.collect_seo_meta_data", array($this, 'onCollectMetaData'));
         $eventManager->bind('class.get_instance', array($this, 'onGetClassInstance'));
 
         if ( defined('OW_ADS_XP_TOP') )
@@ -156,6 +158,88 @@ class BASE_CLASS_EventHandler
                     BASE_CMP_QuickLinksWidget::DATA_KEY_COUNT_URL => OW::getRouter()->urlForRoute('users-blocked')
                 ));
             }
+        }
+    }
+
+    /**
+     * Get sitemap urls
+     *
+     * @param OW_Event $event
+     * @return void
+     */
+    public function onSitemapGetUrls( OW_Event $event )
+    {
+        $params = $event->getParams();
+
+        switch ( $params['entity'] )
+        {
+            // users
+            case 'users' :
+                if ( OW::getUser()->isAuthorized('base', 'view_profile') )
+                {
+                    $offset = (int) $params['offset'];
+                    $limit  = (int) $params['limit'];
+
+                    $users = BOL_UserService::getInstance()->findLatestUserIdsList($offset, $limit);
+                    $urls = BOL_UserService::getInstance()->getUserUrlsForList($users);
+
+                    if ( $urls )
+                    {
+                        $event->setData($urls);
+                    }
+                }
+                break;
+
+            // base pages
+            case 'base_pages' :
+                // list of basic pages
+                $urls = array(
+                    OW_URL_HOME,
+                    OW::getRouter()->urlForRoute('base.mobile_version'),
+                    OW::getRouter()->urlForRoute('base_join'),
+                    OW::getRouter()->urlForRoute('static_sign_in'),
+                    OW::getRouter()->urlForRoute('base_forgot_password')
+                );
+
+                // get all public static docs
+                $staticDocs = BOL_NavigationService::getInstance()->findAllStaticDocuments();
+
+                foreach( $staticDocs as $doc )
+                {
+                    $menuItem = BOL_NavigationService::getInstance()->findMenuItemByDocumentKey($doc->key);
+
+                    // is the page public
+                    if ( $menuItem && in_array($menuItem->visibleFor,
+                            array(BOL_NavigationService::VISIBLE_FOR_ALL, BOL_NavigationService::VISIBLE_FOR_GUEST)) )
+                    {
+                        $urls[] = OW_URL_HOME . $doc->uri;
+                    }
+                }
+
+                $event->setData($urls);
+                break;
+
+            // base user pages
+            case 'user_list' :
+                if ( OW::getUser()->isAuthorized('base', 'view_profile') )
+                {
+                    $event->setData(array(
+                        OW::getRouter()->urlForRoute('users'),
+                        OW::getRouter()->urlForRoute('base_user_lists', array(
+                            'list' => 'latest'
+                        )),
+                        OW::getRouter()->urlForRoute('base_user_lists', array(
+                            'list' => 'featured'
+                        )),
+                        OW::getRouter()->urlForRoute('base_user_lists', array(
+                            'list' => 'online'
+                        )),
+                        OW::getRouter()->urlForRoute('base_user_lists', array(
+                            'list' => 'search'
+                        ))
+                    ));
+                }
+                break;
         }
     }
 
@@ -1810,5 +1894,189 @@ class BASE_CLASS_EventHandler
                 BOL_AvatarService::getInstance()->trackAvatarChangeActivity($params['userId'], $params['avatarId']);
             }
         }
+    }
+
+    public function onCollectMetaData( BASE_CLASS_EventCollector $e )
+    {
+        $language = OW::getLanguage();
+
+        $e->add(
+            array(
+                "sectionLabel" => $language->text("base", "seo_meta_section_users"),
+                "sectionKey" => "base.users",
+                "entityKey" => "userLists",
+                "entityLabel" => $language->text("base", "seo_meta_user_list_label"),
+                "iconClass" => "",
+                "langs" => array(
+                    "title" => "base+meta_title_user_list",
+                    "description" => "base+meta_desc_user_list",
+                    "keywords" => "base+meta_keywords_user_list"
+                ),
+                "vars" => array( "user_list", "site_name" )
+            )
+        );
+
+        $e->add(
+            array(
+                "sectionLabel" => $language->text("base", "seo_meta_section_base_pages"),
+                "sectionKey" => "base.base_pages",
+                "entityKey" => "index",
+                "entityLabel" => $language->text("base", "seo_meta_index_label"),
+                "iconClass" => "ow_ic_house",
+                "langs" => array(
+                    "title" => "base+meta_title_index",
+                    "description" => "base+meta_desc_index",
+                    "keywords" => "base+meta_keywords_index"
+                ),
+                "vars" => array( "site_name" )
+            )
+        );
+
+        $e->add(
+            array(
+                "sectionLabel" => $language->text("base", "seo_meta_section_base_pages"),
+                "sectionKey" => "base.base_pages",
+                "entityKey" => "join",
+                "entityLabel" => $language->text("base", "seo_meta_join_label"),
+                "iconClass" => "ow_ic_add",
+                "langs" => array(
+                    "title" => "base+meta_title_join",
+                    "description" => "base+meta_desc_join",
+                    "keywords" => "base+meta_keywords_join"
+                ),
+                "vars" => array( "site_name" )
+            )
+        );
+
+        $e->add(
+            array(
+                "sectionLabel" => $language->text("base", "seo_meta_section_base_pages"),
+                "sectionKey" => "base.base_pages",
+                "entityKey" => "sign_in",
+                "entityLabel" => $language->text("base", "seo_meta_sign_in_label"),
+                "iconClass" => "ow_ic_key",
+                "langs" => array(
+                    "title" => "base+meta_title_sign_in",
+                    "description" => "base+meta_desc_sign_in",
+                    "keywords" => "base+meta_keywords_sign_in"
+                ),
+                "vars" => array( "site_name" )
+            )
+        );
+
+        $e->add(
+            array(
+                "sectionLabel" => $language->text("base", "seo_meta_section_base_pages"),
+                "sectionKey" => "base.base_pages",
+                "entityKey" => "forgotPass",
+                "entityLabel" => $language->text("base", "seo_meta_forgot_pass_label"),
+                "iconClass" => "ow_ic_key",
+                "langs" => array(
+                    "title" => "base+meta_title_forgot_pass",
+                    "description" => "base+meta_desc_forgot_pass",
+                    "keywords" => "base+meta_keywords_forgot_pass"
+                ),
+                "vars" => array( "site_name" )
+            )
+        );
+
+        $e->add(
+            array(
+                "sectionLabel" => $language->text("base", "seo_meta_section_users"),
+                "sectionKey" => "base.users",
+                "entityKey" => "userPage",
+                "entityLabel" => $language->text("base", "seo_meta_user_page_label"),
+                "iconClass" => "ow_ic_user",
+                "langs" => array(
+                    "title" => "base+meta_title_user_page",
+                    "description" => "base+meta_desc_user_page",
+                    "keywords" => "base+meta_keywords_user_page"
+                ),
+                "vars" => array( "site_name" )
+            )
+        );
+
+        $e->add(
+            array(
+                "sectionLabel" => $language->text("base", "seo_meta_section_users"),
+                "sectionKey" => "base.users",
+                "entityKey" => "userSearch",
+                "entityLabel" => $language->text("base", "seo_meta_user_search_label"),
+                "iconClass" => "ow_ic_lens",
+                "langs" => array(
+                    "title" => "base+meta_title_user_search",
+                    "description" => "base+meta_desc_user_search",
+                    "keywords" => "base+meta_keywords_user_search"
+                ),
+                "vars" => array( "site_name" )
+            )
+        );
+    }
+
+    public function onProvideMetaInfoForPage( OW_Event $event )
+    {
+        $document = OW::getDocument();
+        $language = OW::getLanguage();
+
+        if( !$document || !$document instanceof OW_HtmlDocument )
+        {
+            return;
+        }
+
+        $params = $event->getParams();
+
+        if( BOL_SeoService::getInstance()->isMetaDisabledForEntity($params["sectionKey"], $params["entityKey"]) )
+        {
+            $document->addMetaInfo("robots", "noindex");
+            return;
+        }
+
+        $vars = empty($params["vars"]) ? array() : $params["vars"];
+
+        if( !empty($params["title"]) )
+        {
+            $parts = explode("+", $params["title"]);
+            $text = $this->processMetaText($language->text($parts[0], $parts[1], $vars), BOL_SeoService::META_TITLE_MAX_LENGTH);
+
+            if( $text )
+            {
+                $document->setTitle($text);
+            }
+        }
+
+        if( !empty($params["description"]) )
+        {
+            $parts = explode("+", $params["description"]);
+            $text = $this->processMetaText($language->text($parts[0], $parts[1], $vars), BOL_SeoService::META_DESC_MAX_LENGTH);
+
+            if( $text )
+            {
+                $document->setDescription($text);
+                //
+            }
+        }
+
+        if( !empty($params["keywords"]) )
+        {
+            $parts = explode("+", $params["keywords"]);
+            $text = $this->processMetaText($language->text($parts[0], $parts[1], $vars));
+
+            if( $text )
+            {
+                $document->setKeywords($text);
+            }
+        }
+    }
+
+    protected function processMetaText( $text, $maxLength = null )
+    {
+        $text = trim(strip_tags($text));
+
+        if( mb_strlen($text) > $maxLength )
+        {
+            $text = UTIL_String::truncate($text, $maxLength - 3, '...');
+        }
+
+        return $text;
     }
 }

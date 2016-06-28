@@ -40,6 +40,14 @@ class Updater
     }
 
     /**
+     * @return UPDATE_SeoService
+     */
+    public static function getSeoService()
+    {
+        return UPDATE_SeoService::getInstance();
+    }
+
+    /**
      * @return UPDATE_LanguageService
      */
     public static function getLanguageService()

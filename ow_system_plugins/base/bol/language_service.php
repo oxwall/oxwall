@@ -891,8 +891,6 @@ class BOL_LanguageService
 
         $key = preg_replace("/(_)+/u", '_', $key);
 
-
-
         return mb_strtolower($key);
     }
 
@@ -1130,6 +1128,14 @@ class BOL_LanguageService
         UTIL_File::removeDir($importDir);
     }
 
+    /**
+     *
+     * @return BOL_Language
+     */
+    public function findDefault()
+    {
+        return $this->languageDao->getCurrent();
+    }
 
     /**
      *

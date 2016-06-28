@@ -48,7 +48,7 @@ class OW_Language
         $this->eventManager = OW::getEventManager();
     }    
 
-    public function text( $prefix, $key, array $vars = null )
+    public function text( $prefix, $key, array $vars = null, $defaultValue = null )
     {
         if ( empty($prefix) || empty($key) )
         {
@@ -62,12 +62,12 @@ class OW_Language
         }
         catch ( Exception $e )
         {
-            return $prefix . '+' . $key;
+            return $defaultValue === null ? $prefix . '+' . $key : $defaultValue;
         }
 
         if ( $text === null )
         {
-            return $prefix . '+' . $key;
+            return $defaultValue === null ? $prefix . '+' . $key : $defaultValue;
         }
 
         return $text;
