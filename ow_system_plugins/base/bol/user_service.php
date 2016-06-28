@@ -381,6 +381,18 @@ final class BOL_UserService
         return $this->loginCookieDao->findByUserId($userId);
     }
 
+    /**
+     * Find latest user ids list
+     *
+     * @param integer $offset
+     * @param integer $count
+     * @return array
+     */
+    public function findLatestUserIdsList( $offset, $count )
+    {
+        return $this->userDao->findLatestUserIdsList($offset, $count);
+    }
+
     public function findList( $first, $count, $isAdmin = false )
     {
         return $this->userDao->findList($first, $count, $isAdmin);
