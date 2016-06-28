@@ -84,23 +84,15 @@ class BASE_CTRL_User extends OW_ActionController
         }
 
         // set meta info
-        $language = OW::getLanguage();
+        $params = array(
+            "sectionKey" => "base.base_pages",
+            "entityKey" => "forgotPass",
+            "title" => "base+meta_title_forgot_pass",
+            "description" => "base+meta_desc_forgot_pass",
+            "keywords" => "base+meta_keywords_forgot_pass"
+        );
 
-        if( BOL_SeoService::getInstance()->isMetaDisabledForEntity("base.base_pages", "forgot_pass") )
-        {
-            OW::getDocument()->addMetaInfo("robots", "noindex");
-        }
-        else
-        {
-            $this->setPageTitle($language->text("base", "meta_title_forgot_pass"));
-            $this->setPageDescription($language->text("base", "meta_desc_forgot_pass"));
-            $keywords = trim($language->text("base", "meta_keywords_forgot_pass"));
-
-            if( $keywords )
-            {
-                $this->setKeywords($keywords);
-            }
-        }
+        OW::getEventManager()->trigger(new OW_Event("base.provide_page_meta_info", $params));
     }
 
     public function resetPasswordRequest()

@@ -1971,7 +1971,7 @@ class BASE_CLASS_EventHandler
             array(
                 "sectionLabel" => $language->text("base", "seo_meta_section_base_pages"),
                 "sectionKey" => "base.base_pages",
-                "entityKey" => "forgot_pass",
+                "entityKey" => "forgotPass",
                 "entityLabel" => $language->text("base", "seo_meta_forgot_pass_label"),
                 "iconClass" => "ow_ic_key",
                 "langs" => array(
