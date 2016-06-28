@@ -1075,11 +1075,6 @@ class PasswordField extends TextField
     {
         parent::renderInput($params);
 
-        if ( $this->getHasInvitation() )
-        {
-            $this->addAttribute('value', $this->getInvitation());
-        }
-
         return UTIL_HtmlTag::generateTag('input', $this->attributes);
     }
 }

@@ -63,14 +63,8 @@ final class BASE_MCLASS_JoinFormUtlis
 
                 if ( $question['name'] == 'password' )
                 {
-                    $label = '';
-
-                    if ( !empty($element) && $element->getName() == 'password' )
-                    {
-                        $label = $element->getLabel();
-                    }
-
                     $element = $form->getElement('repeatPassword');
+                    $label = $element->getLabel();
 
                     if( empty($element) )
                     {
@@ -105,6 +99,14 @@ final class BASE_MCLASS_JoinFormUtlis
                 $label .= '<span class="owm_required_star">*<span>';
                 
                 $element->setLabel($label);
+
+                if ( $question['name'] == 'password' )
+                {
+                    $element = $form->getElement('repeatPassword');
+                    $label = $element->getLabel();
+                    $label .= '<span class="owm_required_star">*<span>';
+                    $element->setLabel($label);
+                }
             }
         }
     }

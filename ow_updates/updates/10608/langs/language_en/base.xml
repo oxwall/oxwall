@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<prefix name="base" label="Base" language_tag="en" language_label="English">
+    <key name="component_sign_in_password_invitation">
+        <value>Password</value>
+    </key>
+</prefix>
