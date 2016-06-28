@@ -330,6 +330,21 @@ class BASE_CTRL_ComponentPanel extends OW_ActionController
         $this->setTemplate($controllersTemplate);
 
         $this->setDocumentKey('base_profile_page');
+
+        $vars = BOL_SeoService::getInstance()->getUserMetaInfo($userDto);
+
+        // set meta info
+        $params = array(
+            "sectionKey" => "base.users",
+            "entityKey" => "userPage",
+            "title" => "base+meta_title_user_page",
+            "description" => "base+meta_desc_user_page",
+            "keywords" => "base+meta_keywords_user_page",
+            "vars" => $vars,
+            "image" => BOL_AvatarService::getInstance()->getAvatarUrl($userDto->getId(), 2)
+        );
+
+        OW::getEventManager()->trigger(new OW_Event("base.provide_page_meta_info", $params));
     }
 
     public function privacyMyProfileNoPermission( $params )
@@ -466,23 +481,15 @@ class BASE_CTRL_ComponentPanel extends OW_ActionController
         $this->addComponent('componentPanel', $componentPanel);
 
         // set meta info
-        $language = OW::getLanguage();
+        $params = array(
+            "sectionKey" => "base.base_pages",
+            "entityKey" => "index",
+            "title" => "base+meta_title_index",
+            "description" => "base+meta_desc_index",
+            "keywords" => "base+meta_keywords_index"
+        );
 
-        if( BOL_SeoService::getInstance()->isMetaDisabledForEntity("base.base_pages", "index") )
-        {
-            OW::getDocument()->addMetaInfo("robots", "noindex");
-        }
-        else
-        {
-            $this->setPageTitle($language->text("base", "meta_title_index"));
-            $this->setPageDescription($language->text("base", "meta_desc_index"));
-            $keywords = trim($language->text("base", "meta_keywords_index"));
-
-            if( $keywords )
-            {
-                $this->setKeywords($keywords);
-            }
-        }
+        OW::getEventManager()->trigger(new OW_Event("base.provide_page_meta_info", $params));
     }
 
     public function ajaxSaveAboutMe()

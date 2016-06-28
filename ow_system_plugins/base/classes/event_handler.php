@@ -1982,6 +1982,38 @@ class BASE_CLASS_EventHandler
                 "vars" => array( "site_name" )
             )
         );
+
+        $e->add(
+            array(
+                "sectionLabel" => $language->text("base", "seo_meta_section_users"),
+                "sectionKey" => "base.users",
+                "entityKey" => "userPage",
+                "entityLabel" => $language->text("base", "seo_meta_user_page_label"),
+                "iconClass" => "ow_ic_user",
+                "langs" => array(
+                    "title" => "base+meta_title_user_page",
+                    "description" => "base+meta_desc_user_page",
+                    "keywords" => "base+meta_keywords_user_page"
+                ),
+                "vars" => array( "site_name" )
+            )
+        );
+
+        $e->add(
+            array(
+                "sectionLabel" => $language->text("base", "seo_meta_section_users"),
+                "sectionKey" => "base.users",
+                "entityKey" => "userSearch",
+                "entityLabel" => $language->text("base", "seo_meta_user_search_label"),
+                "iconClass" => "ow_ic_lens",
+                "langs" => array(
+                    "title" => "base+meta_title_user_search",
+                    "description" => "base+meta_desc_user_search",
+                    "keywords" => "base+meta_keywords_user_search"
+                ),
+                "vars" => array( "site_name" )
+            )
+        );
     }
 
     public function onProvideMetaInfoForPage( OW_Event $event )
@@ -1995,12 +2027,19 @@ class BASE_CLASS_EventHandler
         }
 
         $params = $event->getParams();
+
+        if( BOL_SeoService::getInstance()->isMetaDisabledForEntity($params["sectionKey"], $params["entityKey"]) )
+        {
+            $document->addMetaInfo("robots", "noindex");
+            return;
+        }
+
         $vars = empty($params["vars"]) ? array() : $params["vars"];
 
         if( !empty($params["title"]) )
         {
             $parts = explode("+", $params["title"]);
-            $text = trim($language->text($parts[0], $parts[1], $vars));
+            $text = $this->processMetaText($language->text($parts[0], $parts[1], $vars), BOL_SeoService::META_TITLE_MAX_LENGTH);
 
             if( $text )
             {
@@ -2011,28 +2050,36 @@ class BASE_CLASS_EventHandler
         if( !empty($params["description"]) )
         {
             $parts = explode("+", $params["description"]);
-            $text = trim($language->text($parts[0], $parts[1], $vars));
+            $text = $this->processMetaText($language->text($parts[0], $parts[1], $vars), BOL_SeoService::META_DESC_MAX_LENGTH);
 
             if( $text )
             {
                 $document->setDescription($text);
-                //UTIL_String::truncate(strip_tags($event->getDescription()), 200, '...')
+                //
             }
         }
 
         if( !empty($params["keywords"]) )
         {
             $parts = explode("+", $params["keywords"]);
-            $text = trim($language->text($parts[0], $parts[1], $vars));
+            $text = $this->processMetaText($language->text($parts[0], $parts[1], $vars));
 
             if( $text )
             {
                 $document->setKeywords($text);
             }
         }
+    }
 
+    protected function processMetaText( $text, $maxLength = null )
+    {
+        $text = trim(strip_tags($text));
 
+        if( mb_strlen($text) > $maxLength )
+        {
+            $text = UTIL_String::truncate($text, $maxLength - 3, '...');
+        }
 
-
+        return $text;
     }
 }

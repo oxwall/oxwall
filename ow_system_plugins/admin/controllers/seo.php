@@ -97,6 +97,7 @@ class ADMIN_CTRL_Seo extends ADMIN_CTRL_Abstract
 
         if( OW::getRequest()->isPost() ){
             $form->processData($_POST);
+            OW::getFeedback()->info(OW::getLanguage()->text('admin', 'settings_submit_success_message'));
             $this->redirect();
         }
     }

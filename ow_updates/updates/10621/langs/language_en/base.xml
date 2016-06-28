@@ -31,4 +31,16 @@
     <key name="meta_desc_forgot_pass"><value>Enter the email you used during registration for {$site_name} to receive a new password.</value></key>
     <key name="meta_keywords_forgot_pass"><value></value></key>
     <key name="seo_meta_forgot_pass_label"><value>Forgot Password Page</value></key>
+    <key name="meta_title_user_page"><value>{$user_name}, {$user_age} | {$site_name}</value></key>
+    <key name="meta_desc_user_page"><value>Chat with {$user_name}, {$user_age} at {$site_name}.</value></key>
+    <key name="meta_keywords_user_page"><value></value></key>
+    <key name="seo_meta_user_page_label"><value>Individual Member Page</value></key>
+    <key name="meta_title_user_search"><value>User Search | {$site_name}</value></key>
+    <key name="meta_desc_user_search"><value>Search members at {$site_name}, and find someone you like!</value></key>
+    <key name="meta_keywords_user_search"><value></value></key>
+    <key name="seo_meta_user_search_label"><value>User Search Page</value></key>
+    <key name="meta_title_search_result"><value>Your search results for {$site_name}</value></key>
+    <key name="meta_desc_search_result"><value>Search results for {$site_name} by :orderType</value></key>
+    <key name="meta_keywords_search_result"><value></value></key>
+    <key name="seo_meta_search_result_label"><value>Member Search Results Page</value></key>
 </prefix>

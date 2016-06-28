@@ -72,6 +72,15 @@ class BOL_SeoService
      */
     const SITEMAP_UPDATE_MONTHLY = 'monthly';
 
+    /**
+     * Meta title max length
+     */
+    const META_TITLE_MAX_LENGTH = 70;
+
+    /**
+     * Meta description max length
+     */
+    const META_DESC_MAX_LENGTH = 150;
 
     use OW_Singleton;
 
