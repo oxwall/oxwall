@@ -2033,6 +2033,9 @@ class BASE_CLASS_EventHandler
 
         $vars = empty($params["vars"]) ? array() : $params["vars"];
 
+        $document->addMetaInfo("og:type", "website");
+        $document->addMetaInfo("og:site_name", OW::getConfig()->getValue('base', 'site_name'));
+
         if( !empty($params["title"]) )
         {
             $parts = explode("+", $params["title"]);
@@ -2041,6 +2044,8 @@ class BASE_CLASS_EventHandler
             if( $text )
             {
                 $document->setTitle($text);
+                $document->addMetaInfo("og:title", $text);
+                $document->addMetaInfo("twitter:title", $text);
             }
         }
 
@@ -2052,7 +2057,8 @@ class BASE_CLASS_EventHandler
             if( $text )
             {
                 $document->setDescription($text);
-                //
+                $document->addMetaInfo("og:description", $text);
+                $document->addMetaInfo("twitter:description", $text);
             }
         }
 
@@ -2065,6 +2071,19 @@ class BASE_CLASS_EventHandler
             {
                 $document->setKeywords($text);
             }
+        }
+
+        $imageUrl = BOL_SeoService::getInstance()->getSocialLogoUrl();
+
+        if( !empty($params["image"]) )
+        {
+            $imageUrl = trim($params["image"]);
+        }
+
+        if( $imageUrl )
+        {
+            $document->addMetaInfo("og:image", $imageUrl);
+            $document->addMetaInfo("twitter:image", $imageUrl);
         }
     }
 

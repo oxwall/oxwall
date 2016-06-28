@@ -86,9 +86,14 @@ class BASE_CTRL_StaticDocument extends OW_ActionController
     {
         OW::getDocument()->setDescription(null);
 
-        if ( OW::getLanguage()->valueExist('base', "local_page_meta_tags_{$this->getDocumentKey()}") )
+        if ( OW::getLanguage()->valueExist('base', "local_page_meta_desc_{$this->getDocumentKey()}") )
         {
-            OW::getDocument()->addCustomHeadInfo(OW::getLanguage()->text('base', "local_page_meta_tags_{$this->getDocumentKey()}"));
+            OW::getDocument()->setDescription(OW::getLanguage()->text('base', "local_page_meta_desc_{$this->getDocumentKey()}"));
+        }
+
+        if ( OW::getLanguage()->valueExist('base', "local_page_meta_keywords_{$this->getDocumentKey()}") )
+        {
+            OW::getDocument()->setKeywords(OW::getLanguage()->text('base', "local_page_meta_keywords_{$this->getDocumentKey()}"));
         }
     }
 }

@@ -143,6 +143,46 @@ class ADMIN_CTRL_Seo extends ADMIN_CTRL_Abstract
      */
     public function socialMeta()
     {
+        $language = OW::getLanguage();
+
+        $form = new Form("imageForm");
+
+        $el = new FileField("image");
+        $el->setLabel($language->text("base", "form_social_meta_logo_label"));
+        $el->setDescription($language->text("base", "social_meta_logo_desc"));
+        $form->addElement($el);
+
+        $submit = new Submit("submit");
+        $submit->setValue(OW::getLanguage()->text("admin", "theme_graphics_upload_form_submit_label"));
+        $form->addElement($submit);
+
+        $form->setEnctype(Form::ENCTYPE_MULTYPART_FORMDATA);
+        $this->addForm($form);
+
+        $this->assign("logoUrl", BOL_SeoService::getInstance()->getSocialLogoUrl());
+
+        if ( OW::getRequest()->isPost() )
+        {
+            $result = UTIL_File::checkUploadedFile($_FILES["image"]);
+
+            if ( !$result["result"] )
+            {
+                OW::getFeedback()->error($result["message"]);
+                $this->redirect();
+            }
+
+            if ( !UTIL_File::validateImage($_FILES["image"]["name"]) )
+            {
+                OW::getFeedback()->error($language->text('base', 'not_valid_image'));
+                $this->redirect();
+            }
+
+            BOL_SeoService::getInstance()->saveSocialLogo($_FILES["image"]["tmp_name"], "meta_social_logo.".UTIL_File::getExtension($_FILES["image"]["name"]));
+            unlink($_FILES["image"]["tmp_name"]);
+
+            OW::getFeedback()->info(OW::getLanguage()->text('admin', 'theme_graphics_upload_form_success_message'));
+            $this->redirect();
+        }
     }
 
     /**

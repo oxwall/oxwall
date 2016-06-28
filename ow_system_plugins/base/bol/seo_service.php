@@ -272,9 +272,9 @@ class BOL_SeoService
             $activeLanguagesCount = count($activeLanguages);
 
             // process urls
-            foreach( $urls as $urlData )
+            foreach( $urls as $urlId )
             {
-                $urlsIds[] = $urlData['id'];
+                $urlDto = $this->sitemapDao->findById($urlId);
                 $languageList = array();
 
                 if ( $activeLanguagesCount > 1 )
@@ -284,16 +284,16 @@ class BOL_SeoService
                         if ( $language->id !== $defaultLanguage->id )
                         {
                             $languageList[] = array(
-                                'url' => strstr($urlData['url'], '?')
-                                    ? $this->escapeSitemapUrl($urlData['url'] . '&language_id=' . $language->id)
-                                    : $this->escapeSitemapUrl($urlData['url'] . '?language_id=' . $language->id),
+                                'url' => strstr($urlDto->url, '?')
+                                    ? $this->escapeSitemapUrl($urlDto->url . '&language_id=' . $language->id)
+                                    : $this->escapeSitemapUrl($urlDto->url . '?language_id=' . $language->id),
                                 'code' => $language->tag
                             );
                         }
                         else
                         {
                             $languageList[] = array(
-                                'url' => $this->escapeSitemapUrl($urlData['url']),
+                                'url' => $this->escapeSitemapUrl($urlDto->url),
                                 'code' => $language->tag
                             );
                         }
@@ -301,34 +301,31 @@ class BOL_SeoService
                 }
 
                 $processedUrls[] = array(
-                    'url' => $this->escapeSitemapUrl($urlData['url']),
-                    'changefreq' => $entities[$urlData['entityType']]['changefreq'],
-                    'priority' => $entities[$urlData['entityType']]['priority'],
+                    'url' => $this->escapeSitemapUrl($urlDto->url),
+                    'changefreq' => $entities[$urlDto->entityType]['changefreq'],
+                    'priority' => $entities[$urlDto->entityType]['priority'],
                     'languageList' => $languageList
                 );
+
+                $this->sitemapDao->deleteById($urlDto->id);
             }
 
-            // delete processed urls
-            $urlsIds = array_chunk($urlsIds, 500);
-            foreach( $urlsIds as $urlList )
+            if ( $processedUrls )
             {
-                $this->sitemapDao->deleteByIdList($urlList);
+                $view = new OW_View();
+                $view->setTemplate(OW::getPluginManager()->getPlugin('base')->getViewDir() . 'sitemap_part.xml');
+                $view->assign('urls', $processedUrls);
+
+                // save data in a file
+                file_put_contents($newSitemapPath . sprintf(self::SITEMAP_FILE_NAME, $sitemapIndex + 1), $view->render());
+
+                OW::getConfig()->saveConfig('base', 'seo_sitemap_index', $sitemapIndex + 1);
             }
-
-            // render data
-            $view = new OW_View();
-            $view->setTemplate(OW::getPluginManager()->getPlugin('base')->getViewDir() . 'sitemap_part.xml');
-            $view->assign('urls', $processedUrls);
-
-            // save data in a file
-            file_put_contents($newSitemapPath . sprintf(self::SITEMAP_FILE_NAME, $sitemapIndex + 1), $view->render());
-
-            OW::getConfig()->saveConfig('base', 'seo_sitemap_index', $sitemapIndex + 1);
 
             return;
         }
 
-        // generate a final sitemap index file
+        // generate a main sitemap index file
         if ( $sitemapIndex )
         {
             $sitemapParts = array();
@@ -342,7 +339,6 @@ class BOL_SeoService
                 );
             }
 
-            // render data
             $view = new OW_View();
             $view->setTemplate(OW::getPluginManager()->getPlugin('base')->getViewDir() . 'sitemap.xml');
             $view->assign('urls', $sitemapParts);
@@ -354,12 +350,9 @@ class BOL_SeoService
             OW::getConfig()->saveConfig('base', 'seo_sitemap_index', 0);
             OW::getConfig()->saveConfig('base', 'seo_sitemap_last_start', time());
             OW::getConfig()->saveConfig('base', 'seo_sitemap_last_build', $newSitemapBuild);
-
-            // truncate table
-            $this->sitemapDao->truncate();
         }
 
-        // clear all entities
+        // clear entities
         foreach ( $entities as $entityType => $entityData )
         {
             foreach ( $entityData['items'] as $item )
@@ -486,6 +479,9 @@ class BOL_SeoService
     public function disableSitemapEntity($entityType)
     {
         $this->setSitemapEntityStatus($entityType, false);
+
+        // delete already collected data
+        $this->deleteSitemapUrls($entityType);
     }
 
     /**
@@ -544,31 +540,28 @@ class BOL_SeoService
     }
 
     /**
-     * @param BOL_User $userDto
-     * @return array
+     * @param $path
+     * @param $name
      */
-    public function getUserMetaInfo( BOL_User $userDto )
+    public function saveSocialLogo( $path, $name )
     {
-        $result = array("user_name" => $userDto->getUsername());
-        $data = BOL_QuestionService::getInstance()->getQuestionData(array($userDto->getId()), array("sex", "birthdate", "googlemap_location"))[$userDto->getId()];
+        OW::getStorage()->copyFile($path, OW::getPluginManager()->getPlugin("base")->getUserFilesDir().$name);
+        OW::getConfig()->saveConfig("base", "seo_social_meta_logo_name", $name);
+    }
 
-        if( !empty($data["sex"]) )
+    /**
+     * @return string
+     */
+    public function getSocialLogoUrl()
+    {
+        $fileName = OW::getConfig()->getValue("base", "seo_social_meta_logo_name");
+
+        if( !$fileName )
         {
-            $result["user_gender"] = BOL_QuestionService::getInstance()->getQuestionValueLang("sex", $data["sex"]);
+            return null;
         }
 
-        if( !empty($data["birthdate"]) )
-        {
-            $date = UTIL_DateTime::parseDate($data["birthdate"], UTIL_DateTime::MYSQL_DATETIME_DATE_FORMAT);
-            $result["user_age"] = UTIL_DateTime::getAge($date['year'], $date['month'], $date['day']);
-        }
-
-        if( !empty($data["googlemap_location"]["address"]) )
-        {
-            $result["user_location"] = trim($data["googlemap_location"]["address"]);
-        }
-
-        return $result;
+        return OW::getStorage()->getFileUrl(OW::getPluginManager()->getPlugin("base")->getUserFilesDir().$fileName);
     }
 
     /**
@@ -601,18 +594,6 @@ class BOL_SeoService
             $entities[$entityType]['enabled'] = $enabled;
 
             OW::getConfig()->saveConfig('base', 'seo_sitemap_entities', json_encode($entities));
-
-            if ( !$enabled )
-            {
-                // clear entity items
-                foreach ( $entities[$entityType]['items'] as $item )
-                {
-                    $this->updateSitemapEntityItem($entityType, $item['name'], false, 0);
-                }
-
-                // delete already collected urls
-                $this->deleteSitemapUrls($entityType);
-            }
         }
     }
 

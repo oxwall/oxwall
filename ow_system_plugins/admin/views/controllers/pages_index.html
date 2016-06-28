@@ -10,7 +10,8 @@ $(document).ready(function(){
 
 	$radio1.bind('click', function(){
 		var disabled = !this.checked;
-		$('#meta-tags-tr').show();
+		$('#meta-keywords-tr').show();
+		$('#meta-desc-tr').show();
 		$('#meta-tags').attr( 'disabled', disabled );
 		$('#content').attr( 'disabled', disabled );
 		$('#content-tr').show();
@@ -26,7 +27,8 @@ $(document).ready(function(){
 {/literal}
 {if !$isLocal}
 	{literal}
-	$('#meta-tags-tr').hide();
+	$('#meta-keywords-tr').hide();
+	$('#meta-desc-tr').hide();
 	$('#content-tr').hide();
 	$('#title-tr').hide();
 	$('#address2').attr('checked', 'checked');
@@ -39,7 +41,8 @@ $(document).ready(function(){
 {literal}
 	$radio2.bind('click', function(){
 		var disabled = this.checked;
-		$('#meta-tags-tr').hide();
+		$('#meta-keywords-tr').hide();
+		$('#meta-desc-tr').hide();
 		$('#meta-tags').attr( 'disabled', disabled );
 		$('#content').attr( 'disabled', disabled );
 		$('#content-tr').hide();
@@ -102,22 +105,32 @@ $(document).ready(function(){
        </td>
        <td class="ow_description ow_small"></td>
     </tr>
-    
-    <tr class="{cycle values="ow_alt2,ow_alt1"}" id="meta-tags-tr">
-        <td class="ow_label">{label name="meta-tags"}</td>
-        <td class="ow_value">{input name="meta-tags"}
-        	<br />{error name="meta-tags"}
-        </td>
-        <td class="ow_description ow_small"> {desc name="meta-tags"}
-        </td>
-    </tr>
-    <tr class="{cycle values="ow_alt2,ow_alt1"} ow_tr_last" id="content-tr">
+
+	<tr class="{cycle values="ow_alt2,ow_alt1"} ow_tr_last" id="content-tr">
         <td class="ow_label">{label name="content"}</td>
         <td class="ow_value">{input name="content"}
         	<br />{error name="content"}
         </td>
         <td class="ow_description ow_small"> {desc name="content"}</td>
     </tr>
+
+	<tr class="{cycle values="ow_alt2,ow_alt1"}" id="meta-desc-tr">
+	<td class="ow_label">{label name="meta_desc"}</td>
+	<td class="ow_value">{input name="meta_desc"}
+		<br />{error name="meta_desc"}
+	</td>
+	<td class="ow_description ow_small"> {desc name="meta_desc"}
+	</td>
+	</tr>
+
+	<tr class="{cycle values="ow_alt2,ow_alt1"}" id="meta-keywords-tr">
+	<td class="ow_label">{label name="meta_keywords"}</td>
+	<td class="ow_value">{input name="meta_keywords"}
+		<br />{error name="meta_keywords"}
+	</td>
+	<td class="ow_description ow_small"> {desc name="meta_keywords"}
+	</td>
+	</tr>
 </table>
 <div class="clearfix ow_stdmargin"><div class="ow_right">{submit name="submit" class="ow_positive"}</div></div>
 {/form}

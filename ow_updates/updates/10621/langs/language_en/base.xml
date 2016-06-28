@@ -43,4 +43,25 @@
     <key name="meta_desc_search_result"><value>Search results for {$site_name} by :orderType</value></key>
     <key name="meta_keywords_search_result"><value></value></key>
     <key name="seo_meta_search_result_label"><value>Member Search Results Page</value></key>
+    <key name="seo_social_meta_text"><value>
+    &lt;p&gt;You do not need to set up anything - it’s all done for you already. Almost all of the necessary data will be copied from SEO Page Settings and transferred to Open Graph Tags. The following is the list of used tags:
+    &lt;/p&gt;
+    &lt;ul class="ow_stdmargin"&gt;
+    &lt;li&gt;&lt;strong&gt;og:title&lt;/strong&gt; - copied from Title&lt;/li&gt;
+    &lt;li&gt;&lt;strong&gt;og:url&lt;/strong&gt; - copied from URL&lt;/li&gt;
+    &lt;li&gt;&lt;strong&gt;og:type&lt;/strong&gt; - ‘website’ value is set by default&lt;/li&gt;
+    &lt;li&gt;&lt;strong&gt;og:description&lt;/strong&gt; - copied from Meta Description&lt;/li&gt;
+    &lt;li&gt;&lt;strong&gt;og:site_name&lt;/strong&gt; - {$site_name}&lt;/li&gt;
+    &lt;li&gt;&lt;strong&gt;twitter:title&lt;/strong&gt; - copied from Title&lt;/li&gt;
+    &lt;li&gt;&lt;strong&gt;twitter:description&lt;/strong&gt; - copied from Meta Description&lt;/li&gt;
+    &lt;li&gt;&lt;strong&gt;og:image and twitter:image&lt;/strong&gt; - the same image is set for both tags. The following image types will be set automatically depending on page in question: Logo, Video Preview, Event Image, User Photo, Group Image or Logo, Photo Album First Photo, Photo.&lt;/li&gt;
+    &lt;/ul&gt;
+    </value></key>
+    <key name="form_social_meta_logo_label"><value>Logo in good quality</value></key>
+    <key name="social_meta_logo_desc"><value>For the use in shared posts (Recommended image width is 1000px; Recommended image format is JPG)</value></key>
+    <key name="seo_upload_logo_label"><value>Upload logo</value></key>
+    <key name="pages_page_meta_desc_label"><value>Meta Description</value></key>
+    <key name="pages_page_meta_desc_desc"><value>Recommended description length is up to 150 symbols</value></key>
+    <key name="pages_page_meta_keywords_label"><value>Meta keywords</value></key>
+    <key name="pages_page_meta_keywords_desc"><value></value></key>
 </prefix>
