@@ -175,7 +175,7 @@ class BASE_CLASS_EventHandler
         {
             // users
             case 'users' :
-                if ( OW::getUser()->isAuthorized('base', 'view_profile') )
+                if ( BOL_AuthorizationService::getInstance()->isActionAuthorizedForGuest('base', 'view_profile') )
                 {
                     $offset = (int) $params['offset'];
                     $limit  = (int) $params['limit'];
@@ -221,7 +221,7 @@ class BASE_CLASS_EventHandler
 
             // base user pages
             case 'user_list' :
-                if ( OW::getUser()->isAuthorized('base', 'view_profile') )
+                if ( BOL_AuthorizationService::getInstance()->isActionAuthorizedForGuest('base', 'view_profile') )
                 {
                     $event->setData(array(
                         OW::getRouter()->urlForRoute('users'),
