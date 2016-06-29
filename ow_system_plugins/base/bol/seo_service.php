@@ -70,8 +70,8 @@ class BOL_SeoService
     const SITEMAP_UPDATE_MONTHLY = 'monthly';
 
     /**
-    +     * Meta title max length
-    +     */
+     * Meta title max length
+     */
     const META_TITLE_MAX_LENGTH = 70;
 
     /**
