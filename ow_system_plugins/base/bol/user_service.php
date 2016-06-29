@@ -1392,7 +1392,7 @@ final class BOL_UserService
 
         $password = new PasswordField('password');
         $password->setHasInvitation(true);
-        $password->setInvitation('password');
+        $password->setInvitation(OW::getLanguage()->text('base', 'component_sign_in_password_invitation'));
         $password->setRequired(true);
         $form->addElement($password);
 
