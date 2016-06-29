@@ -529,7 +529,6 @@ class ADMIN_CTRL_Languages extends ADMIN_CTRL_Abstract
 
     public function deleteKey()
     {
-
         $languageService = BOL_LanguageService::getInstance();
 
         $key = $_GET['key'];
@@ -537,8 +536,10 @@ class ADMIN_CTRL_Languages extends ADMIN_CTRL_Abstract
 
         $dto = $languageService->findKey($prefix, $key);
 
-        $languageService->deleteKey($dto->getId());
-        OW::getFeedback()->info('Deleted');
+        if ( !empty($dto) ) {
+            $languageService->deleteKey($dto->getId());
+            OW::getFeedback()->info('Deleted');
+        }
         $this->redirect($_SERVER['HTTP_REFERER']);
     }
 
