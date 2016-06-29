@@ -28,9 +28,6 @@
  */
 class ADMIN_CLASS_SeoMetaForm extends Form
 {
-    const META_TITLE_MAX_LENGTH = 70;
-    const META_DESC_MAX_LENGTH = 150;
-
     /**
      * @var array
      */
@@ -78,7 +75,7 @@ class ADMIN_CLASS_SeoMetaForm extends Form
             $this->addElement($title);
 
             $desc = new Textarea("seo_desc_{$item["entityKey"]}");
-            list($prefix, $key) = explode("+",$item["langs"]["desc"]);
+            list($prefix, $key) = explode("+",$item["langs"]["description"]);
             $valDto = $langService->getValue($langId, $prefix, $key);
             $desc->setValue($valDto ? $valDto->getValue() : $prefix ."+". $key);
             $desc->setLabel($language->text("base", "seo_meta_form_element_desc_label"));
@@ -102,13 +99,13 @@ class ADMIN_CLASS_SeoMetaForm extends Form
                 "iconClass" => empty($item["iconClass"]) ? "" : $item["iconClass"],
                 "title" => array(
                     "length" => mb_strlen($title->getValue()),
-                    "max" => self::META_TITLE_MAX_LENGTH,
-                    "isRed" => mb_strlen($title->getValue()) > self::META_TITLE_MAX_LENGTH
+                    "max" => BOL_SeoService::META_TITLE_MAX_LENGTH,
+                    "isRed" => mb_strlen($title->getValue()) > BOL_SeoService::META_TITLE_MAX_LENGTH
                 ),
                 "desc" => array(
                     "length" => mb_strlen($desc->getValue()),
-                    "max" => self::META_DESC_MAX_LENGTH,
-                    "isRed" => mb_strlen($desc->getValue()) > self::META_DESC_MAX_LENGTH
+                    "max" => BOL_SeoService::META_DESC_MAX_LENGTH,
+                    "isRed" => mb_strlen($desc->getValue()) > BOL_SeoService::META_DESC_MAX_LENGTH
                 )
             );
         }

@@ -289,6 +289,8 @@ class SaveForm extends Form
     {
         parent::__construct('page-add-form');
 
+        $language = OW::getLanguage();
+
         $titleTextField = new TextField('title');
 
         $titleTextField->setLabel(OW::getLanguage()->text('admin', 'pages_edit_local_page_title'))
@@ -327,10 +329,26 @@ class SaveForm extends Form
 
         $this->addElement($visibleForCheckboxGroup);
 
+//        $metaTagsTextarea = new Textarea('meta-tags');
+//        $metaTagsTextarea->setLabel('Page meta tags')
+//                ->setId('meta-tags')
+//                ->setDescription(OW::getLanguage()->text('admin', 'pages_page_field_meta_desc'));
+
+        $keywords = new Textarea("meta_keywords");
+        $keywords->setLabel($language->text("base", "pages_page_meta_keywords_label"));
+        $keywords->setDescription($language->text("base", "pages_page_meta_keywords_desc"));
+        $this->addElement($keywords);
+
+        $desc = new Textarea("meta_desc");
+        $desc->setLabel($language->text("base", "pages_page_meta_desc_label"));
+        $desc->setDescription($language->text("base", "pages_page_meta_desc_desc"));
+        $this->addElement($desc);
+
         $metaTagsTextarea = new Textarea('meta-tags');
         $metaTagsTextarea->setLabel('Page meta tags')
-                ->setId('meta-tags')
-                ->setDescription(OW::getLanguage()->text('admin', 'pages_page_field_meta_desc'));
+            ->setId('meta-tags')
+            ->setDescription(OW::getLanguage()->text('admin', 'pages_page_field_meta_desc'));
+
 
         $this->addElement($metaTagsTextarea);
 
@@ -457,9 +475,12 @@ class SaveForm extends Form
                 $languageService->addValue($currentLanguageId, $menuItem->getPrefix(), $keyDto->getKey(), $title);
 
 //-	meta tags
-                $keyDto = $languageService->addKey($prefixDto->getId(), 'local_page_meta_tags_' . $menuItem->getKey());
+                $keyDto = $languageService->addKey($prefixDto->getId(), 'local_page_meta_desc_' . $menuItem->getKey());
+                $metaTagsStr = ( empty($_POST['meta_desc']) ) ? '' : $_POST['meta_desc'];
+                $languageService->addValue($currentLanguageId, $menuItem->getPrefix(), $keyDto->getKey(), $metaTagsStr);
 
-                $metaTagsStr = ( empty($_POST['meta-tags']) ) ? '' : $_POST['meta-tags'];
+                $keyDto = $languageService->addKey($prefixDto->getId(), 'local_page_meta_keywords_' . $menuItem->getKey());
+                $metaTagsStr = ( empty($_POST['meta_keywords']) ) ? '' : $_POST['meta_keywords'];
                 $languageService->addValue($currentLanguageId, $menuItem->getPrefix(), $keyDto->getKey(), $metaTagsStr);
 //- content
                 $keyDto = $languageService->addKey($prefixDto->getId(), 'local_page_content_' . $menuItem->getKey());

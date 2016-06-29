@@ -96,9 +96,8 @@ class BASE_CLASS_EventHandler
         $eventManager->bind("base.user_list.get_displayed_fields", array($this, 'onGetUserListFields'));
         $eventManager->bind("base.user_list.get_questions", array($this, 'onGetUserListQuestions'));
         $eventManager->bind("base.user_list.get_field_data", array($this, 'onGetUserListFieldValue'));
-        $eventManager->bind("base.collect_seo_meta_data", array($this, 'onCollectMetaData'));
         $eventManager->bind("base.sitemap.get_urls", array($this, 'onSitemapGetUrls'));
-
+        $eventManager->bind("base.provide_page_meta_info", array($this, 'onProvideMetaInfoForPage'));
     }
 
     public function init()
@@ -133,7 +132,7 @@ class BASE_CLASS_EventHandler
         $eventManager->bind(OW_EventManager::ON_FINALIZE, array($this, 'onFinalizeCheckIfSiteFullyInstalled'));
         $eventManager->bind(OW_EventManager::ON_AFTER_ROUTE, array($this, 'onPluginsInitCheckUserStatus'));
         $eventManager->bind(BASE_CMP_QuickLinksWidget::EVENT_NAME, array($this, 'onCollectQuickLinks'));
-
+        $eventManager->bind("base.collect_seo_meta_data", array($this, 'onCollectMetaData'));
         $eventManager->bind('class.get_instance', array($this, 'onGetClassInstance'));
 
         if ( defined('OW_ADS_XP_TOP') )
@@ -1910,7 +1909,7 @@ class BASE_CLASS_EventHandler
                 "iconClass" => "",
                 "langs" => array(
                     "title" => "base+meta_title_user_list",
-                    "desc" => "base+meta_desc_user_list",
+                    "description" => "base+meta_desc_user_list",
                     "keywords" => "base+meta_keywords_user_list"
                 ),
                 "vars" => array( "user_list", "site_name" )
@@ -1926,7 +1925,7 @@ class BASE_CLASS_EventHandler
                 "iconClass" => "ow_ic_house",
                 "langs" => array(
                     "title" => "base+meta_title_index",
-                    "desc" => "base+meta_desc_index",
+                    "description" => "base+meta_desc_index",
                     "keywords" => "base+meta_keywords_index"
                 ),
                 "vars" => array( "site_name" )
@@ -1942,7 +1941,7 @@ class BASE_CLASS_EventHandler
                 "iconClass" => "ow_ic_add",
                 "langs" => array(
                     "title" => "base+meta_title_join",
-                    "desc" => "base+meta_desc_join",
+                    "description" => "base+meta_desc_join",
                     "keywords" => "base+meta_keywords_join"
                 ),
                 "vars" => array( "site_name" )
@@ -1958,7 +1957,7 @@ class BASE_CLASS_EventHandler
                 "iconClass" => "ow_ic_key",
                 "langs" => array(
                     "title" => "base+meta_title_sign_in",
-                    "desc" => "base+meta_desc_sign_in",
+                    "description" => "base+meta_desc_sign_in",
                     "keywords" => "base+meta_keywords_sign_in"
                 ),
                 "vars" => array( "site_name" )
@@ -1969,16 +1968,134 @@ class BASE_CLASS_EventHandler
             array(
                 "sectionLabel" => $language->text("base", "seo_meta_section_base_pages"),
                 "sectionKey" => "base.base_pages",
-                "entityKey" => "forgot_pass",
+                "entityKey" => "forgotPass",
                 "entityLabel" => $language->text("base", "seo_meta_forgot_pass_label"),
                 "iconClass" => "ow_ic_key",
                 "langs" => array(
                     "title" => "base+meta_title_forgot_pass",
-                    "desc" => "base+meta_desc_forgot_pass",
+                    "description" => "base+meta_desc_forgot_pass",
                     "keywords" => "base+meta_keywords_forgot_pass"
                 ),
                 "vars" => array( "site_name" )
             )
         );
+
+        $e->add(
+            array(
+                "sectionLabel" => $language->text("base", "seo_meta_section_users"),
+                "sectionKey" => "base.users",
+                "entityKey" => "userPage",
+                "entityLabel" => $language->text("base", "seo_meta_user_page_label"),
+                "iconClass" => "ow_ic_user",
+                "langs" => array(
+                    "title" => "base+meta_title_user_page",
+                    "description" => "base+meta_desc_user_page",
+                    "keywords" => "base+meta_keywords_user_page"
+                ),
+                "vars" => array( "site_name" )
+            )
+        );
+
+        $e->add(
+            array(
+                "sectionLabel" => $language->text("base", "seo_meta_section_users"),
+                "sectionKey" => "base.users",
+                "entityKey" => "userSearch",
+                "entityLabel" => $language->text("base", "seo_meta_user_search_label"),
+                "iconClass" => "ow_ic_lens",
+                "langs" => array(
+                    "title" => "base+meta_title_user_search",
+                    "description" => "base+meta_desc_user_search",
+                    "keywords" => "base+meta_keywords_user_search"
+                ),
+                "vars" => array( "site_name" )
+            )
+        );
+    }
+
+    public function onProvideMetaInfoForPage( OW_Event $event )
+    {
+        $document = OW::getDocument();
+        $language = OW::getLanguage();
+
+        if( !$document || !$document instanceof OW_HtmlDocument )
+        {
+            return;
+        }
+
+        $params = $event->getParams();
+
+        if( BOL_SeoService::getInstance()->isMetaDisabledForEntity($params["sectionKey"], $params["entityKey"]) )
+        {
+            $document->addMetaInfo("robots", "noindex");
+            return;
+        }
+
+        $vars = empty($params["vars"]) ? array() : $params["vars"];
+
+        $document->addMetaInfo("og:type", "website");
+        $document->addMetaInfo("og:site_name", OW::getConfig()->getValue('base', 'site_name'));
+
+        if( !empty($params["title"]) )
+        {
+            $parts = explode("+", $params["title"]);
+            $text = $this->processMetaText($language->text($parts[0], $parts[1], $vars), BOL_SeoService::META_TITLE_MAX_LENGTH);
+
+            if( $text )
+            {
+                $document->setTitle($text);
+                $document->addMetaInfo("og:title", $text);
+                $document->addMetaInfo("twitter:title", $text);
+            }
+        }
+
+        if( !empty($params["description"]) )
+        {
+            $parts = explode("+", $params["description"]);
+            $text = $this->processMetaText($language->text($parts[0], $parts[1], $vars), BOL_SeoService::META_DESC_MAX_LENGTH);
+
+            if( $text )
+            {
+                $document->setDescription($text);
+                $document->addMetaInfo("og:description", $text);
+                $document->addMetaInfo("twitter:description", $text);
+            }
+        }
+
+        if( !empty($params["keywords"]) )
+        {
+            $parts = explode("+", $params["keywords"]);
+            $text = $this->processMetaText($language->text($parts[0], $parts[1], $vars));
+
+            if( $text )
+            {
+                $document->setKeywords($text);
+            }
+        }
+
+        $imageUrl = BOL_SeoService::getInstance()->getSocialLogoUrl();
+
+        if( !empty($params["image"]) )
+        {
+            $imageUrl = trim($params["image"]);
+        }
+
+        if( $imageUrl )
+        {
+            $document->addMetaInfo("og:image", $imageUrl);
+            $document->addMetaInfo("twitter:image", $imageUrl);
+        }
+    }
+
+    protected function processMetaText( $text, $maxLength = null )
+    {
+        $text = trim(strip_tags($text));
+
+        if( mb_strlen($text) > $maxLength )
+        {
+            $text = UTIL_String::truncate($text, $maxLength - 3, '...');
+        }
+
+        return $text;
     }
 }

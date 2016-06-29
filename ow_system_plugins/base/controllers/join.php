@@ -139,23 +139,15 @@ class BASE_CTRL_Join extends OW_ActionController
         $this->setDocumentKey('base_user_join');
 
         // set meta info
-        $language = OW::getLanguage();
+        $params = array(
+            "sectionKey" => "base.base_pages",
+            "entityKey" => "join",
+            "title" => "base+meta_title_join",
+            "description" => "base+meta_desc_join",
+            "keywords" => "base+meta_keywords_join"
+        );
 
-        if( BOL_SeoService::getInstance()->isMetaDisabledForEntity("base.base_pages", "join") )
-        {
-            OW::getDocument()->addMetaInfo("robots", "noindex");
-        }
-        else
-        {
-            $this->setPageTitle($language->text("base", "meta_title_join"));
-            $this->setPageDescription($language->text("base", "meta_desc_join"));
-            $keywords = trim($language->text("base", "meta_keywords_join"));
-
-            if( $keywords )
-            {
-                $this->setKeywords($keywords);
-            }
-        }
+        OW::getEventManager()->trigger(new OW_Event("base.provide_page_meta_info", $params));
     }
 
     public function joinFormSubmit( $params )

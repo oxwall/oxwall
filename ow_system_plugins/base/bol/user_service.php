@@ -317,6 +317,10 @@ final class BOL_UserService
         return $returnArray;
     }
 
+    /**
+     * @param string $username
+     * @return BOL_User
+     */
     public function findByUsername( $username )
     {
         return $this->userDao->findByUsername($username);

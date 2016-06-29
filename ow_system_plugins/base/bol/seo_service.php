@@ -70,6 +70,16 @@ class BOL_SeoService
     const SITEMAP_UPDATE_MONTHLY = 'monthly';
 
     /**
+     * Meta title max length
+     */
+    const META_TITLE_MAX_LENGTH = 70;
+
+    /**
+     * Meta description max length
+     */
+    const META_DESC_MAX_LENGTH = 150;
+
+    /**
      * Sitemap
      *
      * @var BOL_SitemapDao
@@ -531,6 +541,31 @@ class BOL_SeoService
     public function isMetaDisabledForEntity( $sectionKey, $entityKey )
     {
         return  isset($this->getMetaData()["disabledEntities"][$sectionKey]) && in_array($entityKey, $this->getMetaData()["disabledEntities"][$sectionKey]);
+    }
+
+    /**
+     * @param $path
+     * @param $name
+     */
+    public function saveSocialLogo( $path, $name )
+    {
+        OW::getStorage()->copyFile($path, OW::getPluginManager()->getPlugin("base")->getUserFilesDir().$name);
+        OW::getConfig()->saveConfig("base", "seo_social_meta_logo_name", $name);
+    }
+
+    /**
+     * @return string
+     */
+    public function getSocialLogoUrl()
+    {
+        $fileName = OW::getConfig()->getValue("base", "seo_social_meta_logo_name");
+
+        if( !$fileName )
+        {
+            return null;
+        }
+
+        return OW::getStorage()->getFileUrl(OW::getPluginManager()->getPlugin("base")->getUserFilesDir().$fileName);
     }
 
     /**

@@ -22,69 +22,14 @@
  * which combines Covered Code or portions thereof with code not governed by the terms of the CPAL.
  */
 
-$languageService = Updater::getLanguageService();
-
-$languages = $languageService->getLanguages();
-$langId = null;
-
-foreach ( $languages as $lang )
-{
-    if ( $lang->tag == "en" )
-    {
-        $langId = $lang->id;
-        break;
-    }
-}
-
-$languagesToAdd = array(
-    array( 'base', 'meta_title_user_list', '{$user_list} users | {$site_name}' ),
-    array( 'base', 'meta_desc_user_list', 'View {$user_list} users at {$site_name}. Join us and meet the love your life today!' ),
-    array( 'base', 'meta_keywords_user_list', '' ),
-    array( 'base', 'user_list_type_latest', 'Latest' ),
-    array( 'base', 'user_list_type_online', 'Online' ),
-    array( 'base', 'seo_meta_section_users', 'Users' ),
-    array( 'base', 'seo_meta_form_element_title_label', 'Title' ),
-    array( 'base', 'seo_meta_form_element_title_desc', 'Recommended title length is up to 70 symbols' ),
-    array( 'base', 'seo_meta_form_element_desc_label', 'Meta description' ),
-    array( 'base', 'seo_meta_form_element_desc_desc', 'Recommended description length is up to 150 symbols' ),
-    array( 'base', 'seo_meta_form_element_keywords_label', 'Meta keywords' ),
-    array( 'base', 'seo_meta_form_element_index_label', 'Allow for indexing' ),
-    array( 'base', 'seo_meta_choose_pages_label', 'Choose pages:' ),
-    array( 'base', 'seo_meta_user_list_label', 'All Site Members by List (Online / Latest) Page' ),
-    array( 'base', 'seo_meta_section_base_pages', 'Base Pages' ),
-
-    // index
-    array( 'base', 'meta_title_index', '{$site_name} - Find Dates Here!' ),
-    array( 'base', 'meta_desc_index', '{$site_name} dating website with dating apps and robust online community. Meet the love of your life here today!' ),
-    array( 'base', 'meta_keywords_index', '' ),
-    array( 'base', 'seo_meta_index_label', 'Index' ),
-    // join
-    array( 'base', 'meta_title_join', 'Join {$site_name} - Find Dates Here!' ),
-    array( 'base', 'meta_desc_join', 'Join {$site_name} to meet new people and chat with other signles. Find your love today!' ),
-    array( 'base', 'meta_keywords_join', '' ),
-    array( 'base', 'seo_meta_join_label', 'Join' ),
-    // Sign-in
-    array( 'base', 'meta_title_sign_in', 'Sign in to {$site_name} - Find Dates Here!' ),
-    array( 'base', 'meta_desc_sign_in', 'Sign in to your {$site_name} site and meet new people!' ),
-    array( 'base', 'meta_keywords_sign_in', '' ),
-    array( 'base', 'seo_meta_sign_in_label', 'Sign-In Page' ),
-    // Forgot
-    array( 'base', 'meta_title_forgot_pass', 'Forgot password for {$site_name}?' ),
-    array( 'base', 'meta_desc_forgot_pass', 'Enter the email you used during registration for {$site_name} to receive a new password.' ),
-    array( 'base', 'meta_keywords_forgot_pass', '' ),
-    array( 'base', 'seo_meta_forgot_pass_label', 'Forgot Password Page' ),
-
-);
-
-if ( $langId !== null )
-{
-    foreach ( $languagesToAdd as $entry ){
-        $languageService->addOrUpdateValue($langId, $entry[0], $entry[1], $entry[2]);
-    }
-}
-
 if( !Updater::getConfigService()->configExists("base", "seo_meta_info") ){
     Updater::getConfigService()->addConfig("base", "seo_meta_info", json_encode(array("disabledEntities" => array())));
 }
+
+if( !Updater::getConfigService()->configExists("base", "seo_social_meta_logo_name") ){
+    Updater::getConfigService()->addConfig("base", "seo_social_meta_logo_name", "");
+}
+
+Updater::getLanguageService()->importPrefixFromDir(__DIR__ . DS . 'langs', true);
 
 

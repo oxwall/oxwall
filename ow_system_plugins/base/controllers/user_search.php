@@ -61,6 +61,17 @@ class BASE_CTRL_UserSearch extends OW_ActionController
         $displayNameSearchForm = new DisplayNameSearchForm($this);
         $displayNameSearchForm->process($_POST);
         $this->addForm($displayNameSearchForm);
+
+        // set meta info
+        $params = array(
+            "sectionKey" => "base.users",
+            "entityKey" => "userSearch",
+            "title" => "base+meta_title_user_search",
+            "description" => "base+meta_desc_user_search",
+            "keywords" => "base+meta_keywords_user_search"
+        );
+
+        OW::getEventManager()->trigger(new OW_Event("base.provide_page_meta_info", $params));
     }
 
     public function result()
