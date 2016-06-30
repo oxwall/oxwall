@@ -567,6 +567,34 @@ class BOL_SeoService
     }
 
     /**
+     * @param BOL_User $userDto
+     * @return array
+     */
+    public function getUserMetaInfo( BOL_User $userDto )
+    {
+        $result = array("user_name" => $userDto->getUsername());
+        $data = BOL_QuestionService::getInstance()->getQuestionData(array($userDto->getId()), array("sex", "birthdate", "googlemap_location"))[$userDto->getId()];
+
+        if( !empty($data["sex"]) )
+        {
+            $result["user_gender"] = BOL_QuestionService::getInstance()->getQuestionValueLang("sex", $data["sex"]);
+        }
+
+        if( !empty($data["birthdate"]) )
+        {
+            $date = UTIL_DateTime::parseDate($data["birthdate"], UTIL_DateTime::MYSQL_DATETIME_DATE_FORMAT);
+            $result["user_age"] = UTIL_DateTime::getAge($date['year'], $date['month'], $date['day']);
+        }
+
+        if( !empty($data["googlemap_location"]["address"]) )
+        {
+            $result["user_location"] = trim($data["googlemap_location"]["address"]);
+        }
+
+        return $result;
+    }
+
+    /**
      * @param $path
      * @param $name
      */
