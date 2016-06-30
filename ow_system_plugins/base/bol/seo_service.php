@@ -164,6 +164,8 @@ class BOL_SeoService
         // don't collect urls while sitemap is building
         if ( !(int) OW::getConfig()->getValue('base', 'seo_sitemap_build_in_progress') )
         {
+            OW::getConfig()->saveConfig('base', 'seo_sitemap_build_finished', 0);
+
             // get sitemap entities
             $entities = $this->getSitemapEntities();
             $maxCount = (int) OW::getConfig()->getValue('base', 'seo_sitemap_entitites_max_count');
@@ -275,37 +277,57 @@ class BOL_SeoService
             foreach( $urls as $urlData )
             {
                 $urlsIds[] = $urlData['id'];
-                $languageList = array();
 
                 if ( $activeLanguagesCount > 1 )
                 {
+                    // process active languages
                     foreach( $activeLanguages as $language )
                     {
-                        if ( $language->id !== $defaultLanguage->id )
+                        $mainUrl = null;
+
+                        // get main url
+                        if ( $language->id == $defaultLanguage->id )
                         {
-                            $languageList[] = array(
-                                'url' => strstr($urlData['url'], '?')
-                                    ? $this->escapeSitemapUrl($urlData['url'] . '&language_id=' . $language->id)
-                                    : $this->escapeSitemapUrl($urlData['url'] . '?language_id=' . $language->id),
-                                'code' => $language->tag
-                            );
+                            $mainUrl = $urlData['url']; // don't include a lang param for default language
                         }
-                        else
+                        else {
+                            $mainUrl = strstr($urlData['url'], '?')
+                                ? $urlData['url'] . '&language_id=' . $language->id
+                                : $urlData['url'] . '?language_id=' . $language->id;
+                        }
+
+                        // process alternate languages
+                        $alternateLanguages = array();
+                        foreach( $activeLanguages as $altLanguage )
                         {
-                            $languageList[] = array(
-                                'url' => $this->escapeSitemapUrl($urlData['url']),
-                                'code' => $language->tag
-                            );
+                            if ( $altLanguage->id != $language->id )
+                            {
+                                $alternateLanguages[] = array(
+                                    'url' => strstr($urlData['url'], '?')
+                                        ? $this->escapeSitemapUrl($urlData['url'] . '&language_id=' . $altLanguage->id)
+                                        : $this->escapeSitemapUrl($urlData['url'] . '?language_id=' . $altLanguage->id),
+                                    'code' => $altLanguage->tag
+                                );
+                            }
                         }
+
+                        $processedUrls[] = array(
+                            'url' => $this->escapeSitemapUrl($mainUrl),
+                            'changefreq' => $entities[$urlData['entityType']]['changefreq'],
+                            'priority' => $entities[$urlData['entityType']]['priority'],
+                            'alternateLanguages' => $alternateLanguages
+                        );
                     }
                 }
-
-                $processedUrls[] = array(
-                    'url' => $this->escapeSitemapUrl($urlData['url']),
-                    'changefreq' => $entities[$urlData['entityType']]['changefreq'],
-                    'priority' => $entities[$urlData['entityType']]['priority'],
-                    'languageList' => $languageList
-                );
+                else
+                {
+                    $processedUrls[] = array(
+                        'url' => $this->escapeSitemapUrl($urlData['url']),
+                        'changefreq' => $entities[$urlData['entityType']]['changefreq'],
+                        'priority' => $entities[$urlData['entityType']]['priority'],
+                        'alternateLanguages' => array()
+                    );
+                }
             }
 
             // delete processed urls
@@ -377,6 +399,7 @@ class BOL_SeoService
         }
 
         OW::getConfig()->saveConfig('base', 'seo_sitemap_build_in_progress', 0);
+        OW::getConfig()->saveConfig('base', 'seo_sitemap_build_finished', 1);
     }
 
     /**
