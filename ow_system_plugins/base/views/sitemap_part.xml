@@ -5,7 +5,7 @@
         <changefreq>{$url.changefreq}</changefreq>
         <priority>{$url.priority}</priority>
         <loc>{$url.url}</loc>
-        {foreach from=$url.languageList item='langData'}
+        {foreach from=$url.alternateLanguages item='langData'}
         <xhtml:link rel="alternate" hreflang="{$langData.code}" href="{$langData.url}" />
         {/foreach}
     </url>
