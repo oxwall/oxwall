@@ -2066,7 +2066,7 @@ class BASE_CLASS_EventHandler
         {
             $parts = explode("+", $params["keywords"]);
             $text = $this->processMetaText($language->text($parts[0], $parts[1], $vars));
-
+pv($text);
             if( $text )
             {
                 $document->setKeywords($text);
@@ -2091,7 +2091,7 @@ class BASE_CLASS_EventHandler
     {
         $text = trim(strip_tags($text));
 
-        if( mb_strlen($text) > $maxLength )
+        if( $maxLength !== null && mb_strlen($text) > $maxLength )
         {
             $text = UTIL_String::truncate($text, $maxLength - 3, '...');
         }
