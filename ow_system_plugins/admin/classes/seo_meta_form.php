@@ -74,7 +74,7 @@ class ADMIN_CLASS_SeoMetaForm extends Form
             $title->setDescription($language->text("base", "seo_meta_form_element_title_desc"));
             $this->addElement($title);
 
-            $desc = new Textarea("seo_desc_{$item["entityKey"]}");
+            $desc = new Textarea("seo_description_{$item["entityKey"]}");
             list($prefix, $key) = explode("+",$item["langs"]["description"]);
             $valDto = $langService->getValue($langId, $prefix, $key);
             $desc->setValue($valDto ? $valDto->getValue() : $prefix ."+". $key);
@@ -183,6 +183,12 @@ class ADMIN_CLASS_SeoMetaForm extends Form
                     if( $keyDto === null )
                     {
                         $prefixDto = $langService->findPrefix($prefix);
+
+                        if( $prefixDto == null )
+                        {
+                            continue;
+                        }
+
                         $keyDto = new BOL_LanguageKey();
                         $keyDto->setKey($key);
                         $keyDto->setPrefixId($prefixDto->getId());

@@ -46,14 +46,14 @@ addInputCounter = function( $input, $counter, $count ){
             <td class="ow_value">{input name="seo_title_`$key`" onkeydown="addInputCounter($(this), $('input.seo_title_{$key}'), {$item.title.max})"}
                 <div class="ow_letter_count ow_txtright ow_small"><input class="seo_title_{$key}" readonly="" type="text" name="" size="3" maxlength="3" value="{$item.title.length}"{if $item.title.isRed} class="ow_red"{/if}></div>
             </td>
-            <td class="ow_desc ow_small"><span class="ow_info_icon ow_ic_info" title="{desc name="seo_title_`$key`"}"><span></td>
+            <td class="ow_desc ow_small"><span class="ow_info_icon ow_ic_info" title="{desc name="seo_title_`$key`"}"></span></td>
         </tr>
         <tr class="ow_alt2">
-            <td class="ow_label">{label name="seo_desc_`$key`"}</td>
-            <td class="ow_value">{input name="seo_desc_`$key`" onkeydown="addInputCounter($(this), $('input.seo_desc_{$key}'), {$item.desc.max})"}
+            <td class="ow_label">{label name="seo_description_`$key`"}</td>
+            <td class="ow_value">{input name="seo_description_`$key`" onkeydown="addInputCounter($(this), $('input.seo_desc_{$key}'), {$item.desc.max})"}
                 <div class="ow_letter_count ow_txtright ow_small"><input class="seo_desc_{$key}" readonly="" type="text" name="" size="3" maxlength="3" value="{$item.desc.length}"{if $item.desc.isRed} class="ow_red"{/if}></div>
             </td>
-            <td class="ow_desc ow_small"><span class="ow_info_icon ow_ic_info" title="{desc name="seo_desc_`$key`"}"><span></td>
+            <td class="ow_desc ow_small"><span class="ow_info_icon ow_ic_info" title="{desc name="seo_description_`$key`"}"></span></td>
         </tr>
         <tr class="ow_alt1">
             <td class="ow_label">{label name="seo_keywords_`$key`"}</td>
