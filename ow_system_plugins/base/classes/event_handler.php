@@ -2066,7 +2066,7 @@ class BASE_CLASS_EventHandler
         {
             $parts = explode("+", $params["keywords"]);
             $text = $this->processMetaText($language->text($parts[0], $parts[1], $vars));
-pv($text);
+
             if( $text )
             {
                 $document->setKeywords($text);
