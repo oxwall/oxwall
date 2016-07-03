@@ -30,7 +30,7 @@ addInputCounter = function( $input, $counter, $count ){
 {/script}
 {$menu}
 <div class="seo_admin_select ow_stdmargin">
-    <span>{text key='base+seo_meta_choose_pages_label'} </span>{html_options name=foo options=$sections selected=$currentSection onchange="window.location='$currentUrl'.replace('#sec#', this.value)"}
+    <span>{text key='base+seo_meta_choose_pages_label'} </span>{html_options name='meta_sections' options=$sections selected=$currentSection onchange="window.location='$currentUrl'.replace('#sec#', this.value)"}
 </div>
 {form name="meta_form"}
 <table class="ow_table_1 ow_form">
