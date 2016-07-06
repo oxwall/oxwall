@@ -222,6 +222,10 @@ class OW_Request
         {
             $isHttps = (strtolower($_SERVER["REQUEST_SCHEME"]) == "https");
         }
+        else if ( array_key_exists("HTTP_X_FORWARDED_PROTO", $_SERVER) )
+        {
+            $isHttps = ($_SERVER["HTTP_X_FORWARDED_PROTO"] == "https");
+        }
         else if ( array_key_exists("SERVER_PORT", $_SERVER) )
         {
             $isHttps = ($_SERVER["SERVER_PORT"] == "443");
