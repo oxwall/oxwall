@@ -241,7 +241,7 @@ class OW_Application
         $viewRenderer->assignVar('siteUrl', OW_URL_HOME);
         $viewRenderer->assignVar('isAuthenticated', OW::getUser()->isAuthenticated());
         $viewRenderer->assignVar('bottomPoweredByLink',
-            '<a href="http://www.oxwall.org/" target="_blank" title="Powered by Oxwall Community Software"><img src="' . $currentThemeImagesDir . 'powered-by-oxwall.png" alt="Oxwall Community Software" /></a>');
+            '<a href="https://developers.oxwall.com/" target="_blank" title="Powered by Oxwall Community Software"><img src="' . $currentThemeImagesDir . 'powered-by-oxwall.png" alt="Oxwall Community Software" /></a>');
 
         $spotParams = array(
             "platform-version" => OW::getConfig()->getValue("base", "soft_version"),
