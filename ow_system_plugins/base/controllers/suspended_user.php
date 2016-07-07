@@ -32,7 +32,7 @@ class BASE_CTRL_SuspendedUser extends OW_ActionController
 
     public function index()
     {
-
+        $this->assign('reason', BOL_UserService::getInstance()->getSuspendReason(OW::getUser()->getId()));
     }
 
     public function suspend( $params )

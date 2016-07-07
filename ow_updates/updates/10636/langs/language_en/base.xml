@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<prefix name="base" label="Base" language_tag="en" language_label="English">
+    <key name="suspend_reason">
+        <value>Reason</value>
+    </key>
+</prefix>

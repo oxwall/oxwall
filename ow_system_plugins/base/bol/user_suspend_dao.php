@@ -70,6 +70,22 @@ class BOL_UserSuspendDao extends OW_BaseDao
         return 'BOL_UserSuspend';
     }
 
+    /**
+     * Get suspend reason
+     *
+     * @param integer $userId
+     * @return string
+     */
+    public function getSuspendReason( $userId )
+    {
+        $ex = new OW_Example();
+        $ex->andFieldEqual('userId', $userId);
+
+        $reason =  $this->findObjectByExample($ex);
+
+        return $reason->message ? $reason->message : null;
+    }
+
     public function findByUserId( $id )
     {
         $ex = new OW_Example();
