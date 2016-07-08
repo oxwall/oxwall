@@ -39,7 +39,7 @@ class BASE_CMP_SignIn extends OW_Component
     public function __construct( $ajax = false )
     {
         parent::__construct();
-        $form = BOL_UserService::getInstance()->getSignInForm('sign-in', true);
+        $form = BOL_UserService::getInstance()->getSignInForm('sign-in');
 
         $this->addForm($form);
 
