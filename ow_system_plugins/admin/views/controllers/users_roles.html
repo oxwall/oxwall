@@ -94,7 +94,7 @@ tr.placeholder td{
 		        {assign var='roleId' value=$role->id}
 		        <tr class="{cycle values='ow_alt1, ow_alt2'} role">
 		            <td>
-		            	<input type="checkbox" name="role[]" value="{$role->id}" {if $smarty.foreach.roles.first}disabled="disabled"{/if} />
+		            	<input type="checkbox" name="role[]" id="role_{$role->id}" value="{$role->id}" {if $smarty.foreach.roles.first}disabled="disabled"{/if} />
 		            </td>
 		            <td class="ow_txtleft">
 		            	{text_edit key="base+authorization_role_`$role->name`"}
