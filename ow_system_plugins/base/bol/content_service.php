@@ -296,7 +296,8 @@ class BOL_ContentService
         return array(
             "join" => $event->getJoin(),
             "where" => $event->getWhere(),
-            "order" => $event->getOrder()
+            "order" => $event->getOrder(),
+            "params" => $event->getQueryParams()
         );
     }
 }
