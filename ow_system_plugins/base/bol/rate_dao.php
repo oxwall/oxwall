@@ -153,15 +153,15 @@ class BOL_RateDao extends OW_BaseDao
 
         $excludeCond = $exclude ? ' AND `' . self::ENTITY_ID . '` NOT IN (' . $this->dbo->mergeInClause($exclude) . ')' : '';
 
-        $query = 'SELECT `' . self::ENTITY_ID . '` AS `id`, COUNT(*) as `ratesCount`, AVG(`score`) as `avgScore`
+        $query = 'SELECT `r`.`' . self::ENTITY_ID . '` AS `id`, COUNT(*) as `ratesCount`, AVG(`r`.`score`) as `avgScore`
             FROM `' . $this->getTableName() . '` AS `r`
             ' . $queryParts['join'] . '
-            WHERE `' . self::ENTITY_TYPE . '` = :entityType AND `' . self::ACTIVE . '` = 1 ' . $excludeCond . ' AND ' . $queryParts['where'] . '
-            GROUP BY `' . self::ENTITY_ID . '`
-            ORDER BY `avgScore` DESC, `ratesCount` DESC, MAX(`timeStamp`) DESC
+            WHERE `r`.`' . self::ENTITY_TYPE . '` = :entityType AND `r`.`' . self::ACTIVE . '` = 1 ' . $excludeCond . ' AND ' . $queryParts['where'] . '
+            GROUP BY `r`.`' . self::ENTITY_ID . '`
+            ORDER BY `avgScore` DESC, `ratesCount` DESC, MAX(`r`.`timeStamp`) DESC
             LIMIT :first, :count';
-
-        return $this->dbo->queryForList($query, array('entityType' => $entityType, 'first' => (int) $first, 'count' => (int) $count));
+        $boundParams = array_merge(array('entityType' => $entityType, 'first' => (int) $first, 'count' => (int) $count), $queryParts['params']);
+        return $this->dbo->queryForList($query, $boundParams);
     }
 
     public function findMostRatedEntityCount( $entityType, $exclude )
