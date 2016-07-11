@@ -41,6 +41,26 @@ class UPDATE_AuthorizationService
         return $this->authorizationService->findAction($groupName, $actionName);
     }
 
+    public function deleteGroup( $groupName )
+    {
+        $this->authorizationService->deleteGroup($groupName);
+    }
+
+    public function addGroup( $name, $moderated = true )
+    {
+        if ( $this->authorizationService->findGroupByName($name) !== null )
+        {
+            trigger_error('Cant add group `' . $name . '`! Duplicate entry!', E_NOTICE);
+            return;
+        }
+
+        $group = new BOL_AuthorizationGroup();
+        $group->name = $name;
+        $group->moderated = $moderated;
+
+        $this->authorizationService->saveGroup($group);
+    }
+
     /**
      *
      * @param BOL_AuthorizationAction $action
