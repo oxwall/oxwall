@@ -390,11 +390,11 @@ class ADMIN_CTRL_Plugins extends ADMIN_CTRL_StorageAbstract
             return;
         }
 
-        if ( $pluginDto->getBuild() == $remotePluginInfo["build"] )
-        {
-            $this->assign("text", $language->text("admin", "manage_plugins_up_to_date_message"));
-            return;
-        }
+//        if ( $pluginDto->getBuild() == $remotePluginInfo["build"] )
+//        {
+//            $this->assign("text", $language->text("admin", "manage_plugins_up_to_date_message"));
+//            return;
+//        }
 
         if ( !(bool) $remotePluginInfo["freeware"] && ($pluginDto->getLicenseKey() == null || !$this->storageService->checkLicenseKey($pluginDto->getKey(),
                 $pluginDto->getDeveloperKey(), $pluginDto->getLicenseKey())) )
@@ -427,6 +427,7 @@ class ADMIN_CTRL_Plugins extends ADMIN_CTRL_StorageAbstract
         if ( OW::getConfig()->getValue("base", "update_soft") )
         {
             $this->assign("platformUpdateAvail", true);
+            $this->assign("platformUpdateUrl", OW::getRouter()->urlForRoute("admin_core_update_request"));
         }
     }
 

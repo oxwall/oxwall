@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<prefix name="admin" label="Admin" language_tag="en" language_label="English">
+    <key name="plugin_update_platform_avail_yes_button_label">
+        <value>Yes (Not recommended)</value>
+    </key>
+    <key name="plugin_update_platform_first_button_label">
+        <value>Update platform first</value>
+    </key>
+</prefix>
