@@ -186,7 +186,7 @@ class ADMIN_CTRL_Storage extends ADMIN_CTRL_StorageAbstract
         $this->assign("returnUrl", OW::getRouter()->urlForRoute("admin_default"));
         $this->assign("changeLog", $newPlatformInfo["log"]);
 
-        if ( !empty($newPlatformInfo["minPhpVersion"]) && version_compare(PHP_VERSION, trim($newPlatformInfo["minPhpVersion"])) < 0 || true)
+        if ( !empty($newPlatformInfo["minPhpVersion"]) && version_compare(PHP_VERSION, trim($newPlatformInfo["minPhpVersion"])) < 0 )
         {
             $this->assign("phpVersionInvalidText", OW::getLanguage()->text("admin", "plugin_update_platform_invalid_php_version_msg",
                 array("version" => trim($newPlatformInfo["minPhpVersion"]))));
