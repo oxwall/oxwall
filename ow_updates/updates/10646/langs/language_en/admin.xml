@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<prefix name="admin" label="Admin" language_tag="en" language_label="English">
+    <key name="permissions_delete_confirmation">
+        <value>Are you sure you want to delete selected roles?</value>
+    </key>
+</prefix>
