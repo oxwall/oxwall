@@ -21,37 +21,4 @@
  * Display of Attribution Information is required in Larger Works which are defined in the CPAL as a work
  * which combines Covered Code or portions thereof with code not governed by the terms of the CPAL.
  */
-
-/**
- * User console component class.
- *
- * @author Sardar Madumarov <madumarov@gmail.com>
- * @package ow_system_plugins.base.components
- * @since 1.0
- */
-class BASE_CMP_SignIn extends OW_Component
-{
-    const HOOK_REMOTE_AUTH_BUTTON_LIST = 'base_hook_remote_auth_button_list';
-
-    /**
-     * Constructor.
-     */
-    public function __construct( $ajax = false )
-    {
-        parent::__construct();
-        $form = BOL_UserService::getInstance()->getSignInForm('sign-in');
-
-        $this->addForm($form);
-
-        if ( $ajax )
-        {
-            $form->setAjaxResetOnSuccess(false);
-            $form->setAjax();
-            $form->setAction(OW::getRouter()->urlFor('BASE_CTRL_User', 'ajaxSignIn'));
-            $form->bindJsFunction(Form::BIND_SUCCESS, 'function(data){if( data.result ){OW.info(data.message);setTimeout(function(){window.location.reload();}, 1000);}else{OW.error(data.message);}}');
-            $this->assign('forgot_url', OW::getRouter()->urlForRoute('base_forgot_password'));
-        }
-
-        $this->assign('joinUrl', OW::getRouter()->urlForRoute('base_join'));
-    }
-}
+Updater::getLanguageService()->importPrefixFromDir(__DIR__ . DS . "langs");

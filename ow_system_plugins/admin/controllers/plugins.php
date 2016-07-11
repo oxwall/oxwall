@@ -427,6 +427,7 @@ class ADMIN_CTRL_Plugins extends ADMIN_CTRL_StorageAbstract
         if ( OW::getConfig()->getValue("base", "update_soft") )
         {
             $this->assign("platformUpdateAvail", true);
+            $this->assign("platformUpdateUrl", OW::getRouter()->urlForRoute("admin_core_update_request"));
         }
     }
 

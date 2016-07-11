@@ -428,14 +428,12 @@ class BOL_PluginService
         if ( file_exists($plugin->getStaticDir()) )
         {
             UTIL_File::copyDir($plugin->getStaticDir(), $plugin->getPublicStaticDir());
-            UTIL_File::chmodDir($plugin->getPublicStaticDir(), 0777, 0666);
         }
 
         // create dir in pluginfiles
         if( file_exists($plugin->getInnerPluginFilesDir()) )
         {
             UTIL_File::copyDir($plugin->getInnerPluginFilesDir(), $plugin->getPluginFilesDir());
-            UTIL_File::chmodDir($plugin->getPluginFilesDir(), 0777, 0666);
         }
         else if ( !file_exists($plugin->getPluginFilesDir()) )
         {
@@ -447,7 +445,6 @@ class BOL_PluginService
         if( file_exists($plugin->getInnerUserFilesDir()) )
         {
             OW::getStorage()->copyDir($plugin->getInnerUserFilesDir(), $plugin->getUserFilesDir());
-            UTIL_File::chmodDir($plugin->getUserFilesDir(), 0777, 0666);
         }
         else if ( !file_exists($plugin->getUserFilesDir()) )
         {

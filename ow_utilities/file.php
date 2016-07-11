@@ -68,6 +68,7 @@ class UTIL_File
         if ( !file_exists($destPath) )
         {
             mkdir($destPath);
+            chmod($destPath, 0777);
         }
 
         $handle = opendir($sourcePath);
@@ -94,6 +95,7 @@ class UTIL_File
                 if ( is_file($path) && $copy )
                 {
                     copy($path, $dPath);
+                    chmod($path, 0666);
                 }
                 else if ( $level && is_dir($path) )
                 {
@@ -475,44 +477,5 @@ class UTIL_File
         }
 
         return $bytes;
-    }
-
-    /**
-     * @param string $dirPath
-     * @param array $fileTypes
-     * @param integer $level
-     * @return array
-     */
-    public static function chmodDir( $dirPath, $dirPermissions = 0755, $filePermissions = 0644 )
-    {
-        @chmod($dirPath, $dirPermissions);
-
-        $dirPath = self::removeLastDS($dirPath);
-        $handle = opendir($dirPath);
-
-        if ( $handle !== false )
-        {
-            while ( ($item = readdir($handle)) !== false )
-            {
-                if ( $item === '.' || $item === '..' )
-                {
-                    continue;
-                }
-
-                $path = $dirPath . DS . $item;
-
-                if ( is_file($path) )
-                {
-                    @chmod($path, $filePermissions);
-                }
-                else if ( is_dir($path) )
-                {
-                    chmod($path, $dirPermissions);
-                    self::chmodDir($path, $dirPermissions, $filePermissions);
-                }
-            }
-
-            closedir($handle);
-        }
     }
 }

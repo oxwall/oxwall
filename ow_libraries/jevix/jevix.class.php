@@ -317,7 +317,7 @@ class Jevix
             return false;
         }
 
-        while ( (($this->curChClass & self::NAME) == self::NAME || ($minus && !in_array($this->curCh, array(' ', '=', '>')) ) ) )
+        while ( (($this->curChClass & self::NAME) == self::NAME || ($minus && $this->curCh && !in_array($this->curCh, array(' ', '=', '>')) ) ) )
         {
             $name.=$this->curCh;
             $this->getCh();

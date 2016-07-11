@@ -1005,7 +1005,7 @@ class Submit extends FormElement
 
         foreach ( $this->attributes as $attr => $val )
         {
-            if ( !in_array($attr, array('class', 'id', 'buttonName', 'langLabel', 'label', 'type')) )
+            if ( !in_array($attr, array('value', 'class', 'id', 'buttonName', 'langLabel', 'label', 'type')) )
             {
                 $extraString .= $attr . '="' . $val . '" ';
             }
@@ -1015,7 +1015,7 @@ class Submit extends FormElement
 
         if ( $this->decorator !== false )
         {
-            $finalMarkup = OW::getThemeManager()->processDecorator('button', $params);
+            $finalMarkup = OW::getThemeManager()->processDecorator($this->decorator, $params);
         }
         else
         {

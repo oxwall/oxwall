@@ -911,6 +911,17 @@ final class BOL_UserService
         OW::getEventManager()->trigger($event);
     }
 
+    /**
+     * Get suspend reason
+     *
+     * @param integer $userId
+     * @return string
+     */
+    public function getSuspendReason( $userId )
+    {
+        return $this->userSuspendDao->getSuspendReason($userId);
+    }
+
     public function isSuspended( $userId )
     {
         return $this->userSuspendDao->findByUserId($userId) !== null;

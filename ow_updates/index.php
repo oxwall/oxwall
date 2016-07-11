@@ -197,7 +197,7 @@ if ( !empty($_GET['plugin']) )
             $hcMessage = "Update Complete! Plugin '<b>" . $result['key'] . "</b>' successfully updated.";
 
             $db->query("UPDATE `" . OW_DB_PREFIX . "base_config` SET `value` = 0 WHERE `key` = 'base' AND `name` = 'maintenance'");
-            $db->query("UPDATE `" . OW_DB_PREFIX . "base_config` SET `value` = 1 WHERE `key` = 'base' AND `name` = 'dev_mode'");
+            $db->query("UPDATE `" . OW_DB_PREFIX . "base_config` SET `value` = 59 WHERE `key` = 'base' AND `name` = 'dev_mode'");
         }
         else
         {
