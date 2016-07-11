@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<prefix name="admin" label="Admin" language_tag="en" language_label="English">
+    <key name="plugin_update_platform_invalid_php_version_msg">
+        <value>To update the software to the newest version you need to update your site’s PHP version first up to {$version}. Otherwise the update will not be performed correctly and can potentially break your site. To update your site’s PHP version please contact your hosting provider.</value>
+    </key>
+    <key name="plugin_update_platform_invalid_php_version_back_btn_label">
+        <value>Back to dashboard</value>
+    </key>
+</prefix>
