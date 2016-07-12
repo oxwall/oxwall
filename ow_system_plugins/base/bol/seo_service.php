@@ -300,7 +300,14 @@ class BOL_SeoService
                         $alternateLanguages = array();
                         foreach( $activeLanguages as $altLanguage )
                         {
-                            if ( $altLanguage->id != $language->id )
+                            if ( $altLanguage->id == $defaultLanguage->id )
+                            {
+                                $alternateLanguages[] = array(
+                                    'url' => $this->escapeSitemapUrl($urlData['url']),
+                                    'code' => $altLanguage->tag
+                                );
+                            }
+                            else
                             {
                                 $alternateLanguages[] = array(
                                     'url' => strstr($urlData['url'], '?')

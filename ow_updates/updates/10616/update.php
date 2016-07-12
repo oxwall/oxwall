@@ -138,4 +138,4 @@ catch ( Exception $e )
 }
 
 // import langs
-Updater::getLanguageService()->importPrefixFromDir(__DIR__ . DS . 'langs');
+Updater::getLanguageService()->importPrefixFromDir(__DIR__ . DS . 'langs', true);

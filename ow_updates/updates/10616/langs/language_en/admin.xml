@@ -19,7 +19,7 @@
         <value>Page types</value>
     </key>
     <key name="seo_sitemap_note_desc">
-        <value>Note: Please add {$siteMapUrl} link to robots.txt</value>
+        <value>Note: Please add &#x3C;b&#x3E;&#x22;Sitemap: {$siteMapUrl}&#x22;&#x3C;/b&#x3E; to the end of robots.txt</value>
     </key>
     <key name="seo_sitemap_settings_updated">
         <value>Settings updated</value>
@@ -27,8 +27,11 @@
     <key name="seo_sitemap_settings">
         <value>Sitemap settings</value>
     </key>
-    <key name="seo_sitemap_shedule_updates">
-        <value>Shedule updates</value>
+    <key name="seo_sitemap_schedule_updates">
+        <value>Schedule updates</value>
+    </key>
+    <key name="seo_sitemap_schedule_updates_desc">
+        <value>Sitemap update interval</value>
     </key>
     <key name="seo_sitemap_users">
         <value>Users</value>
