@@ -35,11 +35,13 @@ class ADMIN_CLASS_SeoSitemapForm extends Form
         );
 
         $scheduleField = new Selectbox('schedule');
+        $scheduleField->setHasInvitation(false);
         $scheduleField->setValue(OW::getConfig()->getValue('base', 'seo_sitemap_schedule_update'));
-        $scheduleField->setLabel(OW::getLanguage()->text('admin', 'seo_sitemap_shedule_updates'));
+        $scheduleField->setLabel(OW::getLanguage()->text('admin', 'seo_sitemap_schedule_updates'));
         $scheduleField->setOptions($scheduleOptions);
         $scheduleField->addValidator(new InArrayValidator(array_keys($scheduleOptions)));
         $scheduleField->setRequired(true);
+        $scheduleField->setDescription(OW::getLanguage()->text('admin', 'seo_sitemap_schedule_updates_desc'));
 
         $this->addElement($scheduleField);
 

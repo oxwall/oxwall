@@ -18,7 +18,9 @@
                     {input name="schedule"}
                     <p>{error name="schedule"}</p>
                 </td>
-                <td class="ow_desc ow_small"></td>
+                <td class="ow_desc ow_small">
+                    {desc name=schedule}
+                </td>
             </tr>
 
             <tr class="ow_tr_delimiter"><td></td></tr>
@@ -37,12 +39,9 @@
                         <td class="ow_label">
                             {label name=$entityName}
                         </td>
-                        <td class="ow_value">
+                        <td class="ow_value" colspan="2">
                             {input name=$entityName}
                             <p>{error name=$entityName}</p>
-                        </td>
-                        <td class="ow_desc">
-                            {desc name=$entityName}
                         </td>
                     </tr>
                 {/foreach}
