@@ -1,8 +1,13 @@
 <div class="ow_wide ow_automargin">
 {block_decorator name='box'  addClass='ow_stdmargin' iconClass='ow_ic_plugin' langLabel='admin+manage_plugins_core_update_request_box_cap_label'}
 <div class="ow_center">
+{if !empty($phpVersionInvalidText)}
+   <div class="ow_anno ow_smallmargin ow_nocontent ow_ic_warning">{$phpVersionInvalidText}</div>
+   <div class="ow_txtright">{decorator name='button' langLabel='admin+plugin_update_platform_invalid_php_version_back_btn_label' class='ow_ic_right_arrow' onclick="window.location='`$returnUrl`'"}</div>
+{else}
 {$text}
 <div class="clearfix"><div class="ow_right">{decorator name='button' langLabel='admin+plugin_update_yes_button_label' class='ow_positive' onclick="window.location='`$redirectUrl`'"}</div></div>
+{/if}
 </div>
 {/block_decorator}
 </div>
