@@ -330,6 +330,21 @@ class BASE_CTRL_ComponentPanel extends OW_ActionController
         $this->setTemplate($controllersTemplate);
 
         $this->setDocumentKey('base_profile_page');
+
+        $vars = BOL_SeoService::getInstance()->getUserMetaInfo($userDto);
+
+        // set meta info
+        $params = array(
+            "sectionKey" => "base.users",
+            "entityKey" => "userPage",
+            "title" => "base+meta_title_user_page",
+            "description" => "base+meta_desc_user_page",
+            "keywords" => "base+meta_keywords_user_page",
+            "vars" => $vars,
+            "image" => BOL_AvatarService::getInstance()->getAvatarUrl($userDto->getId(), 2)
+        );
+
+        OW::getEventManager()->trigger(new OW_Event("base.provide_page_meta_info", $params));
     }
 
     public function privacyMyProfileNoPermission( $params )
@@ -464,6 +479,17 @@ class BASE_CTRL_ComponentPanel extends OW_ActionController
         $componentPanel->assign('adminPluginsUrl', OW::getRouter()->urlForRoute('admin_plugins_installed'));
 
         $this->addComponent('componentPanel', $componentPanel);
+
+        // set meta info
+        $params = array(
+            "sectionKey" => "base.base_pages",
+            "entityKey" => "index",
+            "title" => "base+meta_title_index",
+            "description" => "base+meta_desc_index",
+            "keywords" => "base+meta_keywords_index"
+        );
+
+        OW::getEventManager()->trigger(new OW_Event("base.provide_page_meta_info", $params));
     }
 
     public function ajaxSaveAboutMe()

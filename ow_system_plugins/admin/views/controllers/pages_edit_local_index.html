@@ -48,17 +48,6 @@
         <td></td>       
     </tr>
 
-    <tr  id="title-tr" class="{cycle values="ow_alt2,ow_alt1"}">
-        <td class="ow_label">
-        	{label name="meta-tags"}
-       	</td>
-        <td class="ow_value">
-        	{input name="meta-tags"}
-        	<br />{error name="meta-tags"}
-        </td>
-        <td class="ow_description ow_small" style="width: 30%;">{desc name="meta-tags"}</td>                
-    </tr>
-
     <tr id="title-tr" class="{cycle values="ow_alt2,ow_alt1"} ow_tr_last">
         <td class="ow_label">
         	{label name="content"}
@@ -68,6 +57,28 @@
         	<br />{error name="content"}
         </td>
         <td class="ow_description ow_small">{desc name="content"}</td>
+    </tr>
+
+    <tr  id="title-tr" class="{cycle values="ow_alt2,ow_alt1"}">
+    <td class="ow_label">
+        {label name="meta_desc"}
+    </td>
+    <td class="ow_value">
+        {input name="meta_desc"}
+        <br />{error name="meta_desc"}
+    </td>
+    <td class="ow_description ow_small" style="width: 30%;">{desc name="meta_desc"}</td>
+    </tr>
+
+    <tr  id="title-tr" class="{cycle values="ow_alt2,ow_alt1"}">
+    <td class="ow_label">
+        {label name="meta_keywords"}
+    </td>
+    <td class="ow_value">
+        {input name="meta_keywords"}
+        <br />{error name="meta_keywords"}
+    </td>
+    <td class="ow_description ow_small" style="width: 30%;">{desc name="meta_keywords"}</td>
     </tr>
 
  </table>

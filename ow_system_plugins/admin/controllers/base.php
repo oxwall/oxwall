@@ -39,6 +39,20 @@ class ADMIN_CTRL_Base extends ADMIN_CTRL_Abstract
         $this->assign('build', OW::getConfig()->getValue('base', 'soft_build'));
     }
 
+    /**
+     * Generate sitemap
+     */
+    public function generateSitemap()
+    {
+        do
+        {
+            BOL_SeoService::getInstance()->generateSitemap();
+        }
+        while ( !(int) OW::getConfig()->getValue('base', 'seo_sitemap_build_finished') );
+
+        exit;
+    }
+
     public function dashboard( $paramList )
     {
         $this->setPageHeading(OW::getLanguage()->text('admin', 'admin_dashboard'));

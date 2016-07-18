@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<prefix name="base" label="Base" language_tag="en" language_label="English">
+    <key name="meta_title_user_list"><value>{$user_list} users | {$site_name}</value></key>
+    <key name="meta_desc_user_list"><value>View {$user_list} users at {$site_name}. Join us and meet the love your life today!</value></key>
+    <key name="meta_keywords_user_list"><value></value></key>
+    <key name="user_list_type_latest"><value>Latest</value></key>
+    <key name="user_list_type_online"><value>Online</value></key>
+    <key name="seo_meta_section_users"><value>Users</value></key>
+    <key name="seo_meta_form_element_title_label"><value>Title</value></key>
+    <key name="seo_meta_form_element_title_desc"><value>Recommended title length is up to 70 symbols</value></key>
+    <key name="seo_meta_form_element_desc_label"><value>Meta description</value></key>
+    <key name="seo_meta_form_element_desc_desc"><value>Recommended description length is up to 150 symbols</value></key>
+    <key name="seo_meta_form_element_keywords_label"><value>Meta keywords</value></key>
+    <key name="seo_meta_form_element_index_label"><value>Allow for indexing</value></key>
+    <key name="seo_meta_choose_pages_label"><value>Choose pages:</value></key>
+    <key name="seo_meta_user_list_label"><value>All Site Members by List (Online / Latest) Page</value></key>
+    <key name="seo_meta_section_base_pages"><value>Base Pages</value></key>
+    <key name="meta_title_index"><value>{$site_name} - Find Dates Here!</value></key>
+    <key name="meta_desc_index"><value>{$site_name} dating website with dating apps and robust online community. Meet the love of your life here today!</value></key>
+    <key name="meta_keywords_index"><value></value></key>
+    <key name="seo_meta_index_label"><value>Index</value></key>
+    <key name="meta_title_join"><value>Join {$site_name} - Find Dates Here!</value></key>
+    <key name="meta_desc_join"><value>Join {$site_name} to meet new people and chat with other signles. Find your love today!</value></key>
+    <key name="meta_keywords_join"><value></value></key>
+    <key name="seo_meta_join_label"><value>Join</value></key>
+    <key name="meta_title_sign_in"><value>Sign in to {$site_name} - Find Dates Here!</value></key>
+    <key name="meta_desc_sign_in"><value>Sign in to your {$site_name} site and meet new people!</value></key>
+    <key name="meta_keywords_sign_in"><value></value></key>
+    <key name="seo_meta_sign_in_label"><value>Sign-In Page</value></key>
+    <key name="meta_title_forgot_pass"><value>Forgot password for {$site_name}?</value></key>
+    <key name="meta_desc_forgot_pass"><value>Enter the email you used during registration for {$site_name} to receive a new password.</value></key>
+    <key name="meta_keywords_forgot_pass"><value></value></key>
+    <key name="seo_meta_forgot_pass_label"><value>Forgot Password Page</value></key>
+    <key name="meta_title_user_page"><value>{$user_name}, {$user_age} | {$site_name}</value></key>
+    <key name="meta_desc_user_page"><value>Chat with {$user_name}, {$user_age} at {$site_name}.</value></key>
+    <key name="meta_keywords_user_page"><value></value></key>
+    <key name="seo_meta_user_page_label"><value>Individual Member Page</value></key>
+    <key name="meta_title_user_search"><value>User Search | {$site_name}</value></key>
+    <key name="meta_desc_user_search"><value>Search members at {$site_name}, and find someone you like!</value></key>
+    <key name="meta_keywords_user_search"><value></value></key>
+    <key name="seo_meta_user_search_label"><value>User Search Page</value></key>
+    <key name="meta_title_search_result"><value>Your search results for {$site_name}</value></key>
+    <key name="meta_desc_search_result"><value>Search results for {$site_name} by :orderType</value></key>
+    <key name="meta_keywords_search_result"><value></value></key>
+    <key name="seo_meta_search_result_label"><value>Member Search Results Page</value></key>
+    <key name="seo_social_meta_text"><value>
+    &lt;p&gt;You do not need to set up anything - it’s all done for you already. Almost all of the necessary data will be copied from SEO Page Settings and transferred to Open Graph Tags. The following is the list of used tags:
+    &lt;/p&gt;
+    &lt;ul class="ow_stdmargin"&gt;
+    &lt;li&gt;&lt;strong&gt;og:title&lt;/strong&gt; - copied from Title&lt;/li&gt;
+    &lt;li&gt;&lt;strong&gt;og:url&lt;/strong&gt; - copied from URL&lt;/li&gt;
+    &lt;li&gt;&lt;strong&gt;og:type&lt;/strong&gt; - ‘website’ value is set by default&lt;/li&gt;
+    &lt;li&gt;&lt;strong&gt;og:description&lt;/strong&gt; - copied from Meta Description&lt;/li&gt;
+    &lt;li&gt;&lt;strong&gt;og:site_name&lt;/strong&gt; - {$site_name}&lt;/li&gt;
+    &lt;li&gt;&lt;strong&gt;twitter:title&lt;/strong&gt; - copied from Title&lt;/li&gt;
+    &lt;li&gt;&lt;strong&gt;twitter:description&lt;/strong&gt; - copied from Meta Description&lt;/li&gt;
+    &lt;li&gt;&lt;strong&gt;og:image and twitter:image&lt;/strong&gt; - the same image is set for both tags. The following image types will be set automatically depending on page in question: Logo, Video Preview, Event Image, User Photo, Group Image or Logo, Photo Album First Photo, Photo.&lt;/li&gt;
+    &lt;/ul&gt;
+    </value></key>
+    <key name="form_social_meta_logo_label"><value>Logo in good quality</value></key>
+    <key name="social_meta_logo_desc"><value>For the use in shared posts (Recommended image width is 1000px; Recommended image format is JPG)</value></key>
+    <key name="seo_upload_logo_label"><value>Upload logo</value></key>
+    <key name="pages_page_meta_desc_label"><value>Meta Description</value></key>
+    <key name="pages_page_meta_desc_desc"><value>Recommended description length is up to 150 symbols</value></key>
+    <key name="pages_page_meta_keywords_label"><value>Meta keywords</value></key>
+    <key name="pages_page_meta_keywords_desc"><value></value></key>
+    <key name="invalid_meta_error_message"><value>HTML is not allowed, please enter plain text</value></key>
+</prefix>

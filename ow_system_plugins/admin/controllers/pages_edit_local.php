@@ -137,12 +137,12 @@ class ADMIN_CTRL_PagesEditLocal extends ADMIN_CTRL_Abstract
             }
 //- meta tags
 
-            $langKey = $languageService->findKey($plugin->getKey(), 'local_page_meta_tags_' . $menu->getKey());
+            $langKey = $languageService->findKey($plugin->getKey(), 'local_page_meta_desc_' . $menu->getKey());
 
             if ( empty($langKey) )
             {
                 $langKey = new BOL_LanguageKey();
-                $langKey->setKey('local_page_meta_tags_' . $menu->getKey());
+                $langKey->setKey('local_page_meta_desc_' . $menu->getKey());
                 $langKey->setPrefixId($languageService->findPrefixId($plugin->getKey()));
 
                 $languageService->saveKey($langKey);
@@ -158,7 +158,31 @@ class ADMIN_CTRL_PagesEditLocal extends ADMIN_CTRL_Abstract
                 $langValue->setLanguageId($languageService->getCurrent()->getId());
             }
 
-            $languageService->saveValue($langValue->setValue($data['meta-tags']));
+            $languageService->saveValue($langValue->setValue($data['meta_desc']));
+/*----------------------------------------------*/
+
+            $langKey = $languageService->findKey($plugin->getKey(), 'local_page_meta_keywords_' . $menu->getKey());
+
+            if ( empty($langKey) )
+            {
+                $langKey = new BOL_LanguageKey();
+                $langKey->setKey('local_page_meta_keywords_' . $menu->getKey());
+                $langKey->setPrefixId($languageService->findPrefixId($plugin->getKey()));
+
+                $languageService->saveKey($langKey);
+            }
+
+
+            $langValue = $languageService->findValue($languageService->getCurrent()->getId(), $langKey->getId());
+
+            if ( $langValue === null )
+            {
+                $langValue = new BOL_LanguageValue();
+                $langValue->setKeyId($langKey->getId());
+                $langValue->setLanguageId($languageService->getCurrent()->getId());
+            }
+
+            $languageService->saveValue($langValue->setValue($data['meta_keywords']));
 
 //- content
 
@@ -323,15 +347,24 @@ class EditLocalPageForm extends Form
                 ->setLabel(OW::getLanguage()->text('admin', 'pages_edit_local_visible_for'))
         );
 
-        $metaTagsTextarea = new Textarea('meta-tags');
+        $metaTagsTextarea = new Textarea('meta_keywords');
 
-        $langValueDto = $languageService->getValue($currentLanguageId, $plugin->getKey(), 'local_page_meta_tags_' . $menu->getKey());
-        $langValue = $langValueDto === null ? '' : $language->text($plugin->getKey(), 'local_page_meta_tags_' . $menu->getKey());
+        $langValueDto = $languageService->getValue($currentLanguageId, $plugin->getKey(), 'local_page_meta_keywords_' . $menu->getKey());
+        $langValue = $langValueDto === null ? '' : $language->text($plugin->getKey(), 'local_page_meta_keywords_' . $menu->getKey());
         $this->addElement(
-                $metaTagsTextarea->setLabel('Page meta tags')
+            $metaTagsTextarea->setLabel(OW::getLanguage()->text("base", "pages_page_meta_keywords_label"))
                 ->setValue($langValue)
-                ->setDescription(OW::getLanguage()->text('admin', 'pages_page_field_meta_desc'))
-                ->setId('meta-tags')
+                ->setDescription(OW::getLanguage()->text('base', 'pages_page_meta_keywords_desc'))
+        );
+
+        $metaTagsTextarea = new Textarea('meta_desc');
+
+        $langValueDto = $languageService->getValue($currentLanguageId, $plugin->getKey(), 'local_page_meta_desc_' . $menu->getKey());
+        $langValue = $langValueDto === null ? '' : $language->text($plugin->getKey(), 'local_page_meta_desc_' . $menu->getKey());
+        $this->addElement(
+            $metaTagsTextarea->setLabel(OW::getLanguage()->text("base", "pages_page_meta_desc_label"))
+                ->setValue($langValue)
+                ->setDescription(OW::getLanguage()->text('base', 'pages_page_meta_desc_desc'))
         );
 
         $contentTextArea = new Textarea('content');

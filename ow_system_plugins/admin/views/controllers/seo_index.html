@@ -1,0 +1,75 @@
+<style>
+    .ow_info_icon {
+        width: 20px;
+        height: 20px;
+        display: inline-block;
+    }
+    .ow_info_icon:hover {
+        cursor: pointer;
+    }
+    .ow_letter_count {
+        padding-top: 7px;
+    }
+    .ow_letter_count input {
+        width: 44px;
+        height: 24px;
+    }
+</style>
+{script}
+addInputCounter = function( $input, $counter, $count ){
+    $counter.val($input.val().length);
+
+    if( $counter.val()-$count == 1 ){
+        $counter.addClass("ow_red");
+    }
+
+    if( $count-$counter.val() == 1 ){
+        $counter.removeClass("ow_red");
+    }
+}
+{/script}
+{$menu}
+<div class="seo_admin_select ow_stdmargin">
+    <span>{text key='base+seo_meta_choose_pages_label'} </span>{html_options name='meta_sections' options=$sections selected=$currentSection onchange="window.location='$currentUrl'.replace('#sec#', this.value)"}
+</div>
+{form name="meta_form"}
+<table class="ow_table_1 ow_form">
+     <tbody>
+     {foreach from=$entities item="item" key="key"}
+        <tr class="ow_tr_first">
+            <th class="ow_name ow_txtleft" colspan="3">
+                <span class="ow_section_icon {if !empty($item.iconClass)}{$item.iconClass}{else}ow_ic_file{/if}">{$item.label}</span>
+            </th>
+        </tr>
+        <tr class="ow_alt1">
+            <td class="ow_label">{label name="seo_title_`$key`"}</td>
+            <td class="ow_value">{input name="seo_title_`$key`" onkeydown="addInputCounter($(this), $('input.seo_title_{$key}'), {$item.title.max})"}
+                <div class="ow_letter_count ow_txtright ow_small"><input class="seo_title_{$key}" readonly="" type="text" name="" size="3" maxlength="3" value="{$item.title.length}"{if $item.title.isRed} class="ow_red"{/if}></div>
+                {error name="seo_title_`$key`"}
+            </td>
+            <td class="ow_desc ow_small"><span class="ow_info_icon ow_ic_info" title="{desc name="seo_title_`$key`"}"></span></td>
+        </tr>
+        <tr class="ow_alt2">
+            <td class="ow_label">{label name="seo_description_`$key`"}</td>
+            <td class="ow_value">{input name="seo_description_`$key`" onkeydown="addInputCounter($(this), $('input.seo_desc_{$key}'), {$item.desc.max})"}
+                <div class="ow_letter_count ow_txtright ow_small"><input class="seo_desc_{$key}" readonly="" type="text" name="" size="3" maxlength="3" value="{$item.desc.length}"{if $item.desc.isRed} class="ow_red"{/if}></div>
+                {error name="seo_description_`$key`"}
+            </td>
+            <td class="ow_desc ow_small"><span class="ow_info_icon ow_ic_info" title="{desc name="seo_description_`$key`"}"></span></td>
+        </tr>
+        <tr class="ow_alt1">
+            <td class="ow_label">{label name="seo_keywords_`$key`"}</td>
+            <td class="ow_value">{input name="seo_keywords_`$key`"}<br />{error name="seo_keywords_`$key`"}</td>
+            <td class="ow_desc ow_small"></td>
+        </tr>
+        <tr class="ow_alt2 ow_tr_last">
+            <td class="ow_label">{label name="seo_index_`$key`"}</td>
+            <td class="ow_value">{input name="seo_index_`$key`"}</td>
+            <td class="ow_desc"></td>
+        </tr>
+        <tr class="ow_tr_delimiter"><td></td></tr>
+     {/foreach}
+    </tbody>
+</table>
+<div class="clearfix ow_stdmargin"><div class="ow_right">{submit name="save"}</div></div>
+{/form}

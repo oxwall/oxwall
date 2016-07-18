@@ -1,0 +1,20 @@
+{$menu}
+<div class="ow_seo_socialmeta_txt ow_stdmargin">{text key='base+seo_social_meta_text'}</div>
+{form name='imageForm'}
+    <table class="ow_table_1 ow_form">
+        <tbody>
+        <tr class="ow_tr_first">
+            <th class="ow_name ow_txtleft" colspan="3">
+                <span class="ow_section_icon ow_ic_save">{text key='base+seo_upload_logo_label'}</span>
+            </th>
+        </tr>
+        <tr class="ow_alt1 ow_tr_last">
+            <td class="ow_label">{label name='image'}</td>
+            <td class="ow_value"><img src="{$logoUrl}" style="max-width: 250px;" /><br />{input name='image'}</td>
+            <td class="ow_desc ow_small">{desc name='image'}</td>
+        </tr>
+        </tbody></table>
+    <div class="clearfix ow_stdmargin">
+        <div class="ow_right">{submit name='submit'}</div>
+    </div>
+{/form}

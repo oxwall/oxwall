@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
+{foreach from=$urls item='url'}
+    <url>
+        <changefreq>{$url.changefreq}</changefreq>
+        <priority>{$url.priority}</priority>
+        <loc>{$url.url}</loc>
+        {foreach from=$url.alternateLanguages item='langData'}
+        <xhtml:link rel="alternate" hreflang="{$langData.code}" href="{$langData.url}" />
+        {/foreach}
+    </url>
+{/foreach}
+</urlset>

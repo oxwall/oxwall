@@ -1,0 +1,62 @@
+{$menu}
+
+{form name="sitemapForm"}
+    <table class="ow_table_1 ow_form">
+        <tbody>
+
+            <tr class="ow_tr_first">
+                <th colspan="3" class="ow_name ow_txtleft">
+                    <span class="ow_section_icon ow_ic_script">{text key="admin+seo_sitemap_settings"}</span>
+                </th>
+            </tr>
+
+            <tr class="ow_alt{cycle values='1,2'}">
+                <td class="ow_label">
+                    {label name=schedule}
+                </td>
+                <td class="ow_value">
+                    {input name="schedule"}
+                    <p>{error name="schedule"}</p>
+                </td>
+                <td class="ow_desc ow_small">
+                    {desc name=schedule}
+                </td>
+            </tr>
+
+            <tr class="ow_tr_delimiter"><td></td></tr>
+
+            {if $formEntitites}
+                <tr class="ow_tr_first">
+                    <th colspan="3" class="ow_name ow_txtleft">
+                        <span class="ow_section_icon ow_ic_files">
+                            {text key="admin+seo_sitemap_page_types"}
+                        </span>
+                    </th>
+                </tr>
+
+                {foreach from=$formEntitites item=entityName}
+                    <tr class="ow_alt{cycle values='1,2'}">
+                        <td class="ow_label">
+                            {label name=$entityName}
+                        </td>
+                        <td class="ow_value" colspan="2">
+                            {input name=$entityName}
+                            <p>{error name=$entityName}</p>
+                        </td>
+                    </tr>
+                {/foreach}
+            {/if}
+
+        </tbody>
+    </table>
+
+    {block_decorator name="box" type="empty" addClass="ow_center ow_anno ow_smallmargin"}
+        {text key='admin+seo_sitemap_note_desc' siteMapUrl=$sitemapUrl}
+    {/block_decorator}
+
+    <div class="ow_right">
+        {submit name="save" class="ow_ic_save ow_submit ow_right"}
+    </div>
+    <div class="clearfix"></div>
+
+{/form}

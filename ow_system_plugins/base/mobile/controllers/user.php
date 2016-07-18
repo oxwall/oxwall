@@ -121,6 +121,17 @@ class BASE_MCTRL_User extends OW_MobileActionController
 
         OW::getDocument()->getMasterPage()->setRButtonData(array('extraString' => ' style="display:none;"'));
         $this->addComponent('signIn', new BASE_MCMP_SignIn(false));
+
+        // set meta info
+        $params = array(
+            "sectionKey" => "base.base_pages",
+            "entityKey" => "sign_in",
+            "title" => "base+meta_title_sign_in",
+            "description" => "base+meta_desc_sign_in",
+            "keywords" => "base+meta_keywords_sign_in"
+        );
+
+        OW::getEventManager()->trigger(new OW_Event("base.provide_page_meta_info", $params));
     }
 
     /**
@@ -200,6 +211,21 @@ class BASE_MCTRL_User extends OW_MobileActionController
         $this->addComponent('about', OW::getClassInstance("BASE_MCMP_ProfileAbout", $userDto, 80));
 
         $this->assign("userId", $userDto->id);
+
+        $vars = BOL_SeoService::getInstance()->getUserMetaInfo($userDto);
+
+        // set meta info
+        $params = array(
+            "sectionKey" => "base.users",
+            "entityKey" => "userPage",
+            "title" => "base+meta_title_user_page",
+            "description" => "base+meta_desc_user_page",
+            "keywords" => "base+meta_keywords_user_page",
+            "vars" => $vars,
+            "image" => BOL_AvatarService::getInstance()->getAvatarUrl($userDto->getId(), 2)
+        );
+
+        OW::getEventManager()->trigger(new OW_Event("base.provide_page_meta_info", $params));
     }
 
     public function about( $params )
@@ -271,6 +297,17 @@ class BASE_MCTRL_User extends OW_MobileActionController
                 $this->redirect();
             }
         }
+
+        // set meta info
+        $params = array(
+            "sectionKey" => "base.base_pages",
+            "entityKey" => "forgot_pass",
+            "title" => "base+meta_title_forgot_pass",
+            "description" => "base+meta_desc_forgot_pass",
+            "keywords" => "base+meta_keywords_forgot_pass"
+        );
+
+        OW::getEventManager()->trigger(new OW_Event("base.provide_page_meta_info", $params));
     }
 
     public function resetPasswordRequest()

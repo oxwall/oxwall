@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<prefix name="admin" label="Admin" language_tag="en" language_label="English">
+    <key name="sidebar_menu_item_seo_settings">
+        <value>SEO</value>
+    </key>
+    <key name="seo_page_heading">
+        <value>SEO settings</value>
+    </key>
+    <key name="seo_page">
+        <value>SEO page</value>
+    </key>
+    <key name="seo_sitemap">
+        <value>Sitemap</value>
+    </key>
+    <key name="seo_social_meta">
+        <value>Social meta</value>
+    </key>
+    <key name="seo_sitemap_page_types">
+        <value>Page types</value>
+    </key>
+    <key name="seo_sitemap_note_desc">
+        <value>Note: Please add &#x3C;b&#x3E;&#x22;Sitemap: {$siteMapUrl}&#x22;&#x3C;/b&#x3E; to the end of robots.txt</value>
+    </key>
+    <key name="seo_sitemap_settings_updated">
+        <value>Settings updated</value>
+    </key>
+    <key name="seo_sitemap_settings">
+        <value>Sitemap settings</value>
+    </key>
+    <key name="seo_sitemap_schedule_updates">
+        <value>Schedule updates</value>
+    </key>
+    <key name="seo_sitemap_schedule_updates_desc">
+        <value>Sitemap update interval</value>
+    </key>
+    <key name="seo_sitemap_users">
+        <value>Users</value>
+    </key>
+    <key name="seo_sitemap_users_desc">
+        <value>Users and lists</value>
+    </key>
+    <key name="seo_sitemap_update_daily">
+        <value>Daily</value>
+    </key>
+    <key name="seo_sitemap_update_weekly">
+        <value>Weekly</value>
+    </key>
+    <key name="seo_sitemap_update_monthly">
+        <value>Monthly</value>
+    </key>
+    <key name="seo_sitemap_base_pages">
+        <value>Base Pages</value>
+    </key>
+</prefix>

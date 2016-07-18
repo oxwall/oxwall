@@ -110,22 +110,23 @@ class BOL_TagDao extends OW_BaseDao
      * 
      * @param string $entityType
      * @param integer $limit
+     * @param integer $offset
      * @return array
      */
-    public function findMostPopularTags( $entityType, $limit )
+    public function findMostPopularTags( $entityType, $limit, $offset  = 0)
     {
         $query = "SELECT * FROM
-	    		(
-	    			SELECT `et`.*, COUNT(*) AS `count`, `t`.`label` AS `label` FROM `" . BOL_EntityTagDao::getInstance()->getTableName() . "` AS `et`
-					LEFT JOIN `" . $this->getTableName() . "` AS `t` ON ( `et`.`tagId` = `t`.`id`	)
-					WHERE `et`.`entityType` = :entityType AND `et`.`active` = 1
-					GROUP BY `tagId`
-                                        ORDER BY `count` DESC
-                                        LIMIT :limit
-				) AS `t` 
-				ORDER BY `t`.`label`";
+            (
+                SELECT `et`.*, COUNT(*) AS `count`, `t`.`label` AS `label` FROM `" . BOL_EntityTagDao::getInstance()->getTableName() . "` AS `et`
+                LEFT JOIN `" . $this->getTableName() . "` AS `t` ON ( `et`.`tagId` = `t`.`id`	)
+                WHERE `et`.`entityType` = :entityType AND `et`.`active` = 1
+                GROUP BY `tagId`
+                                    ORDER BY `count` DESC
+                                    LIMIT :offset, :limit
+            ) AS `t`
+            ORDER BY `t`.`label`";
 
-        return $this->dbo->queryForList($query, array('limit' => $limit, 'entityType' => $entityType));
+        return $this->dbo->queryForList($query, array('offset' => (int) $offset, 'limit' => (int) $limit, 'entityType' => $entityType));
     }
 
     /**
