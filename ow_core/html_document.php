@@ -613,16 +613,6 @@ class OW_HtmlDocument extends OW_Document
         $this->addMetaInfo(self::META_CONTENT_TYPE, $this->getMime() . '; charset=' . $this->getCharset(), 'http-equiv');
         $this->addMetaInfo(self::META_CONTENT_LANGUAGE, $this->getLanguage(), 'http-equiv');
 
-        if ( $this->getKeywords() )
-        {
-            $this->addMetaInfo('keywords', $this->getKeywords());
-        }
-
-        if ( $this->getDescription() )
-        {
-            $this->addMetaInfo('description', $this->getDescription());
-        }
-
         $this->getMasterPage()->assign('content', $this->body);
         $this->getMasterPage()->assign('heading', $this->getHeading());
         $this->getMasterPage()->assign('heading_icon_class', $this->getHeadingIconClass());
@@ -635,6 +625,15 @@ class OW_HtmlDocument extends OW_Document
         $jsData = '';
 
         // META INFO
+        if ( $this->getDescription() )
+        {
+            $headData .= UTIL_HtmlTag::generateTag('meta', array("name" => "description", "content" => $this->getDescription())) . PHP_EOL;
+        }
+
+        if ( $this->getKeywords() )
+        {
+            $headData .= UTIL_HtmlTag::generateTag('meta', array("name" => "keywords", "content" => $this->getKeywords())) . PHP_EOL;
+        }
 
         foreach ( $this->meta as $key => $value )
         {

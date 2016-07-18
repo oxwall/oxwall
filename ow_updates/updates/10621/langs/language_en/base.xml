@@ -64,4 +64,5 @@
     <key name="pages_page_meta_desc_desc"><value>Recommended description length is up to 150 symbols</value></key>
     <key name="pages_page_meta_keywords_label"><value>Meta keywords</value></key>
     <key name="pages_page_meta_keywords_desc"><value></value></key>
+    <key name="invalid_meta_error_message"><value>HTML is not allowed, please enter plain text</value></key>
 </prefix>

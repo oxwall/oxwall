@@ -2033,46 +2033,45 @@ class BASE_CLASS_EventHandler
 
         $vars = empty($params["vars"]) ? array() : $params["vars"];
 
-        $document->addMetaInfo("og:type", "website");
-        $document->addMetaInfo("og:site_name", OW::getConfig()->getValue('base', 'site_name'));
+        $title = false;
+        $desc = false;
+        $keywords = false;
 
         if( !empty($params["title"]) )
         {
             $parts = explode("+", $params["title"]);
-            $text = $this->processMetaText($language->text($parts[0], $parts[1], $vars), BOL_SeoService::META_TITLE_MAX_LENGTH);
-
-            if( $text )
-            {
-                $document->setTitle($text);
-                $document->addMetaInfo("og:title", $text);
-                $document->addMetaInfo("twitter:title", $text);
-            }
+            $title = $this->processMetaText($language->text($parts[0], $parts[1], $vars), BOL_SeoService::META_TITLE_MAX_LENGTH);
         }
 
         if( !empty($params["description"]) )
         {
             $parts = explode("+", $params["description"]);
-            $text = $this->processMetaText($language->text($parts[0], $parts[1], $vars), BOL_SeoService::META_DESC_MAX_LENGTH);
-
-            if( $text )
-            {
-                $document->setDescription($text);
-                $document->addMetaInfo("og:description", $text);
-                $document->addMetaInfo("twitter:description", $text);
-            }
+            $desc = $this->processMetaText($language->text($parts[0], $parts[1], $vars), BOL_SeoService::META_DESC_MAX_LENGTH);
         }
 
         if( !empty($params["keywords"]) )
         {
             $parts = explode("+", $params["keywords"]);
-            $text = $this->processMetaText($language->text($parts[0], $parts[1], $vars));
-
-            if( $text )
-            {
-                $document->setKeywords($text);
-            }
+            $keywords = $this->processMetaText($language->text($parts[0], $parts[1], $vars));
         }
 
+        // add standard meta
+        if( $title )
+        {
+            $document->setTitle($title);
+        }
+
+        if( $desc )
+        {
+            $document->setDescription($desc);
+        }
+
+        if( $keywords )
+        {
+            $document->setKeywords($keywords);
+        }
+
+        //add og
         $imageUrl = BOL_SeoService::getInstance()->getSocialLogoUrl();
 
         if( !empty($params["image"]) )
@@ -2080,9 +2079,36 @@ class BASE_CLASS_EventHandler
             $imageUrl = trim($params["image"]);
         }
 
+        $document->addMetaInfo("og:type", "website");
+        $document->addMetaInfo("og:site_name", OW::getConfig()->getValue('base', 'site_name'));
+
+        if( $title )
+        {
+            $document->addMetaInfo("og:title", $title);
+        }
+
+        if( $desc )
+        {
+            $document->addMetaInfo("og:description", $desc);
+        }
+
         if( $imageUrl )
         {
             $document->addMetaInfo("og:image", $imageUrl);
+        }
+
+        if( $title )
+        {
+            $document->addMetaInfo("twitter:title", $title);
+        }
+
+        if( $desc )
+        {
+            $document->addMetaInfo("twitter:description", $desc);
+        }
+
+        if( $imageUrl )
+        {
             $document->addMetaInfo("twitter:image", $imageUrl);
         }
     }

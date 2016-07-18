@@ -42,8 +42,8 @@ class ADMIN_CTRL_Seo extends ADMIN_CTRL_Abstract
         parent::__construct();
 
         // activate menu item
-        OW::getDocument()->getMasterPage()->
-                getMenu(OW_Navigation::ADMIN_SETTINGS)->getElement('sidebar_menu_item_seo_settings')->setActive(true);
+//        OW::getDocument()->getMasterPage()->
+//                getMenu(OW_Navigation::ADMIN_SETTINGS)->getElement('sidebar_menu_item_seo_settings')->setActive(true);
 
         $this->setPageHeading(OW::getLanguage()->text('admin', 'seo_page_heading'));
         $this->setPageHeadingIconClass('ow_ic_edit');
@@ -58,7 +58,7 @@ class ADMIN_CTRL_Seo extends ADMIN_CTRL_Abstract
      */
     public function index()
     {
-        $this->menu->getElement("seo_page")->setActive(true);
+        //$this->menu->getElement("seo_page")->setActive(true);
 
         $event = new BASE_CLASS_EventCollector("base.collect_seo_meta_data");
         OW::getEventManager()->trigger($event);
@@ -96,9 +96,15 @@ class ADMIN_CTRL_Seo extends ADMIN_CTRL_Abstract
         $this->assign("entities", $form->getEntities());
 
         if( OW::getRequest()->isPost() ){
-            $form->processData($_POST);
-            OW::getFeedback()->info(OW::getLanguage()->text('admin', 'settings_submit_success_message'));
-            $this->redirect();
+            if( $form->processData($_POST) )
+            {
+                OW::getFeedback()->info(OW::getLanguage()->text('admin', 'settings_submit_success_message'));
+                $this->redirect();
+            }
+            else
+            {
+                OW::getFeedback()->error($form->getEmptyElementsErrorMessage());
+            }
         }
     }
 
