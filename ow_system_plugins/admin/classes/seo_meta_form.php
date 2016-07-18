@@ -72,6 +72,7 @@ class ADMIN_CLASS_SeoMetaForm extends Form
             $title->setValue($valDto ? $valDto->getValue() : $prefix ."+". $key);
             $title->setLabel($language->text("base", "seo_meta_form_element_title_label"));
             $title->setDescription($language->text("base", "seo_meta_form_element_title_desc"));
+            $title->addValidator(new MetaInfoValidator());
             $this->addElement($title);
 
             $desc = new Textarea("seo_description_{$item["entityKey"]}");
@@ -80,6 +81,7 @@ class ADMIN_CLASS_SeoMetaForm extends Form
             $desc->setValue($valDto ? $valDto->getValue() : $prefix ."+". $key);
             $desc->setLabel($language->text("base", "seo_meta_form_element_desc_label"));
             $desc->setDescription($language->text("base", "seo_meta_form_element_desc_desc"));
+            $desc->addValidator(new MetaInfoValidator());
             $this->addElement($desc);
 
             $keywords = new Textarea("seo_keywords_{$item["entityKey"]}");
@@ -87,6 +89,7 @@ class ADMIN_CLASS_SeoMetaForm extends Form
             $valDto = $langService->getValue($langId, $prefix, $key);
             $keywords->setValue($valDto ? $valDto->getValue() : $prefix ."+". $key);
             $keywords->setLabel($language->text("base", "seo_meta_form_element_keywords_label"));
+            $keywords->addValidator(new MetaInfoValidator());
             $this->addElement($keywords);
 
             $indexCheckbox = new CheckboxField("seo_index_{$item["entityKey"]}");
@@ -173,7 +176,7 @@ class ADMIN_CLASS_SeoMetaForm extends Form
                 {
                     if( empty($dataToUpdate[$item["entityKey"]][$type]) )
                     {
-                        continue;
+                        $dataToUpdate[$item["entityKey"]][$type] = "";
                     }
 
                     list($prefix, $key) = explode("+", $langKey);
@@ -211,17 +214,61 @@ class ADMIN_CLASS_SeoMetaForm extends Form
             }
 
             OW_DeveloperTools::getInstance()->clearLanguagesCache();
+
+            return true;
         }
 
+        return false;
+    }
+}
 
+class MetaInfoValidator extends OW_Validator
+{
+    /**
+     * Class constructor
+     *
+     * @param array $predefinedValues
+     */
+    public function __construct()
+    {
+        $this->setErrorMessage(OW::getLanguage()->text("base", "invalid_meta_error_message"));
+    }
 
+    /**
+     * Is data valid
+     *
+     * @param mixed $value
+     * @return boolean
+     */
+    public function isValid( $value )
+    {
+        return strpos($value, ">") === false && strpos($value, "<") === false && strpos($value, '"') === false;
+    }
 
+    /**
+     * Get js validator
+     *
+     * @return string
+     */
+    public function getJsValidator()
+    {
+        $js = "{
+            validate : function( value )
+        	{
+        	    if ( (value.indexOf('>') == -1) && (value.indexOf('<') == -1) && (value.indexOf('\"') == -1) )
+        	    {
+        	        return true;
+        	    }
+        	    
+        	    throw " . json_encode($this->getError()) . ";
+        	},
 
+        	getErrorMessage : function()
+        	{
+        		return " . json_encode($this->getError()) . "
+    		}
+        }";
 
-
-
-
-
-
+        return $js;
     }
 }
