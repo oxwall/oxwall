@@ -232,7 +232,8 @@ class BOL_StorageService
     {
         $params = array(
             "platform-version" => OW::getConfig()->getValue("base", "soft_version"),
-            "platform-build" => OW::getConfig()->getValue("base", "soft_build")
+            "platform-build" => OW::getConfig()->getValue("base", "soft_build"),
+            "site-url" => OW::getRouter()->getBaseUrl()
         );
 
         $data = array_merge($params, $this->triggerEventBeforeRequest($params));
@@ -269,7 +270,8 @@ class BOL_StorageService
         $params = array(
             self::URI_VAR_KEY => trim($key),
             self::URI_VAR_DEV_KEY => trim($devKey),
-            self::URI_VAR_LICENSE_KEY => $licenseKey != null ? trim($licenseKey) : null
+            self::URI_VAR_LICENSE_KEY => $licenseKey != null ? trim($licenseKey) : null,
+            "site-url" => OW::getRouter()->getBaseUrl()
         );
 
         $data = array_merge($params, $this->triggerEventBeforeRequest($params));
@@ -593,6 +595,7 @@ class BOL_StorageService
 
     private function requestGetResultAsJson( $url, $data )
     {
+        $data["site-url"] = OW::getRouter()->getBaseUrl();
         $params = new UTIL_HttpClientParams();
         $params->addParams($data);
         $response = UTIL_HttpClient::get($url, $params);
