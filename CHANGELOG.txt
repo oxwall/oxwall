@@ -1,3 +1,31 @@
+Oxwall 1.8.4 beta, July 19, 2016
+====================================
+
+Platform [core]:
+- added advanced SEO settings for site pages 
+- added option to generate and update sitemap
+- removed hardcode for Submit form element (contributed by revkov https://github.com/oxwall/oxwall/pull/357)
+- made the reason for a profile suspension displayable on site
+- fixed preloader display for Simplicity theme
+- introduced hardcode ban to upload PHP files
+- introduced required PHP version check before platform update 
+- when attempting to update plugins while there is an available platform update present, the system will warn admins to perform platform update first
+- fixed the display order for profile fields on profile view page within mobile version
+- changed URL attribution to https://developers.oxwall.com
+- changed anti-CSFR token lifetime to match user’s on-site session time
+- fixed avatar crop bug on profile edit page
+- improved SSL integration with CloudFlare
+
+Forum [forum]:
+- fixed display of quoted text for Simplicity theme (contributed by WalterMisar https://github.com/oxwall/simplicity/pull/7)
+
+Advertisement [ads]:
+- fixed fatal error during plugin installation
+
+Videos [video]:
+- fixed integration with dailymotion.com
+
+
 Oxwall 1.8.3, May 17, 2016
 ====================================
 
