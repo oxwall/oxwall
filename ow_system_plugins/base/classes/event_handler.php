@@ -1906,7 +1906,7 @@ class BASE_CLASS_EventHandler
                 "sectionKey" => "base.users",
                 "entityKey" => "userLists",
                 "entityLabel" => $language->text("base", "seo_meta_user_list_label"),
-                "iconClass" => "",
+                "iconClass" => "ow_ic_newsfeed",
                 "langs" => array(
                     "title" => "base+meta_title_user_list",
                     "description" => "base+meta_desc_user_list",
@@ -1970,7 +1970,7 @@ class BASE_CLASS_EventHandler
                 "sectionKey" => "base.base_pages",
                 "entityKey" => "forgotPass",
                 "entityLabel" => $language->text("base", "seo_meta_forgot_pass_label"),
-                "iconClass" => "ow_ic_key",
+                "iconClass" => "ow_ic_lock",
                 "langs" => array(
                     "title" => "base+meta_title_forgot_pass",
                     "description" => "base+meta_desc_forgot_pass",
