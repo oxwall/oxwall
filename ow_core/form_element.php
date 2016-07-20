@@ -622,7 +622,7 @@ class TextField extends InvitationFormElement
 
         if ( $this->getValue() !== null )
         {
-            $this->addAttribute('value', str_replace('"', '&quot;', $this->value));
+            $this->addAttribute('value', $this->value);
         }
 
         if ( $this->getHasInvitation() )

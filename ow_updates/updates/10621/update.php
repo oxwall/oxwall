@@ -30,6 +30,6 @@ if( !Updater::getConfigService()->configExists("base", "seo_social_meta_logo_nam
     Updater::getConfigService()->addConfig("base", "seo_social_meta_logo_name", "");
 }
 
-Updater::getLanguageService()->importPrefixFromDir(__DIR__ . DS . 'langs', true);
+Updater::getLanguageService()->importPrefixFromDir(__DIR__ . DS . 'langs');
 
 
