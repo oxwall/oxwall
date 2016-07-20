@@ -2115,7 +2115,7 @@ class BASE_CLASS_EventHandler
 
     protected function processMetaText( $text, $maxLength = null )
     {
-        $text = trim(strip_tags($text));
+        $text = htmlspecialchars(trim($text));
 
         if( $maxLength !== null && mb_strlen($text) > $maxLength )
         {
