@@ -204,7 +204,7 @@ class ADMIN_CTRL_Users extends ADMIN_CTRL_Abstract
                 break;
         }
         
-        $usersCmp = new ADMIN_CMP_UserList($par);
+        $usersCmp = OW::getClassInstance("ADMIN_CMP_UserList", $par);
         $this->addComponent('userList', $usersCmp);
 
         if ( !OW::getRequest()->isAjax() )
