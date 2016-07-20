@@ -22,14 +22,63 @@
  * which combines Covered Code or portions thereof with code not governed by the terms of the CPAL.
  */
 
-if( !Updater::getConfigService()->configExists("base", "seo_meta_info") ){
-    Updater::getConfigService()->addConfig("base", "seo_meta_info", json_encode(array("disabledEntities" => array())));
+$tblPrefix = OW_DB_PREFIX;
+
+$dbo = Updater::getDbo();
+$logger = Updater::getLogger();
+
+// add absent columns
+try
+{
+    $query = "SHOW COLUMNS FROM `{$tblPrefix}base_geolocation_ip_to_country` LIKE 'ipFrom'";
+    $column = $dbo->queryForRow($query);
+
+    if ( !$column )
+    {
+        $query = "ALTER TABLE `{$tblPrefix}base_geolocation_ip_to_country` ADD `ipFrom` bigint UNSIGNED";
+        $dbo->query($query);
+    }
+    else
+    {
+        $query = "ALTER TABLE `{$tblPrefix}base_geolocation_ip_to_country` CHANGE `ipFrom` `ipFrom` bigint UNSIGNED";
+        $dbo->query($query);
+    }
+}
+catch (Exception $e)
+{
+    $logger->addEntry(json_encode($e));
 }
 
-if( !Updater::getConfigService()->configExists("base", "seo_social_meta_logo_name") ){
-    Updater::getConfigService()->addConfig("base", "seo_social_meta_logo_name", "");
+try
+{
+    $query = "SHOW COLUMNS FROM `{$tblPrefix}base_geolocation_ip_to_country` LIKE 'ipTo'";
+    $column = $dbo->queryForRow($query);
+
+    if ( !$column )
+    {
+        $query = "ALTER TABLE `{$tblPrefix}base_geolocation_ip_to_country` ADD `ipTo` bigint UNSIGNED";
+        $dbo->query($query);
+    }
+    else
+    {
+        $query = "ALTER TABLE `{$tblPrefix}base_geolocation_ip_to_country` CHANGE `ipTo` `ipTo` bigint UNSIGNED";
+        $dbo->query($query);
+    }
+}
+catch (Exception $e)
+{
+    $logger->addEntry(json_encode($e));
 }
 
-Updater::getLanguageService()->importPrefixFromDir(__DIR__ . DS . 'langs');
+// add index
+try
+{
+    $query = "ALTER TABLE `{$tblPrefix}base_geolocation_ip_to_country` ADD INDEX `ipRange` (`ipFrom`, `ipTo`)";
+    $dbo->query($query);
 
+}
+catch (Exception $e)
+{
+    $logger->addEntry(json_encode($e));
+}
 

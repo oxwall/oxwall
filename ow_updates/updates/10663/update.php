@@ -21,15 +21,4 @@
  * Display of Attribution Information is required in Larger Works which are defined in the CPAL as a work
  * which combines Covered Code or portions thereof with code not governed by the terms of the CPAL.
  */
-
-if( !Updater::getConfigService()->configExists("base", "seo_meta_info") ){
-    Updater::getConfigService()->addConfig("base", "seo_meta_info", json_encode(array("disabledEntities" => array())));
-}
-
-if( !Updater::getConfigService()->configExists("base", "seo_social_meta_logo_name") ){
-    Updater::getConfigService()->addConfig("base", "seo_social_meta_logo_name", "");
-}
-
-Updater::getLanguageService()->importPrefixFromDir(__DIR__ . DS . 'langs');
-
-
+Updater::getLanguageService()->importPrefixFromDir(__DIR__ . DS . "langs", true);

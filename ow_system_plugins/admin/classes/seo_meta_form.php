@@ -242,7 +242,7 @@ class MetaInfoValidator extends OW_Validator
      */
     public function isValid( $value )
     {
-        return strpos($value, ">") === false && strpos($value, "<") === false && strpos($value, '"') === false;
+        return strip_tags(trim($value)) == trim($value);
     }
 
     /**
@@ -254,13 +254,16 @@ class MetaInfoValidator extends OW_Validator
     {
         $js = "{
             validate : function( value )
-        	{
-        	    if ( (value.indexOf('>') == -1) && (value.indexOf('<') == -1) && (value.indexOf('\"') == -1) )
-        	    {
-        	        return true;
-        	    }
-        	    
-        	    throw " . json_encode($this->getError()) . ";
+        	{       	
+        	    var a = document.createElement('div');
+                a.innerHTML = value;
+                for (var c = a.childNodes, i = c.length; i--; ) {
+                    if (c[i].nodeType == 1){
+                        throw " . json_encode($this->getError()) . ";    
+                    }
+                }
+        	
+        	    return true;
         	},
 
         	getErrorMessage : function()
