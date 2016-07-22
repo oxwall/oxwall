@@ -227,10 +227,6 @@ class BASE_CTRL_Avatar extends OW_ActionController
             $entityId = $params['avatarId'];
             $entityType = BASE_CLASS_ContentProvider::ENTITY_TYPE_AVATAR;
 
-            $backUrl = OW::getRouter()->urlForRoute("event.view", array(
-                "eventId" => $entityId
-            ));
-
             $event = new OW_Event("moderation.approve", array(
                 "entityType" => $entityType,
                 "entityId" => $entityId
