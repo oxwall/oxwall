@@ -842,7 +842,9 @@ class BOL_UserDao extends OW_BaseDao
             $usersTableName = "( SELECT * FROM {$usersTableName} ORDER BY `{$orderFieldname}` DESC LIMIT " . OW_SQL_LIMIT_USERS_COUNT . " )";
         }
 
-        $query = "SELECT DISTINCT `user`.id, `user`.`activityStamp` FROM {$usersTableName} `user`
+        $distinct = !isset($aditionalParams["distinct"]) || $aditionalParams["distinct"] ? 'DISTINCT' : '';
+
+        $query = "SELECT $distinct `user`.id, `user`.`activityStamp` FROM {$usersTableName} `user`
                 {$innerJoin}
                 {$queryParts["join"]}
 
@@ -851,7 +853,7 @@ class BOL_UserDao extends OW_BaseDao
 
         if ( $isAdmin === true )
         {
-            $query = "SELECT DISTINCT `user`.id FROM {$usersTableName} `user`
+            $query = "SELECT $distinct `user`.id FROM {$usersTableName} `user`
             {$innerJoin}
                 WHERE 1 {$where}
                 ORDER BY {$order}";
