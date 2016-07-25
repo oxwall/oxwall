@@ -842,7 +842,7 @@ class BOL_UserDao extends OW_BaseDao
             $usersTableName = "( SELECT * FROM {$usersTableName} ORDER BY `{$orderFieldname}` DESC LIMIT " . OW_SQL_LIMIT_USERS_COUNT . " )";
         }
 
-        $distinct = $aditionalParams["distinct"] === false ? '' : 'DISTINCT';
+        $distinct = !isset($aditionalParams["distinct"]) || $aditionalParams["distinct"] ? 'DISTINCT' : '';
 
         $query = "SELECT $distinct `user`.id, `user`.`activityStamp` FROM {$usersTableName} `user`
                 {$innerJoin}
