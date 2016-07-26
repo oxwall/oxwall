@@ -2040,13 +2040,13 @@ class BASE_CLASS_EventHandler
         if( !empty($params["title"]) )
         {
             $parts = explode("+", $params["title"]);
-            $title = $this->processMetaText($language->text($parts[0], $parts[1], $vars), BOL_SeoService::META_TITLE_MAX_LENGTH);
+            $title = $this->processMetaText($language->text($parts[0], $parts[1], $vars), false, BOL_SeoService::META_TITLE_MAX_LENGTH);
         }
 
         if( !empty($params["description"]) )
         {
             $parts = explode("+", $params["description"]);
-            $desc = $this->processMetaText($language->text($parts[0], $parts[1], $vars), BOL_SeoService::META_DESC_MAX_LENGTH);
+            $desc = $this->processMetaText($language->text($parts[0], $parts[1], $vars), true, BOL_SeoService::META_DESC_MAX_LENGTH);
         }
 
         if( !empty($params["keywords"]) )
@@ -2113,9 +2113,16 @@ class BASE_CLASS_EventHandler
         }
     }
 
-    protected function processMetaText( $text, $maxLength = null )
+    protected function processMetaText( $text, $escape = true, $maxLength = null )
     {
-        $text = htmlspecialchars(trim($text));
+        if( $escape )
+        {
+            $text = htmlspecialchars(trim($text));
+        }
+        else
+        {
+            $text = str_replace('"', "", strip_tags($text));
+        }
 
         if( $maxLength !== null && mb_strlen($text) > $maxLength )
         {
