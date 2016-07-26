@@ -107,6 +107,17 @@ class BASE_CTRL_UserSearch extends OW_ActionController
 
         $searchUrl = OW::getRouter()->urlForRoute('users-search');
         $this->assign('searchUrl', $searchUrl);
+
+        $params = array(
+            "sectionKey" => "base.users",
+            "entityKey" => "userLists",
+            "title" => "base+meta_title_user_list",
+            "description" => "base+meta_desc_user_list",
+            "keywords" => "base+meta_keywords_user_list",
+            "vars" => array( "user_list" => $language->text("base", "search_results") )
+        );
+
+        OW::getEventManager()->trigger(new OW_Event("base.provide_page_meta_info", $params));
     }
 }
 
