@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <prefix name="base" label="Base" language_tag="en" language_label="English">
     <key name="meta_title_user_list"><value>{$user_list} users | {$site_name}</value></key>
-    <key name="meta_desc_user_list"><value>View {$user_list} users at {$site_name}. Join us and meet the love your life today!</value></key>
+    <key name="meta_desc_user_list"><value>View {$user_list} users at {$site_name}. Join us and meet new people today!</value></key>
     <key name="meta_keywords_user_list"><value></value></key>
     <key name="user_list_type_latest"><value>Latest</value></key>
     <key name="user_list_type_online"><value>Online</value></key>

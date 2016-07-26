@@ -207,10 +207,16 @@ class BASE_CTRL_UserList extends OW_ActionController
     }
 
     protected function setMetaForListType( array $vars ){
-        $language = OW::getLanguage();
-        $this->setPageTitle($language->text("base", "meta_title_user_list", $vars));
-        $this->setPageDescription($language->text("base", "meta_desc_user_list", $vars));
-        $this->setKeywords($language->text("base", "meta_desc_user_list", $vars));
+        $params = array(
+            "sectionKey" => "base.users",
+            "entityKey" => "userLists",
+            "title" => "base+meta_title_user_list",
+            "description" => "base+meta_desc_user_list",
+            "keywords" => "base+meta_keywords_user_list",
+            "vars" => $vars
+        );
+
+        OW::getEventManager()->trigger(new OW_Event("base.provide_page_meta_info", $params));
     }
 }
 
