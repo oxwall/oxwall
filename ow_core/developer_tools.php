@@ -225,6 +225,9 @@ class OW_DeveloperTools
         // events data
         $view->assign("events", $this->getEventInfo(OW::getEventManager()->getLog()));
 
+        $view->assign("clrBtnUrl", OW::getRequest()->buildUrlQueryString(OW::getRouter()->urlFor("BASE_CTRL_Base", "turnDevModeOn"),
+            array("back-uri" => urlencode(OW::getRouter()->getUri()))));
+
         $event->add($view->render());
     }
 
