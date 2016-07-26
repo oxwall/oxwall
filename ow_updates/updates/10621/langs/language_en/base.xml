@@ -65,4 +65,5 @@
     <key name="pages_page_meta_keywords_label"><value>Meta keywords</value></key>
     <key name="pages_page_meta_keywords_desc"><value></value></key>
     <key name="invalid_meta_error_message"><value>HTML is not allowed, please enter plain text</value></key>
+    <key name="search_results"><value>Search results</value></key>
 </prefix>
