@@ -16,7 +16,7 @@
             </div>
         {/if}
         {if !empty($platformUpdateAvail)}
-            <span class="ow_button ow_critical"><span class=""><input type="button" value="{text key='admin+plugin_update_platform_avail_yes_button_label'}"></span></span>
+            <span class="ow_button ow_critical"><span class=""><input onclick="window.location='{$updateUrl|escape:javascript}'" type="button" value="{text key='admin+plugin_update_platform_avail_yes_button_label'}"></span></span>
             {*decorator name='button' langLabel='admin+plugin_update_platform_avail_yes_button_label' onclick="window.location='`$updateUrl|escape:javascript`'" class="ow_button ow_critical"*}
             {decorator name='button' langLabel='admin+plugin_update_platform_first_button_label' onclick="window.location='`$platformUpdateUrl|escape:javascript`'"}
         {else}
