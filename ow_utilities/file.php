@@ -95,7 +95,7 @@ class UTIL_File
                 if ( is_file($path) && $copy )
                 {
                     copy($path, $dPath);
-                    chmod($path, 0666);
+                    chmod($dPath, 0666);
                 }
                 else if ( $level && is_dir($path) )
                 {
