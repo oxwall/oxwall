@@ -67,7 +67,7 @@ class OW_ApiApplication extends OW_Application
             }
         }
 
-        $this->detectLanguage();
+        //$this->detectLanguage();
 
         // setting default time zone
         date_default_timezone_set(OW::getConfig()->getValue('base', 'site_timezone'));
