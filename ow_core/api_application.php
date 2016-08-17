@@ -58,7 +58,7 @@ class OW_ApiApplication extends OW_Application
         }
         else
         {
-            if( !function_exists('apache_request_headers') )
+            if( function_exists('apache_request_headers') )
             {
                 $headers = apache_request_headers();
 
