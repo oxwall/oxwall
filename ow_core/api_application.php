@@ -58,11 +58,14 @@ class OW_ApiApplication extends OW_Application
         }
         else
         {
-            $headers = apache_request_headers();
-
-            if ( !empty($headers) && !empty($headers['language_tag']) )
+            if( !function_exists('apache_request_headers') )
             {
-                $tag = trim($headers['language_tag']);
+                $headers = apache_request_headers();
+
+                if ( !empty($headers) && !empty($headers['language_tag']) )
+                {
+                    $tag = trim($headers['language_tag']);
+                }
             }
         }
 
