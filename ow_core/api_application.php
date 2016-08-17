@@ -49,10 +49,29 @@ class OW_ApiApplication extends OW_Application
 
         $authToken = empty($_SERVER["HTTP_API_AUTH_TOKEN"]) ? null : $_SERVER["HTTP_API_AUTH_TOKEN"];
         OW_Auth::getInstance()->setAuthenticator(new OW_TokenAuthenticator($authToken));
-        
+
+        $tag = '';
+
         if ( !empty($_SERVER["HTTP_API_LANGUAGE"]) )
         {
             $tag = $_SERVER["HTTP_API_LANGUAGE"];
+        }
+        else
+        {
+            if( function_exists('apache_request_headers') )
+            {
+                $headers = apache_request_headers();
+
+                if ( !empty($headers) && !empty($headers['language_tag']) )
+                {
+                    $tag = trim($headers['language_tag']);
+                }
+            }
+        }
+
+
+        if ( $tag )
+        {
             $languageDto = BOL_LanguageService::getInstance()->findByTag($tag);
 
             if ( empty($languageDto) )
