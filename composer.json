@@ -5,6 +5,7 @@
     "require": {
         "guzzlehttp/guzzle": "~6.2",
         "smarty/smarty": "~3.1",
-        "phpmailer/phpmailer": "~5.2"
+        "phpmailer/phpmailer": "~5.2",
+        "symfony/console": "~3.1"
     }
 }

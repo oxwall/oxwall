@@ -36,9 +36,19 @@ date_default_timezone_set(OW::getConfig()->getValue('base', 'site_timezone'));
 
 OW_Auth::getInstance()->setAuthenticator(new OW_SessionAuthenticator());
 
+/* @var OW_CliApplication $application */
+$application = OW::getApplication();
+
 OW::getPluginManager()->initPlugins();
 $event = new OW_Event(OW_EventManager::ON_PLUGINS_INIT);
 OW::getEventManager()->trigger($event);
 
-$event = new OW_Event(OW_EventManager::ON_CLI_RUN, array('args' => $argv));
+$event = new OW_Event(OW_EventManager::ON_CLI_RUN);
 OW::getEventManager()->trigger($event);
+
+$commands = $event->getData();
+foreach ($commands as $c)
+{
+    $application->addCommand($c);
+}
+$application->run();

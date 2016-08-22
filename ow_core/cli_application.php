@@ -22,6 +22,9 @@
  * which combines Covered Code or portions thereof with code not governed by the terms of the CPAL.
  */
 
+use Symfony\Component\Console\Application;
+use Symfony\Component\Console\Command\Command;
+
 /**
  * @author Sardar Madumarov <madumarov@gmail.com>
  * @package ow_core
@@ -32,8 +35,25 @@ class OW_CliApplication extends OW_Application
 {
     use OW_Singleton;
 
+    protected $cliArgsHandler = null;
+
     private function __construct()
     {
         $this->context = self::CONTEXT_CLI;
+        $this->cliArgsHandler = new CliArgsHandler();
     }
+
+    public function addCommand(Command $c)
+    {
+        $this->cliArgsHandler->add($c);
+    }
+
+    public function run()
+    {
+        $this->cliArgsHandler->run();
+    }
+}
+
+class CliArgsHandler extends Application
+{
 }
