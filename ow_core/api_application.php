@@ -62,13 +62,12 @@ class OW_ApiApplication extends OW_Application
             {
                 $headers = apache_request_headers();
 
-                if ( !empty($headers) && !empty($headers['language_tag']) )
+                if ( !empty($headers) && !empty($headers['api-language']) )
                 {
-                    $tag = trim($headers['language_tag']);
+                    $tag = trim($headers['api-language']);
                 }
             }
         }
-
 
         if ( $tag )
         {
