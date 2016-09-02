@@ -50,6 +50,7 @@ final class BOL_UserService
     const USER_CONTEXT_CLI = BOL_UserOnlineDao::CONTEXT_VAL_CLI;
     const PASSWORD_RESET_CODE_EXPIRATION_TIME = 3600;
     const PASSWORD_RESET_CODE_UPDATE_TIME = 600;
+    const BEFORE_USER_ONLINE = 'base.before_user_online';
     
     const EVENT_USER_QUERY_FILTER = BOL_UserDao::EVENT_QUERY_FILTER;
 
@@ -733,7 +734,15 @@ final class BOL_UserService
 
         $userOnline->setActivityStamp($activityStamp);
         $userOnline->setContext($context);
-        $this->userOnlineDao->saveDelayed($userOnline);
+
+        $event = new OW_Event(self::BEFORE_USER_ONLINE, array('userId' => $userId, 'context' => $context), $userOnline);
+        OW_EventManager::getInstance()->trigger($event);
+        $data = $event->getData();
+
+        if ( $data instanceof BOL_UserOnline && !empty($data) )
+        {
+            $this->userOnlineDao->saveDelayed($data);
+        }
 
         /* @var $user BOL_User */
         $user->setActivityStamp($activityStamp);
