@@ -451,6 +451,39 @@ class OW_HtmlDocument extends OW_Document
     }
 
     /**
+     * Removes javascript file from document.
+     *
+     * @param string $url
+     * @return OW_HtmlDocument
+     */
+    public function removeScript( $url )
+    {
+        if ( !in_array($url, $this->javaScripts['added']) )
+        {
+            return $this;
+        }
+
+        $key = array_search($url, $this->javaScripts['added']);
+        unset($this->javaScripts['added'][$key]);
+
+        foreach ( $this->javaScripts['items'] as $priorityKey => $priority )
+        {
+            foreach ( $priority as $typeKey => $type )
+            {
+                foreach ( $type as $key => $item )
+                {
+                    if( $item == $url )
+                    {
+                        unset($this->javaScripts['items'][$priorityKey][$typeKey][$key]);
+                    }
+                }
+            }
+        }
+
+        return $this;
+    }
+
+    /**
      * Adds head javascript code  to document.
      *
      * @param string $script
