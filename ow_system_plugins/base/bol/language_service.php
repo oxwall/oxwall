@@ -1227,7 +1227,8 @@ class BOL_LanguageService
         // include cache file
         include $filename;
 
-        $this->language = $language;
+        $key = key($language);
+        $this->language[$key] = $language[$key];
     }
 
     protected function getCacheFilename( $languageId )
