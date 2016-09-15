@@ -441,7 +441,7 @@ class BOL_SeoService
                 $delaySeconds = $secondsInDay;
         }
 
-        return $lastStart - time() >= $delaySeconds;
+        return time() - $lastStart >= $delaySeconds;
     }
 
     /**
