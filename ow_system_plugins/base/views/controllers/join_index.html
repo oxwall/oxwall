@@ -9,17 +9,7 @@
         {block_decorator name="box" type="empty" addClass="ow_center" style="padding:15px;"}
             {text key="base+join_promo"}
         {/block_decorator}
-
-        {if !empty($joinConnectHook)}
-           {block_decorator name="box" addClass="ow_center" style="overflow:hidden;" iconClass='ow_ic_key' langLabel='base+join_connect_title'}
-               {foreach from=$joinConnectHook item='item'}
-                  {$item}
-               {/foreach}
-           {/block_decorator}
-           {block_decorator name="box" type="empty" addClass="ow_center" style="padding:15px;"}
-                {text key="base+join_or"}
-           {/block_decorator}
-        {/if}
+        {component class='BASE_CMP_SignInButtonList'}
     {/if}
     {block_decorator name='box' type='empty' iconClass='ow_ic_user' langLabel='base+join_form_title'}{/block_decorator}
     {form name=joinForm}
