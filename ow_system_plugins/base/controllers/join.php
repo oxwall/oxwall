@@ -117,25 +117,6 @@ class BASE_CTRL_Join extends OW_ActionController
         $jsDir = OW::getPluginManager()->getPlugin("base")->getStaticJsUrl();
         OW::getDocument()->addScript($jsDir . "base_field_validators.js");
 
-        $joinConnectHook = OW::getRegistry()->getArray(self::JOIN_CONNECT_HOOK);
-
-        if ( !empty($joinConnectHook) )
-        {
-            $content = array();
-
-            foreach ( $joinConnectHook as $function )
-            {
-                $result = call_user_func($function);
-
-                if ( trim($result) )
-                {
-                    $content[] = $result;
-                }
-            }
-
-            $this->assign('joinConnectHook', $content);
-        }
-
         $this->setDocumentKey('base_user_join');
 
         // set meta info
