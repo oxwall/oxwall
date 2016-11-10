@@ -1594,7 +1594,6 @@ class BOL_QuestionService
                 if ( !empty($accountType) )
                 {
                     $user->accountType = $accountType->name;
-                    $this->updateQuestionsEditStamp();
                 }
             }
         }
