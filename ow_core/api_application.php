@@ -75,8 +75,7 @@ class OW_ApiApplication extends OW_Application
 
             if ( empty($languageDto) )
             {
-                // remove all non-alphanumeric characters
-                $tag = preg_replace('/[^\da-z]/i', '-', $tag);
+                $tag = str_replace('_', '-', $tag);
                 $languageDto = BOL_LanguageService::getInstance()->findByTag($tag);
             }
 
