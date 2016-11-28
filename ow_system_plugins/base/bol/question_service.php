@@ -32,6 +32,8 @@
 class BOL_QuestionService
 {
     const EVENT_ON_QUESTION_DELETE = 'base.event.on_question_delete';
+    const EVENT_ON_SECTION_DELETE = 'base.event.on_section_delete';
+    const EVENT_ON_SORT_QUESTION = 'base.event.on_sort_question';
     const EVENT_ON_ACCOUNT_TYPE_DELETE = 'base.event.on_account_type_delete';
     const EVENT_ON_ACCOUNT_TYPE_ADD = 'base.event.on_account_type_add';
     const EVENT_ON_ACCOUNT_TYPE_REORDER = 'base.event.on_account_type_reorder';
@@ -1138,6 +1140,9 @@ class BOL_QuestionService
             BOL_LanguageService::getInstance()->deleteKey($key->id);
         }
 
+        $event = new OW_Event( self::EVENT_ON_SECTION_DELETE, array( 'dto' => $section ) );
+        OW::getEventManager()->trigger($event);
+        
         $this->sectionDao->deleteById($section->id);
         $this->updateQuestionsEditStamp();
 
@@ -1675,7 +1680,10 @@ class BOL_QuestionService
         {
             return false;
         }
-
+        
+        $event = new OW_Event( self::EVENT_ON_SORT_QUESTION, array('sectionName' => $sectionName, 'questionOrder' => $questionOrder));
+        OW::getEventManager()->trigger($event);
+        
         foreach ( $questions as $key => $question )
         {
             if ( isset($questionOrder[$question->name]) )
