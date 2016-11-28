@@ -841,9 +841,8 @@ class BOL_QuestionService
         if ( isset($data['question']) && $data['question'] instanceof BOL_Question )
         {
             $this->questionDao->save($data['question']);
+            $this->updateQuestionsEditStamp();
         }
-        
-        $this->updateQuestionsEditStamp();
     }
 
     public function setQuestionLabel( $questionName, $label, $generateCahce = true )
