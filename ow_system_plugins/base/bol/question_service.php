@@ -31,6 +31,7 @@
  */
 class BOL_QuestionService
 {
+	const EVENT_BEFORE_ADD_QUESTION = 'base.event.before_add_question';
     const EVENT_ON_QUESTION_DELETE = 'base.event.on_question_delete';
     const EVENT_ON_SECTION_DELETE = 'base.event.on_section_delete';
     const EVENT_ON_SORT_QUESTION = 'base.event.on_sort_question';
@@ -833,7 +834,15 @@ class BOL_QuestionService
      */
     public function saveOrUpdateQuestion( BOL_Question $question, $label = null, $description = null )
     {
-        $this->questionDao->save($question);
+		$event = new OW_Event(self::EVENT_BEFORE_ADD_QUESTION, array('label' => $label, 'description' => $description), array('question' => $question));
+        OW::getEventManager()->trigger($event);
+        $data = $event->getData();
+
+        if ( isset($data['question']) && $data['question'] instanceof BOL_Question )
+        {
+            $this->questionDao->save($data['question']);
+        }
+        
         $this->updateQuestionsEditStamp();
     }
 
