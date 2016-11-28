@@ -31,6 +31,7 @@
  */
 class BOL_QuestionService
 {
+    const EVENT_ON_BEFORE_ADD_QUESTION = 'base.event.on_before_add_question';
     const EVENT_ON_QUESTION_DELETE = 'base.event.on_question_delete';
     const EVENT_ON_SECTION_DELETE = 'base.event.on_section_delete';
     const EVENT_ON_SORT_QUESTION = 'base.event.on_sort_question';
@@ -829,10 +830,13 @@ class BOL_QuestionService
     /**
      * Saves/updates <BOL_Question> objects.
      *
-     * @param BOL_Question $field
+     * @param BOL_Question $question
      */
-    public function saveOrUpdateQuestion( BOL_Question $question, $label = null, $description = null )
+    public function saveOrUpdateQuestion( BOL_Question $question )
     {
+        $event = new OW_Event(self::EVENT_ON_BEFORE_ADD_QUESTION, array(), $question);
+        OW::getEventManager()->trigger($event);
+
         $this->questionDao->save($question);
         $this->updateQuestionsEditStamp();
     }
