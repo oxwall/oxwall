@@ -88,6 +88,9 @@ class BOL_QuestionService
     /* field presentation configs */
     const QUESTION_CONFIG_DATE_RANGE = 'dateRange';
 
+    const AGE_RANGE_FROM = 24;
+    const AGE_RANGE_TO = 86;
+
     /**
      * @var BOL_QuestionDao
      */
@@ -2821,5 +2824,41 @@ class BOL_QuestionService
         }
 
         return false;
+    }
+
+    public function getPresentationRange()
+    {
+        $range = array(
+            'from' => self::AGE_RANGE_FROM,
+            'to' => self::AGE_RANGE_TO
+        );
+
+        if ( empty($this->birthdayConfig) )
+        {
+            $birthday = $this->findQuestionByName("birthdate");
+
+            if ( !empty($birthday) )
+            {
+                $this->birthdayConfig = ($birthday->custom);
+            }
+        }
+
+        if ( !empty($this->birthdayConfig) && mb_strlen( trim($this->birthdayConfig) ) > 0 )
+        {
+            $configsList = json_decode($this->birthdayConfig, true);
+
+            foreach ( $configsList as $name => $value )
+            {
+                if ( $name = 'year_range' && isset($value['from']) && isset($value['to']) )
+                {
+                    $range = array(
+                        'from' => date("Y") - $value['to'],
+                        'to' => date("Y") - $value['from']
+                    );
+                }
+            }
+        }
+
+        return $range;
     }
 }
