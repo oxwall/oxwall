@@ -193,4 +193,36 @@ class BOL_BillingSaleDao extends OW_BaseDao
         
         return $this->countByExample($example);
     }
+
+        public function findRecurringBillingSale( $userId, $entityId )
+    {
+        $example = new OW_Example();
+        $example->andFieldEqual('userId', $userId);
+        $example->andFieldEqual('entityId', $entityId);
+        $example->andFieldIsNotNull('extraData');
+        $example->andFieldEqual('recurring', '1');
+        $example->setLimitClause(0, 1);
+        
+        return $this->findObjectByExample($example);
+    }
+
+    public function countRecurringBillingSale( $userId, $entityId )
+    {
+        $example = new OW_Example();
+        $example->andFieldEqual('userId', $userId);
+        $example->andFieldEqual('entityId', $entityId);
+        $example->andFieldIsNotNull('extraData');
+        $example->andFieldEqual('recurring', '1');
+
+        return $this->countByExample($example);
+    }
+
+    public function findListByUserIdEntityId( $userId, $entityId )
+    {
+        $example = new OW_Example();
+        $example->andFieldLessThan('userId', $userId);
+        $example->andFieldEqual('entityId', $entityId);
+        
+        return $this->findListByExample($example);
+    }
 }

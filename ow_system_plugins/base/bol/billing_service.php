@@ -1032,4 +1032,31 @@ final class BOL_BillingService
 
         return $currencies;
     }
+
+    
+    public function findRecurringBillingSale( $userId, $entityId )
+    {
+        $userId = intval($userId);
+        $entityId = intval($entityId);
+
+        return $this->billingSaleDao->findRecurringBillingSale( $userId, $entityId );
+
+    }
+
+    public function countRecurringBillingSale( $userId, $entityId )
+    {
+        $userId = intval($userId);
+        $entityId = intval($entityId);
+
+        return $this->billingSaleDao->countRecurringBillingSale( $userId, $entityId );
+
+    }
+
+    public function findListByUserIdEntityId( $userId, $entityId )
+    {
+        $userId = intval($userId);
+        $entityId = intval($entityId);
+        
+        return $this->billingSaleDao->findListByUserIdEntityId( $userId, $entityId );
+    }
 }
