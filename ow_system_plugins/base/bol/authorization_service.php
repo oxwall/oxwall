@@ -557,11 +557,15 @@ class BOL_AuthorizationService
         return $this->trackActionForUser( 0, $groupName, $actionName, $extra );
     }
 
-    public function trackActionForUser( $userId, $groupName, $actionName = null, array $extra = array() )
+    public function trackActionForUser( $userId, $groupName, $actionName = null, $extra = null )
     {
         $userId = !empty($userId) ? $userId : (OW::getUser()->isAuthenticated() ? OW::getUser()->getId() : 0);
 
-        $isAuthorized = $this->isActionAuthorizedBy($groupName, $actionName, array('userId' => $userId) + $extra);
+        $params = is_array( $extra ) && !empty($extra)
+            ? array('userId' => $userId) + $extra
+            : array('userId' => $userId);
+
+        $isAuthorized = $this->isActionAuthorizedBy($groupName, $actionName, $params);
         $defaults = array('status' => false, 'msg' => null, 'trackedBy' => null);
 
         if ( $isAuthorized['status'] && $isAuthorized['authorizedBy'] == 'base' )
