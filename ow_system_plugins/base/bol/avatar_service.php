@@ -434,6 +434,9 @@ class BOL_AvatarService
         {
             @unlink($uploadedFileName);
 
+            $img = new UTIL_Image($path);
+            $img->orientateImage()->saveImage();
+
             return true;
         }
 
