@@ -331,7 +331,7 @@ class UTIL_HtmlTag
      */
     public static function escapeHtmlAttr( $string = null )
     {
-        if ( !$string )
+        if ( trim($string) === '' )
         {
             return;
         }
