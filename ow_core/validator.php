@@ -747,12 +747,12 @@ class IntValidator extends OW_Validator
     {
         $this->pattern = UTIL_Validator::INT_PATTERN;
 
-        if ( isset($min) )
+        if ( !is_null($min) )
         {
             $this->min = (int) $min;
         }
 
-        if ( isset($max) )
+        if ( !is_null($max) )
         {
             $this->max = (int) $max;
         }
@@ -769,26 +769,12 @@ class IntValidator extends OW_Validator
 
     public function setMaxValue( $max )
     {
-        $value = (int) $max;
-
-        if ( empty($value) )
-        {
-            throw new InvalidArgumentException('Empty max value!');
-        }
-
-        $this->max = (int) $value;
+        $this->max = (int) $max;
     }
 
     public function setMinValue( $min )
     {
-        $value = (int) $min;
-
-        if ( empty($value) )
-        {
-            throw new InvalidArgumentException('Empty min value!');
-        }
-
-        $this->min = (int) $value;
+        $this->min = (int) $min;
     }
 
     public function isValid( $value )
@@ -842,47 +828,47 @@ class IntValidator extends OW_Validator
     {
         $js = "{
             
-        	validate : function( value )
-        	{
-        		var self = this;
-        		
-        		// doesn't check empty values
-        		if( !value || $.trim( value ).length == 0 || ( $.isArray(value) && value.length == 0 ) )
-        		{
-        			return;
-        		}
-        		
-        		if( $.isArray(value) )
-        		{
-        			$.each( value,
+            validate : function( value )
+            {
+                var self = this;
+                
+                // doesn't check empty values
+                if( !value || $.trim( value ).length == 0 || ( $.isArray(value) && value.length == 0 ) )
+                {
+                    return;
+                }
+                
+                if( $.isArray(value) )
+                {
+                    $.each( value,
                         function( i, item )
                         {
-                        	self.checkValue( item );
+                            self.checkValue( item );
                         } );
-        		}
-        		else
-        		{
-        			this.checkValue( value );
-        		}
-        	},
-    		";
+                }
+                else
+                {
+                    this.checkValue( value );
+                }
+            },
+            ";
 
         $js .= "
-        	getErrorMessage : function()
-        	{
-        		return " . json_encode($this->getError()) . "
-    		},
+            getErrorMessage : function()
+            {
+                return " . json_encode($this->getError()) . "
+            },
         ";
 
         $js .= "
             checkValue : function( value )
             {
-            	var pattern = " . $this->pattern . ";
-        		
-            	if( !pattern.test( value ) )
-            	{
-            		throw " . json_encode($this->getError()) . ";
-        		}
+                var pattern = " . $this->pattern . ";
+                
+                if( !pattern.test( value ) )
+                {
+                    throw " . json_encode($this->getError()) . ";
+                }
         ";
 
         if ( isset($this->min) )
@@ -890,7 +876,7 @@ class IntValidator extends OW_Validator
             $js .= "
             if( parseInt(value) < " . $this->min . " )
             {
-            	throw " . json_encode($this->getError()) . ";
+                throw " . json_encode($this->getError()) . ";
             }
            ";
         }
@@ -900,13 +886,13 @@ class IntValidator extends OW_Validator
             $js .= "
             if( parseInt(value) > " . $this->max . " )
             {
-            	throw " . json_encode($this->getError()) . ";
+                throw " . json_encode($this->getError()) . ";
             }
            ";
         }
 
         $js .= "}
-    		}";
+            }";
 
         return $js;
     }
