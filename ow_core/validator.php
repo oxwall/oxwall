@@ -938,12 +938,12 @@ class FloatValidator extends OW_Validator
     {
         $this->pattern = UTIL_Validator::FLOAT_PATTERN;
 
-        if ( isset($min) )
+        if ( !is_null($min) )
         {
             $this->min = (float) $min;
         }
 
-        if ( isset($max) )
+        if ( !is_null($max) )
         {
             $this->max = (float) $max;
         }
@@ -960,26 +960,12 @@ class FloatValidator extends OW_Validator
 
     public function setMaxValue( $max )
     {
-        $value = (float) $max;
-
-        if ( empty($value) )
-        {
-            throw new InvalidArgumentException('Empty max value!');
-        }
-
-        $this->max = (float) $value;
+        $this->max = (float) $max;
     }
 
     public function setMinValue( $min )
     {
-        $value = (float) $min;
-
-        if ( empty($value) )
-        {
-            throw new InvalidArgumentException('Empty min value!');
-        }
-
-        $this->min = (float) $value;
+        $this->min = (float) $min;
     }
 
     public function isValid( $value )
