@@ -2799,11 +2799,17 @@ class MobileBillingGatewaySelectionField extends BillingGatewaySelectionField
     {
         $name = str_replace('billing', '', $option['dto']->gatewayKey);
 
+        $style_classes = array(
+            "owm_border",
+            "owm_" . $name,
+            ($this->getAttribute('checked')) ? "active" : ""
+        );
+
         return'<div class="owm_payment_provider_item owm_std_margin_bottom">
-                <label class="owm_border owm_' . $name . ' active">' . $field . '</label>
+                <label class="'. implode(' ', $style_classes) .'">' . $field . '</label>
         </div>';
     }
-
+    
     protected function getActiveGatewaysList()
     {
         return BOL_BillingService::getInstance()->getActiveGatewaysList(true);
