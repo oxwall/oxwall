@@ -560,9 +560,13 @@ class Form
 
 			if ( form.form ) 
 			{
+                var formSubmitElement = null;
+                $(form.form).find('input[type=\\'submit\\']').bind('click', function(e){
+                    formSubmitElement = e.currentTarget;
+                });
     			$(form.form).bind( 'submit', {form:form},
     					function(e){
-    						return e.data.form.submitForm();
+    						return e.data.form.submitForm(formSubmitElement);
     					}
     			);
                         }
