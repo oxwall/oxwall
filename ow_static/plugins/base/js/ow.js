@@ -1410,7 +1410,7 @@ OwForm.prototype = {
             );
     },
 
-    submitForm: function(){
+    submitForm: function(target){
 
         var self = this;
 
@@ -1430,7 +1430,8 @@ OwForm.prototype = {
             return false;
         }
 
-        var buttons = $('input[type=button], input[type=submit], button', '#' + this.id).addClass('ow_inprogress');
+        var buttons = $('input[type=button], input[type=submit], button', '#' + this.id);
+        $(target).addClass('ow_inprogress');
 
         if( this.ajax ){
             OW.inProgressNode(buttons);
