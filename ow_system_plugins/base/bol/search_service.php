@@ -95,6 +95,23 @@ class BOL_SearchService
     }
 
     /**
+     * Update search Result.
+     *
+     * @param integer $id
+     * @param array $idList
+     */
+    public function updateSearchResult( $id, array $idList )
+    {
+
+        $this->searchResultDao->deleteSearchResultItems(array($id));
+        $this->searchResultDao->saveSearchResult($id, $idList);
+
+        $event = new OW_Event('base.after_update_search_result', array('userIdList' => $idList), array());
+        OW::getEventManager()->trigger($event);
+
+    }
+
+    /**
      * Return user id list
      *
      * @param int $listId
