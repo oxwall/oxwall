@@ -1,65 +1,65 @@
 {script}
 {literal}
 $(document).ready(function(){
-	$('#roles').sortable({
-		items: 'tr.role',
-		helper: 'clone',
-		placeholder: 'placeholder',
-		start: function(event, ui){
-			$(ui.placeholder).append('<td colspan="4"></td>');
-		},
-		update: function(event, ui){
-			var set = {};
+$('#roles').sortable({
+items: 'tr.role',
+helper: 'clone',
+placeholder: 'placeholder',
+start: function(event, ui){
+$(ui.placeholder).append('<td colspan="4"></td>');
+},
+update: function(event, ui){
+var set = {};
 
-			$('#roles tr.role td input:checkbox[name="role[]"]').each(function(i){
-				var id = $(this).val();
-				set['order['+id+']'] = ++i;
-			});
+$('#roles tr.role td input:checkbox[name="role[]"]').each(function(i){
+var id = $(this).val();
+set['order['+id+']'] = ++i;
+});
 
-			url = '{/literal}{url_for for="ADMIN_CTRL_Users:ajaxReorder"}{literal}';
+url = '{/literal}{url_for for="ADMIN_CTRL_Users:ajaxReorder"}{literal}';
 
-			$.post( url, set );
-		},
-		stop: function(event, ui){
+$.post( url, set );
+},
+stop: function(event, ui){
 
-			$set = $('#roles tr.role td input:checkbox[name="role[]"]');
+$set = $('#roles tr.role td input:checkbox[name="role[]"]');
 
-			$set.attr('disabled', false);
+$set.attr('disabled', false);
 
-			$( $set[0] ).attr('disabled', 'disabled').attr('checked', false);
+$( $set[0] ).attr('disabled', 'disabled').attr('checked', false);
 
-			$('td span.default-role:visible', this).hide();
+$('td span.default-role:visible', this).hide();
 
-			$('td input:checkbox[name]')
+$('td input:checkbox[name]')
 
-			$( $(this).sortable('option', 'items'), this ).each(function(i){
-				if(i == 0)
-					$('td span.default-role', this).show();
+$( $(this).sortable('option', 'items'), this ).each(function(i){
+if(i == 0)
+$('td span.default-role', this).show();
 
-				var isEven = (i+1) % 2 === 0;
+var isEven = (i+1) % 2 === 0;
 
-				remClass = isEven ? 'ow_alt1':'ow_alt2';
-				addClass = isEven ? 'ow_alt2':'ow_alt1';
+remClass = isEven ? 'ow_alt1':'ow_alt2';
+addClass = isEven ? 'ow_alt2':'ow_alt1';
 
-				if( $(this).hasClass(remClass) )
-					$(this).removeClass( remClass );
+if( $(this).hasClass(remClass) )
+$(this).removeClass( remClass );
 
-				if( !$(this).hasClass(addClass) )
-					$(this).addClass( addClass );
+if( !$(this).hasClass(addClass) )
+$(this).addClass( addClass );
 
-			})
-		}
-	});
+})
+}
+});
 
-	$(".edit_role", "#roles").click(function(){
-	    var roleId = $(this).attr("rel");
+$(".edit_role", "#roles").click(function(){
+var roleId = $(this).attr("rel");
 
-	    editRoleFloatBox = OW.ajaxFloatBox(
-	    	"ADMIN_CMP_AuthorizationRoleEdit",
-	    	{ roleId: roleId },
-	    	{ width:400, iconClass: "ow_ic_edit", title: OW.getLanguageText('admin', 'permissions_edit_role_btn') }
-	    );
-	});
+editRoleFloatBox = OW.ajaxFloatBox(
+"ADMIN_CMP_AuthorizationRoleEdit",
+{ roleId: roleId },
+{ width:400, iconClass: "ow_ic_edit", title: OW.getLanguageText('admin', 'permissions_edit_role_btn') }
+);
+});
 });
 
 {/literal}
@@ -68,121 +68,121 @@ $(document).ready(function(){
 {style}
 {literal}
 tr.placeholder td{
-	border: 1px dashed grey;
-	height: 35px;
-	width: 100%;
+border: 1px dashed grey;
+height: 35px;
+width: 100%;
 }
 
 .role{
-	cursor: move;
+cursor: move;
 }
 {/literal}
 {/style}
 
 <div class="ow_automargin ow_wide">
 	<form action="{url_for for="ADMIN_CTRL_Users:deleteRoles"}" method="POST">
-	    <table id="roles" class="ow_table_2 ow_form ow_stdmargin ow_center">
-	        <tr class="ow_tr_first">
-	            <th width="1"></th>
-	            <th>{text key='admin+permissions_user_role'}</th>
-	            <th width="1">{text key='admin+permissions_number_of_users'}</th>
-	            <th width="1"><span class="ow_nowrap">{text key='admin+avatar_label'}</span></th>
-	        </tr>
+	<table id="roles" class="ow_table_2 ow_form ow_stdmargin ow_center">
+		<tr class="ow_tr_first">
+			<th width="1"></th>
+			<th>{text key='admin+permissions_user_role'}</th>
+			<th width="1">{text key='admin+permissions_number_of_users'}</th>
+			<th width="1"><span class="ow_nowrap">{text key='admin+avatar_label'}</span></th>
+		</tr>
 
-	        {foreach name="roles" from=$set item='item'}
-		        {assign var='role' value=$item.dto}
-		        {assign var='roleId' value=$role->id}
-		        <tr class="{cycle values='ow_alt1, ow_alt2'} role">
-		            <td>
-		            	<input type="checkbox" name="role[]" id="role_{$role->id}" value="{$role->id}" {if $smarty.foreach.roles.first}disabled="disabled"{/if} />
-		            </td>
-		            <td class="ow_txtleft">
-		            	{text_edit key="base+authorization_role_`$role->name`"}
+		{foreach name="roles" from=$set item='item'}
+		{assign var='role' value=$item.dto}
+		{assign var='roleId' value=$role->id}
+		<tr class="{cycle values='ow_alt1, ow_alt2'} role">
+			<td>
+				<input type="checkbox" name="role[]" id="role_{$role->id}" value="{$role->id}" {if $smarty.foreach.roles.first}disabled="disabled"{/if} />
+			</td>
+			<td class="ow_txtleft">
+				{text_edit key="base+authorization_role_`$role->name`"}
 		            	<span class="ow_mild_green ow_small default-role" style="display:{if $smarty.foreach.roles.first}inline{else}none{/if};">
 		            		{text key='admin+permissions_default_role'}
 		            	</span>
-		            </td>
-		            <td class="ow_nowrap">
-		            	{math equation="(x/y)*100" x=$item.userCount y=$total assign='percent'}
-		            	<a href="{url_for_route for="admin_users_browse_membership_owners:[roleId=>`$roleId`]"}">{$item.userCount}</a> | {$percent|string_format:'%.1f'}%
-		            </td>
-		            <td style="min-width: 40px;">
-		            {if $role->displayLabel}
-                        <a class="ow_lbutton edit_role" rel="{$role->id}" href="javascript://"{if !empty($role->custom)} style="background-color: {$role->custom}"{/if}>
-                            {text key='base+yes'}
-                        </a>
-		            {else}
-                        <a href="javascript://" rel="{$role->id}" class="edit_role">{text key='base+no'}</a>
-		            {/if}
-		            </td>
-		        </tr>
-		        {/foreach}
-			<tr class="ow_tr_last">
-				<td>
-					<input id="check_all" type="checkbox" onclick="$('#roles tr.role td input:checkbox:enabled').attr('checked', this.checked );" />
-				</td>
-				<td colspan="3" style="text-align: left;">
-					<label for="check_all">{text key='admin+permissions_check_all_selected'}</label>
-					<form>
-                                                {capture name="selectRoleAlert"}{text key='admin+permissions_please_select_role'}{/capture}
-                                                {capture name="areYouSure"}{text key='admin+permissions_delete_confirmation'}{/capture}
+			</td>
+			<td class="ow_nowrap">
+				{math equation="(x/y)*100" x=$item.userCount y=$total assign='percent'}
+				<a href="{url_for_route for="admin_users_browse_membership_owners:[roleId=>`$roleId`]"}">{$item.userCount}</a> | {$percent|string_format:'%.1f'}%
+			</td>
+			<td style="min-width: 40px;">
+				{if $role->displayLabel}
+				<a class="ow_lbutton edit_role" rel="{$role->id}" href="javascript://"{if !empty($role->custom)} style="background-color: {$role->custom}"{/if}>
+					{text key='base+yes'}
+				</a>
+				{else}
+				<a href="javascript://" rel="{$role->id}" class="edit_role">{text key='base+no'}</a>
+				{/if}
+			</td>
+		</tr>
+		{/foreach}
+		<tr class="ow_tr_last">
+			<td>
+				<input id="check_all" type="checkbox" onclick="$('#roles tr.role td input:checkbox:enabled').attr('checked', this.checked );" />
+			</td>
+			<td colspan="3" style="text-align: left;">
+				<label for="check_all">{text key='admin+permissions_check_all_selected'}</label>
+				<form>
+					{capture name="selectRoleAlert"}{text key='admin+permissions_please_select_role'}{/capture}
+					{capture name="areYouSure"}{text key='admin+permissions_delete_confirmation'}{/capture}
 
-						<script type="text/javascript">
-							window.delRoles = function(){
-								if( $('#roles tr.role td input:checkbox:checked').size() == 0 ){
-									alert('{$smarty.capture.selectRoleAlert|escape:"quotes"}');
-									return false;
-								}
+					<script type="text/javascript">
+						window.delRoles = function(){
+							if( $('#roles tr.role td input:checkbox:checked').size() == 0 ){
+								alert('{$smarty.capture.selectRoleAlert|escape:"quotes"}');
+								return false;
+							}
 
-								return confirm('{$smarty.capture.areYouSure|escape:"quotes"}');
-							};
-						</script>
-						{decorator name='button' type='submit' langLabel='admin+permissions_delete_role' class='ow_button ow_red ow_ic_delete' onclick="return delRoles()"}
-					</form>
-				</td>
-			</tr>
-	    </table>
+							return confirm('{$smarty.capture.areYouSure|escape:"quotes"}');
+						};
+					</script>
+					{decorator name='button' type='submit' langLabel='admin+permissions_delete_role' class='ow_button ow_red ow_ic_delete' onclick="return delRoles()"}
+				</form>
+			</td>
+		</tr>
+	</table>
 	</form>
 
-    {block_decorator name='box' addClass='ow_stdmargin ow_center' type='empty' langLabel='admin+add_new_role_block_cap_label' iconClass='ow_ic_add'}
-        	{form name="add-role"}
-	            {label name="label"} {input name="label" style="width: 270px;"}
-	            {submit name="submit" class=" ow_mild_green ow_ic_add"}
-            {/form}
-    {/block_decorator}
-    {block_decorator name='box' addClass='ow_stdmargin' type='empty' langLabel='admin+user_role_permissions_cap_label' iconClass='ow_ic_gear_wheel'}
-        {capture assign="permissionsPageUrl"}{url_for for='ADMIN_CTRL_Permissions:roles'}{/capture}
-    {/block_decorator}
+	{block_decorator name='box' addClass='ow_stdmargin ow_center' type='empty' langLabel='admin+add_new_role_block_cap_label' iconClass='ow_ic_add'}
+	{form name="add-role"}
+	{label name="label"} {input name="label" style="width: 270px;"}
+	{submit name="submit" class=" ow_mild_green ow_ic_add"}
+	{/form}
+	{/block_decorator}
+	{block_decorator name='box' addClass='ow_stdmargin' type='empty' langLabel='admin+user_role_permissions_cap_label' iconClass='ow_ic_gear_wheel'}
+	{capture assign="permissionsPageUrl"}{url_for for='ADMIN_CTRL_Permissions:roles'}{/capture}
+	{/block_decorator}
 </div>
 
 
 <form method="post" action="{$formAction}">
-<div class="ow_admin_permissions ow_automargin ow_superwide ow_stdmargin ow_center">
-<table class="ow_table_2 ow_form ow_automargin ow_superwide">
-	<tr class="ow_tr_first">
-		<th>{text key='admin+permissions_role_actions_label'}</th>
-		{foreach from=$roles item='role'}
-		<th width='1'>{text key="base+authorization_role_`$role->name`"}</th>
-		{/foreach}
-	</tr>
-	{foreach from=$groupActionList item='groupAction' name='groupAction'}
-	<tr>
-		<th colspan="{$colspanForRoles}">{if !empty($labels[$groupAction.name].label)}{$labels[$groupAction.name].label}{else}{$groupAction.name}{/if}</th>
-	</tr>
-	{foreach from=$groupAction.actions item='action' name='action'}
-	<tr class="{cycle values='ow_alt1,ow_alt2'}  {if $smarty.foreach.groupAction.last && $smarty.foreach.action.last}ow_tr_last{/if}">
-        {assign var='actionName' value=$action->name}
-		<td class="ow_label ow_autowidth">{if !empty($labels[$groupAction.name].actions[$actionName])}{$labels[$groupAction.name].actions[$actionName]}{else}{$actionName}{/if}</td>
-		{assign var='actionId' value=$action->id}
-		{foreach from=$roles item='role'}
-			{assign var='roleId' value=$role->id}
-		<td>{if !($action->availableForGuest == false && $roleId == $guestRoleId)}<label for="action-{$actionId}-{$roleId}"></label><input type="checkbox" id="action-{$actionId}-{$roleId}" name="perm[]" value="{$actionId}:{$roleId}" {if isset($perms.$actionId.$roleId)} checked="checked"{/if} />{/if}</td>
-		{/foreach}
-	</tr>
-	{/foreach}
-	{/foreach}
-</table>
+	<div class="ow_admin_permissions ow_automargin ow_superwide ow_stdmargin ow_center">
+		<table class="ow_table_2 ow_form ow_automargin ow_superwide">
+			<tr class="ow_tr_first">
+				<th>{text key='admin+permissions_role_actions_label'}</th>
+				{foreach from=$roles item='role'}
+				<th width='1'>{text key="base+authorization_role_`$role->name`"}</th>
+				{/foreach}
+			</tr>
+			{foreach from=$groupActionList item='groupAction' name='groupAction'}
+			<tr>
+				<th colspan="{$colspanForRoles}">{if !empty($labels[$groupAction.name].label)}{$labels[$groupAction.name].label}{else}{$groupAction.name}{/if}</th>
+			</tr>
+			{foreach from=$groupAction.actions item='action' name='action'}
+			<tr class="{cycle values='ow_alt1,ow_alt2'}  {if $smarty.foreach.groupAction.last && $smarty.foreach.action.last}ow_tr_last{/if}">
+				{assign var='actionName' value=$action->name}
+				<td class="ow_label ow_autowidth">{if !empty($labels[$groupAction.name].actions[$actionName])}{$labels[$groupAction.name].actions[$actionName]}{else}{$actionName}{/if}</td>
+				{assign var='actionId' value=$action->id}
+				{foreach from=$roles item='role'}
+				{assign var='roleId' value=$role->id}
+				<td>{if !($action->availableForGuest == false && $roleId == $guestRoleId)}<label for="{$groupAction['name']}-{$action->name}-{$role->name}"></label><input type="checkbox" id="{$groupAction['name']}-{$action->name}-{$role->name}" name="perm[]" value="{$actionId}:{$roleId}" {if isset($perms.$actionId.$roleId)} checked="checked"{/if} />{/if}</td>
+				{/foreach}
+			</tr>
+			{/foreach}
+			{/foreach}
+		</table>
 
-</div>
-<div class="clearfix ow_automargin ow_superwide"><div class="ow_right">{decorator name="button" langLabel='admin+permissions_index_save' class="ow_button ow_ic_save ow_positive" onclick='this.form.submit();'}</div></div>
+	</div>
+	<div class="clearfix ow_automargin ow_superwide"><div class="ow_right">{decorator name="button" langLabel='admin+permissions_index_save' class="ow_button ow_ic_save ow_positive" onclick='this.form.submit();'}</div></div>
 </form>
