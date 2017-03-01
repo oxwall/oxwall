@@ -176,7 +176,7 @@ tr.placeholder td{
 		{assign var='actionId' value=$action->id}
 		{foreach from=$roles item='role'}
 			{assign var='roleId' value=$role->id}
-		<td>{if !($action->availableForGuest == false && $roleId == $guestRoleId)}<label for="action-{$actionId}-{$roleId}"></label><input type="checkbox" id="action-{$actionId}-{$roleId}" name="perm[]" value="{$actionId}:{$roleId}" {if isset($perms.$actionId.$roleId)} checked="checked"{/if} />{/if}</td>
+		<td>{if !($action->availableForGuest == false && $roleId == $guestRoleId)}<label for="{$groupAction['name']}-{$action->name}-{$role->name}"></label><input type="checkbox" id="{$groupAction['name']}-{$action->name}-{$role->name}" name="perm[]" value="{$actionId}:{$roleId}" {if isset($perms.$actionId.$roleId)} checked="checked"{/if} />{/if}</td>
 		{/foreach}
 	</tr>
 	{/foreach}
