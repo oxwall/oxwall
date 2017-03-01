@@ -1,5 +1,22 @@
-Options All -Indexes
-<IfModule php5_module>
-php_flag engine off
-</IfModule>
+Options +FollowSymLinks
+RewriteEngine On
 
+AddEncoding gzip .gz
+AddEncoding gzip .gzip
+<FilesMatch "\.(js.gz|js.gzip)$">
+  ForceType text/javascript
+</FilesMatch>
+<FilesMatch "\.(css.gz|css.gzip)$">
+  ForceType text/css
+</FilesMatch>
+
+
+RewriteCond %{REQUEST_URI} !^/index\.php
+RewriteCond %{REQUEST_URI} !/ow_updates/index\.php
+RewriteCond %{REQUEST_URI} !/ow_updates/
+RewriteCond %{REQUEST_URI} !/ow_cron/run\.php
+RewriteCond %{REQUEST_URI} !/e500\.php
+RewriteCond %{REQUEST_URI} !/captcha\.php
+#RewriteCond %{REQUEST_URI} (/|\.php|\.html|\.htm|\.xml|\.feed|robots\.txt|\.raw|/[^.]*)$  [NC]
+RewriteCond %{REQUEST_FILENAME} (/|\.php|\.xml|\.feed|robots\.txt|\.raw|/[^.]*)$  [NC]
+RewriteRule (.*) index.php
