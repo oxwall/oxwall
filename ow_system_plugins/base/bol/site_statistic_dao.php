@@ -221,10 +221,10 @@ class BOL_SiteStatisticDao extends OW_BaseDao
 
         for ($i = $count - 1; $i > 0; $i--)
         {
-            $categories[date('j' , strtotime('today -' . $i . ' days'))] = 0;
+            $categories[date('n-j' , strtotime('today -' . $i . ' days'))] = 0;
         }
 
-        $categories[date('j' , strtotime('today'))] = 0;
+        $categories[date('n-j' , strtotime('today'))] = 0;
 
         return $categories;
     }
@@ -304,7 +304,7 @@ class BOL_SiteStatisticDao extends OW_BaseDao
                 break;
 
             case self::REPORT_TYPE_DAY :
-                return '%e';
+                return '%c-%e';
                 break;
 
             case self::REPORT_TYPE_HOUR :
