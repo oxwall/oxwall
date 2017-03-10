@@ -83,7 +83,7 @@ $router->addRoute(new OW_Route('base_index_customize', 'index/customize', 'BASE_
         'mode' => array(OW_Route::PARAM_OPTION_HIDDEN_VAR => 'customize'
         ))));
 
-$router->addRoute(new OW_Route('base_index', 'index', 'BASE_CTRL_ComponentPanel', 'index'));
+$router->addRoute(new OW_Route('base_index', '/', 'BASE_CTRL_ComponentPanel', 'index'));
 $router->addRoute(new OW_Route('base_member_profile', 'my-profile', 'BASE_CTRL_ComponentPanel', 'myProfile'));
 
 $router->addRoute(new OW_Route('base_user_profile', 'user/:username', 'BASE_CTRL_ComponentPanel', 'profile'));
