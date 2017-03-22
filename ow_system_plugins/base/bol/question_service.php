@@ -1727,6 +1727,19 @@ class BOL_QuestionService
     }
 
     /**
+     * Clear cached questions data
+     *
+     * @param integer $userId
+     * @return void
+     */
+    public function clearCachedQuestionData($userId)
+    {
+        if (isset($this->questionsData[$userId])) {
+            unset($this->questionsData[$userId]);
+        }
+    }
+
+    /**
      *
      * @param array $data
      * @param int $userId
