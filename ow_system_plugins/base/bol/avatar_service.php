@@ -366,13 +366,15 @@ class BOL_AvatarService
         try
         {
             $image = new UTIL_Image($uploadedFileName);
+            $image->orientateImage()->copyImage($avatarPFOriginalPath);
+            $image = new UTIL_Image($avatarPFOriginalPath);
 
             $config = OW::getConfig();
 
             $configAvatarSize = $config->getValue('base', 'avatar_size');
             $configBigAvatarSize = $config->getValue('base', 'avatar_big_size');
 
-            $image->copyImage($avatarPFOriginalPath)
+            $image
                 ->resizeImage($configBigAvatarSize, $configBigAvatarSize, true)
                 ->saveImage($avatarPFBigPath)
                 ->resizeImage($configAvatarSize, $configAvatarSize, true)
