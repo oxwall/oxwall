@@ -162,7 +162,7 @@ class BASE_CMP_SiteStatistic  extends OW_Component
         for ($i = $count - 1; $i > 0; $i--)
         {
             $months[] = $language->
-                    text('base', 'month_' . date('n', strtotime('today -' . $i . ' month')));
+                    text('base', 'month_' . date('n', strtotime('first day of -' . $i . ' month')));
         }
 
         $months[] = $language->
