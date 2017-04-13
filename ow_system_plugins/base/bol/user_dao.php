@@ -942,25 +942,12 @@ class BOL_UserDao extends OW_BaseDao
 
             case BOL_QuestionService::QUESTION_PRESENTATION_RADIO :
             case BOL_QuestionService::QUESTION_PRESENTATION_SELECT :
+            case BOL_QuestionService::QUESTION_PRESENTATION_FSELECT :
                 if ( !empty($value) )
                 {
                     if ( (int) $value > 0 )
                     {
                         $result = ' `' . $this->dbo->escapeString($prefix) . '`.`intValue` = \'' . ((int)$value) . '\' ';
-                    }
-                }
-                break;
-
-            case BOL_QuestionService::QUESTION_PRESENTATION_FSELECT :
-                if ( !empty($value) )
-                {
-                    if ( is_array($value) )
-                    {
-                        $result = ' `' . $this->dbo->escapeString($prefix) . '`.`intValue` IN ( ' . $this->dbo->mergeInClause($value) . ') ';
-                    }
-                    else if ( (int) $value > 0 )
-                    {
-                        $result = ' `' . $this->dbo->escapeString($prefix) . '`.`intValue` & \'' . ((int)$value) . '\' ';
                     }
                 }
                 break;
