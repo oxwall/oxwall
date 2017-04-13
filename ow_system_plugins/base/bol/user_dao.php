@@ -938,12 +938,10 @@ class BOL_UserDao extends OW_BaseDao
 
             case BOL_QuestionService::QUESTION_PRESENTATION_CHECKBOX :
                 $result = " `" . $prefix . "`.`intValue` = " . (boolean) $value;
-
                 break;
 
             case BOL_QuestionService::QUESTION_PRESENTATION_RADIO :
             case BOL_QuestionService::QUESTION_PRESENTATION_SELECT :
-
                 if ( !empty($value) )
                 {
                     if ( (int) $value > 0 )
@@ -951,7 +949,6 @@ class BOL_UserDao extends OW_BaseDao
                         $result = ' `' . $this->dbo->escapeString($prefix) . '`.`intValue` = \'' . ((int)$value) . '\' ';
                     }
                 }
-
                 break;
 
             case BOL_QuestionService::QUESTION_PRESENTATION_FSELECT :
@@ -966,11 +963,9 @@ class BOL_UserDao extends OW_BaseDao
                         $result = ' `' . $this->dbo->escapeString($prefix) . '`.`intValue` & \'' . ((int)$value) . '\' ';
                     }
                 }
-
                 break;
 
             case BOL_QuestionService::QUESTION_PRESENTATION_MULTICHECKBOX :
-                
                 if ( !empty ( $value ) )
                 {
                     if ( is_array($value) )
@@ -982,8 +977,6 @@ class BOL_UserDao extends OW_BaseDao
                         $result = " `" . $prefix . "`.`intValue` & '" . ((int) $value) . "'";
                     }
                 }
-                
-                
                 break;
 
             case BOL_QuestionService::QUESTION_PRESENTATION_BIRTHDATE :
