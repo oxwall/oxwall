@@ -964,22 +964,13 @@ var OwFormElement = function( id, name ){
 OwFormElement.prototype = {
 
     validate: function(){
-
-        var error = false;
-        var errorMessage = '';
-
         try{
             for( var i = 0; i < this.validators.length; i++ ){
                 this.validators[i].validate(this.getValue());
             }
         }catch (e) {
-            error = true;
             this.showError(e);
-            errorMessage = e;
-        }
-
-        if( error ){
-            throw errorMessage;
+            throw e;
         }
     },
 
