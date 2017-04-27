@@ -966,6 +966,7 @@ OwFormElement.prototype = {
     validate: function(){
 
         var error = false;
+        var errorMessage = '';
 
         try{
             for( var i = 0; i < this.validators.length; i++ ){
@@ -974,10 +975,11 @@ OwFormElement.prototype = {
         }catch (e) {
             error = true;
             this.showError(e);
+            errorMessage = e;
         }
 
         if( error ){
-            throw e;
+            throw errorMessage;
         }
     },
 
