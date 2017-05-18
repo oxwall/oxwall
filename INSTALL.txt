@@ -11,7 +11,7 @@ REQUIREMENTS
 Oxwall Requires:
 
 - Apache WEB server, version 2.0 or higher. ( http://httpd.apache.org/download.cgi )
-- PHP 5.2.6 or higher. ( http://www.php.net/ )
+- PHP 5.5 or higher. ( http://www.php.net/ )
 - MySQL 5.0 or higher. ( http://dev.mysql.com/downloads/ )
 - Mail Server installed: SendMail, Exim or other. ( http://www.exim.org/mirrors.html )
 - Cron ( http://en.wikipedia.org/wiki/Cron )
