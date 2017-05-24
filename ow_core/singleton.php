@@ -21,7 +21,7 @@ trait OW_Singleton
         return static::$instance;
     }
 
-    private function __construct()
+    protected function __construct()
     {
     }
 }
