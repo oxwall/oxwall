@@ -117,56 +117,8 @@ class BOL_AuthorizationService
         $this->moderatorDao = BOL_AuthorizationModeratorDao::getInstance();
         $this->moderatorPermissionDao = BOL_AuthorizationModeratorPermissionDao::getInstance();
 
-        $this->groupDaoCache = $this->groupDao->findAll();
-        foreach ( $this->groupDaoCache as $group )
-        {
-            /* @var $group BOL_AuthorizationGroup */
-            $this->groupCache[$group->name] = $group->id;
-        }
-
-        $moderatorDaoCache = $this->moderatorDao->findAll();
+        $this->generateCaches();
         $this->superModeratorUserId = 0;
-
-        foreach ( $moderatorDaoCache as $moderator )
-        {
-            /* @var $moderator BOL_AuthorizationModerator */
-            $this->moderatorCache[$moderator->userId] = $moderator->id;
-
-            if ( $this->superModeratorUserId === 0
-                || (int) $this->moderatorCache[$moderator->userId] < (int) $this->moderatorCache[$this->superModeratorUserId] )
-            {
-                $this->superModeratorUserId = (int) $moderator->userId;
-            }
-        }
-
-        $moderatorPermissionDaoCache = $this->moderatorPermissionDao->findAll();
-        foreach ( $moderatorPermissionDaoCache as $perm )
-        {
-            /* @var $perm BOL_AuthorizationModeratorPermission */
-            $this->moderatorPermissionCache[$perm->moderatorId][$perm->groupId] = $perm->id;
-        }
-
-        $this->actionDaoCache = $this->actionDao->findAll();
-        foreach ( $this->actionDaoCache as $action )
-        {
-            /* @var $action BOL_AuthorizationAction */
-            $this->actionCache[$action->name][$action->groupId] = $action->id;
-        }
-
-        $this->userRolesCache = array();
-        if ( OW::getUser()->isAuthenticated() )
-        {
-            $this->userRolesCache[OW::getUser()->getId()] = $this->userRoleDao->getRoleIdList(OW::getUser()->getId());
-        }
-
-        $permissionDaoCache = $this->permissionDao->findAll();
-        foreach ( $permissionDaoCache as $permission )
-        {
-            /* @var $permission BOL_AuthorizationPermission */
-            $this->permissionCache[$permission->actionId][$permission->roleId] = $permission->id;
-        }
-
-        $this->roleDaoCache = $this->roleDao->findAll();
         $this->guestRoleId = $this->getGuestRoleId();
     }
     /* ----------------------------------------- */
@@ -364,7 +316,7 @@ class BOL_AuthorizationService
             'actionName' => $actionName,
             'extra' => $extra
         );
-        
+
         try
         {
             $event = new BASE_CLASS_EventCollector('authorization.layer_check', $eventParams);
@@ -419,7 +371,7 @@ class BOL_AuthorizationService
         {
             return $isAuthorized;
         }
-        
+
         try
         {
             // layer check
@@ -672,6 +624,61 @@ class BOL_AuthorizationService
         }
 
         return ( $permissionId !== null /* && (int)$permissionId > 0 */ );
+    }
+
+    /**
+     * Generate caches
+     */
+    public function generateCaches() {
+        $this->groupDaoCache = $this->groupDao->findAll();
+        foreach ( $this->groupDaoCache as $group )
+        {
+            /* @var $group BOL_AuthorizationGroup */
+            $this->groupCache[$group->name] = $group->id;
+        }
+
+        $moderatorDaoCache = $this->moderatorDao->findAll();
+
+        foreach ( $moderatorDaoCache as $moderator )
+        {
+            /* @var $moderator BOL_AuthorizationModerator */
+            $this->moderatorCache[$moderator->userId] = $moderator->id;
+
+            if ( $this->superModeratorUserId === 0
+                || (int) $this->moderatorCache[$moderator->userId] < (int) $this->moderatorCache[$this->superModeratorUserId] )
+            {
+                $this->superModeratorUserId = (int) $moderator->userId;
+            }
+        }
+
+        $moderatorPermissionDaoCache = $this->moderatorPermissionDao->findAll();
+        foreach ( $moderatorPermissionDaoCache as $perm )
+        {
+            /* @var $perm BOL_AuthorizationModeratorPermission */
+            $this->moderatorPermissionCache[$perm->moderatorId][$perm->groupId] = $perm->id;
+        }
+
+        $this->actionDaoCache = $this->actionDao->findAll();
+        foreach ( $this->actionDaoCache as $action )
+        {
+            /* @var $action BOL_AuthorizationAction */
+            $this->actionCache[$action->name][$action->groupId] = $action->id;
+        }
+
+        $this->userRolesCache = array();
+        if ( OW::getUser()->isAuthenticated() )
+        {
+            $this->userRolesCache[OW::getUser()->getId()] = $this->userRoleDao->getRoleIdList(OW::getUser()->getId());
+        }
+
+        $permissionDaoCache = $this->permissionDao->findAll();
+        foreach ( $permissionDaoCache as $permission )
+        {
+            /* @var $permission BOL_AuthorizationPermission */
+            $this->permissionCache[$permission->actionId][$permission->roleId] = $permission->id;
+        }
+
+        $this->roleDaoCache = $this->roleDao->findAll();
     }
 
     public function isActionAuthorizedForGuest( $groupName, $actionName = null )
