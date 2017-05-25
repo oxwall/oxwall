@@ -118,8 +118,6 @@ class BOL_AuthorizationService
         $this->moderatorPermissionDao = BOL_AuthorizationModeratorPermissionDao::getInstance();
 
         $this->generateCaches();
-        $this->superModeratorUserId = 0;
-        $this->guestRoleId = $this->getGuestRoleId();
     }
     /* ----------------------------------------- */
 
@@ -686,6 +684,9 @@ class BOL_AuthorizationService
         }
 
         $this->roleDaoCache = $this->roleDao->findAll();
+
+        $this->superModeratorUserId = 0;
+        $this->guestRoleId = $this->getGuestRoleId();
     }
 
     public function isActionAuthorizedForGuest( $groupName, $actionName = null )
