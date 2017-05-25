@@ -630,6 +630,13 @@ class BOL_AuthorizationService
      * Generate caches
      */
     public function generateCaches() {
+        $this->groupCache = array();
+        $this->moderatorCache = array();
+        $this->moderatorPermissionCache = array();
+        $this->actionCache = array();
+        $this->permissionCache = array();
+        $this->userRolesCache = array();
+
         $this->groupDaoCache = $this->groupDao->findAll();
         foreach ( $this->groupDaoCache as $group )
         {
