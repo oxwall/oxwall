@@ -165,6 +165,12 @@ class ADMIN_CMP_UserList extends OW_Component
 
         $onPage = 20;
 
+        $event = new OW_Event('admin.amount_users_per_page', array(), array("amountOnPage" => $onPage));
+
+        OW::getEventManager()->trigger($event);
+
+        $onPage = $event->getData()['amountOnPage'];
+
         $page = isset($_GET['page']) && (int) $_GET['page'] ? (int) $_GET['page'] : 1;
         $first = ( $page - 1 ) * $onPage;
 
