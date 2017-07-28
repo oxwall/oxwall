@@ -650,7 +650,7 @@ class BOL_AuthorizationService
             $this->moderatorCache[$moderator->userId] = $moderator->id;
 
             if ( $this->superModeratorUserId === 0
-                || (int) $this->moderatorCache[$moderator->userId] < (int) $this->moderatorCache[$this->superModeratorUserId] )
+                || $this->superModeratorUserId !== null && ( (int) $this->moderatorCache[$moderator->userId] < (int) $this->moderatorCache[$this->superModeratorUserId] ) )
             {
                 $this->superModeratorUserId = (int) $moderator->userId;
             }
