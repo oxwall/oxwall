@@ -208,11 +208,11 @@ class UTIL_Image
     {
         if ( !isset($destPath) )
         {
-            $this->image->saveToFile($this->sourcePath, self::IMAGE_QUALITY);
+            $this->image->saveToFile($this->sourcePath, self::IMAGE_QUALITY, true);
         }
         else
         {
-            $this->image->saveToFile($destPath, self::IMAGE_QUALITY);
+            $this->image->saveToFile($destPath, self::IMAGE_QUALITY, true);
         }
 
         return $this;
