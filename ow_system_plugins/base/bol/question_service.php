@@ -2464,9 +2464,9 @@ class BOL_QuestionService
 
         $questionsList = $this->findRequiredQuestionsForAccountType($user->accountType);
 
-        $event = new OW_Event(self::EVENT_ON_GET_EMPTY_REQUIRED_QUESTIONS, [
+        $event = new OW_Event(self::EVENT_ON_GET_EMPTY_REQUIRED_QUESTIONS, array(
             'account' => $user->accountType
-        ], $questionsList);
+        ), $questionsList);
 
         OW::getEventManager()->trigger($event);
         $questionsList = $event->getData();
