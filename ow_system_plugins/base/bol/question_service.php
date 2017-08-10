@@ -31,6 +31,8 @@
  */
 class BOL_QuestionService
 {
+    const EVENT_ON_GET_EMPTY_REQUIRED_QUESTIONS = 'base.event.on_get_empty_required_questions';
+    const EVENT_ON_FIND_QUESTIONS_FOR_ACCOUNT_TYPE = 'base.event.on_find_edit_questions_for_account_type';
     const EVENT_ON_BEFORE_ADD_QUESTION = 'base.event.on_before_add_question';
     const EVENT_ON_QUESTION_DELETE = 'base.event.on_question_delete';
     const EVENT_ON_SECTION_DELETE = 'base.event.on_section_delete';
@@ -714,7 +716,15 @@ class BOL_QuestionService
 
     public function findEditQuestionsForAccountType( $accountType )
     {
-        return $this->questionDao->findEditQuestionsForAccountType($accountType);
+        $questionsList = $this->questionDao->findEditQuestionsForAccountType($accountType);
+
+        $event = new OW_Event(self::EVENT_ON_FIND_QUESTIONS_FOR_ACCOUNT_TYPE, array(
+            'account' => $accountType
+        ), $questionsList);
+
+        OW::getEventManager()->trigger($event);
+
+        return $event->getData();
     }
 
     public function findViewQuestionsForAccountType( $accountType )
@@ -2454,9 +2464,9 @@ class BOL_QuestionService
 
         $questionsList = $this->findRequiredQuestionsForAccountType($user->accountType);
 
-        $event = new OW_Event('questions:required_questions_list', [
+        $event = new OW_Event(self::EVENT_ON_GET_EMPTY_REQUIRED_QUESTIONS, array(
             'account' => $user->accountType
-        ], $questionsList);
+        ), $questionsList);
 
         OW::getEventManager()->trigger($event);
         $questionsList = $event->getData();
