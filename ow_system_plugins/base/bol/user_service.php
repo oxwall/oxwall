@@ -218,6 +218,7 @@ final class BOL_UserService
         $questionValues = BOL_QuestionService::getInstance()->getQuestionData($userIdList, array($questionName));
 
         $resultArray = array();
+        $emptyDisplayNames = array();
 
         foreach ( $userIdList as $value )
         {
@@ -226,6 +227,28 @@ final class BOL_UserService
             if ( isset($questionValues[$value]) )
             {
                 $resultArray[$value] = isset($questionValues[$value][$questionName]) ? htmlspecialchars($questionValues[$value][$questionName]) : '';
+
+                if ( !$resultArray[$value] )
+                {
+                    $emptyDisplayNames[] = $value;
+                }
+            }
+        }
+
+        if ( $emptyDisplayNames )
+        {
+            $event = new BASE_CLASS_EventCollector('base.event.on_get_empty_display_names', array(
+                'users' => $emptyDisplayNames
+            ));
+
+            OW::getEventManager()->trigger($event);
+            $displayNames = $event->getData();
+
+            if ( !empty($displayNames) )
+            {
+                foreach ($displayNames as $items) {
+                    $resultArray = $items + $resultArray;
+                }
             }
         }
 
