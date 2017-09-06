@@ -232,7 +232,7 @@ final class OW_ErrorManager
      *
      * @param Exception $e
      */
-    public function exceptionHandler( Exception $e )
+    public function exceptionHandler( $e )
     {
         $data = array(
             'message' => $e->getMessage(),
