@@ -1442,7 +1442,7 @@ class BOL_QuestionService
                 {
                     case self::QUESTION_VALUE_TYPE_TEXT:
 
-                        $value = $question->presentation !== self::QUESTION_PRESENTATION_PASSWORD ? $this->questionTextFormatter(trim($data[$question->name])) : BOL_UserService::getInstance()->hashPassword($data[$question->name]);
+                        $value = $question->presentation !== self::QUESTION_PRESENTATION_PASSWORD ? $this->questionTextFormatter($question->name, trim($data[$question->name])) : BOL_UserService::getInstance()->hashPassword($data[$question->name]);
 
                         if ( (int) $question->base === 1 && in_array($question->name, $dataFields) )
                         {
@@ -1636,13 +1636,27 @@ class BOL_QuestionService
     }
 
     /**
-     * Save questions data.
+     * Question text formatter
      *
-     * @param array $data
+     * @param string $questionName
+     * @param string $value
+     * @return string
      */
-    public function questionTextFormatter( $value )
+    public function questionTextFormatter( $questionName, $value )
     {
-        return strip_tags($value); //TODO: check question value
+        $event = new OW_Event('base.question_text_formatter', array(
+            'questionName' => $questionName,
+            'questionValue' => $value
+        ));
+
+        OW::getEventManager()->trigger($event);
+
+        if ( null !== $event->getData() )
+        {
+            return $event->getData();
+        }
+
+        return strip_tags($value); // strip tags by default
     }
 
     public function reOrderAccountType( array $accountTypeList )
