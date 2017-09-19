@@ -953,7 +953,7 @@ class BOL_UserDao extends OW_BaseDao
                     }                    
                     else if ( (int) $value > 0 )
                     {
-                        $result = ' `' . $this->dbo->escapeString($prefix) . '`.`intValue` & \'' . ((int)$value) . '\' ';
+                        $result = ' `' . $this->dbo->escapeString($prefix) . '`.`intValue` = \'' . ((int)$value) . '\' ';
                     }
                 }
 
@@ -964,11 +964,11 @@ class BOL_UserDao extends OW_BaseDao
                 {
                     if ( is_array($value) )
                     {
-                        $result = " `" . $prefix . "`.`intValue` & '" . $this->dbo->escapeString(array_sum($value)) . "'";
+                        $result = " `" . $prefix . "`.`intValue` = '" . $this->dbo->escapeString(array_sum($value)) . "'";
                     }                    
                     else if ( (int) $value > 0 )
                     {
-                        $result = " `" . $prefix . "`.`intValue` & '" . ((int) $value) . "'";
+                        $result = " `" . $prefix . "`.`intValue` = '" . ((int) $value) . "'";
                     }
                 }
                 
@@ -980,10 +980,10 @@ class BOL_UserDao extends OW_BaseDao
 
                 if ( isset($value['from']) && isset($value['to']) )
                 {
-                    $maxDate = ( date('Y') - (int) $value['from'] ) . '-12-31';
-                    $minDate = ( date('Y') - (int) $value['to'] ) . '-01-01';
+                    $maxDate = ( date('Y') - (int) $value['from']);
+                    $minDate = ( date('Y') - (int) $value['to'] );
 
-                    $result = " `" . $prefix . "`.`dateValue` BETWEEN  '" . $this->dbo->escapeString($minDate) . "' AND '" . $this->dbo->escapeString($maxDate) . "'";
+                    $result = " `" . $prefix . "`.YEAR(`dateValue`) BETWEEN  '" . $this->dbo->escapeString($minDate) . "' AND '" . $this->dbo->escapeString($maxDate) . "'";
                 }
 
                 break;
