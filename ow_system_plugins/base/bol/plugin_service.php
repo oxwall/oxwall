@@ -664,6 +664,11 @@ class BOL_PluginService
         }
     }
 
+    public function clearPluginListCache()
+    {
+        return $this->pluginListCache = [];
+    }
+
     private function getPluginListCache()
     {
         if ( !$this->pluginListCache )
