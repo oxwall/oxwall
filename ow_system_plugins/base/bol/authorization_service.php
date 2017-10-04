@@ -643,6 +643,7 @@ class BOL_AuthorizationService
         }
 
         $moderatorDaoCache = $this->moderatorDao->findAll();
+        $this->superModeratorUserId = 0;
 
         foreach ( $moderatorDaoCache as $moderator )
         {
@@ -650,7 +651,7 @@ class BOL_AuthorizationService
             $this->moderatorCache[$moderator->userId] = $moderator->id;
 
             if ( $this->superModeratorUserId === 0
-                || $this->superModeratorUserId !== null && ( (int) $this->moderatorCache[$moderator->userId] < (int) $this->moderatorCache[$this->superModeratorUserId] ) )
+                || ( (int) $this->moderatorCache[$moderator->userId] < (int) $this->moderatorCache[$this->superModeratorUserId] ) )
             {
                 $this->superModeratorUserId = (int) $moderator->userId;
             }
@@ -684,8 +685,6 @@ class BOL_AuthorizationService
         }
 
         $this->roleDaoCache = $this->roleDao->findAll();
-
-        $this->superModeratorUserId = 0;
         $this->guestRoleId = $this->getGuestRoleId();
     }
 
