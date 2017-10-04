@@ -1012,6 +1012,9 @@ class BOL_AuthorizationService
 
         $this->userRoleDao->deleteUserRole($userRole->userId, $userRole->roleId);
         $this->userRoleDao->save($userRole);
+
+        $event = new OW_Event('base.after_save_user_role', array('userId' => $userId, 'roleId' => $roleId));
+        OW::getEventManager()->trigger($event);
     }
 
     public function assignDefaultRoleToUser( $userId )
@@ -1119,6 +1122,9 @@ class BOL_AuthorizationService
         {
             $this->userRoleDao->deleteUserRole($userId, $roleId);
         }
+
+        $event = new OW_Event('base.after_delete_user_role', array('userId' => $userId, 'roleId' => $roleId));
+        OW::getEventManager()->trigger($event);
     }
 
     public function grantActionListToRole( BOL_AuthorizationRole $role, array $actions )
