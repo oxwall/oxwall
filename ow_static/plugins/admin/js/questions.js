@@ -19,10 +19,9 @@ var QuestionUtils = function()
 
 var qUtils = new QuestionUtils();
 
-var questionValuesField = function( params )
-{
+var questionValuesField = function (params) {
     var self = this;
-    
+
     self.dataFieldId;
     self.dataField;
 
@@ -35,6 +34,7 @@ var questionValuesField = function( params )
     this.value = {};
     this.order = [];
     this.possibleValuesList = [];
+    this.maxQuestionValuesCount = 64;
 
     this.addButton;
     this.valuesArea;
@@ -76,7 +76,7 @@ questionValuesField.prototype = {
         );
 
         var id = 0;
-        for ( var i = 0; i < 32; i++ )
+        for ( var i = 0; i < self.maxQuestionValuesCount; i++ )
         {
             id = Math.pow(2, i);
             self.possibleValuesList.push(id);
@@ -347,7 +347,6 @@ infiniteQuestionValuesField.prototype.setValue = function(values){
                 self.order.push(index);
             }
         });
-
         self.renderValues();
         OW.trigger('question.value.add', {values:addValues, node:self.tr});
         self.updateDataField();

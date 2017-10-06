@@ -89,6 +89,7 @@ class BOL_QuestionService
 
     /* field presentation configs */
     const QUESTION_CONFIG_DATE_RANGE = 'dateRange';
+    const MAX_QUESTION_VALUES_COUNT = 64;
 
     const AGE_RANGE_FROM = 24;
     const AGE_RANGE_TO = 86;

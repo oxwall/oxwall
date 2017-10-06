@@ -152,7 +152,7 @@ class addValueField extends FormElement
                     $count++;
                 }
 
-                if ( $count >= 32 )
+                if ( $count >= BOL_QuestionService::MAX_QUESTION_VALUES_COUNT )
                 {
                     break;
                 }

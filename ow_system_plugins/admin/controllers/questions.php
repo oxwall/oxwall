@@ -671,13 +671,12 @@ class ADMIN_CTRL_Questions extends ADMIN_CTRL_Abstract
                 $questionId = (int) $_POST["questionId"];
 
                 $question = $this->questionService->findQuestionById($questionId);
-
                 $values = !empty($_POST["values"]) && is_array($_POST["values"]) ? $_POST["values"] : array();
 
                 if ( empty($question) || empty($values) )
                 {
                     echo json_encode(array('result' => $result));
-                    return;
+                    exit;
                 }
 
                 if ( $this->questionService->updateQuestionValues($question, $values) )
@@ -685,8 +684,8 @@ class ADMIN_CTRL_Questions extends ADMIN_CTRL_Abstract
                     $result = true;
                 }
 
-                echo json_encode(array('result' => $result));
-
+                echo (json_encode(array('result' => $result)));
+                exit;
                 break;
 
            case 'AddAccountType':
