@@ -72,6 +72,8 @@ class ADMIN_CMP_EditQuestion extends OW_Component
                 var questionId = params.node.parents(\'form[name=qst_edit_form]:eq(0)\').find(\'input[name=questionId]\').val();
                 var values = params.values;
 
+                console.log(values);
+
                 if ( questionId && values )
                 {
                     $.ajax( {
