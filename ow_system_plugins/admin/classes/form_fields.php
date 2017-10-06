@@ -138,7 +138,6 @@ class addValueField extends FormElement
 
     protected function setArrayValue( $value )
     {
-
         $values = array();
 
         if ( !empty($value) )

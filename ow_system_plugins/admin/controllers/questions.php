@@ -485,8 +485,6 @@ class ADMIN_CTRL_Questions extends ADMIN_CTRL_Abstract
 
     public function ajaxResponder()
     {
-
-        print_r($_SERVER);
         if ( !OW::getAuthorization()->isUserAuthorized(OW::getUser()->getId(), 'admin') || empty($_POST["command"]) || !OW::getRequest()->isAjax() )
         {
             throw new Redirect404Exception();

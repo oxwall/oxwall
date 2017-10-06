@@ -19,8 +19,7 @@ var QuestionUtils = function()
 
 var qUtils = new QuestionUtils();
 
-var questionValuesField;
-questionValuesField = function (params) {
+var questionValuesField = function (params) {
     var self = this;
 
     self.dataFieldId;
@@ -150,7 +149,6 @@ questionValuesField.prototype = {
             });
 
             self.renderValues();
-            console.log(addValues);
             OW.trigger('question.value.add', {values:addValues, node:self.tr});
             self.updateDataField();
         }
@@ -349,7 +347,6 @@ infiniteQuestionValuesField.prototype.setValue = function(values){
                 self.order.push(index);
             }
         });
-        console.log(350);
         self.renderValues();
         OW.trigger('question.value.add', {values:addValues, node:self.tr});
         self.updateDataField();
