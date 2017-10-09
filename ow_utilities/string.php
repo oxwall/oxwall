@@ -175,10 +175,7 @@ class UTIL_String
      */
     public static function getRandomString( $length = 8, $strength = self::RND_STR_ALPHA_WITH_CAPS_NUMERIC )
     {
-        list($usec, $sec) = explode(" ", microtime());
-        $seed = (float) $sec + ((float) $usec * 1000000);
-
-        srand($seed);
+        srand();
 
         $chars1 = "1234";
         $chars2 = "56789";
