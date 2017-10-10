@@ -507,7 +507,21 @@ class JoinForm extends BASE_CLASS_UserQuestionForm
         {
             if ( !empty($question['realName']) )
             {
-                $this->getElement($question['name'])->setLabel(OW::getLanguage()->text('base', 'questions_question_' . $question['realName'] . '_label'));
+                $event = new OW_Event('base.questions_field_add_label_join', $question, true);
+
+                OW::getEventManager()->trigger($event);
+
+                $data = $event->getData();
+
+                if( !empty($data['label']) )
+                {
+                    $this->getElement($question['name'])->setLabel($data['label']);
+                }
+                else
+                {
+                    $this->getElement($question['name'])->setLabel(OW::getLanguage()->text('base', 'questions_question_' . $question['realName'] . '_label'));
+                }
+
             }
         }
     }
