@@ -76,8 +76,22 @@ class BASE_CLASS_UserQuestionForm extends Form
 
             $formField = $this->getPresentationClass($question['presentation'], $question['name'], $custom);
 
+            $event = new OW_Event('base.questions_field_add_label_edit', $question, true);
 
-            $formField->setLabel(OW::getLanguage()->text('base', 'questions_question_' . $question['name'] . '_label'));
+            OW::getEventManager()->trigger($event);
+
+            $data = $event->getData();
+
+            if( !empty($data['label']) )
+            {
+                $formField->setLabel($data['label']);
+            }
+            else
+            {
+                $formField->setLabel(OW::getLanguage()->text('base', 'questions_question_' . $question['name'] . '_label'));
+            }
+
+
             $this->setLabel($formField, $question);
 
             if ( in_array($question['type'], array( BOL_QuestionService::QUESTION_VALUE_TYPE_MULTISELECT, BOL_QuestionService::QUESTION_VALUE_TYPE_SELECT) ) 
