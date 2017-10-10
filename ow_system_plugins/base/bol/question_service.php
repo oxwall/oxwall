@@ -336,7 +336,6 @@ class BOL_QuestionService
                             $this->birthdayConfig = ($birthday->custom);
                         }
                     }
-
                     if ( trim($this->birthdayConfig) )
                     {
                         $configsList = json_decode($this->birthdayConfig, true);
@@ -344,10 +343,27 @@ class BOL_QuestionService
                         {
                             if ( $name == 'year_range' && isset($value['from']) && isset($value['to']) )
                             {
-                                $rangeValidator->setMinValue(date("Y") - $value['to']);
-                                $rangeValidator->setMaxValue(date("Y") - $value['from']);
-                                $class->setMinValue(date("Y") - $value['to']);
-                                $class->setMaxValue(date("Y") - $value['from']);
+                                $minValue = date("Y") - $value['to'];
+                                $maxValue = date("Y") - $value['from'];
+
+                                $event = new OW_Event('base.questions_question_set_range_join', array(
+                                    'questionName' => $class->getAttribute('name')
+                                ));
+
+                                OW::getEventManager()->trigger($event);
+
+                                $data = $event->getData();
+
+                                if( isset($data['maxValue']) && isset($data['minValue']) )
+                                {
+                                    $minValue = $data['minValue'];
+                                    $maxValue = $data['maxValue'];
+                                }
+                                
+                                $rangeValidator->setMinValue($minValue);
+                                $rangeValidator->setMaxValue($maxValue);
+                                $class->setMinValue($minValue);
+                                $class->setMaxValue($maxValue);
                             }
                         }
                     }
@@ -472,7 +488,7 @@ class BOL_QuestionService
                             {
                                 $class->setMinValue(date("Y") - $value['to']);
                                 $class->setMaxValue(date("Y") - $value['from']);
-                                
+
                                 $rangeValidator->setMinValue(date("Y") - $value['to']);
                                 $rangeValidator->setMaxValue(date("Y") - $value['from']);
                             }
