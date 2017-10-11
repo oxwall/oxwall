@@ -1,5 +1,9 @@
 {style}
 
+    .owm_premoderation_high {
+        background: #f9f6a9 none repeat scroll 0 0;
+    }
+
     .owm_edit_photo_upload .owm_upload_photo_attach_wrap
     {
         padding:0px;
@@ -116,7 +120,7 @@
         <br />
         <div class="owm_field_container owm_std_margin_bottom">
             <div class="owm_form_label owm_small_margin_bottom">{label name='accountType'}</div>
-            <div class="owm_checkbox_wrap"><div class="owm_checkbox_single">{input name='accountType'}</div></div>
+            <div class="owm_field_wrap">{input name='accountType'}</div>
             <div class="owm_error_txt">{error name='accountType'}</div>
         </div>
     {/if}
@@ -134,7 +138,7 @@
         {foreach from=$questions item='question' name='question'}
             <div class="owm_field_container owm_std_margin_bottom {if !empty($changeList[$question.name]) && $adminMode } owm_premoderation_high {/if}">
                 <div class="owm_form_label owm_small_margin_bottom">{label name=$question.name}</div>
-                <div class="owm_checkbox_wrap"><div class="owm_checkbox_single">{input name=$question.name}</div></div>
+                <div class="owm_field_wrap">{input name=$question.name}</div>
                 <div class="owm_error_txt">{error name=$question.name}</div>
             </div>
         {/foreach}

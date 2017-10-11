@@ -15,4 +15,10 @@
     <key name="wrong_avatar_format">
         <value>Wrong avatar format</value>
     </key>
+    <key name="change_password">
+        <value>Change password</value>
+    </key>
+    <key name="change_password_page">
+        <value>Change password</value>
+    </key>
 </prefix>
