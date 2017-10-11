@@ -38,6 +38,7 @@ class BASE_MCLASS_EventHandler extends BASE_CLASS_EventHandler
         $eventManager->bind(BASE_MCMP_ProfileContentMenu::EVENT_NAME, array($this, 'onMobileProfileContentMenu'));
         //$eventManager->bind(BASE_MCMP_ProfileContentMenu::EVENT_NAME, array($this, 'onFakeMobileProfileContentMenu'));
 
+        $eventManager->bind(BASE_MCMP_ProfileActionToolbar::EVENT_NAME, array($this, 'onActionToolbarAddEditUserActionTool'));
         $eventManager->bind(BASE_MCMP_ProfileActionToolbar::EVENT_NAME, array($this, 'onActionToolbarAddDeleteActionTool'));
         $eventManager->bind(BASE_MCMP_ProfileActionToolbar::EVENT_NAME, array($this, 'onActionToolbarAddSuspendActionTool'));
         $eventManager->bind(BASE_MCMP_ProfileActionToolbar::EVENT_NAME, array($this, 'onActionToolbarAddUserApproveActionTool'));
@@ -481,6 +482,26 @@ class BASE_MCLASS_EventHandler extends BASE_CLASS_EventHandler
         $action["key"] = "base.suspend_user";
 
         $event->add($action);
+    }
+
+    public function onActionToolbarAddEditUserActionTool( BASE_CLASS_EventCollector $event )
+    {
+        $params = $event->getParams();
+
+        if ( OW::getUser()->getId() == $params['userId']
+            || (OW::getUser()->isAuthorized('base') && !BOL_AuthorizationService::getInstance()->isSuperModerator($params['userId'])) )
+        {
+            $resultArray = array(
+                "label" => OW::getUser()->getId() == $params['userId']
+                    ? OW::getLanguage()->text('mobile', 'edit_profile')
+                    : OW::getLanguage()->text('mobile', 'edit_other_profile'),
+                "href" => OW::getUser()->getId() == $params['userId']
+                    ? OW::getRouter()->urlForRoute('base_edit')
+                    : OW::getRouter()->urlForRoute('base_edit_user_datails', array('userId' => $params['userId']))
+            );
+
+            $event->add($resultArray);
+        }
     }
 
     public function onActionToolbarAddDeleteActionTool( BASE_CLASS_EventCollector $event )
