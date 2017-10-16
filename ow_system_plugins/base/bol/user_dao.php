@@ -815,7 +815,7 @@ class BOL_UserDao extends OW_BaseDao
 
         if ( !empty($aditionalParams['where']) )
         {
-            $where = $aditionalParams['where'];
+            $where .= $aditionalParams['where'];
         }
 
         if ( !empty($questionValues['accountType']) )
