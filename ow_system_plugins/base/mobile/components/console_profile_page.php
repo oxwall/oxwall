@@ -60,5 +60,24 @@ class BASE_MCMP_ConsoleProfilePage extends OW_MobileComponent
             document.location.href = '.json_encode(OW::getRouter()->urlForRoute('base_sign_out')).';
         });';
         OW::getDocument()->addOnloadScript($script);
+
+        // language switcher
+        $languages = BOL_LanguageService::getInstance()->getLanguages();
+        $sessionLanguageId = BOL_LanguageService::getInstance()->getCurrent()->getId();
+        $activeLanguages = [];
+
+        foreach( $languages as $id => $language )
+        {
+            if ( $language->status == 'active' )
+            {
+                $activeLanguages[] = [
+                    'active' => $language->id == $sessionLanguageId,
+                    'label' => $language->label,
+                    'id'=> $language->id
+                ];
+            }
+        }
+
+        $this->assign('languages', (count($activeLanguages) > 1 ? $activeLanguages : []));
     }
 }

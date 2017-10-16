@@ -9,7 +9,7 @@
                         </th>
                     </tr>
                 {/if}
-                    
+
                 {foreach from=$questions key='sort' item='question' name='question'}
                     {if !empty($questionData[$question.name]) }
                         <tr {if $smarty.foreach.question.first}class="own_tr_first"{elseif $smarty.foreach.question.last}class="owm_tr_last"{/if}>

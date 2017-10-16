@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<prefix name="mobile" label="Mobile" language_tag="en" language_label="English">
+    <key name="edit_profile">
+        <value>Edit my profile</value>
+    </key>
+    <key name="edit_other_profile">
+        <value>Edit profile</value>
+    </key>
+    <key name="edit_profile_page">
+        <value>Profile edit</value>
+    </key>
+    <key name="avatar_cannot_be_deleted">
+        <value>Avatar cannot be deleted</value>
+    </key>
+    <key name="wrong_avatar_format">
+        <value>Wrong avatar format</value>
+    </key>
+    <key name="change_password">
+        <value>Change password</value>
+    </key>
+    <key name="change_password_page">
+        <value>Change password</value>
+    </key>
+</prefix>

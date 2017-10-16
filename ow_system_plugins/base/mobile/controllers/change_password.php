@@ -23,71 +23,22 @@
  */
 
 /**
- * Avatar field form element validator.
+ * Change password controller
  *
- * @author Podiachev Evgenii <joker.OW2@gmail.com>
- * @package ow.ow_system_plugins.base.bol
- * @since 1.7.2
+ * @author Alex Ermashev <alexermashev@gmail.com>
+ * @package ow_system_plugins.base.mobile.controller
+ * @since 1.8.6
  */
-class BASE_MCLASS_JoinAvatarFieldValidator extends BASE_CLASS_AvatarFieldValidator
+class BASE_MCTRL_ChangePassword extends OW_MobileActionController
 {
     /**
-     * @param mixed $value
-     * @return bool
+     * Index
      */
-    public function isValid( $value )
+    public function index()
     {
-        if ( !$this->required )
-        {
-            return true;
-        }
+        $this->setPageTitle(OW::getLanguage()->text('mobile', 'change_password_page'));
+        $this->setPageHeading(OW::getLanguage()->text('mobile', 'change_password_page'));
 
-        $language = OW::getLanguage();
-
-        $avatarService = BOL_AvatarService::getInstance();
-
-        if ( !is_writable(BOL_AvatarService::getInstance()->getAvatarsDir()) )
-        {
-            $this->setErrorMessage($language->text('base', 'not_writable_avatar_dir'));
-
-            return false;
-        }
-
-        if ( empty($_FILES['userPhoto']['name']) )
-        {
-            return false;
-        }
-
-        if ( !empty($_FILES['userPhoto']['error']) )
-        {
-            $this->setErrorMessage(BOL_FileService::getInstance()->getUploadErrorMessage($_FILES['userPhoto']['error']));
-
-            return false;
-        }
-        
-        return true;
-    }
-
-    /**
-     * @see Validator::getJsValidator()
-     *
-     * @return string
-     */
-    public function getJsValidator()
-    {
-        $condition = '';
-
-        if ( $this->required )
-        {
-            $condition = "
-            if ( value == undefined || $.trim(value).length == 0 ) {
-                throw " . json_encode($this->getError()) . ";
-            }";
-        }
-
-        return "{
-                validate : function( value ){ " . $condition . " },
-                getErrorMessage : function(){ return " . json_encode($this->getError()) . " }
-        }";
+        $this->addComponent('changePassword', new BASE_MCMP_ChangePassword());
     }
 }

@@ -1,0 +1,188 @@
+{style}
+
+    .owm_premoderation_high {
+        background: #f9f6a9 none repeat scroll 0 0;
+    }
+
+    .owm_edit_photo_upload .owm_upload_photo_attach_wrap
+    {
+        padding:0px;
+    }
+
+    .owm_edit_photo_button
+    {
+        position: absolute;
+        top: 9px;
+        left: 10px;
+    }
+
+    .owm_edit_photo_button_label
+    {
+        padding-left: 63px;
+        margin-right: 8px;
+        min-width:53px;
+        float:left;
+    }
+
+    .owm_edit_photo_button_img
+    {
+        min-width: 100px;
+        float: left;
+    }
+
+    .owm_edit_photo_button_img #photo-file-preview {
+        height: 44px;
+        vertical-align: middle;
+    }
+
+    .owm_edit_photo_button_img #delete-avatar {
+        padding-left: 10px;
+        vertical-align: middle;
+    }
+
+    .owm_anno {
+        margin-top: 20px;
+        padding-right: 10px;
+        padding-top: 10px;
+        padding-bottom: 10px;
+    }
+{/style}
+
+{script}
+    var validImageExtensions = {$validImageExtensions};
+    var hiddenImg = $("#{$avatarId}");
+    var img = $('.edit_photo_upload #photo-file-preview');
+    var imgSpan = img.parents(".edit_photo_upload .owm_upload_img_name_label");
+
+    var imgChangeLabel = $('.edit_photo_upload .owm_upload_replace_label');
+    var imgUploadLabel = $('.edit_photo_upload .owm_upload_choose_label');
+    var icon = $('.edit_photo_upload .edit_photo_button a');
+
+    $("#delete-avatar").click(function(e) {
+        e.preventDefault();
+
+        hiddenImg.val('');
+        imgSpan.hide();
+    });
+
+    $("input[name=userPhoto]").change(function() {
+
+        if (!this.files || !this.files[0]) {
+            return
+        };
+
+        var extension = this.files[0].name.split('.').pop().toLowerCase();
+
+        if (validImageExtensions.indexOf(extension) == -1) {
+            return;
+        }
+
+        var name = imgSpan.find("span");
+
+        name.text("");
+        imgSpan.hide();
+
+        if ( window.FileReader ) {
+            var reader = new FileReader();
+
+            reader.onload = function (e) {
+                showAvatar(e.target.result);
+            }
+
+            reader.readAsDataURL(this.files[0]);
+        } else {
+            name.text(this.files[0].name);
+        }
+    });
+
+    function showAvatar(url) {
+        img.attr('src', url);
+        imgSpan.css('display','table');
+        imgChangeLabel.css('display','table');
+        imgUploadLabel.hide();
+
+        icon.parents('div:eq(0)').addClass('owm_upload_photo_attach_wrap');
+
+        hiddenImg.val(url);
+    }
+
+    // show avatar
+    {if $avatarPreview}
+        showAvatar('{$avatarPreview}');
+    {/if}
+{/script}
+
+
+{form name=editForm}
+
+    <!-- account type -->
+    {if $displayAccountType}
+        <br />
+        <div class="owm_field_container owm_std_margin_bottom">
+            <div class="owm_form_label owm_small_margin_bottom">{label name='accountType'}</div>
+            <div class="owm_field_wrap">{input name='accountType'}</div>
+            <div class="owm_error_txt">{error name='accountType'}</div>
+        </div>
+    {/if}
+
+    {foreach from=$questionArray key='section' item='questions' name='question'}
+        <!-- section -->
+        {if !empty($section) }
+            <div class="owm_field_container owm_section owm_std_margin_bottom">
+                <span class="owm_section_label">{text key="base+questions_section_`$section`_label"}</span>
+                <div class="owm_section_border"></div>
+            </div>
+        {/if}
+
+        <!-- questions -->
+        {foreach from=$questions item='question' name='question'}
+            <div class="owm_field_container owm_std_margin_bottom {if !empty($changeList[$question.name]) && $adminMode } owm_premoderation_high {/if}">
+                <div class="owm_form_label owm_small_margin_bottom">{label name=$question.name}</div>
+                <div class="owm_field_wrap">{input name=$question.name}</div>
+                <div class="owm_error_txt">{error name=$question.name}</div>
+            </div>
+        {/foreach}
+
+    {/foreach}
+
+    <!-- avatar -->
+    <div class="owm_field_container edit_photo_upload owm_upload_photo_browse_wrap clearfix owm_bg_color_3 {if $requiredPhotoUpload}owm_field_required{/if} owm_field_wrap">
+        <div class="owm_edit_photo_button">
+            <a class="owm_upload_photo_choose_btn" href="javascript://">
+                <input name="userPhoto" type="file" accept="image/*" />
+            </a>
+        </div>
+        <div class="owm_edit_photo_button_label">
+            <span class="owm_upload_choose_label"><span>{label name='userPhoto'}{if $requiredPhotoUpload}<span class="owm_required_star">*</span>{/if}</span></span>
+            <span class="owm_upload_replace_label"><span>{label name='userPhoto'}{if $requiredPhotoUpload}<span class="owm_required_star">*</span>{/if}</span></span>
+        </div>
+        <div class="owm_edit_photo_button_img">
+            <span class="owm_upload_img_name_label">
+                <img id="photo-file-preview" src="{$avatarPreview}" />
+                <a href="#" id="delete-avatar">{text key="base+delete"}</a>
+            </span>
+        </div>
+        <input type="hidden" id="{$avatarId}" name="userPhoto" value="{$avatarPreview}" />
+    </div>
+    <div class="owm_error_txt">{error name='userPhoto'}</div>
+
+    <!-- approve notice -->
+    {if !$adminMode && !$isAdmin && $approveEnabled}
+        <div class="owm_anno owm_std_margin">{text key="base+edit_profile_warning"}</div>
+    {/if}
+
+    <!-- submit -->
+
+    <div class="owm_btn_wide owm_std_margin_top">
+        {if $adminMode}
+            {if !$isUserApproved}
+                {submit name='saveAndApprove'}
+            {else}
+                {submit name='editSubmit'}
+            {/if}
+        {else}
+            {submit name='editSubmit'}
+        {/if}
+    </div>
+
+{/form}

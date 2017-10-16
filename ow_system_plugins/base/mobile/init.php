@@ -60,7 +60,10 @@ $router->addRoute(new OW_Route('users', 'users', 'BASE_MCTRL_UserList', 'index',
 $router->addRoute(new OW_Route('base_user_lists', 'users/:list', 'BASE_MCTRL_UserList', 'index'));
 $router->addRoute(new OW_Route('base_user_lists_responder', 'responder', 'BASE_MCTRL_UserList', 'responder'));
 
+$router->addRoute(new OW_Route('base_change_password', 'change-password', 'BASE_MCTRL_ChangePassword', 'index'));
 $router->addRoute(new OW_Route('base_join', 'join', 'BASE_MCTRL_Join', 'index'));
+$router->addRoute(new OW_Route('base_edit', 'profile/edit', 'BASE_MCTRL_Edit', 'index'));
+$router->addRoute(new OW_Route('base_edit_user_datails', 'profile/:userId/edit/', 'BASE_MCTRL_Edit', 'index'));
 
 $router->addRoute(new OW_Route('base.complete_account_type', 'fill/account_type', 'BASE_MCTRL_CompleteProfile', 'fillAccountType'));
 $router->addRoute(new OW_Route('base.complete_required_questions', 'fill/profile_questions', 'BASE_CTRL_MCompleteProfile', 'fillRequiredQuestions'));

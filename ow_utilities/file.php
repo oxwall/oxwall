@@ -34,14 +34,14 @@ class UTIL_File
      *
      * @var array
      */
-    private static $imageExtensions = array('jpg', 'jpeg', 'png', 'gif');
+    public static $imageExtensions = array('jpg', 'jpeg', 'png', 'gif');
 
     /**
      * Avaliable video extensions
      *
      * @var array
      */
-    private static $videoExtensions = array('avi', 'mpeg', 'wmv', 'flv', 'mov', 'mp4');
+    public static $videoExtensions = array('avi', 'mpeg', 'wmv', 'flv', 'mov', 'mp4');
 
     /**
      * Copies whole directory from source to destination folder. The destionation folder will be created if it doesn't exist.

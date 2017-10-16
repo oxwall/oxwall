@@ -27,9 +27,9 @@
  *
  * @author Podiachev Evgenii <joker.OW2@gmail.com>
  * @package ow.ow_system_plugins.base.bol
- * @since 1.7.2
+ * @since 1.8.6
  */
-class BASE_MCLASS_JoinAvatarFieldValidator extends BASE_CLASS_AvatarFieldValidator
+class BASE_MCLASS_EditAvatarFieldValidator extends BASE_MCLASS_JoinAvatarFieldValidator
 {
     /**
      * @param mixed $value
@@ -37,14 +37,13 @@ class BASE_MCLASS_JoinAvatarFieldValidator extends BASE_CLASS_AvatarFieldValidat
      */
     public function isValid( $value )
     {
-        if ( !$this->required )
+        if ( !$this->required
+            || BOL_AvatarService::getInstance()->getAvatarUrl($this->userId, 1, null, true, false))
         {
             return true;
         }
 
         $language = OW::getLanguage();
-
-        $avatarService = BOL_AvatarService::getInstance();
 
         if ( !is_writable(BOL_AvatarService::getInstance()->getAvatarsDir()) )
         {
@@ -66,28 +65,5 @@ class BASE_MCLASS_JoinAvatarFieldValidator extends BASE_CLASS_AvatarFieldValidat
         }
         
         return true;
-    }
-
-    /**
-     * @see Validator::getJsValidator()
-     *
-     * @return string
-     */
-    public function getJsValidator()
-    {
-        $condition = '';
-
-        if ( $this->required )
-        {
-            $condition = "
-            if ( value == undefined || $.trim(value).length == 0 ) {
-                throw " . json_encode($this->getError()) . ";
-            }";
-        }
-
-        return "{
-                validate : function( value ){ " . $condition . " },
-                getErrorMessage : function(){ return " . json_encode($this->getError()) . " }
-        }";
     }
 }
