@@ -1,3 +1,32 @@
+{style}
+    .owm_sidebar_profile_logout_wrap {
+        position: absolute;
+        bottom: 32px;
+        right: 17px;
+        width: 406px;
+    }
+    @media only screen and (max-width : 479px) {
+        .owm_sidebar_profile_logout_wrap {
+            width: 246px;
+        }
+    }
+    body .owm_sidebar_profile_block .owm_sidebar_profile_logout {
+        bottom: 32px;
+        background-color: #ff687a;
+        color: #fff;
+        border: none;        
+    }
+    .owm_sidebar_profile_block .owm_select_wrap {
+        padding: 10px 0;
+        margin-top: 6px;
+    }
+    .owm_sidebar_profile_block .owm_select_wrap select {
+        width: 100%;
+        max-width: none;
+        margin: 0;
+    }
+{/style}
+
 <div class="owm_sidebar_profile_block">
     <div class="owm_sidebar_profile_cont clearfix">
         <div class="owm_avatar"><a href="{$url}"><img src="{$avatarUrl}" /></a></div>
@@ -8,13 +37,15 @@
     </div>
 
     {if $languages}
+    <div class="owm_field_wrap owm_select_wrap">
         <select onchange="location.href = OWM.addUrlParam('language_id', this.value, OWM.removeUrlParam('language_id', location.href))">
             {foreach from=$languages item=language}
                 <option value="{{$language.id}}" {if $language.active}selected="selected"{/if}>{{$language.label}}</option>
             {/foreach}
         </select>
+    </div>
     {/if}
 
     <div class="owm_sidebar_profile_delimiter"></div>
-    <input class="owm_sidebar_profile_logout" type="button" onclick="location.href='{url_for_route for='base_sign_out'}'" value="{text key='mobile+sign_out'}" />
+    <div class="owm_sidebar_profile_logout_wrap"><input class="owm_sidebar_profile_logout" type="button" onclick="location.href='{url_for_route for='base_sign_out'}'" value="{text key='mobile+sign_out'}" /></div>
 </div>
