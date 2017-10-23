@@ -40,6 +40,7 @@ class BASE_MCMP_ProfileInfo extends OW_MobileComponent
         $questions = BASE_CMP_UserViewWidget::getUserViewQuestions($this->user->id, OW::getUser()->isAdmin(), reset($questionNames));
         
         $data = array();
+        
         foreach ( $questions['data'][$this->user->id] as $key => $value )
         {
             $data[$key] = $value;
@@ -49,6 +50,11 @@ class BASE_MCMP_ProfileInfo extends OW_MobileComponent
                 $data[$key] = implode(', ', $value);
             }
         }
+
+        $event = new OW_Event('mbase.profile_on_collect_question_data', array('profileUserId' => $this->user->getId()), $questions);
+        OW::getEventManager()->trigger($event);
+
+        $questions = $event->getData();
 
         $this->assign("displaySections", !$this->previewMode);
         $this->assign('questionArray', $questions['questions']);
