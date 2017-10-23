@@ -2079,6 +2079,24 @@ OwMobileComments.prototype = {
 
 };
 
+OWM.postRequest = function(url, params)
+{
+    var $form = $("<form></form>")
+        .attr({
+            action: url,
+            method: "post"
+        })
+        .appendTo("body");
+
+    $.each(params, function( name, value ) {
+        $('<input type="hidden" />').attr({
+            name: name, value: value
+        }).appendTo($form);
+    });
+
+    $form.submit();
+}
+
 var OwMobileCommentsList = function( params ){
 	this.$context = $('#' + params.contextId);
 	$.extend(this, params, owCommentListCmps.staticData);
