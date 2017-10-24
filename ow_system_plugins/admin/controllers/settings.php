@@ -574,7 +574,7 @@ class ConfigSaveForm extends Form
         $this->addElement($siteEmailField);
 
         $taglineField = new TextField('tagline');
-        $taglineField->setRequired(true);
+        //$taglineField->setRequired(true);
         $this->addElement($taglineField);
 
         $descriptionField = new Textarea('description');
