@@ -591,7 +591,7 @@ class JoinForm extends BASE_CLASS_UserQuestionForm
         $oldQuestionList = OW::getSession()->get(self::SESSION_REAL_QUESTION_LIST);
         $allQuestionList = OW::getSession()->get(self::SESSION_ALL_QUESTION_LIST);
 
-        if ( !empty($oldQuestionList) && !empty($oldQuestionList) )
+        if ( !empty($oldQuestionList) && !empty($allQuestionList) )
         {
             $realQuestionList = $oldQuestionList;
             $this->sortedQuestionsList = $allQuestionList;
