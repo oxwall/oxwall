@@ -91,6 +91,9 @@ class ADMIN_CLASS_AddQuestionForm extends Form
 
         $displayFieldList = array(
             'qst_name' => true,
+            'qst_name_join' => true,
+            'qst_name_edit' => true,
+            'qst_name_search' => true,
             'qst_description' => true,
             'qst_section' => true,
             'qst_account_type' => true,
@@ -224,6 +227,24 @@ class ADMIN_CLASS_AddQuestionForm extends Form
         $qstName->setRequired();
 
         $this->addElement($qstName);
+
+        // question name on join
+        $qstNameJoin = new TextField('qst_name_join');
+        $qstNameJoin->setLabel($language->text('admin', 'questions_question_name_join_label'));
+
+        $this->addElement($qstNameJoin);
+
+        // question name on edit
+        $qstNameJoin = new TextField('qst_name_edit');
+        $qstNameJoin->setLabel($language->text('admin', 'questions_question_name_edit_label'));
+
+        $this->addElement($qstNameJoin);
+
+        // question name on search
+        $qstNameJoin = new TextField('qst_name_search');
+        $qstNameJoin->setLabel($language->text('admin', 'questions_question_name_search_label'));
+
+        $this->addElement($qstNameJoin);
 
         $qstName = new TextField('qst_description');
         $qstName->setLabel($language->text('admin', 'questions_question_description_label'));

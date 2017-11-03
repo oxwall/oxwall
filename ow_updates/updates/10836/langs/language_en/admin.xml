@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<prefix name="admin" label="Admin" language_tag="en" language_label="English">
+    <key name="questions_question_name_join_label">
+        <value>Question name on join</value>
+    </key>
+    <key name="questions_question_name_edit_label">
+        <value>Question name on edit</value>
+    </key>
+    <key name="questions_question_name_search_label">
+        <value>Question name on search</value>
+    </key>
+</prefix>
