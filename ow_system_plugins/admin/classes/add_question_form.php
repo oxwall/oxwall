@@ -91,10 +91,13 @@ class ADMIN_CLASS_AddQuestionForm extends Form
 
         $displayFieldList = array(
             'qst_name' => true,
-            'qst_name_join' => true,
-            'qst_name_edit' => true,
-            'qst_name_search' => true,
             'qst_description' => true,
+            'qst_name_join' => true,
+            'qst_name_join_desc' => true,
+            'qst_name_edit' => true,
+            'qst_name_edit_desc' => true,
+            'qst_name_search' => true,
+            'qst_name_search_desc' => true,
             'qst_section' => true,
             'qst_account_type' => true,
             'qst_answer_type' => true,
@@ -228,11 +231,23 @@ class ADMIN_CLASS_AddQuestionForm extends Form
 
         $this->addElement($qstName);
 
+        $qstName = new TextField('qst_description');
+        $qstName->setLabel($language->text('admin', 'questions_question_description_label'));
+        //$qstName->addValidator(new StringValidator(0, 24000));
+
+        $this->addElement($qstName);
+
         // question name on join
         $qstNameJoin = new TextField('qst_name_join');
         $qstNameJoin->setLabel($language->text('admin', 'questions_question_name_join_label'));
 
         $this->addElement($qstNameJoin);
+
+        // question name desc on join
+        $qstNameJoinDesc = new TextField('qst_name_join_desc');
+        $qstNameJoinDesc->setLabel($language->text('admin', 'questions_question_name_join_desc_label'));
+
+        $this->addElement($qstNameJoinDesc);
 
         // question name on edit
         $qstNameJoin = new TextField('qst_name_edit');
@@ -240,17 +255,23 @@ class ADMIN_CLASS_AddQuestionForm extends Form
 
         $this->addElement($qstNameJoin);
 
+        // question name desc on edit
+        $qstNameJoinDesc = new TextField('qst_name_edit_desc');
+        $qstNameJoinDesc->setLabel($language->text('admin', 'questions_question_name_edit_desc_label'));
+
+        $this->addElement($qstNameJoinDesc);
+
         // question name on search
         $qstNameJoin = new TextField('qst_name_search');
         $qstNameJoin->setLabel($language->text('admin', 'questions_question_name_search_label'));
 
         $this->addElement($qstNameJoin);
 
-        $qstName = new TextField('qst_description');
-        $qstName->setLabel($language->text('admin', 'questions_question_description_label'));
-        //$qstName->addValidator(new StringValidator(0, 24000));
+        // question name desc on search
+        $qstNameJoinDesc = new TextField('qst_name_search_desc');
+        $qstNameJoinDesc->setLabel($language->text('admin', 'questions_question_name_search_desc_label'));
 
-        $this->addElement($qstName);
+        $this->addElement($qstNameJoinDesc);
 
         if ( count($accountTypes) > 1 )
         {
@@ -463,8 +484,30 @@ class ADMIN_CLASS_AddQuestionForm extends Form
 
                 $name = !empty($data['qst_name']) ? trim($data['qst_name']) : '';
                 $description = !empty($data['qst_description']) ? htmlspecialchars(trim($data['qst_description'])) : '';
-                
-                $this->questionService->createQuestion($question, $name, $description, $questionValues, true);
+
+                // process extra labels
+                $extraLabels = array(
+                    BOL_QuestionService::LANG_KEY_TYPE_QUESTION_LABEL_JOIN => !empty($data['qst_name_join'])
+                        ? trim($data['qst_name_join'])
+                        : '',
+                    BOL_QuestionService::LANG_KEY_TYPE_QUESTION_DESCRIPTION_JOIN => !empty($data['qst_name_join_desc'])
+                        ? trim($data['qst_name_join_desc'])
+                        : '',
+                    BOL_QuestionService::LANG_KEY_TYPE_QUESTION_LABEL_EDIT => !empty($data['qst_name_edit'])
+                        ? trim($data['qst_name_edit'])
+                        : '',
+                    BOL_QuestionService::LANG_KEY_TYPE_QUESTION_DESCRIPTION_EDIT => !empty($data['qst_name_edit_desc'])
+                        ? trim($data['qst_name_edit_desc'])
+                        : '',
+                    BOL_QuestionService::LANG_KEY_TYPE_QUESTION_LABEL_SEARCH => !empty($data['qst_name_search'])
+                        ? trim($data['qst_name_search'])
+                        : '',
+                    BOL_QuestionService::LANG_KEY_TYPE_QUESTION_DESCRIPTION_SEARCH => !empty($data['qst_name_search_desc'])
+                        ? htmlspecialchars(trim($data['qst_name_search_desc']))
+                        : ''
+                );
+
+                $this->questionService->createQuestion($question, $name, $description, $questionValues, true, $extraLabels);
                 
                 if ( !empty($data['qst_account_type']) && is_array($data['qst_account_type']) )
                 {
