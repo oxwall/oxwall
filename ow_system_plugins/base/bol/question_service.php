@@ -2150,6 +2150,11 @@ class BOL_QuestionService
                 $text = OW::getLanguage()->text(self::QUESTION_LANG_PREFIX,$key, null, '');
                 break;
 
+            case 'join' :
+                $key = $this->getQuestionLangKeyName(self::LANG_KEY_TYPE_QUESTION_DESCRIPTION_JOIN, $questionName);
+                $text = OW::getLanguage()->text(self::QUESTION_LANG_PREFIX,$key, null, '');
+                break;
+
             default :
         }
 

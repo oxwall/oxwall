@@ -666,10 +666,10 @@ class EditQuestionForm extends BASE_CLASS_UserQuestionForm
 
         if ( empty($label) )
         {
-            $lengKey = BOL_QuestionService::getInstance()->
+            $langKey = BOL_QuestionService::getInstance()->
                 getQuestionLangKeyName(BOL_QuestionService::LANG_KEY_TYPE_QUESTION_LABEL_EDIT, $question['name']);
 
-            $label = OW::getLanguage()->text('base', $lengKey, null, '');
+            $label = OW::getLanguage()->text('base', $langKey, null, '');
 
             if ( $label && $label != '&nbsp;' )
             {
