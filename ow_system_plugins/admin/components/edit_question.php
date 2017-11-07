@@ -225,7 +225,7 @@ class ADMIN_CMP_EditQuestion extends OW_Component
 
         foreach ( $extraLangs as $extraLang )
         {
-            $questionLabel = BOL_QuestionService::getInstance()->getQuestionLangByType($question->name, $extraLang);
+            $questionLabel = BOL_QuestionService::getInstance()->getQuestionLangByType($question->name, $extraLang, '');
             $questionLabel = ( mb_strlen(trim($questionLabel)) == 0 || $questionLabel == '&nbsp;' ) ? $noValue : $questionLabel;
 
             $this->assign($extraLang, $questionLabel);

@@ -2155,9 +2155,9 @@ class BOL_QuestionService
         return $text;
     }
 
-    public function getQuestionLangByType($questionName, $type)
+    public function getQuestionLangByType($questionName, $type, $defaultValue = null)
     {
-        return OW::getLanguage()->text(self::QUESTION_LANG_PREFIX, $this->getQuestionLangKeyName($type, $questionName));
+        return OW::getLanguage()->text(self::QUESTION_LANG_PREFIX, $this->getQuestionLangKeyName($type, $questionName), null, $defaultValue);
     }
 
     public function getQuestionLang( $questionName )
