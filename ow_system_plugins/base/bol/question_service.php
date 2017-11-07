@@ -2142,14 +2142,22 @@ class BOL_QuestionService
         return $key;
     }
 
-    public function getQuestionDescriptionLang( $questionName )
+    public function getQuestionDescriptionLang( $questionName, $page = null )
     {
-        $key = $this->getQuestionLangKeyName(self::LANG_KEY_TYPE_QUESTION_DESCRIPTION, $questionName);
-        $text = OW::getLanguage()->text(self::QUESTION_LANG_PREFIX,$key);
+        switch ($page) {
+            case 'edit' :
+                $key = $this->getQuestionLangKeyName(self::LANG_KEY_TYPE_QUESTION_DESCRIPTION_EDIT, $questionName);
+                $text = OW::getLanguage()->text(self::QUESTION_LANG_PREFIX,$key, null, '');
+                break;
 
-        if( preg_match('/^'.preg_quote(self::QUESTION_LANG_PREFIX."+".$key).'$/', $text) )
+            default :
+        }
+
+        // get default desc
+        if ( !$text || $text == '&nbsp;' )
         {
-            $text = '';
+            $key = $this->getQuestionLangKeyName(self::LANG_KEY_TYPE_QUESTION_DESCRIPTION, $questionName);
+            $text = OW::getLanguage()->text(self::QUESTION_LANG_PREFIX,$key, null, '');
         }
 
         return $text;

@@ -38,6 +38,7 @@
  */
 function smarty_function_question_description_lang( $params, $smarty )
 {
-    return BOL_QuestionService::getInstance()->getQuestionDescriptionLang(trim($params['name']));
+    $page = !empty($params['page']) ? $params['page'] : null;
+
+    return BOL_QuestionService::getInstance()->getQuestionDescriptionLang(trim($params['name']), $page);
 }
-?>

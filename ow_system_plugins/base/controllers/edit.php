@@ -655,6 +655,33 @@ class EditQuestionForm extends BASE_CLASS_UserQuestionForm
     }
 
     /**
+     * Set question label
+     *
+     * @param FormElement $formField
+     * @param array $question
+     */
+    protected function setLabel( $formField, $question )
+    {
+        $label = $formField->getLabel();
+
+        if ( empty($label) )
+        {
+            $lengKey = BOL_QuestionService::getInstance()->
+                getQuestionLangKeyName(BOL_QuestionService::LANG_KEY_TYPE_QUESTION_LABEL_EDIT, $question['name']);
+
+            $label = OW::getLanguage()->text('base', $lengKey, null, '');
+
+            if ( $label && $label != '&nbsp;' )
+            {
+                $formField->setLabel($label);
+            }
+
+            // set default label
+            parent::setLabel($formField, $question);
+        }
+    }
+
+    /**
      * Set field validator
      *
      * @param FormElement $formField
