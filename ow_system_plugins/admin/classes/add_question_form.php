@@ -507,7 +507,7 @@ class ADMIN_CLASS_AddQuestionForm extends Form
                         : ''
                 );
 
-                $this->questionService->createQuestion($question, $name, $description, $questionValues, true, $extraLabels);
+                $this->questionService->createQuestion($question, $name, $description, $questionValues, true, true, $extraLabels);
                 
                 if ( !empty($data['qst_account_type']) && is_array($data['qst_account_type']) )
                 {

@@ -2228,7 +2228,7 @@ class BOL_QuestionService
         {
             return;
         }
-        
+
         $this->saveOrUpdateQuestion($question);
         $this->setQuestionDescription($question->name, $description, false);
         $this->setQuestionLabel($question->name, $label, false);

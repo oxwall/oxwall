@@ -41,6 +41,7 @@ class ADMIN_CMP_EditQuestion extends OW_Component
 
         $presentations2FormElements = $addForm->getPresentations2FormElements();
 
+        $noValue = OW::getLanguage()->text('admin', 'questions_empty_lang_value');
         $this->assign('formData', $fields);
         $this->assign('displayedFormElements', $presentations2FormElements[BOL_QuestionService::QUESTION_PRESENTATION_TEXT]);
 
@@ -127,9 +128,10 @@ class ADMIN_CMP_EditQuestion extends OW_Component
         } );
 
         OW.bind( "admin.language_key_edit_success", function( params ) {
-            
             if ( params && params.result == "success" && params.key )
             {
+                var translationValue = params.value.trim();
+                var translation = translationValue && translationValue != "&nbsp;" ? translationValue : ' . json_encode($noValue) . ';
                 var closeFloatbox = false;
 
                 // set value to form element
@@ -140,18 +142,48 @@ class ADMIN_CMP_EditQuestion extends OW_Component
                     var input = $("form[name=qst_edit_form] .values_list").find("input[type=hidden][value="+value+"]");
                     var label = input.parents("span.tag:eq(0)").find("span.label");
 
-                    label.html(params.value);
+                    label.html(translation);
 
                     closeFloatbox = true;
                 }
                 else if ( /^'.$nameLang.'/g.test(params.key) )
                 {
-                    $("form[name=qst_edit_form] a.question_label").html(params.value);
+                    $("form[name=qst_edit_form] a.question_label").html(translation);
                     closeFloatbox = true;
                 }
                 else if ( /^'.$descriptionLang.'/g.test(params.key) )
                 {
-                    $("form[name=qst_edit_form] a.question_description").html(params.value);
+                    $("form[name=qst_edit_form] a.question_description").html(translation);
+                    closeFloatbox = true;
+                }
+                else if ( /^'.$nameJoinLang.'/g.test(params.key) )
+                {
+                    $("form[name=qst_edit_form] a.question_join_label").html(translation);
+                    closeFloatbox = true;
+                }
+                else if ( /^'.$nameJoinDesc.'/g.test(params.key) )
+                {
+                    $("form[name=qst_edit_form] a.question_join_desc").html(translation);
+                    closeFloatbox = true;
+                }
+                else if ( /^'.$nameEditLang.'/g.test(params.key) )
+                {
+                    $("form[name=qst_edit_form] a.question_edit_label").html(translation);
+                    closeFloatbox = true;
+                }
+                else if ( /^'.$nameEditDesc.'/g.test(params.key) )
+                {
+                    $("form[name=qst_edit_form] a.question_edit_desc").html(translation);
+                    closeFloatbox = true;
+                }
+                else if ( /^'.$nameSearchLang.'/g.test(params.key) )
+                {
+                    $("form[name=qst_edit_form] a.question_search_label").html(translation);
+                    closeFloatbox = true;
+                }
+                else if ( /^'.$nameSearchDesc.'/g.test(params.key) )
+                {
+                    $("form[name=qst_edit_form] a.question_search_desc").html(translation);
                     closeFloatbox = true;
                 }
 
@@ -173,7 +205,6 @@ class ADMIN_CMP_EditQuestion extends OW_Component
 
         $questionLabel = BOL_QuestionService::getInstance()->getQuestionLang($question->name);
         $questionDescription = BOL_QuestionService::getInstance()->getQuestionDescriptionLang($question->name);
-        $noValue = OW::getLanguage()->text('admin', 'questions_empty_lang_value');
         $questionLabel = ( mb_strlen(trim($questionLabel)) == 0 || $questionLabel == '&nbsp;' ) ? $noValue : $questionLabel;
 
         $questionDescription = ( mb_strlen(trim($questionDescription)) == 0 || $questionDescription == '&nbsp;' ) ? $noValue : $questionDescription;
