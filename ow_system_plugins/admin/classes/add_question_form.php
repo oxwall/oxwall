@@ -240,36 +240,42 @@ class ADMIN_CLASS_AddQuestionForm extends Form
         // question name on join
         $qstNameJoin = new TextField('qst_name_join');
         $qstNameJoin->setLabel($language->text('admin', 'questions_question_name_join_label'));
+        $qstNameJoin->setDescription($language->text('admin', 'optional_question'));
 
         $this->addElement($qstNameJoin);
 
         // question name desc on join
         $qstNameJoinDesc = new TextField('qst_name_join_desc');
         $qstNameJoinDesc->setLabel($language->text('admin', 'questions_question_name_join_desc_label'));
+        $qstNameJoinDesc->setDescription($language->text('admin', 'optional_question'));
 
         $this->addElement($qstNameJoinDesc);
 
         // question name on edit
         $qstNameJoin = new TextField('qst_name_edit');
         $qstNameJoin->setLabel($language->text('admin', 'questions_question_name_edit_label'));
+        $qstNameJoin->setDescription($language->text('admin', 'optional_question'));
 
         $this->addElement($qstNameJoin);
 
         // question name desc on edit
         $qstNameJoinDesc = new TextField('qst_name_edit_desc');
         $qstNameJoinDesc->setLabel($language->text('admin', 'questions_question_name_edit_desc_label'));
+        $qstNameJoinDesc->setDescription($language->text('admin', 'optional_question'));
 
         $this->addElement($qstNameJoinDesc);
 
         // question name on search
         $qstNameJoin = new TextField('qst_name_search');
         $qstNameJoin->setLabel($language->text('admin', 'questions_question_name_search_label'));
+        $qstNameJoin->setDescription($language->text('admin', 'optional_question'));
 
         $this->addElement($qstNameJoin);
 
         // question name desc on search
         $qstNameJoinDesc = new TextField('qst_name_search_desc');
         $qstNameJoinDesc->setLabel($language->text('admin', 'questions_question_name_search_desc_label'));
+        $qstNameJoinDesc->setDescription($language->text('admin', 'optional_question'));
 
         $this->addElement($qstNameJoinDesc);
 

@@ -36,4 +36,7 @@
     <key name="questions_edit_join_label_title">
         <value>Edit question label on join</value>
     </key>
+    <key name="optional_question">
+        <value>Optional</value>
+    </key>
 </prefix>
