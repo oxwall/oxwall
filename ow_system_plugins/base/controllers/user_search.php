@@ -132,6 +132,8 @@ class MainSearchForm extends BASE_CLASS_UserQuestionForm
     public $displayAccountType = false;
     public $displayMainSearch = true;
 
+    protected $page = self::PAGE_SEARCH;
+
     /*
      * @var OW_ActionController $controller
      * 
@@ -207,7 +209,7 @@ class MainSearchForm extends BASE_CLASS_UserQuestionForm
 
         $questionValueList = $questionService->findQuestionsValuesByQuestionNameList($questionNameList);
 
-        $this->addQuestions($questions, $questionValueList, $questionData);
+        $this->addQuestions($questions, $questionValueList, $questionData, 'search');
 
         $controller->assign('questionList', $mainSearchQuestion);
         $controller->assign('displayAccountType', $this->displayAccountType);
@@ -270,6 +272,8 @@ class DisplayNameSearchForm extends BASE_CLASS_UserQuestionForm
     public $accountType;
     public $displayAccountType = false;
     public $displayMainSearch = true;
+
+    protected $page = self::PAGE_SEARCH;
 
     /*
      * @var OW_ActionController $controller
