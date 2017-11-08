@@ -15,12 +15,6 @@
     <key name="questions_question_name_search_label">
         <value>Question name on search</value>
     </key>
-    <key name="questions_question_name_search_desc_label">
-        <value>Question description on search</value>
-    </key>
-    <key name="questions_edit_search_description_title">
-        <value>Edit question description on search</value>
-    </key>
     <key name="questions_edit_search_label_title">
         <value>Edit question label on search</value>
     </key>
