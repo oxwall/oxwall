@@ -97,6 +97,7 @@ class ADMIN_CLASS_AddQuestionForm extends Form
             'qst_name_edit' => true,
             'qst_name_edit_desc' => true,
             'qst_name_search' => true,
+            'qst_name_view' => true,
             'qst_section' => true,
             'qst_account_type' => true,
             'qst_answer_type' => true,
@@ -270,6 +271,13 @@ class ADMIN_CLASS_AddQuestionForm extends Form
         $qstNameJoin->setDescription($language->text('admin', 'optional_question'));
 
         $this->addElement($qstNameJoin);
+
+        // question name on view
+        $qstNameView = new TextField('qst_name_view');
+        $qstNameView->setLabel($language->text('admin', 'questions_question_name_view_label'));
+        $qstNameView->setDescription($language->text('admin', 'optional_question'));
+
+        $this->addElement($qstNameView);
 
         if ( count($accountTypes) > 1 )
         {
@@ -499,6 +507,9 @@ class ADMIN_CLASS_AddQuestionForm extends Form
                         : '',
                     BOL_QuestionService::LANG_KEY_TYPE_QUESTION_LABEL_SEARCH => !empty($data['qst_name_search'])
                         ? trim($data['qst_name_search'])
+                        : '',
+                    BOL_QuestionService::LANG_KEY_TYPE_QUESTION_LABEL_VIEW => !empty($data['qst_name_view'])
+                        ? trim($data['qst_name_view'])
                         : ''
                 );
 

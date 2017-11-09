@@ -75,6 +75,17 @@
 			</td>
 		</tr>
 
+		<tr class="{cycle values='ow_alt2,ow_alt1'} tr_qst_name ow_tr_first">
+			<td class="ow_label">
+				{text key="admin+questions_question_name_view_label"}
+			</td>
+			<td class="ow_value">
+				<a href="javascript://" class="question_view_label">{$labelView}</a>
+			</td>
+			<td class="ow_desc ow_small">
+			</td>
+		</tr>
+
 		{foreach from=$formData key='formEl' item='field' name='f'}
 		    <tr class="{cycle values='ow_alt2,ow_alt1'} tr_{$formEl} {if $smarty.foreach.f.last}ow_tr_last{/if}">
 		        <td class="ow_label">

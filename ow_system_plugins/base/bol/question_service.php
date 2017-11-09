@@ -60,6 +60,7 @@ class BOL_QuestionService
     const LANG_KEY_TYPE_QUESTION_LABEL_EDIT = 'labelEdit';
     const LANG_KEY_TYPE_QUESTION_DESCRIPTION_EDIT = 'descriptionEdit';
     const LANG_KEY_TYPE_QUESTION_LABEL_SEARCH = 'labelSearch';
+    const LANG_KEY_TYPE_QUESTION_LABEL_VIEW = 'labelView';
     const LANG_KEY_TYPE_QUESTION_SECTION = 'section';
     const LANG_KEY_TYPE_QUESTION_VALUE = 'value';
     const LANG_KEY_TYPE_ACCOUNT_TYPE = 'account_type';
@@ -909,7 +910,8 @@ class BOL_QuestionService
             self::LANG_KEY_TYPE_QUESTION_DESCRIPTION_JOIN,
             self::LANG_KEY_TYPE_QUESTION_LABEL_EDIT,
             self::LANG_KEY_TYPE_QUESTION_DESCRIPTION_EDIT,
-            self::LANG_KEY_TYPE_QUESTION_LABEL_SEARCH
+            self::LANG_KEY_TYPE_QUESTION_LABEL_SEARCH,
+            self::LANG_KEY_TYPE_QUESTION_LABEL_VIEW
         );
 
         $serviceLang = BOL_LanguageService::getInstance();
@@ -1281,7 +1283,8 @@ class BOL_QuestionService
                 BOL_QuestionService::LANG_KEY_TYPE_QUESTION_DESCRIPTION_JOIN,
                 BOL_QuestionService::LANG_KEY_TYPE_QUESTION_LABEL_EDIT,
                 BOL_QuestionService::LANG_KEY_TYPE_QUESTION_DESCRIPTION_EDIT,
-                BOL_QuestionService::LANG_KEY_TYPE_QUESTION_LABEL_SEARCH
+                BOL_QuestionService::LANG_KEY_TYPE_QUESTION_LABEL_SEARCH,
+                BOL_QuestionService::LANG_KEY_TYPE_QUESTION_LABEL_VIEW
             );
 
             foreach ( $extraLangs as $extraLang )
@@ -2108,6 +2111,10 @@ class BOL_QuestionService
 
             case self::LANG_KEY_TYPE_QUESTION_LABEL_SEARCH:
                 $key = 'questions_question_' . $name . '_search_label';
+                break;
+
+            case self::LANG_KEY_TYPE_QUESTION_LABEL_VIEW:
+                $key = 'questions_question_' . $name . '_view_label';
                 break;
 
             case self::LANG_KEY_TYPE_QUESTION_SECTION:

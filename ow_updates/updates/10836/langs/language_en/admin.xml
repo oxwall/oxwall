@@ -33,4 +33,10 @@
     <key name="optional_question">
         <value>Optional</value>
     </key>
+    <key name="questions_question_name_view_label">
+        <value>Question name on view</value>
+    </key>
+    <key name="questions_edit_view_label_title">
+        <value>Edit question label on view</value>
+    </key>
 </prefix>

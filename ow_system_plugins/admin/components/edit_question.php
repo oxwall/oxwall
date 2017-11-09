@@ -53,6 +53,7 @@ class ADMIN_CMP_EditQuestion extends OW_Component
         $nameEditLang = BOL_QuestionService::getInstance()->getQuestionLangKeyName(BOL_QuestionService::LANG_KEY_TYPE_QUESTION_LABEL_EDIT, $question->name);
         $nameEditDesc = BOL_QuestionService::getInstance()->getQuestionLangKeyName(BOL_QuestionService::LANG_KEY_TYPE_QUESTION_DESCRIPTION_EDIT, $question->name);
         $nameSearchLang = BOL_QuestionService::getInstance()->getQuestionLangKeyName(BOL_QuestionService::LANG_KEY_TYPE_QUESTION_LABEL_SEARCH, $question->name);
+        $nameViewLang = BOL_QuestionService::getInstance()->getQuestionLangKeyName(BOL_QuestionService::LANG_KEY_TYPE_QUESTION_LABEL_VIEW, $question->name);
 
         $script = ' window.addQuest = new QuestionFormModel( ' . json_encode( array(
             'formName' => 'qst_edit_form',
@@ -117,6 +118,10 @@ class ADMIN_CMP_EditQuestion extends OW_Component
             OW.ajaxFloatBox("BASE_CMP_LanguageValueEdit", [\'base\', '.json_encode($nameSearchLang).', true], { title: '.json_encode(OW::getLanguage()->text('admin', 'questions_edit_search_label_title')).' } );
         });
 
+        $("form[name=qst_edit_form] a.question_view_label").on( "click", function(){
+            OW.ajaxFloatBox("BASE_CMP_LanguageValueEdit", [\'base\', '.json_encode($nameViewLang).', true], { title: '.json_encode(OW::getLanguage()->text('admin', 'questions_edit_view_label_title')).' } );
+        });
+
         $("form[name=qst_edit_form]").on( "dblclick", ".values_list .tag .label", function(){
             var value = $(this).parents(\'span.tag:eq(0)\').find(\'input[type=hidden]\').val();
             OW.ajaxFloatBox("BASE_CMP_LanguageValueEdit", [\'base\', '.json_encode($valueLang).'+value, true], { title: '.json_encode(OW::getLanguage()->text('admin', 'questions_edit_question_value_title')).' } );
@@ -176,6 +181,11 @@ class ADMIN_CMP_EditQuestion extends OW_Component
                     $("form[name=qst_edit_form] a.question_search_label").html(translation);
                     closeFloatbox = true;
                 }
+                else if ( /^'.$nameViewLang.'/g.test(params.key) )
+                {
+                    $("form[name=qst_edit_form] a.question_view_label").html(translation);
+                    closeFloatbox = true;
+                }
 
                 if ( closeFloatbox )
                 {
@@ -209,7 +219,8 @@ class ADMIN_CMP_EditQuestion extends OW_Component
             BOL_QuestionService::LANG_KEY_TYPE_QUESTION_DESCRIPTION_JOIN,
             BOL_QuestionService::LANG_KEY_TYPE_QUESTION_LABEL_EDIT,
             BOL_QuestionService::LANG_KEY_TYPE_QUESTION_DESCRIPTION_EDIT,
-            BOL_QuestionService::LANG_KEY_TYPE_QUESTION_LABEL_SEARCH
+            BOL_QuestionService::LANG_KEY_TYPE_QUESTION_LABEL_SEARCH,
+            BOL_QuestionService::LANG_KEY_TYPE_QUESTION_LABEL_VIEW
         );
 
         foreach ( $extraLangs as $extraLang )
