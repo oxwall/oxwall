@@ -31,6 +31,8 @@
  */
 class BOL_QuestionService
 {
+    const EVENT_ON_FIND_SIGN_UP_QUESTIONS_FOR_ACCOUNT_TYPE = 'base.event.on_find_sign_up_questions_for_account_type';
+    const EVENT_ON_FIND_BASE_SIGN_UP_QUESTIONS = 'base.event.on_find_base_sign_up_questions';
     const EVENT_ON_GET_EMPTY_REQUIRED_QUESTIONS = 'base.event.on_get_empty_required_questions';
     const EVENT_ON_FIND_QUESTIONS_FOR_ACCOUNT_TYPE = 'base.event.on_find_edit_questions_for_account_type';
     const EVENT_ON_BEFORE_ADD_QUESTION = 'base.event.on_before_add_question';
@@ -717,18 +719,34 @@ class BOL_QuestionService
     }
 
     /**
+     * @param $accountType
+     * @param bool $baseOnly
      *
-     * @param string $accountType
-     * @param boolean $baseOnly
+     * @return mixed
      */
     public function findSignUpQuestionsForAccountType( $accountType, $baseOnly = false )
     {
-        return $this->questionDao->findSignUpQuestionsForAccountType($accountType, $baseOnly);
+        $questionsList = $this->questionDao->findSignUpQuestionsForAccountType($accountType, $baseOnly);
+
+        $event = new OW_Event(self::EVENT_ON_FIND_SIGN_UP_QUESTIONS_FOR_ACCOUNT_TYPE, array(
+            'account' => $accountType,
+            'baseOnly' => $baseOnly
+        ), $questionsList);
+
+        OW::getEventManager()->trigger($event);
+
+        return $event->getData();
     }
 
     public function findBaseSignUpQuestions()
     {
-        return $this->questionDao->findBaseSignUpQuestions();
+        $questionsList = $this->questionDao->findBaseSignUpQuestions();
+
+        $event = new OW_Event(self::EVENT_ON_FIND_BASE_SIGN_UP_QUESTIONS, array(), $questionsList);
+
+        OW::getEventManager()->trigger($event);
+
+        return $event->getData();
     }
 
     public function findEditQuestionsForAccountType( $accountType )
