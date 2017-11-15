@@ -91,7 +91,7 @@ class BOL_QuestionService
 
     /* field presentation configs */
     const QUESTION_CONFIG_DATE_RANGE = 'dateRange';
-    const MAX_QUESTION_VALUES_COUNT = 64;
+    const MAX_QUESTION_VALUES_COUNT = 54;
 
     const AGE_RANGE_FROM = 24;
     const AGE_RANGE_TO = 86;
@@ -2167,7 +2167,7 @@ class BOL_QuestionService
             $order = 0;
             foreach ( $values as $key => $value )
             {
-                if ( $order > 30 && $question->presentation != 'fselect')
+                if ( $order > BOL_QuestionService::MAX_QUESTION_VALUES_COUNT - 1 && $question->presentation != 'fselect')
                 {
                     break;
                 }
@@ -2236,7 +2236,7 @@ class BOL_QuestionService
 
             foreach ( $values as $key => $value )
             {
-                if ( $count > 30 && $question->presentation != 'fselect')
+                if ( $count > BOL_QuestionService::MAX_QUESTION_VALUES_COUNT - 1 && $question->presentation != 'fselect')
                 {
                     break;
                 }
@@ -2611,7 +2611,7 @@ class BOL_QuestionService
                 $data = array();
                 $multicheckboxValue = (int) $value;
 
-                for ( $i = 0; $i < 31; $i++ )
+                for ( $i = 0; $i < BOL_QuestionService::MAX_QUESTION_VALUES_COUNT; $i++ )
                 {
                     $val = (int) pow(2, $i);
 
@@ -2672,7 +2672,7 @@ class BOL_QuestionService
                     $data = array();
                     $multicheckboxValue = (int) $value;
 
-                    for ( $i = 0; $i < 31; $i++ )
+                    for ( $i = 0; $i < BOL_QuestionService::MAX_QUESTION_VALUES_COUNT; $i++ )
                     {
                         $val = (int) pow(2, $i);
 

@@ -265,7 +265,7 @@ class ADMIN_CMP_UserList extends OW_Component
                 {
                     $sexValue = '';
 
-                    for ( $i = 0 ; $i < 31; $i++ )
+                    for ( $i = 0 ; $i < BOL_QuestionService::MAX_QUESTION_VALUES_COUNT; $i++ )
                     {
                         $val = pow( 2, $i );
                         if ( (int)$sex & $val  )

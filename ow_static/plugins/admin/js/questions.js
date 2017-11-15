@@ -34,7 +34,7 @@ var questionValuesField = function (params) {
     this.value = {};
     this.order = [];
     this.possibleValuesList = [];
-    this.maxQuestionValuesCount = 64;
+    this.maxQuestionValuesCount = 54;
 
     this.addButton;
     this.valuesArea;
