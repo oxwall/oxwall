@@ -33,6 +33,7 @@ class BOL_TagDao extends OW_BaseDao
 {
     // table field names
     const LABEL = 'label';
+    const TYPE_PREFIX = 'tags_';
 
     /**
      * Singleton instance.
