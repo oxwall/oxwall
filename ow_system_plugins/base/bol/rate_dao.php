@@ -141,10 +141,8 @@ class BOL_RateDao extends OW_BaseDao
     public function findMostRatedEntityList( $entityType, $first, $count, $exclude )
     {
         $queryParts = BOL_ContentService::getInstance()->getQueryFilter(array(
-            BASE_CLASS_QueryBuilderEvent::TABLE_USER => 'r',
             BASE_CLASS_QueryBuilderEvent::TABLE_CONTENT => 'r'
         ), array(
-            BASE_CLASS_QueryBuilderEvent::FIELD_USER_ID => 'userId',
             BASE_CLASS_QueryBuilderEvent::FIELD_CONTENT_ID => 'id'
         ), array(
             BASE_CLASS_QueryBuilderEvent::OPTION_METHOD => __METHOD__,
@@ -168,10 +166,8 @@ class BOL_RateDao extends OW_BaseDao
     public function findMostRatedEntityCount( $entityType, $exclude )
     {
         $queryParts = BOL_ContentService::getInstance()->getQueryFilter(array(
-            BASE_CLASS_QueryBuilderEvent::TABLE_USER => 'r',
             BASE_CLASS_QueryBuilderEvent::TABLE_CONTENT => 'r'
         ), array(
-            BASE_CLASS_QueryBuilderEvent::FIELD_USER_ID => 'userId',
             BASE_CLASS_QueryBuilderEvent::FIELD_CONTENT_ID => 'id'
         ), array(
             BASE_CLASS_QueryBuilderEvent::OPTION_METHOD => __METHOD__,

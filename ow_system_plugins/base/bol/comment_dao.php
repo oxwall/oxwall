@@ -96,11 +96,9 @@ class BOL_CommentDao extends OW_BaseDao
     public function findCommentList( $entityType, $entityId, $first, $count )
     {
         $queryParts = BOL_ContentService::getInstance()->getQueryFilter(array(
-            BASE_CLASS_QueryBuilderEvent::TABLE_USER => 'c',
             BASE_CLASS_QueryBuilderEvent::TABLE_CONTENT => 'c',
             'comment_entity' => 'ce'
         ), array(
-            BASE_CLASS_QueryBuilderEvent::FIELD_USER_ID => 'userId',
             BASE_CLASS_QueryBuilderEvent::FIELD_CONTENT_ID => 'id'
         ), array(
             BASE_CLASS_QueryBuilderEvent::OPTION_METHOD => __METHOD__,
@@ -128,11 +126,9 @@ class BOL_CommentDao extends OW_BaseDao
     public function findFullCommentList( $entityType, $entityId )
     {
         $queryParts = BOL_ContentService::getInstance()->getQueryFilter(array(
-            BASE_CLASS_QueryBuilderEvent::TABLE_USER => 'c',
             BASE_CLASS_QueryBuilderEvent::TABLE_CONTENT => 'c',
             'comment_entity' => 'ce'
         ), array(
-            BASE_CLASS_QueryBuilderEvent::FIELD_USER_ID => 'userId',
             BASE_CLASS_QueryBuilderEvent::FIELD_CONTENT_ID => 'id'
         ), array(
             BASE_CLASS_QueryBuilderEvent::OPTION_METHOD => __METHOD__,
@@ -159,11 +155,9 @@ class BOL_CommentDao extends OW_BaseDao
     public function findCommentCount( $entityType, $entityId )
     {
         $queryParts = BOL_ContentService::getInstance()->getQueryFilter(array(
-            BASE_CLASS_QueryBuilderEvent::TABLE_USER => 'c',
             BASE_CLASS_QueryBuilderEvent::TABLE_CONTENT => 'c',
             'comment_entity' => 'ce'
         ), array(
-            BASE_CLASS_QueryBuilderEvent::FIELD_USER_ID => 'userId',
             BASE_CLASS_QueryBuilderEvent::FIELD_CONTENT_ID => 'id'
         ), array(
             BASE_CLASS_QueryBuilderEvent::OPTION_METHOD => __METHOD__,
@@ -183,11 +177,9 @@ class BOL_CommentDao extends OW_BaseDao
     public function findMostCommentedEntityList( $entityType, $first, $count )
     {
         $queryParts = BOL_ContentService::getInstance()->getQueryFilter(array(
-            BASE_CLASS_QueryBuilderEvent::TABLE_USER => 'c',
             BASE_CLASS_QueryBuilderEvent::TABLE_CONTENT => 'c',
             'comment_entity' => 'ce'
         ), array(
-            BASE_CLASS_QueryBuilderEvent::FIELD_USER_ID => 'userId',
             BASE_CLASS_QueryBuilderEvent::FIELD_CONTENT_ID => 'id'
         ), array(
             BASE_CLASS_QueryBuilderEvent::OPTION_METHOD => __METHOD__,
@@ -214,11 +206,9 @@ class BOL_CommentDao extends OW_BaseDao
         }
 
         $queryParts = BOL_ContentService::getInstance()->getQueryFilter(array(
-            BASE_CLASS_QueryBuilderEvent::TABLE_USER => 'c',
             BASE_CLASS_QueryBuilderEvent::TABLE_CONTENT => 'c',
             'comment_entity' => 'ce'
         ), array(
-            BASE_CLASS_QueryBuilderEvent::FIELD_USER_ID => 'userId',
             BASE_CLASS_QueryBuilderEvent::FIELD_CONTENT_ID => 'id'
         ), array(
             BASE_CLASS_QueryBuilderEvent::OPTION_METHOD => __METHOD__,
