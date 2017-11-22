@@ -35,7 +35,6 @@ class BOL_EntityTagDao extends OW_BaseDao
     const ENTITY_TYPE = 'entityType';
     const TAG_ID = 'tagId';
     const ACTIVE = 'active';
-    const TYPE_PREFIX = 'tags_';
 
     /**
      * Constructor.
@@ -149,7 +148,7 @@ class BOL_EntityTagDao extends OW_BaseDao
             BASE_CLASS_QueryBuilderEvent::FIELD_CONTENT_ID => 'id'
         ), array(
             BASE_CLASS_QueryBuilderEvent::OPTION_METHOD => __METHOD__,
-            BASE_CLASS_QueryBuilderEvent::OPTION_TYPE => self::TYPE_PREFIX . $entityType
+            BASE_CLASS_QueryBuilderEvent::OPTION_TYPE => $entityType
         ));
 
         $query = "SELECT `et`.`" . self::ENTITY_ID . "` AS `id` from `" . BOL_TagDao::getInstance()->getTableName() . "` AS `t` 
@@ -172,7 +171,7 @@ class BOL_EntityTagDao extends OW_BaseDao
             BASE_CLASS_QueryBuilderEvent::FIELD_CONTENT_ID => 'id'
         ), array(
             BASE_CLASS_QueryBuilderEvent::OPTION_METHOD => __METHOD__,
-            BASE_CLASS_QueryBuilderEvent::OPTION_TYPE => self::TYPE_PREFIX . $entityType
+            BASE_CLASS_QueryBuilderEvent::OPTION_TYPE => $entityType
         ));
 
         $query = "SELECT COUNT(*) from `" . BOL_TagDao::getInstance()->getTableName() . "` AS `t` 

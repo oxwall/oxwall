@@ -33,7 +33,6 @@ class BOL_TagDao extends OW_BaseDao
 {
     // table field names
     const LABEL = 'label';
-    const TYPE_PREFIX = 'tags_';
 
     /**
      * Singleton instance.
@@ -123,7 +122,7 @@ class BOL_TagDao extends OW_BaseDao
             BASE_CLASS_QueryBuilderEvent::FIELD_CONTENT_ID => 'id'
         ), array(
             BASE_CLASS_QueryBuilderEvent::OPTION_METHOD => __METHOD__,
-            BASE_CLASS_QueryBuilderEvent::OPTION_TYPE => self::TYPE_PREFIX . $entityType
+            BASE_CLASS_QueryBuilderEvent::OPTION_TYPE => $entityType
         ));
 
         $query = "SELECT * FROM
@@ -158,7 +157,7 @@ class BOL_TagDao extends OW_BaseDao
             BASE_CLASS_QueryBuilderEvent::FIELD_CONTENT_ID => 'id'
         ), array(
             BASE_CLASS_QueryBuilderEvent::OPTION_METHOD => __METHOD__,
-            BASE_CLASS_QueryBuilderEvent::OPTION_TYPE => self::TYPE_PREFIX . $entityType
+            BASE_CLASS_QueryBuilderEvent::OPTION_TYPE => $entityType
         ));
 
         $query = "SELECT * FROM
