@@ -128,7 +128,7 @@ class BASE_MCTRL_Edit extends BASE_CTRL_Edit
 
         // -- Edit form --
 
-        $editForm = new EditQuestionForm('editForm', $editUserId);
+        $editForm = OW::getClassInstanceArray('EditQuestionForm', ['editForm', $editUserId]);
         $editForm->setId('editForm');
         $editForm->setEnctype('multipart/form-data');
 
