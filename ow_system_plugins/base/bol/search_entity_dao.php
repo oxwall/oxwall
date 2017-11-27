@@ -338,19 +338,46 @@ class BOL_SearchEntityDao extends OW_BaseDao
         // search without tags
         if ( !$tags ) 
         {
+            $queryParts = BOL_ContentService::getInstance()->getQueryFilter([
+                BASE_CLASS_QueryBuilderEvent::TABLE_CONTENT => 'b'
+            ], [
+                BASE_CLASS_QueryBuilderEvent::FIELD_CONTENT_ID => 'id'
+            ], [
+                BASE_CLASS_QueryBuilderEvent::OPTION_METHOD => __METHOD__,
+                BASE_CLASS_QueryBuilderEvent::OPTION_TYPE => 'search_entity',
+                'search' => $text,
+                'timeStampStart' => $timeStart,
+                'timeStampEnd' => $timeEnd
+            ]);
+
             $subQuery = '
                 SELECT 
                     b.' . self::ENTITY_TYPE . ', 
                     b.' . self::ENTITY_ID . ' 
                 FROM 
-                    ' . $this->getTableName() . ' b
+                    ' . $this->getTableName() . ' b 
+                    ' . $queryParts['join'] . '
                 WHERE 
                     b.'. self::STATUS  . ' = :status AND b.' . self::ACTIVATED . ' = :activated' . $subQueryTimeStampFilter . ' 
-                        AND
-                    MATCH (b.' . self::TEXT . ') AGAINST (:search ' . $this->getFullTextSearchMode() . ')';
+                    AND MATCH (b.' . self::TEXT . ') AGAINST (:search ' . $this->getFullTextSearchMode() . ')
+                    AND ' . $queryParts['where'] . ' ';
         }
         else
         {
+            $queryParts = BOL_ContentService::getInstance()->getQueryFilter([
+                BASE_CLASS_QueryBuilderEvent::TABLE_CONTENT => 'a',
+                'search_entity' => 'b'
+            ], [
+                BASE_CLASS_QueryBuilderEvent::FIELD_CONTENT_ID => 'id'
+            ], [
+                BASE_CLASS_QueryBuilderEvent::OPTION_METHOD => __METHOD__,
+                BASE_CLASS_QueryBuilderEvent::OPTION_TYPE => 'search_entity_tag',
+                'search' => $text,
+                'tags' => $tags,
+                'timeStampStart' => $timeStart,
+                'timeStampEnd' => $timeEnd
+            ]);
+
             $enityTags = BOL_SearchEntityTagDao::getInstance();
 
             $subQuery = '
@@ -367,8 +394,10 @@ class BOL_SearchEntityDao extends OW_BaseDao
                     b.'. self::STATUS  . ' = :status AND b.' . self::ACTIVATED . ' = :activated' . $subQueryTimeStampFilter . ' 
                         AND
                     MATCH (b.' . self::TEXT . ') AGAINST (:search ' . $this->getFullTextSearchMode() . ')
+                ' . $queryParts['join'] . '
                 WHERE 
-                    a.' . BOL_SearchEntityTagDao::ENTITY_TAG . ' IN (' . $this->dbo->mergeInClause($tags) . ')';
+                    a.' . BOL_SearchEntityTagDao::ENTITY_TAG . ' IN (' . $this->dbo->mergeInClause($tags) . ') 
+                    AND ' . $queryParts['where'] . ' ';
         }
 
         // build main query
@@ -441,22 +470,49 @@ class BOL_SearchEntityDao extends OW_BaseDao
         // search without tags
         if ( !$tags ) 
         {
+            $queryParts = BOL_ContentService::getInstance()->getQueryFilter([
+                BASE_CLASS_QueryBuilderEvent::TABLE_CONTENT => 'b'
+            ], [
+                BASE_CLASS_QueryBuilderEvent::FIELD_CONTENT_ID => 'id'
+            ], [
+                BASE_CLASS_QueryBuilderEvent::OPTION_METHOD => __METHOD__,
+                BASE_CLASS_QueryBuilderEvent::OPTION_TYPE => 'search_entity',
+                'search' => $text,
+                'timeStampStart' => $timeStart,
+                'timeStampEnd' => $timeEnd
+            ]);
+
             $subQuery = '
                 SELECT 
                     b.' . self::ENTITY_TYPE . ', 
                     b.' . self::ENTITY_ID . ',
                     MATCH (b.' . self::TEXT . ') AGAINST (:search ' . $this->getFullTextSearchMode() . ') as relevance
                 FROM 
-                    ' . $this->getTableName() . ' b
+                    ' . $this->getTableName() . ' b 
+                    ' . $queryParts['join'] . '
                 WHERE 
                     b.'. self::STATUS  . ' = :status AND b.' . self::ACTIVATED . ' = :activated' . $subQueryTimeStampFilter . ' 
-                        AND
-                    MATCH (b.' . self::TEXT . ') AGAINST (:search ' . $this->getFullTextSearchMode() . ')
+                    AND MATCH (b.' . self::TEXT . ') AGAINST (:search ' . $this->getFullTextSearchMode() . ') 
+                    AND ' . $queryParts['where'] . '
                 ORDER BY 
                     ' . ($sort == self::SORT_BY_DATE ? 'b.' . self::TIMESTAMP : 'relevance') . ($sortDesc ? ' DESC' : null);
         }
         else
         {
+            $queryParts = BOL_ContentService::getInstance()->getQueryFilter([
+                BASE_CLASS_QueryBuilderEvent::TABLE_CONTENT => 'a',
+                'search_entity' => 'b'
+            ], [
+                BASE_CLASS_QueryBuilderEvent::FIELD_CONTENT_ID => 'id'
+            ], [
+                BASE_CLASS_QueryBuilderEvent::OPTION_METHOD => __METHOD__,
+                BASE_CLASS_QueryBuilderEvent::OPTION_TYPE => 'search_entity_tag',
+                'search' => $text,
+                'tags' => $tags,
+                'timeStampStart' => $timeStart,
+                'timeStampEnd' => $timeEnd
+            ]);
+
             $enityTags = BOL_SearchEntityTagDao::getInstance();
 
             $subQuery = '
@@ -474,8 +530,10 @@ class BOL_SearchEntityDao extends OW_BaseDao
                     b.'. self::STATUS  . ' = :status AND b.' . self::ACTIVATED . ' = :activated' . $subQueryTimeStampFilter . ' 
                         AND
                     MATCH (b.' . self::TEXT . ') AGAINST (:search ' . $this->getFullTextSearchMode() . ')
+                ' . $queryParts['join'] . '
                 WHERE 
-                    a.' . BOL_SearchEntityTagDao::ENTITY_TAG . ' IN (' . $this->dbo->mergeInClause($tags) . ')
+                    a.' . BOL_SearchEntityTagDao::ENTITY_TAG . ' IN (' . $this->dbo->mergeInClause($tags) . ') 
+                    AND ' . $queryParts['where'] . '
                 ORDER BY 
                     ' . ($sort == self::SORT_BY_DATE ? 'b.' . self::TIMESTAMP : 'relevance') . ($sortDesc ? ' DESC' : null);
         }
@@ -537,6 +595,19 @@ class BOL_SearchEntityDao extends OW_BaseDao
             }
         }
 
+        $queryParts = BOL_ContentService::getInstance()->getQueryFilter([
+            BASE_CLASS_QueryBuilderEvent::TABLE_CONTENT => 'a',
+            'search_entity' => 'b'
+        ], [
+            BASE_CLASS_QueryBuilderEvent::FIELD_CONTENT_ID => 'id'
+        ], [
+            BASE_CLASS_QueryBuilderEvent::OPTION_METHOD => __METHOD__,
+            BASE_CLASS_QueryBuilderEvent::OPTION_TYPE => 'search_entity_tag',
+            'tags' => $tags,
+            'timeStampStart' => $timeStart,
+            'timeStampEnd' => $timeEnd
+        ]);
+
         $subQuery = '
             SELECT 
                 b.' . self::ENTITY_TYPE . ', 
@@ -549,8 +620,10 @@ class BOL_SearchEntityDao extends OW_BaseDao
                 a.' . BOL_SearchEntityTagDao::ENTITY_SEARCH_ID . ' = b.id 
                     AND 
                 b.'. self::STATUS  . ' = :status AND b.' . self::ACTIVATED . ' = :activated' . $subQueryTimeStampFilter . ' 
+            ' . $queryParts['join'] . '
             WHERE 
-                a.' . BOL_SearchEntityTagDao::ENTITY_TAG . ' IN (' . $this->dbo->mergeInClause($tags) . ')';
+                a.' . BOL_SearchEntityTagDao::ENTITY_TAG . ' IN (' . $this->dbo->mergeInClause($tags) . ') 
+                AND ' . $queryParts['where'] . ' ';
 
         // build the main query
         $query = '
@@ -617,6 +690,19 @@ class BOL_SearchEntityDao extends OW_BaseDao
             }
         }
 
+        $queryParts = BOL_ContentService::getInstance()->getQueryFilter([
+            BASE_CLASS_QueryBuilderEvent::TABLE_CONTENT => 'a',
+            'search_entity' => 'b'
+        ], [
+            BASE_CLASS_QueryBuilderEvent::FIELD_CONTENT_ID => 'id'
+        ], [
+            BASE_CLASS_QueryBuilderEvent::OPTION_METHOD => __METHOD__,
+            BASE_CLASS_QueryBuilderEvent::OPTION_TYPE => 'search_entity_tag',
+            'tags' => $tags,
+            'timeStampStart' => $timeStart,
+            'timeStampEnd' => $timeEnd
+        ]);
+
         $enityTags = BOL_SearchEntityTagDao::getInstance();
 
         $subQuery = '
@@ -631,8 +717,10 @@ class BOL_SearchEntityDao extends OW_BaseDao
                 a.' . BOL_SearchEntityTagDao::ENTITY_SEARCH_ID . ' = b.id 
                     AND 
                 b.'. self::STATUS  . ' = :status AND b.' . self::ACTIVATED . ' = :activated' . $subQueryTimeStampFilter . '
+            ' . $queryParts['join'] . '
             WHERE 
                 a.' . BOL_SearchEntityTagDao::ENTITY_TAG . ' IN (' . $this->dbo->mergeInClause($tags) . ')
+                AND ' . $queryParts['where'] . '
             ORDER BY 
                 b.' . self::TIMESTAMP . ($sortDesc ? ' DESC' : null);
 
