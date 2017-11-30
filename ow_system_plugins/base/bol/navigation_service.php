@@ -314,7 +314,10 @@ class BOL_NavigationService
             $resultArray[] = $menuItem;
         }
 
-        return $resultArray;
+        $event = new OW_Event('navigation.onGetMenuItems', ['menuItems' => $menuItems], $resultArray);
+        OW::getEventManager()->trigger($event);
+
+        return $event->getData();
     }
 
     /**
