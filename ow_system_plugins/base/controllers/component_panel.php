@@ -275,9 +275,11 @@ class BASE_CTRL_ComponentPanel extends OW_ActionController
             'viewerId' => OW::getUser()->getId()
         );
 
+        $event = new OW_Event('privacy_check_permission', $eventParams);
+
         try
         {
-            OW::getEventManager()->getInstance()->call('privacy_check_permission', $eventParams);
+            OW::getEventManager()->getInstance()->trigger($event);
         }
         catch ( RedirectException $ex )
         {

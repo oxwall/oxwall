@@ -101,12 +101,14 @@ class BASE_MCTRL_WidgetPanel extends OW_MobileActionController
             'ownerId' => $userDto->id,
             'viewerId' => OW::getUser()->getId()
         );
-        
+
+        $event = new OW_Event('privacy_check_permission', $eventParams);
+
         $displayName = BOL_UserService::getInstance()->getDisplayName($userDto->id);
 
         try
         {
-            OW::getEventManager()->getInstance()->call('privacy_check_permission', $eventParams);
+            OW::getEventManager()->getInstance()->trigger($event);
         }
         catch ( RedirectException $ex )
         {
