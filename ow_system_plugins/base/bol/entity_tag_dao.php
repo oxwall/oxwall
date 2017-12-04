@@ -141,8 +141,21 @@ class BOL_EntityTagDao extends OW_BaseDao
 
     public function findEntityListByTag( $entityType, $tag, $first, $count )
     {
-        $query = "SELECT `et`.`" . self::ENTITY_ID . "` AS `id` from `" . BOL_TagDao::getInstance()->getTableName() . "` AS `t` INNER JOIN `" . $this->getTableName() . "` AS `et` ON(`et`.`" . self::TAG_ID . "`=`t`.`id`)
+        $queryParts = BOL_ContentService::getInstance()->getQueryFilter(array(
+            BASE_CLASS_QueryBuilderEvent::TABLE_CONTENT => 't',
+            'base_entity_tag' => 'et'
+        ), array(
+            BASE_CLASS_QueryBuilderEvent::FIELD_CONTENT_ID => 'id'
+        ), array(
+            BASE_CLASS_QueryBuilderEvent::OPTION_METHOD => __METHOD__,
+            BASE_CLASS_QueryBuilderEvent::OPTION_TYPE => $entityType
+        ));
+
+        $query = "SELECT `et`.`" . self::ENTITY_ID . "` AS `id` from `" . BOL_TagDao::getInstance()->getTableName() . "` AS `t` 
+                INNER JOIN `" . $this->getTableName() . "` AS `et` ON(`et`.`" . self::TAG_ID . "`=`t`.`id`)
+                " . $queryParts['join'] . "
                 WHERE `t`.`" . BOL_TagDao::LABEL . "` = :tag AND `et`.`" . self::ENTITY_TYPE . "` = :entityType AND `et`.`" . self::ACTIVE . "` = 1
+                AND " . $queryParts['where'] . "
                 ORDER BY `et`.`entityId` DESC
                 LIMIT :first, :count";
 
@@ -151,8 +164,21 @@ class BOL_EntityTagDao extends OW_BaseDao
 
     public function findEntityCountByTag( $entityType, $tag )
     {
-        $query = "SELECT COUNT(*) from `" . BOL_TagDao::getInstance()->getTableName() . "` AS `t` INNER JOIN `" . $this->getTableName() . "` AS `et` ON(`et`.`" . self::TAG_ID . "`=`t`.`id`)
-                where `t`.`" . BOL_TagDao::LABEL . "` = :tag AND `et`.`" . self::ENTITY_TYPE . "` = :entityType AND `et`.`" . self::ACTIVE . "` = 1";
+        $queryParts = BOL_ContentService::getInstance()->getQueryFilter(array(
+            BASE_CLASS_QueryBuilderEvent::TABLE_CONTENT => 't',
+            'base_entity_tag' => 'et'
+        ), array(
+            BASE_CLASS_QueryBuilderEvent::FIELD_CONTENT_ID => 'id'
+        ), array(
+            BASE_CLASS_QueryBuilderEvent::OPTION_METHOD => __METHOD__,
+            BASE_CLASS_QueryBuilderEvent::OPTION_TYPE => $entityType
+        ));
+
+        $query = "SELECT COUNT(*) from `" . BOL_TagDao::getInstance()->getTableName() . "` AS `t` 
+                INNER JOIN `" . $this->getTableName() . "` AS `et` ON(`et`.`" . self::TAG_ID . "`=`t`.`id`)
+                " . $queryParts['join'] . "
+                where `t`.`" . BOL_TagDao::LABEL . "` = :tag AND `et`.`" . self::ENTITY_TYPE . "` = :entityType AND `et`.`" . self::ACTIVE . "` = 1
+                AND " . $queryParts['where'] . " ";
 
         return (int) $this->dbo->queryForColumn($query, array('tag' => $tag, 'entityType' => $entityType));
     }

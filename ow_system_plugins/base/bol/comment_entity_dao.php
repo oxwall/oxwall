@@ -101,10 +101,20 @@ class BOL_CommentEntityDao extends OW_BaseDao
 
     public function findCommentedEntityCount( $entityType )
     {
-        $example = new OW_Example();
-        $example->andFieldEqual(self::ENTITY_TYPE, trim($entityType));
+        $queryParts = BOL_ContentService::getInstance()->getQueryFilter(array(
+            BASE_CLASS_QueryBuilderEvent::TABLE_CONTENT => 'base_comment_entity'
+        ), array(
+            BASE_CLASS_QueryBuilderEvent::FIELD_CONTENT_ID => 'id'
+        ), array(
+            BASE_CLASS_QueryBuilderEvent::OPTION_METHOD => __METHOD__,
+            BASE_CLASS_QueryBuilderEvent::OPTION_TYPE => $entityType
+        ));
 
-        return (int) $this->countByExample($example);
+        $query = "SELECT COUNT( DISTINCT `base_comment_entity`.`id`) FROM `" . $this->getTableName() . "` AS `base_comment_entity`
+            " . $queryParts['join'] . "
+            WHERE `base_comment_entity`.`" . self::ENTITY_TYPE . "` = :entityType AND " . $queryParts['where'] . " " ;
+
+        return (int) $this->dbo->queryForColumn($query, array('entityType' => trim($entityType)));
     }
 
     public function deleteByEntityType( $entityType )

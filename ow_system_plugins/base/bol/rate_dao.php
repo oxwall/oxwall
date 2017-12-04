@@ -141,17 +141,15 @@ class BOL_RateDao extends OW_BaseDao
     public function findMostRatedEntityList( $entityType, $first, $count, $exclude )
     {
         $queryParts = BOL_ContentService::getInstance()->getQueryFilter(array(
-            BASE_CLASS_QueryBuilderEvent::TABLE_USER => 'r',
             BASE_CLASS_QueryBuilderEvent::TABLE_CONTENT => 'r'
         ), array(
-            BASE_CLASS_QueryBuilderEvent::FIELD_USER_ID => 'userId',
             BASE_CLASS_QueryBuilderEvent::FIELD_CONTENT_ID => 'id'
         ), array(
             BASE_CLASS_QueryBuilderEvent::OPTION_METHOD => __METHOD__,
             BASE_CLASS_QueryBuilderEvent::OPTION_TYPE => $entityType
         ));
 
-        $excludeCond = $exclude ? ' AND `' . self::ENTITY_ID . '` NOT IN (' . $this->dbo->mergeInClause($exclude) . ')' : '';
+        $excludeCond = $exclude ? ' AND `r`.`' . self::ENTITY_ID . '` NOT IN (' . $this->dbo->mergeInClause($exclude) . ')' : '';
 
         $query = 'SELECT `r`.`' . self::ENTITY_ID . '` AS `id`, COUNT(*) as `ratesCount`, AVG(`r`.`score`) as `avgScore`
             FROM `' . $this->getTableName() . '` AS `r`
@@ -161,15 +159,26 @@ class BOL_RateDao extends OW_BaseDao
             ORDER BY `avgScore` DESC, `ratesCount` DESC, MAX(`r`.`timeStamp`) DESC
             LIMIT :first, :count';
         $boundParams = array_merge(array('entityType' => $entityType, 'first' => (int) $first, 'count' => (int) $count), $queryParts['params']);
+
         return $this->dbo->queryForList($query, $boundParams);
     }
 
     public function findMostRatedEntityCount( $entityType, $exclude )
     {
-        $excludeCond = $exclude ? ' AND `' . self::ENTITY_ID . '` NOT IN (' . $this->dbo->mergeInClause($exclude) . ')' : '';
+        $queryParts = BOL_ContentService::getInstance()->getQueryFilter(array(
+            BASE_CLASS_QueryBuilderEvent::TABLE_CONTENT => 'r'
+        ), array(
+            BASE_CLASS_QueryBuilderEvent::FIELD_CONTENT_ID => 'id'
+        ), array(
+            BASE_CLASS_QueryBuilderEvent::OPTION_METHOD => __METHOD__,
+            BASE_CLASS_QueryBuilderEvent::OPTION_TYPE => $entityType
+        ));
 
-        $query = "SELECT COUNT(DISTINCT `" . self::ENTITY_ID . "`) from `" . $this->getTableName() .
-            "` WHERE `" . self::ENTITY_TYPE . "` = :entityType AND `" . self::ACTIVE . "` = 1" . $excludeCond;
+        $excludeCond = $exclude ? ' AND `r`.`' . self::ENTITY_ID . '` NOT IN (' . $this->dbo->mergeInClause($exclude) . ')' : '';
+
+        $query = "SELECT COUNT(DISTINCT `" . self::ENTITY_ID . "`) from `" . $this->getTableName() . "` AS `r`
+            "  . $queryParts['join'] . "
+            WHERE `r`.`" . self::ENTITY_TYPE . "` = :entityType AND `r`.`" . self::ACTIVE . "` = 1" . $excludeCond . " AND " . $queryParts['where'] . "";
 
         return (int) $this->dbo->queryForColumn($query, array('entityType' => $entityType));
     }

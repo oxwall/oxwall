@@ -115,11 +115,23 @@ class BOL_TagDao extends OW_BaseDao
      */
     public function findMostPopularTags( $entityType, $limit, $offset  = 0)
     {
+        $queryParts = BOL_ContentService::getInstance()->getQueryFilter(array(
+            BASE_CLASS_QueryBuilderEvent::TABLE_CONTENT => 'et',
+            'base_tag' => 't'
+        ), array(
+            BASE_CLASS_QueryBuilderEvent::FIELD_CONTENT_ID => 'id'
+        ), array(
+            BASE_CLASS_QueryBuilderEvent::OPTION_METHOD => __METHOD__,
+            BASE_CLASS_QueryBuilderEvent::OPTION_TYPE => $entityType
+        ));
+
         $query = "SELECT * FROM
             (
                 SELECT `et`.*, COUNT(*) AS `count`, `t`.`label` AS `label` FROM `" . BOL_EntityTagDao::getInstance()->getTableName() . "` AS `et`
                 LEFT JOIN `" . $this->getTableName() . "` AS `t` ON ( `et`.`tagId` = `t`.`id`	)
+                " . $queryParts['join'] . "
                 WHERE `et`.`entityType` = :entityType AND `et`.`active` = 1
+                AND " . $queryParts['where'] . "
                 GROUP BY `tagId`
                                     ORDER BY `count` DESC
                                     LIMIT :offset, :limit
@@ -138,12 +150,24 @@ class BOL_TagDao extends OW_BaseDao
      */
     public function findEntityTagsWithPopularity( $entityId, $entityType )
     {
+        $queryParts = BOL_ContentService::getInstance()->getQueryFilter(array(
+            BASE_CLASS_QueryBuilderEvent::TABLE_CONTENT => 'et',
+            'base_tag' => 't'
+        ), array(
+            BASE_CLASS_QueryBuilderEvent::FIELD_CONTENT_ID => 'id'
+        ), array(
+            BASE_CLASS_QueryBuilderEvent::OPTION_METHOD => __METHOD__,
+            BASE_CLASS_QueryBuilderEvent::OPTION_TYPE => $entityType
+        ));
+
         $query = "SELECT * FROM
 	    		(
 	    			SELECT `et`.*, COUNT(*) AS `count`, `t`.`label` AS `label` FROM `" . BOL_EntityTagDao::getInstance()->getTableName() . "` AS `et`
 					INNER JOIN `" . $this->getTableName() . "` AS `t`
 					ON ( `et`.`tagId` = `t`.`id`)
+					" . $queryParts['join'] . "
 					WHERE `et`.`entityId` = :entityId AND `et`.`entityType` = :entityType
+					AND " . $queryParts['where'] . "
 					GROUP BY `tagId` ORDER BY `count` DESC
 				) AS `t` 
 				ORDER BY `t`.`label`";

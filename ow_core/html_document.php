@@ -501,11 +501,17 @@ class OW_HtmlDocument extends OW_Document
             return $this;
         }
 
-        $this->javaScriptDeclarations['hash'][] = $scriptHash;
+        $event = new OW_Event('core.onAddScriptDeclaration', ['scriptHash' => $scriptHash, 'type' => $type], $script);
+        OW::getEventManager()->trigger($event);
 
-        $priority = ($priority === null) ? 1000 : (int) $priority;
+        if ( !empty($event->getData()) )
+        {
+            $this->javaScriptDeclarations['hash'][] = $scriptHash;
 
-        $this->javaScriptDeclarations['items'][$priority][$type][] = $script;
+            $priority = ($priority === null) ? 1000 : (int) $priority;
+
+            $this->javaScriptDeclarations['items'][$priority][$type][] = $event->getData();
+        }
 
         return $this;
     }
