@@ -155,7 +155,7 @@ class BASE_CMP_AvatarUserListSelect extends OW_Component
             var cmp = new AvatarUserSelect(" . json_encode($jsArray) . ", '" . $contexId . "');
             cmp.init();  ");
 
-        OW::getLanguage()->text('base', 'avatar_user_select_empty_list_message');
+        OW::getLanguage()->addKeyForJs('base', 'avatar_user_select_empty_list_message');
 
         $this->assign('users', $arrayToAssign);
 
