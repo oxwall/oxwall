@@ -983,7 +983,7 @@ class BOL_UserDao extends OW_BaseDao
                     $maxDate = ( date('Y') - (int) $value['from']);
                     $minDate = ( date('Y') - (int) $value['to'] );
 
-                    $result = " `" . $prefix . "`.YEAR(`dateValue`) BETWEEN  '" . $this->dbo->escapeString($minDate) . "' AND '" . $this->dbo->escapeString($maxDate) . "'";
+                    $result = " YEAR(`" . $prefix . "`.`dateValue`) BETWEEN  '" . $this->dbo->escapeString($minDate) . "' AND '" . $this->dbo->escapeString($maxDate) . "'";
                 }
 
                 break;
