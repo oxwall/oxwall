@@ -53,5 +53,24 @@ class BASE_MCMP_SignIn extends OW_MobileComponent
             $form->bindJsFunction(Form::BIND_SUCCESS, 'function(data){if( data.result ){OWM.info(data.message);setTimeout(function(){window.location.reload();}, 1000);}else{OWM.error(data.message);}}');
         }
         $this->addForm($form);
+
+        // language switcher
+        $languages = BOL_LanguageService::getInstance()->getLanguages();
+        $sessionLanguageId = BOL_LanguageService::getInstance()->getCurrent()->getId();
+        $activeLanguages = [];
+
+        foreach( $languages as $id => $language )
+        {
+            if ( $language->status == 'active' )
+            {
+                $activeLanguages[] = [
+                    'active' => $language->id == $sessionLanguageId,
+                    'label' => $language->label,
+                    'id'=> $language->id
+                ];
+            }
+        }
+
+        $this->assign('languages', (count($activeLanguages) > 1 ? $activeLanguages : []));
     }
 }
