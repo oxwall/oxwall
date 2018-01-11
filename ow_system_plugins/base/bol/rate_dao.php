@@ -176,7 +176,7 @@ class BOL_RateDao extends OW_BaseDao
 
         $excludeCond = $exclude ? ' AND `r`.`' . self::ENTITY_ID . '` NOT IN (' . $this->dbo->mergeInClause($exclude) . ')' : '';
 
-        $query = "SELECT COUNT(DISTINCT `" . self::ENTITY_ID . "`) from `" . $this->getTableName() . "` AS `r`
+        $query = "SELECT COUNT(DISTINCT `r`.`" . self::ENTITY_ID . "`) from `" . $this->getTableName() . "` AS `r`
             "  . $queryParts['join'] . "
             WHERE `r`.`" . self::ENTITY_TYPE . "` = :entityType AND `r`.`" . self::ACTIVE . "` = 1" . $excludeCond . " AND " . $queryParts['where'] . "";
 
