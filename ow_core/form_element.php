@@ -25,7 +25,7 @@
 /**
  * Base form element class.
  *
- * @author Sardar Madumarov <madumarov@gmail.com>
+ * @author Sardar Madumarov, Sergey Pryadkin <madumarov@gmail.com, GiperProger@gmail.com>
  * @package ow_core
  * @since 1.0
  */
@@ -2684,6 +2684,12 @@ class BillingGatewaySelectionField extends FormElement
         $name = $this->getName();
 
         $gateways = $this->getActiveGatewaysList();
+
+        $event = new OW_Event(BOL_BillingService::EVENT_ON_COLLECT_GATEWAYS_LIST, array(), $gateways);
+
+        OW::getEventManager()->trigger($event);
+
+        $gateways = $event->getData();
 
         if ( $gateways )
         {

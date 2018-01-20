@@ -25,7 +25,7 @@
 /**
  * Billing Service
  *
- * @author Egor Bulgakov <egor.bulgakov@gmail.com>
+ * @author Egor Bulgakov, Sergey Pryadkin <egor.bulgakov@gmail.com, GiperProger@gmail.com>
  * @package ow.ow_system_plugins.base.bol
  * @since 1.0
  */
@@ -33,7 +33,9 @@ final class BOL_BillingService
 {
     const EVENT_ON_AFTER_INIT_SALE = "base.billing.after_init_sale";
     const EVENT_ON_AFTER_DELIVER_SALE = "base.billing.on_after_delivered_sale";
-    
+    const EVENT_ON_COLLECT_GATEWAYS_LIST = "base.billing.on_collect_gateways_list";
+
+
     /**
      * @var BOL_BillingSaleDao
      */
