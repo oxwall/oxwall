@@ -33,7 +33,9 @@ final class BOL_BillingService
 {
     const EVENT_ON_AFTER_INIT_SALE = "base.billing.after_init_sale";
     const EVENT_ON_AFTER_DELIVER_SALE = "base.billing.on_after_delivered_sale";
-    
+    const EVENT_ON_COLLECT_GATEWAYS_LIST = "base.billing.on_collect_gateways_list";
+
+
     /**
      * @var BOL_BillingSaleDao
      */

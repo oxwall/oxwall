@@ -2685,6 +2685,12 @@ class BillingGatewaySelectionField extends FormElement
 
         $gateways = $this->getActiveGatewaysList();
 
+        $event = new OW_Event(BOL_BillingService::EVENT_ON_COLLECT_GATEWAYS_LIST, array(), $gateways);
+
+        OW::getEventManager()->trigger($event);
+
+        $gateways = $event->getData();
+
         if ( $gateways )
         {
             $paymentOptions = $this->getAdapterData($gateways);
