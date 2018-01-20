@@ -25,7 +25,7 @@
 /**
  * Base form element class.
  *
- * @author Sardar Madumarov <madumarov@gmail.com>
+ * @author Sardar Madumarov, Sergey Pryadkin <madumarov@gmail.com, GiperProger@gmail.com>
  * @package ow_core
  * @since 1.0
  */

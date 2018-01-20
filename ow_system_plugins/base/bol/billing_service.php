@@ -25,7 +25,7 @@
 /**
  * Billing Service
  *
- * @author Egor Bulgakov <egor.bulgakov@gmail.com>
+ * @author Egor Bulgakov, Sergey Pryadkin <egor.bulgakov@gmail.com, GiperProger@gmail.com>
  * @package ow.ow_system_plugins.base.bol
  * @since 1.0
  */
