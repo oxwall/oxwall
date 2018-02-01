@@ -367,6 +367,10 @@ class BOL_AvatarService
         {
             $image = new UTIL_Image($uploadedFileName);
             $image->orientateImage()->copyImage($avatarPFOriginalPath);
+
+            $image = null;
+            unset($image);
+
             $image = new UTIL_Image($avatarPFOriginalPath);
 
             $config = OW::getConfig();

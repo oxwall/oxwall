@@ -64,6 +64,15 @@ class BASE_MCLASS_JoinAvatarFieldValidator extends BASE_CLASS_AvatarFieldValidat
 
             return false;
         }
+
+        $allowedAvatarSize = OW::getConfig()->getValue('base', 'avatar_max_upload_size');
+
+        if ( empty($_FILES['userPhoto']['size']) || ($allowedAvatarSize * 1048576) < $_FILES['userPhoto']['size'] )
+        {
+            $this->setErrorMessage($language->text('base', 'upload_file_max_upload_filesize_error'));
+
+            return false;
+        }
         
         return true;
     }
@@ -79,9 +88,17 @@ class BASE_MCLASS_JoinAvatarFieldValidator extends BASE_CLASS_AvatarFieldValidat
 
         if ( $this->required )
         {
+            $allowedAvatarSize = OW::getConfig()->getValue('base', 'avatar_max_upload_size') * 1048576;
+
             $condition = "
+            var allowedAvatarSize = {$allowedAvatarSize};
+            var fileInput = $('input[name=\"userPhoto\"]')[0];
+
             if ( value == undefined || $.trim(value).length == 0 ) {
                 throw " . json_encode($this->getError()) . ";
+            }
+            else if (fileInput.files[0].size > allowedAvatarSize) {
+                throw " . json_encode( OW::getLanguage()->text('base', 'upload_file_max_upload_filesize_error') ) . ";
             }";
         }
 
