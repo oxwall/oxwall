@@ -36,6 +36,7 @@ class BASE_CMP_ProfileActionToolbar extends OW_Component
 
     const EVENT_NAME = 'base.add_profile_action_toolbar';
     const EVENT_PROCESS_TOOLBAR = 'base.process_profile_action_toolbar';
+    const EVENT_GROUP_MENU_CLASS = 'base.profile_action_toolbar_group_menu_class';
     const DATA_KEY_LABEL = 'label';
     const DATA_KEY_EXTRA_LABEL = 'extraLabel';
     const DATA_KEY_LINK_ID = 'id';
@@ -219,10 +220,16 @@ class BASE_CMP_ProfileActionToolbar extends OW_Component
         {
             return "";
         }
-        
+
         $contextActionMenu = new BASE_CMP_ContextAction();
-        $contextActionMenu->setClass("ow_profile_toolbar_group ow_context_action_value_block");
-        
+        $event = new OW_Event(self::EVENT_GROUP_MENU_CLASS, array("key" => $group["key"]), [
+            "ow_profile_toolbar_group",
+            "ow_context_action_value_block"
+        ]);
+
+        OW::getEventManager()->trigger($event);
+        $contextActionMenu->setClass(implode(" ", $event->getData()));
+
         $contextParentAction = new BASE_ContextAction();
         $contextParentAction->setKey($group["key"]);
         $contextParentAction->setLabel($group["label"]);
