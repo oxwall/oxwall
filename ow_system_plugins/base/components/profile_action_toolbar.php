@@ -222,7 +222,7 @@ class BASE_CMP_ProfileActionToolbar extends OW_Component
         }
 
         $contextActionMenu = new BASE_CMP_ContextAction();
-        $event = new OW_Event(self::EVENT_GROUP_MENU_CLASS, array("key" => $group["key"]), array(
+        $event = new OW_Event(self::EVENT_GROUP_MENU_CLASS, array("key" => $group["key"], "userId" => $this->userId), array(
             "ow_profile_toolbar_group",
             "ow_context_action_value_block"
         ));
