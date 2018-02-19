@@ -25,9 +25,9 @@
 /**
  * Question Service
  *
- * @author Podyachev Evgeny <joker.OW2@gmail.com>
+ * @author Podyachev Evgeny, Sergey Pryadkin <joker.OW2@gmail.com, GiperProger@gmail.com>
  * @package ow_system_plugins.base.bol
- * @since 1.0
+ * @since 1.8.5
  */
 class BOL_QuestionService
 {
@@ -48,6 +48,7 @@ class BOL_QuestionService
     const EVENT_AFTER_UPDATE_QUESTION_VALUE = 'base.event.afret_question_value_update';
     const EVENT_AFTER_DELETE_QUESTION_VALUE = 'base.event.afret_question_value_delete';
     const EVENT_BEFORE_ADD_QUESTIONS_TO_NEW_ACCOUNT_TYPE = 'base.event.on_before_add_questions_to_new_account_type';
+    const EVENT_ON_COLLECT_QUESTIONS_SECTIONS_LIST = 'base.event.on_collect_question_section_list';
 
     const EVENT_ON_GET_QUESTION_LANG = 'base.event.on_get_question_lang';
 

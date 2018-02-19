@@ -23,10 +23,11 @@
  */
 
 /**
- * @author Podyachev Evgeny <joker.OW2@gmail.com>
+ * @author Podyachev Evgeny, Sergey Pryadkin <joker.OW2@gmail.com, GiperProger@gmail.com>
  * @package ow_system_plugins.base.components
- * @since 1.0
+ * @since 1.8.5
  */
+
 class BASE_CMP_UserViewWidget extends BASE_CLASS_Widget
 {
     const USER_VIEW_PRESENTATION_TABS = 'tabs';
@@ -177,6 +178,12 @@ class BASE_CMP_UserViewWidget extends BASE_CLASS_Widget
     public static function getUserViewQuestions( $userId, $adminMode = false, $questionNames = array(), $sectionNames = null )
     {
         $questions = BOL_UserService::getInstance()->getUserViewQuestions($userId, $adminMode, $questionNames, $sectionNames);
+
+        $event = new OW_Event(BOL_QuestionService::EVENT_ON_COLLECT_QUESTIONS_SECTIONS_LIST, array('userId' => $userId), $questions);
+
+        OW::getEventManager()->trigger($event);
+
+        $questions = $event->getData();
 
         if ( !empty($questions['data'][$userId]) )
         {
