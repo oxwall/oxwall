@@ -29,12 +29,15 @@
  */
 class BASE_MCMP_ProfileActionToolbar extends BASE_MCMP_ButtonList
 {
-    const EVENT_NAME = 'base.mobile.add_profile_action_toolbar';
+    const EVENT_NAME = "base.mobile.add_profile_action_toolbar";
+    const EVENT_GROUP_MENU_CLASS = "base.mobile.profile_action_toolbar_group_menu_class";
 
     protected $userId;
 
     /**
      * Constructor.
+     *
+     * @param integer $userId
      */
     public function __construct( $userId )
     {
@@ -42,7 +45,7 @@ class BASE_MCMP_ProfileActionToolbar extends BASE_MCMP_ButtonList
         
         $this->userId = (int) $userId;
         
-        $event = new BASE_CLASS_EventCollector(self::EVENT_NAME, array('userId' => $this->userId));
+        $event = new BASE_CLASS_EventCollector(self::EVENT_NAME, array("userId" => $this->userId));
 
         OW::getEventManager()->trigger($event);
 
@@ -56,5 +59,62 @@ class BASE_MCMP_ProfileActionToolbar extends BASE_MCMP_ButtonList
         }
         
         $this->items = $addedData;
+    }
+
+    public function onBeforeRender()
+    {
+        parent::onBeforeRender();
+
+        $this->initList();
+
+        $template = OW::getPluginManager()->getPlugin("base")->getMobileCmpViewDir() . "profile_action_toolbar.html";
+        $this->setTemplate($template);
+    }
+
+    protected function initList()
+    {
+        $itemGroups = array();
+        $buttons = array();
+
+        foreach ( $this->items as $item  )
+        {
+            if ( isset($item["group"]) )
+            {
+                if ( empty($itemGroups[$item["group"]]) )
+                {
+                    $itemGroups[$item["group"]] = array(
+                        "key" => $item["group"],
+                        "label" => isset($item["groupLabel"]) ? $item["groupLabel"] : null,
+                        "context" => array()
+                    );
+                }
+
+                $itemGroups[$item["group"]]["items"][] = $item;
+            }
+            else
+            {
+                $buttons[] = $this->prepareItem($item, "owm_btn_list_item");
+            }
+        }
+
+        $tplGroups = array();
+        foreach ( $itemGroups as $group )
+        {
+            $event = new OW_Event(self::EVENT_GROUP_MENU_CLASS, array("key" => $group["key"], "userId" => $this->userId), array(
+                "owm_btn_list_item_wrap",
+                "owm_view_more",
+                "owm_float_right"
+            ));
+
+            OW::getEventManager()->trigger($event);
+            $contextAction = new BASE_MCMP_ContextAction($group["items"], $group["label"]);
+            $tplGroups[] = [
+                "classes" => implode(" ", $event->getData()),
+                "view" => $contextAction->render()
+            ];
+        }
+
+        $this->assign("groups", $tplGroups);
+        $this->assign("buttons", $this->getSortedItems($buttons));
     }
 }
