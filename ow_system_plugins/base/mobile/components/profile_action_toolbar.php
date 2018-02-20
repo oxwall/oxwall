@@ -29,13 +29,15 @@
  */
 class BASE_MCMP_ProfileActionToolbar extends BASE_MCMP_ButtonList
 {
-    const EVENT_NAME = 'base.mobile.add_profile_action_toolbar';
-    const EVENT_GROUP_MENU_CLASS = 'base.mobile.profile_action_toolbar_group_menu_class';
+    const EVENT_NAME = "base.mobile.add_profile_action_toolbar";
+    const EVENT_GROUP_MENU_CLASS = "base.mobile.profile_action_toolbar_group_menu_class";
 
     protected $userId;
 
     /**
      * Constructor.
+     *
+     * @param integer $userId
      */
     public function __construct( $userId )
     {
@@ -43,7 +45,7 @@ class BASE_MCMP_ProfileActionToolbar extends BASE_MCMP_ButtonList
         
         $this->userId = (int) $userId;
         
-        $event = new BASE_CLASS_EventCollector(self::EVENT_NAME, array('userId' => $this->userId));
+        $event = new BASE_CLASS_EventCollector(self::EVENT_NAME, array("userId" => $this->userId));
 
         OW::getEventManager()->trigger($event);
 
@@ -107,12 +109,12 @@ class BASE_MCMP_ProfileActionToolbar extends BASE_MCMP_ButtonList
             OW::getEventManager()->trigger($event);
             $contextAction = new BASE_MCMP_ContextAction($group["items"], $group["label"]);
             $tplGroups[] = [
-                'classes' => implode(" ", $event->getData()),
-                'view' => $contextAction->render()
+                "classes" => implode(" ", $event->getData()),
+                "view" => $contextAction->render()
             ];
         }
 
-        $this->assign('groups', $tplGroups);
+        $this->assign("groups", $tplGroups);
         $this->assign("buttons", $this->getSortedItems($buttons));
     }
 }
