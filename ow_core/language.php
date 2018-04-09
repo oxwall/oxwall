@@ -39,7 +39,7 @@ class OW_Language
      */
     private $eventManager;
 
-    const ON_CREATE_LANG_VARS = 'ow.on_create_lang_vars';
+    const ON_CREATE_LANG_VARS = 'core.on_create_lang_vars';
 
     /**
      * Constructor.
