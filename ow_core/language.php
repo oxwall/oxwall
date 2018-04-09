@@ -39,6 +39,8 @@ class OW_Language
      */
     private $eventManager;
 
+    const ON_CREATE_LANG_VARS = 'core.on_create_lang_vars';
+
     /**
      * Constructor.
      *
@@ -54,6 +56,12 @@ class OW_Language
         {
             return $prefix . '+' . $key;
         }
+
+        $event = new OW_Event(self::ON_CREATE_LANG_VARS, array('prefix' => $prefix, 'key' => $key), $vars);
+
+        OW::getEventManager()->trigger($event);
+
+        $vars = $event->getData();
 
         $text = null;
         try
