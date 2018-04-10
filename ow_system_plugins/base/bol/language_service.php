@@ -282,7 +282,7 @@ class BOL_LanguageService
 
         if ( !empty($vars) && is_array($vars) ) 
         {
-            foreach ( $vars as $key => &$value ) 
+            foreach ( $vars as $keyValue => &$value )
             {
                 if ( UTIL_Serialize::isSerializedObject($value) ) 
                 {
