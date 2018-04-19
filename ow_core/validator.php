@@ -186,7 +186,7 @@ class WyswygRequiredValidator extends OW_Validator
     public function isValid( $value )
     {
         // process value
-        $value = strip_tags(str_replace(array('&nbsp;', '&nbsp'), array(' ', ' '), $value));
+        $value = htmlentities(str_replace(array('&nbsp;', '&nbsp'), array(' ', ' '), $value));
 
         return mb_strlen(trim($value));
     }
