@@ -1997,19 +1997,23 @@ final class BOL_UserService
         {
             foreach ( $userIds as $item => $userId )
             {
+                $language = OW::getLanguage();
                 $user = $this->findUserById($userId);
+                $userName = $this->getDisplayName($user->id);
+                $mailContentLang =  $language->text('base', 'user_reactivation_mail_txt');
+                $mailContent = str_replace('{$userName}', $userName, $mailContentLang);
+
                 if ( !$user )
                 {
                     return false;
                 }
 
-                $language = OW::getLanguage();
                 try
                 {
                     $mail = OW::getMailer()->createMail();
                     $mail->addRecipientEmail($user->getEmail());
                     $mail->setSubject($language->text('base', 'user_reactivation_mail_subject'));
-                    $mail->setTextContent($language->text('base', 'user_reactivation_mail_txt'));
+                    $mail->setTextContent($mailContent);
                     $mail->setHtmlContent($language->text('base', 'user_reactivation_mail_html'));
                     OW::getMailer()->send($mail);
                 }
