@@ -1993,15 +1993,13 @@ final class BOL_UserService
      */
     public function sendReActivationNotification( array $userIds )
     {
+        $language = OW::getLanguage();
+
         if ( is_array($userIds) )
         {
             foreach ( $userIds as $item => $userId )
             {
-                $language = OW::getLanguage();
                 $user = $this->findUserById($userId);
-                $userName = $this->getDisplayName($user->id);
-                $mailContentLang =  $language->text('base', 'user_reactivation_mail_txt');
-                $mailContent = str_replace('{$userName}', $userName, $mailContentLang);
 
                 if ( !$user )
                 {
@@ -2013,8 +2011,8 @@ final class BOL_UserService
                     $mail = OW::getMailer()->createMail();
                     $mail->addRecipientEmail($user->getEmail());
                     $mail->setSubject($language->text('base', 'user_reactivation_mail_subject'));
-                    $mail->setTextContent($mailContent);
-                    $mail->setHtmlContent($language->text('base', 'user_reactivation_mail_html'));
+                    $mail->setTextContent($language->text('base', 'user_reactivation_mail_txt', array('userName' => $this->getDisplayName($user->id))));
+                    $mail->setHtmlContent($language->text('base', 'user_reactivation_mail_html', array('site_name' => OW::getConfig()->getValue('base', 'site_name'))));
                     OW::getMailer()->send($mail);
                 }
                 catch ( Exception $e )
