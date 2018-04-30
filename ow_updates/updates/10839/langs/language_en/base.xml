@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<prefix name="base" label="Base" language_tag="en" language_label="English">
+    <key name="user_reactivation_mail_subject"><value>Profile re-activation</value></key>
+    <key name="user_reactivation_mail_txt"><value>Dear {$userName} your profile on {$site_name} is active again!</value></key>
+    <key name="user_reactivation_mail_html"><value>Dear {$userName} your profile on {$site_name} is active again!</value></key>
+</prefix>

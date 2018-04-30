@@ -81,6 +81,12 @@ class ADMIN_CTRL_Users extends ADMIN_CTRL_Abstract
      */
     public function index( array $params )
     {
+        if ( isset($_POST['reactivate']) && !empty($_POST['users']) )
+        {
+            $service = BOL_UserService::getInstance();
+            $service->sendReActivationNotification($_POST['users']);
+        }
+
         $language = OW::getLanguage();
         
         OW::getDocument()->getMasterPage()->getMenu(OW_Navigation::ADMIN_USERS)->getElement('sidebar_menu_item_users')->setActive(true);

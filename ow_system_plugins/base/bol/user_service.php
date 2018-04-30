@@ -1985,4 +1985,41 @@ final class BOL_UserService
     {
         return $this->userDao->getQueryFilter($tables, $fields, $params);
     }
+
+    /**
+     * Sends a custom email notification when a profile is re-activated by admin.
+     * @param array $userIds
+     * @return void
+     */
+    public function sendReActivationNotification( array $userIds )
+    {
+        $language = OW::getLanguage();
+
+        if ( is_array($userIds) )
+        {
+            foreach ( $userIds as $item => $userId )
+            {
+                $user = $this->findUserById($userId);
+
+                if ( !$user )
+                {
+                    return false;
+                }
+
+                try
+                {
+                    $mail = OW::getMailer()->createMail();
+                    $mail->addRecipientEmail($user->getEmail());
+                    $mail->setSubject($language->text('base', 'user_reactivation_mail_subject'));
+                    $mail->setTextContent($language->text('base', 'user_reactivation_mail_txt', array('userName' => $this->getDisplayName($user->id))));
+                    $mail->setHtmlContent($language->text('base', 'user_reactivation_mail_html', array('userName' => $this->getDisplayName($user->id))));
+                    OW::getMailer()->send($mail);
+                }
+                catch ( Exception $e )
+                {
+                    OW::getLogger()->addEntry(json_encode($e));
+                }
+            }
+        }
+    }
 }
