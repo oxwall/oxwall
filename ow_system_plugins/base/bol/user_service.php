@@ -2012,12 +2012,12 @@ final class BOL_UserService
                     $mail->addRecipientEmail($user->getEmail());
                     $mail->setSubject($language->text('base', 'user_reactivation_mail_subject'));
                     $mail->setTextContent($language->text('base', 'user_reactivation_mail_txt', array('userName' => $this->getDisplayName($user->id))));
-                    $mail->setHtmlContent($language->text('base', 'user_reactivation_mail_html', array('site_name' => OW::getConfig()->getValue('base', 'site_name'))));
+                    $mail->setHtmlContent($language->text('base', 'user_reactivation_mail_html', array('userName' => $this->getDisplayName($user->id))));
                     OW::getMailer()->send($mail);
                 }
                 catch ( Exception $e )
                 {
-                    pv($e->getMessage());
+                    OW::getLogger()->addEntry(json_encode($e));
                 }
             }
         }
