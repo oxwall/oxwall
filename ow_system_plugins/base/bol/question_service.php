@@ -1230,6 +1230,7 @@ class BOL_QuestionService
         $questionArray = $this->questionDao->findByIdList($questionIdList);
 
         $questionsNameList = array();
+        $deleteQuestionIdList = array();
 
         foreach ( $questionArray as $question )
         {
@@ -1239,6 +1240,7 @@ class BOL_QuestionService
             }
 
             $questionsNameList[] = $question->name;
+            $deleteQuestionIdList[] = $question->id;
 
             $valuesObjects = $this->valueDao->findQuestionValues($question->name);
 
@@ -1282,7 +1284,7 @@ class BOL_QuestionService
 
         $this->dataDao->deleteByQuestionNamesList($questionsNameList);
 
-        $this->questionDao->deleteByIdList($questionIdList);
+        $this->questionDao->deleteByIdList($deleteQuestionIdList);
 
         $this->updateQuestionsEditStamp();
 
