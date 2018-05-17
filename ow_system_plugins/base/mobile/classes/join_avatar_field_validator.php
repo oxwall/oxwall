@@ -97,7 +97,7 @@ class BASE_MCLASS_JoinAvatarFieldValidator extends BASE_CLASS_AvatarFieldValidat
             if ( value == undefined || $.trim(value).length == 0 ) {
                 throw " . json_encode($this->getError()) . ";
             }
-            else if (fileInput.files[0].size > allowedAvatarSize) {
+            else if (fileInput.files[0] && fileInput.files[0].size > allowedAvatarSize) {
                 throw " . json_encode( OW::getLanguage()->text('base', 'upload_file_max_upload_filesize_error') ) . ";
             }";
         }
