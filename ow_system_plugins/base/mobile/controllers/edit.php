@@ -164,7 +164,10 @@ class BASE_MCTRL_Edit extends BASE_CTRL_Edit
 
         $userPhoto = OW::getClassInstance("BASE_CLASS_JoinUploadPhotoField", 'userPhoto');
         $userPhoto->setLabel(OW::getLanguage()->text('base', 'questions_question_user_photo_label'));
-        $userPhoto->addValidator($avatarValidator);
+        if ( !$userAvatar )
+        {
+            $userPhoto->addValidator($avatarValidator);
+        }
         $userPhoto->setValue($userAvatar);
         $editForm->addElement($userPhoto);
 
