@@ -1,4 +1,4 @@
-var subscribePageActions = function() {
+var gatewayExtraInfo = function() {
 
     var billingGatewayKey;
     var billingGatewayExtraInfoUrl;
