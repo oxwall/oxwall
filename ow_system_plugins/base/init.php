@@ -105,6 +105,7 @@ $router->addRoute(new OW_Route('base_billing_completed_st', 'order/completed', '
 $router->addRoute(new OW_Route('base_billing_canceled', 'order/:hash/canceled', 'BASE_CTRL_Billing', 'canceled'));
 $router->addRoute(new OW_Route('base_billing_canceled_st', 'order/canceled', 'BASE_CTRL_Billing', 'canceled'));
 $router->addRoute(new OW_Route('base_billing_error', 'order/incomplete', 'BASE_CTRL_Billing', 'error'));
+$router->addRoute(new OW_Route('base_billing_gateway_extra_info', 'extra/information', 'BASE_CTRL_Billing', 'getBillingGatewayExtraInfo'));
 
 $router->addRoute(new OW_Route('base_preference_index', 'profile/preference', 'BASE_CTRL_Preference', 'index'));
 

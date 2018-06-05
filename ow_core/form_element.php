@@ -2691,6 +2691,7 @@ class BillingGatewaySelectionField extends FormElement
 
         $gateways = $event->getData();
 
+
         if ( $gateways )
         {
             $paymentOptions = $this->getAdapterData($gateways);
@@ -2755,6 +2756,9 @@ class BillingGatewaySelectionField extends FormElement
                 $url_field.val("' . $url . '");
                 $("ul#' . $cont_id . ' input").change(function(){
                     $url_field.val($(this).attr("rel"));
+                    OW.trigger("core.gateway_changed", [{gatewayKey: this.value}]);
+                    
+                    
                 });';
 
             OW::getDocument()->addOnloadScript($js);

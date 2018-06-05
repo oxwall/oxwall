@@ -127,4 +127,14 @@ trait BASE_CLASS_BillingMethodsTrait
             OW::getApplication()->redirect(urldecode($_POST['back_url']));
         }
     }
+
+    public function getBillingGatewayExtraInfo()
+    {
+        $gateWayKey = $_POST['billingGatewayKey'];
+        $langKey = $_POST['langKey'];
+
+        $billingGatewayExtraInfo = BOL_BillingService::getInstance()->getBillingGatewayExtraInfo($gateWayKey, $langKey);
+
+        exit(json_encode(['extraInfo' => $billingGatewayExtraInfo]));
+    }
 }
