@@ -1061,4 +1061,18 @@ final class BOL_BillingService
         
         return $this->billingSaleDao->findListByUserIdEntityId( $userId, $entityId );
     }
+
+    /**
+     * @param $billingGatewayKey
+     * @param $langKey
+     * @return null|string
+     */
+    public function  getBillingGatewayExtraInfo( $billingGatewayKey, $langKey )
+    {
+        $isInfoExist = BOL_LanguageService::getInstance()->findKey($billingGatewayKey, $langKey);
+
+        if( !$isInfoExist ) { return null; }
+
+        return OW::getLanguage()->text($billingGatewayKey, $langKey);
+    }
 }
