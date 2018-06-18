@@ -943,7 +943,6 @@ class BOL_UserDao extends OW_BaseDao
 
             case BOL_QuestionService::QUESTION_PRESENTATION_RADIO :
             case BOL_QuestionService::QUESTION_PRESENTATION_SELECT :
-            case BOL_QuestionService::QUESTION_PRESENTATION_FSELECT :
 
                 if ( !empty($value) )
                 {
@@ -958,6 +957,16 @@ class BOL_UserDao extends OW_BaseDao
                 }
 
                 break;
+
+            case BOL_QuestionService::QUESTION_PRESENTATION_FSELECT :
+
+                if ( !empty($value) )
+                {
+                    $result = ' `' . $this->dbo->escapeString($prefix) . '`.`intValue` = \'' . ((int)$value) . '\' ';
+                }
+
+                break;
+
             case BOL_QuestionService::QUESTION_PRESENTATION_MULTICHECKBOX :
                 
                 if ( !empty ( $value ) )
