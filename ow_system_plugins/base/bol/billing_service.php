@@ -1063,16 +1063,21 @@ final class BOL_BillingService
     }
 
     /**
-     * @param $billingGatewayKey
-     * @param $langKey
-     * @return null|string
+     * @param null $gatewayId
+     * @return mixed
      */
-    public function  getBillingGatewayExtraInfo( $billingGatewayKey, $langKey )
+    public function findGatewayById($gatewayId = null )
     {
-        $isInfoExist = BOL_LanguageService::getInstance()->findKey($billingGatewayKey, $langKey);
+        if( empty($gatewayId) )
+        {
+            $logger = OW::getLogger('mobile_billing');
+            $logger->addEntry('missed_gateway_id', 'mobile_billing');
+            $logger->writeLog();
+        }
 
-        if( !$isInfoExist ) { return null; }
+        $result = $this->billingGatewayDao->findById($gatewayId);
 
-        return OW::getLanguage()->text($billingGatewayKey, $langKey);
+        return $result;
+
     }
 }
