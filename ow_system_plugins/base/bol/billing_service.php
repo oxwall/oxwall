@@ -1075,4 +1075,23 @@ final class BOL_BillingService
 
         return OW::getLanguage()->text($billingGatewayKey, $langKey);
     }
+
+    /**
+     * @param null $gatewayId
+     * @return mixed
+     */
+    public function findGatewayById($gatewayId = null )
+    {
+        if( empty($gatewayId) )
+        {
+            $logger = OW::getLogger('mobile_billing');
+            $logger->addEntry('missed_gateway_id', 'mobile_billing');
+            $logger->writeLog();
+        }
+
+        $result = $this->billingGatewayDao->findById($gatewayId);
+
+        return $result;
+
+    }
 }
