@@ -1080,7 +1080,7 @@ final class BOL_BillingService
      * @param null $gatewayId
      * @return mixed
      */
-    public function findGatewayById($gatewayId = null )
+    public function findGatewayById( $gatewayId = null )
     {
         if( empty($gatewayId) )
         {
