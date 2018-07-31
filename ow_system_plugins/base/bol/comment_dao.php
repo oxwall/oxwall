@@ -113,7 +113,9 @@ class BOL_CommentDao extends OW_BaseDao
 			ORDER BY `" . self::CREATE_STAMP . "` DESC
 			LIMIT :first, :count";
 
-        return $this->dbo->queryForObjectList($query, $this->getDtoClassName(), array('entityType' => $entityType, 'entityId' => $entityId, 'first' => $first, 'count' => $count));
+        $boundParams = array_merge(array('entityType' => $entityType, 'entityId' => $entityId, 'first' => $first, 'count' => $count), $queryParts['params']);
+
+        return $this->dbo->queryForObjectList($query, $this->getDtoClassName(), $boundParams);
     }
 
     /**
@@ -142,7 +144,9 @@ class BOL_CommentDao extends OW_BaseDao
 			AND " . $queryParts['where'] . "
 			ORDER BY `" . self::CREATE_STAMP . "`";
 
-        return $this->dbo->queryForObjectList($query, $this->getDtoClassName(), array('entityType' => $entityType, 'entityId' => $entityId));
+        $boundParams = array_merge(array('entityType' => $entityType, 'entityId' => $entityId), $queryParts['params']);
+
+        return $this->dbo->queryForObjectList($query, $this->getDtoClassName(), $boundParams);
     }
 
     /**
@@ -171,7 +175,9 @@ class BOL_CommentDao extends OW_BaseDao
 			AND " . $queryParts['where'] . "
 			";
 
-        return (int) $this->dbo->queryForColumn($query, array('entityType' => $entityType, 'entityId' => $entityId));
+        $boundParams = array_merge(array('entityType' => $entityType, 'entityId' => $entityId), $queryParts['params']);
+
+        return (int) $this->dbo->queryForColumn($query, $boundParams);
     }
 
     public function findMostCommentedEntityList( $entityType, $first, $count )
@@ -194,7 +200,9 @@ class BOL_CommentDao extends OW_BaseDao
 			GROUP BY `ce`.`' . BOL_CommentEntityDao::ENTITY_ID . '`
 			ORDER BY `commentCount` DESC, `id` DESC
 			LIMIT :first, :count';
+
         $boundParams = array_merge(array('entityType' => $entityType, 'first' => $first, 'count' => $count), $queryParts['params']);
+
         return $this->dbo->queryForList($query, $boundParams);
     }
 
@@ -223,7 +231,9 @@ class BOL_CommentDao extends OW_BaseDao
 			AND " . $queryParts['where'] . "
 			GROUP BY `" . BOL_CommentEntityDao::ENTITY_ID . "`";
 
-        return $this->dbo->queryForList($query, array('entityType' => $entityType));
+        $boundParams = array_merge(array('entityType' => $entityType), $queryParts['params']);
+
+        return $this->dbo->queryForList($query, $boundParams);
     }
 
     public function deleteByCommentEntityId( $id )
