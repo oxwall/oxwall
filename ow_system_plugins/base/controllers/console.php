@@ -6,6 +6,13 @@ class BASE_CTRL_Console extends OW_ActionController
     {
         $request = json_decode($_POST['request'], true);
 
+        if ( !OW::getUser()->isAuthenticated() )
+        {
+            echo json_encode(['items' => []]);
+
+            exit;
+        }
+
         $event = new BASE_CLASS_ConsoleListEvent('console.load_list', $request, $request['data']);
         OW::getEventManager()->trigger($event);
 
