@@ -50,7 +50,7 @@ class BASE_CLASS_FileStorage implements OW_Storage
         if ( file_exists($sourcePath) && is_file($sourcePath) )
         {
             copy($sourcePath, $destPath);
-            chmod($destPath, 0666);
+            chmod($destPath, 0755);
             return true;
         }
 
