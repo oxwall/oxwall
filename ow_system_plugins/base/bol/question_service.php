@@ -36,6 +36,7 @@ class BOL_QuestionService
     const EVENT_ON_FIND_VIEW_QUESTIONS_FOR_ACCOUNT_TYPE = 'base.event.on_find_view_questions_for_account_type';
     const EVENT_ON_FIND_ALL_QUESTIONS_FOR_ACCOUNT_TYPE = 'base.event.on_find_all_questions_for_account_type';
     const EVENT_ON_GET_EMPTY_REQUIRED_QUESTIONS = 'base.event.on_get_empty_required_questions';
+    const EVENT_ON_GET_EMPTY_QUESTIONS_LIST = 'base.event.on_get_empty_questions_list';
     const EVENT_ON_FIND_QUESTIONS_FOR_ACCOUNT_TYPE = 'base.event.on_find_edit_questions_for_account_type';
     const EVENT_ON_BEFORE_ADD_QUESTION = 'base.event.on_before_add_question';
     const EVENT_ON_QUESTION_DELETE = 'base.event.on_question_delete';
@@ -2588,6 +2589,14 @@ class BOL_QuestionService
                 }
             }
         }
+
+        $event = new OW_Event(self::EVENT_ON_GET_EMPTY_QUESTIONS_LIST, array(
+            'account' => $user->accountType,
+            'userId' => $user->id
+        ), $emptyQuestionsList);
+
+        OW::getEventManager()->trigger($event);
+        $emptyQuestionsList = $event->getData();
 
         return $emptyQuestionsList;
     }
