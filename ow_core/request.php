@@ -210,7 +210,7 @@ class OW_Request
         return $value;
     }
 
-     public function isSsl()
+    public function isSsl()
     {
         $isHttps = null;
 
