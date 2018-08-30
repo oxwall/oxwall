@@ -788,7 +788,28 @@ final class BOL_UserService
 
     public function findOnlineStatusForUserList( $idList )
     {
-        $onlineUsers = $this->userOnlineDao->findOnlineUserIdListFromIdList($idList);
+        // Check privacy permissions
+        $eventParams = array(
+            'action' => 'base_view_my_presence_on_site',
+            'ownerIdList' => $idList,
+            'viewerId' => OW::getUser()->getId()
+        );
+
+        $permission = OW::getEventManager()->getInstance()->call('privacy_check_permission_for_user_list', $eventParams);
+
+        $showPresenceList = array();
+
+        foreach ( $idList as $user )
+        {
+            if ( isset($permission[$user]['blocked']) && $permission[$user]['blocked'] == true )
+            {
+                continue;
+            }
+
+            $showPresenceList[] = $user;
+        }
+
+        $onlineUsers = $this->userOnlineDao->findOnlineUserIdListFromIdList($showPresenceList);
 
         $onlineUsersArr = array();
 
