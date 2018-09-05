@@ -51,6 +51,7 @@ final class BOL_UserService
     const PASSWORD_RESET_CODE_EXPIRATION_TIME = 3600;
     const PASSWORD_RESET_CODE_UPDATE_TIME = 600;
     const BEFORE_USER_ONLINE = 'base.before_user_online';
+    const EVENT_GET_USER_VIEW_QUESTIONS = 'base.get_user_view_questions';
     
     const EVENT_USER_QUERY_FILTER = BOL_UserDao::EVENT_QUERY_FILTER;
 
@@ -1724,6 +1725,17 @@ final class BOL_UserService
                 $q = (array) $q;
             }
         }
+
+        $event = new OW_Event(self::EVENT_GET_USER_VIEW_QUESTIONS, array(
+            'userId' => $userId,
+            'adminMode' => $adminMode,
+            'questionNames' => $questionNames,
+            'sectionNames' => $sectionNames
+        ), $questions);
+
+        OW::getEventManager()->trigger($event);
+
+        $questions = $event->getData();
 
         $section = null;
         $questionArray = array();
