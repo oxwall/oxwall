@@ -54,6 +54,7 @@ class BOL_StorageService
     const URI_VAR_ITEM_TYPE_VAL_THEME = "theme";
     /* ---------------------------------------------------------------------- */
     const EVENT_ON_STORAGE_INTERECT = "base.on_plugin_info_update";
+    const EVENT_ON_NOTIFY_ADMIN_ABOUT_INVALID_ITEMS = "base.on_notify_admin_about_invalid_items";
     const OXWALL_STORE_DEV_KEY = "e547ebcf734341ec11911209d93a1054";
     const ITEM_DEACTIVATE_TIMEOUT_IN_DAYS = 5;
 
@@ -564,6 +565,10 @@ class BOL_StorageService
 
     private function notifyAdminAboutInvalidItems( array $items )
     {
+        $event = new OW_Event(self::EVENT_ON_NOTIFY_ADMIN_ABOUT_INVALID_ITEMS, array(), $items);
+        OW::getEventManager()->trigger($event);
+        $items = $event->getData();
+
         if ( empty($items) )
         {
             return;
