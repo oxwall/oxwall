@@ -565,7 +565,6 @@ class BOL_StorageService
 
     private function notifyAdminAboutInvalidItems( array $items )
     {
-        pv($items);
         $event = new OW_Event(self::EVENT_ON_NOTIFY_ADMIN_ABOUT_INVALID_ITEMS, array(), $items);
         OW::getEventManager()->trigger($event);
         $items = $event->getData();
