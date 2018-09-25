@@ -44,9 +44,9 @@ $(function(){
                     <a href="{text key="admin+lang_in_key_doc_link_value"}" class="ow_mild_green lang-key-link" target="_blank">
                         {text key="admin+lang_in_key_doc_link"}
                     </a>
-					<span>
-						{text key="admin+show"}
-					</span>
+                    <span>
+                        {text key="admin+show"}
+                    </span>
 
                     <select onchange="location.href='{$section_switch_url}&prefix='+$(this).val();">
                         <option {if $current_prefix == 'all'}selected="selected"{/if} value="all">{text key="admin+all_sections"}</option>
