@@ -41,9 +41,9 @@ $(function(){
                 </div>
 
             	<div class="ow_box ow_right">
-					<a href="{text key="admin+lang_in_key_doc_link_value"}" class="ow_mild_green lang-key-link" target="_blank">
+                    <a href="{text key="admin+lang_in_key_doc_link_value"}" class="ow_mild_green lang-key-link" target="_blank">
                         {text key="admin+lang_in_key_doc_link"}
-					</a>
+                    </a>
 					<span>
 						{text key="admin+show"}
 					</span>
@@ -64,9 +64,9 @@ $(function(){
                     <form id="search_form" style="display: inline" onsubmit="location.href = '{$searchFormActionUrl}&search='+ $('#search_inp').val()+( $('#search_in_inp:checked').length > 0 ? '&in_keys=y': ''); return false;">
                         <input id="search_inp" name="search" type="text" value="{$current_search}" style="width: 200px" class="grey-text" onfocus={literal}"if(this.flag == undefined){this.flag = false; $(this).removeClass('grey-text').attr('value', '')}"{/literal} />
 						<input id="search_in_inp" name="search_in_keys" {if !empty($searchInKeys) && $searchInKeys == 'y'}checked="checked"{/if} type="checkbox" />
-						<label for="search_in_inp">
+                        <label for="search_in_inp">
                             {text key="admin+lang_in_key"}
-						</label>
+                        </label>
                         {decorator name='button'  langLabel='admin+go' class="ow_ic_lens" type='submit'}
                     </form>
                 </div>
