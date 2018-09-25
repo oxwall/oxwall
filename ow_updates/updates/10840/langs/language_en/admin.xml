@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<prefix name="admin" label="Admin" language_tag="en" language_label="English">
+    <key name="lang_in_key"><value>in keys</value></key>
+    <key name="lang_in_key_doc_link"><value>Click here to find out how to search in keys and by keywords here.</value></key>
+    <key name="lang_in_key_doc_link_value"><value>#</value></key>
+</prefix>

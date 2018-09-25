@@ -15,7 +15,11 @@ $(function(){
         width: 395px;
         overflow: hidden;
     }
-    
+
+	.lang-key-link {
+		display: block;
+		margin-left: 330px;
+	}
 </style>
 {/literal}
     		<div class="ow_anno ow_std_margin" style="text-align:center;">
@@ -37,7 +41,12 @@ $(function(){
                 </div>
 
             	<div class="ow_box ow_right">
-                	{text key="admin+show"}
+					<a href="{text key="admin+lang_in_key_doc_link_value"}" class="ow_mild_green lang-key-link" target="_blank">
+                        {text key="admin+lang_in_key_doc_link"}
+					</a>
+					<span>
+						{text key="admin+show"}
+					</span>
 
                     <select onchange="location.href='{$section_switch_url}&prefix='+$(this).val();">
                         <option {if $current_prefix == 'all'}selected="selected"{/if} value="all">{text key="admin+all_sections"}</option>
@@ -54,7 +63,10 @@ $(function(){
 
                     <form id="search_form" style="display: inline" onsubmit="location.href = '{$searchFormActionUrl}&search='+ $('#search_inp').val()+( $('#search_in_inp:checked').length > 0 ? '&in_keys=y': ''); return false;">
                         <input id="search_inp" name="search" type="text" value="{$current_search}" style="width: 200px" class="grey-text" onfocus={literal}"if(this.flag == undefined){this.flag = false; $(this).removeClass('grey-text').attr('value', '')}"{/literal} />
-                        {if !empty($devMode)}<input id="search_in_inp" name="search_in_keys" {if !empty($searchInKeys) && $searchInKeys == 'y'}checked="checked"{/if} type="checkbox" /> <label>in keys</label>{/if}
+						<input id="search_in_inp" name="search_in_keys" {if !empty($searchInKeys) && $searchInKeys == 'y'}checked="checked"{/if} type="checkbox" />
+						<label for="search_in_inp">
+                            {text key="admin+lang_in_key"}
+						</label>
                         {decorator name='button'  langLabel='admin+go' class="ow_ic_lens" type='submit'}
                     </form>
                 </div>
