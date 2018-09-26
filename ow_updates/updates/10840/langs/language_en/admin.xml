@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<prefix name="admin" label="Admin" language_tag="en" language_label="English">
+    <key name="lang_in_key"><value>in keys</value></key>
+    <key name="lang_in_key_doc_link"><value>How to search in keys.</value></key>
+    <key name="lang_in_key_doc_link_value"><value>https://hello.skadate.com/index.php?rp=/knowledgebase/33/Dev-Tools.html</value></key>
+</prefix>
