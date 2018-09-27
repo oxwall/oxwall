@@ -1018,15 +1018,8 @@ class BOL_AvatarService
             return false;
         }
 
-        if ( !UTIL_File::validateImage($path) )
+        if ( !UTIL_File::validateImage($path) || !getimagesize($path) )
         {
-            return false;
-        }
-
-        if ( !getimagesize($path) )
-        {
-            $this->setErrorMessage(OW::getLanguage()->text('base', 'not_valid_image'));
-
             return false;
         }
 

@@ -45,14 +45,7 @@ class BASE_MCLASS_EditAvatarFieldValidator extends BASE_MCLASS_JoinAvatarFieldVa
 
         $language = OW::getLanguage();
 
-        if ( !UTIL_File::validateImage($_FILES['userPhoto']['name']) )
-        {
-            $this->setErrorMessage($language->text('base', 'join_error_photo_file_is_not_valid'));
-
-            return false;
-        }
-
-        if ( !getimagesize($_FILES['userPhoto']['tmp_name']) )
+        if ( !UTIL_File::validateImage($_FILES['userPhoto']['name']) || !getimagesize($_FILES['userPhoto']['tmp_name']) )
         {
             $this->setErrorMessage($language->text('base', 'not_valid_image'));
 
