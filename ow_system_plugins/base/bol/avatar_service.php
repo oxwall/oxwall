@@ -1018,7 +1018,7 @@ class BOL_AvatarService
             return false;
         }
 
-        if ( !UTIL_File::validateImage($path) )
+        if ( !UTIL_File::validateImage($path) || !getimagesize($path) )
         {
             return false;
         }
