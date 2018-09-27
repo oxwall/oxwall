@@ -1023,6 +1023,13 @@ class BOL_AvatarService
             return false;
         }
 
+        if ( !getimagesize($path) )
+        {
+            $this->setErrorMessage(OW::getLanguage()->text('base', 'not_valid_image'));
+
+            return false;
+        }
+
         $event = new OW_Event('base.before_avatar_change', array(
             'userId' => $userId,
             'avatarId' => null,

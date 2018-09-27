@@ -44,7 +44,19 @@ class BASE_MCLASS_JoinAvatarFieldValidator extends BASE_CLASS_AvatarFieldValidat
 
         $language = OW::getLanguage();
 
-        $avatarService = BOL_AvatarService::getInstance();
+        if ( !UTIL_File::validateImage($_FILES['userPhoto']['name']) )
+        {
+            $this->setErrorMessage($language->text('base', 'join_error_photo_file_is_not_valid'));
+
+            return false;
+        }
+
+        if ( !getimagesize($_FILES['userPhoto']['tmp_name']) )
+        {
+            $this->setErrorMessage($language->text('base', 'not_valid_image'));
+
+            return false;
+        }
 
         if ( !is_writable(BOL_AvatarService::getInstance()->getAvatarsDir()) )
         {
