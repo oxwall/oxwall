@@ -793,7 +793,7 @@ class ADMIN_CTRL_Languages extends ADMIN_CTRL_Abstract
         $this->assign('inactive_langs', $inactive_langs);
 
         $importLangForm = new ImportLangForm();
-        $importLangForm->setAction(OW::getRouter()->urlForRoute('admin_settings_language_mod'). "#lang_import");
+        $importLangForm->setAction(OW::getRouter()->urlForRoute('admin_settings_language_mod'). "/#lang_import");
         $this->addForm($importLangForm);
 
         $this->addForm(new CloneForm());
