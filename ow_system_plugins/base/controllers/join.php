@@ -296,13 +296,10 @@ class BASE_CTRL_Join extends OW_ActionController
 
                 // authenticate user
                 OW::getUser()->login($user->id);
-
-                if(isset($_POST['avatarUploaded']) && $_POST['avatarUploaded'] == 1)
-                {
-                    // create Avatar
-                    $this->createAvatar($user->id);
-                }
                 
+                // create Avatar
+                $this->createAvatar($user->id);
+
                 $event = new OW_Event(OW_EventManager::ON_USER_REGISTER, array('userId' => $user->id, 'method' => 'native', 'params' => $params));
                 OW::getEventManager()->trigger($event);
 
