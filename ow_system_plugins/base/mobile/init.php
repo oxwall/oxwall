@@ -68,6 +68,8 @@ $router->addRoute(new OW_Route('base_edit_user_datails', 'profile/:userId/edit/'
 $router->addRoute(new OW_Route('base.complete_account_type', 'fill/account_type', 'BASE_MCTRL_CompleteProfile', 'fillAccountType'));
 $router->addRoute(new OW_Route('base.complete_required_questions', 'fill/profile_questions', 'BASE_CTRL_MCompleteProfile', 'fillRequiredQuestions'));
 
+$router->addRoute(new OW_Route('base_massmailing_unsubscribe', 'unsubscribe/:id/:code/:desktopRedirect', 'BASE_CTRL_Unsubscribe', 'index'));
+
 $owBasePlugin = OW::getPluginManager()->getPlugin('base');
 
 $themeManager = OW::getThemeManager();

@@ -1,0 +1,18 @@
+{block_decorator name="box" type="empty" style="padding-left:20px;"}
+    {if $result===false}
+        {text key="base+massmailing_unsubscribe_failed"}
+    {/if}
+
+    {if $result==='confirm'}
+        {block_decorator name="box" type="empty" addClass="ow_stdmargin ow_center"}
+            {text key="base+massmailing_unsubscribe_confirmation"}
+        {/block_decorator}
+
+        {block_decorator name="box" type="empty" addClass="ow_stdmargin ow_wide ow_automargin ow_center"}
+            <form name="deleteUser" method="post">
+                {decorator name="button" type="submit" buttonName="confirm" class="ow_ic_ok" langLabel="base+confirm_button"}
+                {decorator name="button" type="submit" buttonName="cancel" class="ow_ic_delete" langLabel="base+cancel_button"}
+            </form>
+        {/block_decorator}
+    {/if}
+{/block_decorator}
