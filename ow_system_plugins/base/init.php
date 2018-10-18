@@ -66,7 +66,7 @@ $router->addRoute(new OW_Route('base_email_verify', 'email-verify', 'BASE_CTRL_E
 $router->addRoute(new OW_Route('base_email_verify_code_form', 'email-verify-form', 'BASE_CTRL_EmailVerify', 'verifyForm'));
 $router->addRoute(new OW_Route('base_email_verify_code_check', 'email-verify-check/:code', 'BASE_CTRL_EmailVerify', 'verify'));
 
-$router->addRoute(new OW_Route('base_massmailing_unsubscribe', 'unsubscribe/:id/:code/:desktopRedirect', 'BASE_CTRL_Unsubscribe', 'index'));
+$router->addRoute(new OW_Route('base_massmailing_unsubscribe', 'unsubscribe/:id/:code', 'BASE_CTRL_Unsubscribe', 'index'));
 $router->addRoute(new OW_Route('base.mobile_version', 'mobile-version', 'BASE_CTRL_BaseDocument', 'redirectToMobile'));
 
 // Drag And Drop panels
