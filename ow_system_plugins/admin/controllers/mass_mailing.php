@@ -195,8 +195,8 @@ class ADMIN_CTRL_MassMailing extends ADMIN_CTRL_Abstract
                         $vars['user_name'] = $displayNameList[$user->id];
 
                         $code = md5($user->username . $user->password);
-                        
-                        $vars['unsubscribe_url'] = OW::getRouter()->urlForRoute('base_massmailing_unsubscribe', array('id' => $user->id, 'code' => $code));
+
+                        $vars['unsubscribe_url'] = OW::getRouter()->urlForRoute('base_massmailing_unsubscribe', array('id' => $user->id, 'code' => $code)) . '?desktopRedirect=1';
 
                         $event = new BASE_CLASS_PropertyEvent("base.massmail_on_before_fetch_user_mail", $vars, array("userId" => $user->id));
                         OW::getEventManager()->trigger($event);
