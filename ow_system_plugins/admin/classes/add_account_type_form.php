@@ -261,18 +261,16 @@ class ADMIN_CLASS_AddAccountTypeForm extends Form {
 
             if ($dto !== null) {
                 if ($dto->getValue() !== $value) {
-                    $languageService->saveValue($dto->setValue($value, true));
+                    $languageService->saveValue($dto->setValue($value));
                 }
             } else {
-                $dto = $languageService->addValue($item->getId(), $prefix, $key, $value, true);
+                $dto = $languageService->addValue($item->getId(), $prefix, $key, $value);
             }
 
             if ((int) $currentLanguageId === (int) $item->getId()) {
                 $currentLangValue = $value;
             }
         }
-        
-        $languageService->generateCache(OW::getLanguage()->getCurrentId());
     }
 
 }
