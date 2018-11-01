@@ -81,7 +81,7 @@ class BASE_CLASS_ConsoleEventHandler
             $event->addItem($item, 1);
         }
 
-        $item = OW::getClassInstance('BASE_CMP_ConsoleSwitchLanguage', $this);
+        $item = OW::getClassInstance('BASE_CMP_ConsoleSwitchLanguage');
         $event->addItem($item, 0);
     }
 
