@@ -237,9 +237,9 @@ class ADMIN_CTRL_Settings extends ADMIN_CTRL_Abstract
         $postMaxSize = (float) ini_get("post_max_size");
 
         $maxUploadMaxFilesize = BOL_FileService::getInstance()->getUploadMaxFilesize();
-        $this->assign('maxUploadMaxFilesize', $maxUploadMaxFilesize);       
-        
-        $userSettingsForm = new UserSettingsForm($maxUploadMaxFilesize);
+        $this->assign('maxUploadMaxFilesize', $maxUploadMaxFilesize);
+
+        $userSettingsForm = OW::getClassInstance('UserSettingsForm', $maxUploadMaxFilesize);
         $this->addForm($userSettingsForm);
 
         $conf = OW::getConfig();
