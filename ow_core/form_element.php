@@ -1231,7 +1231,7 @@ class RadioField extends FormElement
                 $this->addAttribute(FormElement::ATTR_CHECKED, 'checked');
             }
 
-            $this->setId(UTIL_HtmlTag::generateAutoId('input'));
+            $this->setId(UTIL_HtmlTag::generateAutoId('input_' . uniqid(UTIL_String::getRandomString(rand(8, 13), UTIL_String::RND_STR_ALPHA_NUMERIC))));
 
             $this->addAttribute('value', $key);
 
@@ -1425,7 +1425,7 @@ class CheckboxGroup extends FormElement
                 $this->addAttribute(FormElement::ATTR_CHECKED, 'checked');
             }
 
-            $this->setId(UTIL_HtmlTag::generateAutoId('input'));
+            $this->setId(UTIL_HtmlTag::generateAutoId('input_' . uniqid(UTIL_String::getRandomString(rand(8, 13), UTIL_String::RND_STR_ALPHA_NUMERIC))));
 
             $this->addAttribute('value', $key);
 
@@ -1953,7 +1953,7 @@ class MultiFileField extends FormElement
         for ( $i = 0; $i < $this->inputs; $i++ )
         {
             $label = isset($this->labels[$i]) ? $this->labels[$i] . ' ' : '';
-            $this->setId(UTIL_HtmlTag::generateAutoId('input'));
+            $this->setId(UTIL_HtmlTag::generateAutoId('input_' . uniqid(UTIL_String::getRandomString(rand(8, 13), UTIL_String::RND_STR_ALPHA_NUMERIC))));
 
             $markup .= $label . '<input type="file" id="' . $this->getId() . '" name="' . $this->getName() . '[]" /><br />';
         }
