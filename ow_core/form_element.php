@@ -110,7 +110,7 @@ abstract class FormElement
 
         $this->setName($name);
 
-        $this->setId(UTIL_HtmlTag::generateAutoId('input'));
+        $this->setId(UTIL_HtmlTag::generateAutoId('input_' . uniqid(UTIL_String::getRandomString(rand(8, 13), UTIL_String::RND_STR_ALPHA_NUMERIC))));
     }
 
     /**
