@@ -114,7 +114,7 @@ class BASE_CTRL_ComponentPanel extends OW_ActionController
             $defaultScheme = reset($schemeList);
         }
 
-        $componentPanel = new BASE_CMP_DragAndDropEntityPanel($place, $userId, $defaultComponents, $customizeMode, $componentTemplate, $responderController);
+        $componentPanel = OW::getClassInstance('BASE_CMP_DragAndDropEntityPanel', $place, $userId, $defaultComponents, $customizeMode, $componentTemplate, $responderController);
         $componentPanel->setAdditionalSettingList(array(
             'entityId' => $userId,
             'entity' => 'user'
