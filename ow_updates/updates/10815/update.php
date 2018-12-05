@@ -25,17 +25,21 @@
 $dbPrefix = OW_DB_PREFIX;
 $dbo = Updater::getDbo();
 
-$sql = "ALTER TABLE `{$dbPrefix}base_question_value` CHANGE `value` `value` BIGINT(20) UNSIGNED NOT NULL DEFAULT '0';";
-$sql = "ALTER TABLE `{$dbPrefix}base_question_data` CHANGE `intValue` `intValue` BIGINT(20) UNSIGNED NOT NULL DEFAULT '0';";
+$sql = [
+    "ALTER TABLE `{$dbPrefix}base_question_value` CHANGE `value` `value` BIGINT(20) UNSIGNED NOT NULL DEFAULT '0';",
+    "ALTER TABLE `{$dbPrefix}base_question_data` CHANGE `intValue` `intValue` BIGINT(20) UNSIGNED NOT NULL DEFAULT '0';"
+];
 
-
-try
+foreach ( $sql as $query )
 {
-    $dbo->query($sql);
-}
-catch (Exception $e)
-{
-    $logger = OW::getLogger();
-    $logger->addEntry($e->getMessage());
-    $logger->writeLog();
+    try
+    {
+        $dbo->query($query);
+    }
+    catch ( Exception $e )
+    {
+        $logger = OW::getLogger();
+        $logger->addEntry($e->getMessage());
+        $logger->writeLog();
+    }
 }
