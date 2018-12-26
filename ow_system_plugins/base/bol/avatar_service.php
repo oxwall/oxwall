@@ -1011,7 +1011,7 @@ class BOL_AvatarService
     public function createAvatar( $userId, $isModerable = true, $trackAction = true)
     {
         $key = $this->getAvatarChangeSessionKey();
-        $path = $this->getTempAvatarPath($key, 2);
+        $path = $this->getTempAvatarPath($key, 3);
 
         if ( !file_exists($path) )
         {
