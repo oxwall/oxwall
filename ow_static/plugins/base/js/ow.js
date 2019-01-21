@@ -709,6 +709,7 @@ var OwUtils = function(){
       $('*[title]', $context).each( function(i, o){
           $(o).on('mouseenter', function(){ OW.showTip($(this), {timeout:200}); });
           $(o).on('mouseleave', function(){ OW.hideTip($(this)); });
+          $(o).on('mousewheel', function(){ OW.hideTip($(this)); });
       });
     };
 
