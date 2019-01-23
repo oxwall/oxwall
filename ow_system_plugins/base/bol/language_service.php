@@ -986,6 +986,15 @@ class BOL_LanguageService
 
         $this->valueDao->save($valueDto);
 
+        $event = new OW_Event('base.on_after_add_or_update_value_lang', array(
+                'languageId' => $languageId,
+                'prefix' => $prefix,
+                'key' => $key,
+                'value' => $value,
+                'generateCache' => $generateCache)
+        );
+        OW::getEventManager()->trigger($event);
+
         if ( $generateCache )
         {
             $this->generateCache($valueDto->languageId);
