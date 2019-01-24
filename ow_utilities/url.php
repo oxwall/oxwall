@@ -157,9 +157,7 @@ class UTIL_Url
         $serverProtocol = strtolower($_SERVER["SERVER_PROTOCOL"]);
         $protocol = substr($serverProtocol, 0, strpos($serverProtocol, '/')) . $s;
 
-        $port = ($_SERVER["SERVER_PORT"] == "80") ? "" : (":" . $_SERVER["SERVER_PORT"]);
-
-        return $protocol . "://" . $_SERVER['SERVER_NAME'] . $port . self::secureUri($_SERVER['REQUEST_URI']);
+        return $protocol . "://" . $_SERVER['SERVER_NAME'] . self::secureUri($_SERVER['REQUEST_URI']);
     }
 
     public static function getLocalPath( $uri )
