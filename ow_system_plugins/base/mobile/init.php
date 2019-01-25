@@ -71,6 +71,7 @@ $router->addRoute(new OW_Route('base.complete_required_questions', 'fill/profile
 $router->addRoute(new OW_Route('base_massmailing_unsubscribe', 'unsubscribe/:id/:code/', 'BASE_CTRL_Unsubscribe', 'index'));
 
 $router->addRoute(new OW_Route('base.robots_txt', 'robots.txt', 'BASE_CTRL_Base', 'robotsTxt'));
+$router->addRoute(new OW_Route('base.sitemap', 'sitemap.xml', 'BASE_CTRL_Base', 'sitemap'));
 
 $owBasePlugin = OW::getPluginManager()->getPlugin('base');
 
