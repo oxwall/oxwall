@@ -19,4 +19,5 @@ RewriteCond %{REQUEST_URI} !/e500\.php
 RewriteCond %{REQUEST_URI} !/captcha\.php
 #RewriteCond %{REQUEST_URI} (/|\.php|\.html|\.htm|\.xml|\.feed|robots\.txt|\.raw|/[^.]*)$  [NC]
 RewriteCond %{REQUEST_FILENAME} (/|\.php|\.html|\.htm|\.feed|robots\.txt|sitemap\.xml|\.raw|/[^.]*)$  [NC]
+RewriteCond %{REQUEST_FILENAME} (/|\.php|\.htm|\.feed|robots\.txt|sitemap\.xml|\.raw|/[^.]*)$  [NC]
 RewriteRule (.*) index.php
