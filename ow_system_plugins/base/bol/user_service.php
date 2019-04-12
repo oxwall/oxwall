@@ -1349,11 +1349,18 @@ final class BOL_UserService
      */
     public function getNewResetPassword( $userId )
     {
+    	$code = md5(UTIL_String::getRandomString(8, 5));
+
+        $event = new OW_Event('base.on_after_generate_password_reset_code', [], $code);
+        OW::getEventManager()->trigger($event);
+
+        $code = $event->getData();
+
         $resetPassword = new BOL_UserResetPassword();
         $resetPassword->setUserId($userId);
         $resetPassword->setExpirationTimeStamp(( time() + self::PASSWORD_RESET_CODE_EXPIRATION_TIME));
         $resetPassword->setUpdateTimeStamp(time() + self::PASSWORD_RESET_CODE_UPDATE_TIME);
-        $resetPassword->setCode(md5(UTIL_String::getRandomString(8, 5)));
+        $resetPassword->setCode($code);
 
         $this->resetPasswordDao->save($resetPassword);
 
