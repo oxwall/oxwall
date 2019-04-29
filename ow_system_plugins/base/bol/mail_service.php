@@ -211,6 +211,7 @@ class BOL_MailService
         $mail->setSentTime($mailDto->sentTime);
         $mail->setPriority($mailDto->priority);
         $mail->setSenderSuffix($mailDto->senderSuffix);
+        $mail->setReplyTo($mailDto->senderEmail);
 
         return $mail;
     }
