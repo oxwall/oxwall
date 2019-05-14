@@ -323,7 +323,7 @@ class BASE_CTRL_Join extends OW_ActionController
     
     protected function createAvatar($userId)
     {
-         BOL_AvatarService::getInstance()->createAvatar($userId, false, false);
+         BOL_AvatarService::getInstance()->createAvatar($userId, true, false);
     }
 }
 
