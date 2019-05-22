@@ -94,7 +94,7 @@ class OW_MobileMasterPage extends OW_MasterPage
             $this->setTemplate(OW::getThemeManager()->getMasterPageTemplate(self::TEMPLATE_GENERAL));
         }
 
-        $this->addComponent("signIn", new BASE_MCMP_SignIn());
+        $this->addComponent('signIn', OW::getClassInstance("BASE_MCMP_SignIn", false));
         $this->addComponent("topMenu", new BASE_MCMP_TopMenu());
         $this->addComponent("bottomMenu", new BASE_MCMP_BottomMenu());
         $this->assign("buttonData", $this->buttonData);

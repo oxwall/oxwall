@@ -120,7 +120,7 @@ class BASE_MCTRL_User extends OW_MobileActionController
         }
 
         OW::getDocument()->getMasterPage()->setRButtonData(array('extraString' => ' style="display:none;"'));
-        $this->addComponent('signIn', new BASE_MCMP_SignIn(false));
+        $this->addComponent('signIn', OW::getClassInstance("BASE_MCMP_SignIn", false));
 
         // set meta info
         $params = array(
