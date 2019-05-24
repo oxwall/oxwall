@@ -16,9 +16,9 @@
 			{assign var='dto' value=$img.dto}
 			{assign var='data' value=$img.data}
 
-			<tr class="{cycle name="1" values='ow_alt1, ow_alt2'}" onclick="if( $('#gimg-{$dto->getId()}').is(':visible') ){ldelim} $('#gimg-{$dto->getId()}-visbtn').empty().html('show');{rdelim} else $('#gimg-{$dto->getId()}-visbtn').empty().html('{text key='base+mp_gal_hide'}'); $('#gimg-{$dto->getId()}').toggle();">
+			<tr class="{cycle name="1" values='ow_alt1, ow_alt2'}" onclick="if( $('#gimg-{$dto->getId()}').is(':visible') ){ldelim} $('#gimg-{$dto->getId()}-visbtn').empty().html('{text key='base+mp_gal_show'}');{rdelim} else $('#gimg-{$dto->getId()}-visbtn').empty().html('{text key='base+mp_gal_hide'}'); $('#gimg-{$dto->getId()}').toggle();">
 				<td style="padding: 3px;">
-					 <div style="float: left;">{$data->name} {if !empty($data->width) && !empty($data->height) }{$data->width}x{$data->height}{/if}</div><span id="gimg-{$dto->getId()}-visbtn" class="ow_lbutton clearfix" style="width: 30px; text-align:center; float: right;">{text key='base+mp_gal_show'}</span>
+					 <div style="float: left;">{$data->name} {if !empty($data->width) && !empty($data->height) }{$data->width}x{$data->height}{/if}</div><span id="gimg-{$dto->getId()}-visbtn" class="ow_lbutton clearfix" style="width: 60px; text-align:center; float: right;">{text key='base+mp_gal_show'}</span>
 				</td>
 			</tr>
 
