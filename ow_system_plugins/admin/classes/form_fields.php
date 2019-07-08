@@ -232,7 +232,7 @@ class addValueField extends FormElement
                 
         foreach ( $this->value as $key => $val )
         {
-            $inputValues[] = array($key => $val);
+            $inputValues[] = array($key => htmlspecialchars($val));
         }
         
         $html = '<div class="values_list">
