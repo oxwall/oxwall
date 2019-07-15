@@ -54,6 +54,7 @@ final class BOL_UserService
     const EVENT_GET_USER_VIEW_QUESTIONS = 'base.get_user_view_questions';
     
     const EVENT_USER_QUERY_FILTER = BOL_UserDao::EVENT_QUERY_FILTER;
+    const EVENT_ON_GET_DISPLAY_NAME = 'base.get_display_name';
 
     /**
      * @var BOL_UserDao
@@ -198,6 +199,12 @@ final class BOL_UserService
         $questionName = OW::getConfig()->getValue('base', 'display_name_question');
 
         $questionValue = BOL_QuestionService::getInstance()->getQuestionData(array($userId), array($questionName));
+        
+        $event = OW::getEventManager()->trigger(new OW_Event(self::EVENT_ON_GET_DISPLAY_NAME, array(
+            'userIdList' => array($userId),
+            'questionName' => $questionName
+        ), $questionValue));
+        $questionValue = $event->getData();
 
         $displayName = isset($questionValue[$userId]) ? ( isset($questionValue[$userId][$questionName]) ? $questionValue[$userId][$questionName] : '' ) : OW::getLanguage()->text('base', 'deleted_user');
 
@@ -217,6 +224,12 @@ final class BOL_UserService
         $questionName = OW::getConfig()->getValue('base', 'display_name_question');
 
         $questionValues = BOL_QuestionService::getInstance()->getQuestionData($userIdList, array($questionName));
+
+        $event = OW::getEventManager()->trigger(new OW_Event(self::EVENT_ON_GET_DISPLAY_NAME, array(
+            'userIdList' => $userIdList,
+            'questionName' => $questionName
+        ), $questionValues));
+        $questionValues = $event->getData();
 
         $resultArray = array();
         $emptyDisplayNames = array();
