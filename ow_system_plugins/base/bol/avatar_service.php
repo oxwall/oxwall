@@ -332,7 +332,7 @@ class BOL_AvatarService
         return true;
     }
 
-    public function setUserAvatar( $userId, $uploadedFileName, array $editionalParams = array(), $originalAvatarPath = null )
+    public function setUserAvatar( $userId, $uploadedFileName, array $editionalParams = array() )
     {
         $avatar = $this->findByUserId($userId);
 
@@ -405,11 +405,6 @@ class BOL_AvatarService
                 $this->removeAvatarImage($oldAvatarPath);
                 $this->removeAvatarImage($oldAvatarBigPath);
                 $this->removeAvatarImage($oldAvatarOriginalPath);
-            }
-
-            if ( !empty($originalAvatarPath) )
-            {
-                $avatarPFOriginalPath = $originalAvatarPath;
             }
 
             $storage = OW::getStorage();
@@ -1017,7 +1012,6 @@ class BOL_AvatarService
     {
         $key = $this->getAvatarChangeSessionKey();
         $path = $this->getTempAvatarPath($key, 2);
-        $originalAvatarPath = $this->getTempAvatarPath($key, 3);
 
         if ( !file_exists($path) )
         {
@@ -1038,7 +1032,7 @@ class BOL_AvatarService
         ));
         OW::getEventManager()->trigger($event);
 
-        $avatarSet = $this->setUserAvatar($userId, $path, array('isModerable' => $isModerable, 'trackAction' => $trackAction ), $originalAvatarPath);
+        $avatarSet = $this->setUserAvatar($userId, $path, array('isModerable' => $isModerable, 'trackAction' => $trackAction ));
 
         if ( $avatarSet )
         {
