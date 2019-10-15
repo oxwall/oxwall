@@ -34,8 +34,6 @@ ow_pluginfiles/*
 ow_userfiles/*
 !ow_userfiles/.htaccess
 
-ow_plugins/*
-!ow_plugins/.htaccess
 
 ow_themes/*
 !ow_themes/.htaccess

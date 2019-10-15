@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<plugin>
+    <name>Birthdays</name>
+    <key>birthdays</key>
+    <description>The list of upcoming birthdays for site users + widgets for index, dashboard and profiles</description>
+    <author>Oxwall Foundation</author>
+    <authorEmail>plugins@oxwall.org</authorEmail>
+    <authorUrl>http://www.oxwall.org/foundation</authorUrl>
+    <developerKey>e547ebcf734341ec11911209d93a1054</developerKey>
+    <build>9600</build>
+    <copyright>(C) 2009 Oxwall Foundation. All rights reserved.</copyright>
+    <license>The BSD License</license>
+    <licenseUrl>http://www.opensource.org/licenses/bsd-license.php</licenseUrl>
+</plugin>
