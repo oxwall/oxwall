@@ -66,6 +66,7 @@ class BASE_CLASS_EventHandler
         $eventManager->bind('base.before_decorator', array($this, 'onBeforeDecoratorRender'));
         $eventManager->bind('plugin.privacy.get_action_list', array($this, 'onPrivacyAddAction'));
         $eventManager->bind('base.members_only_exceptions', array($this, 'onAddMembersOnlyException'));
+        $eventManager->bind('base.splash_screen_exceptions', array($this, 'onAddSplashScreenExceptions'));
         $eventManager->bind('base.password_protected_exceptions', array($this, 'onAddPasswordProtectedExceptions'));
         $eventManager->bind('base.maintenance_mode_exceptions', array($this, 'onAddMaintenanceModeExceptions'));
         $eventManager->bind(OW_EventManager::ON_USER_LOGIN, array($this, 'onUserLoginSetAdminCookie'));
@@ -939,6 +940,7 @@ class BASE_CLASS_EventHandler
         $event->add(array('controller' => 'BASE_CTRL_User', 'action' => 'resetPasswordCodeExpired'));
         $event->add(array('controller' => 'BASE_CTRL_User', 'action' => 'resetPasswordRequest'));
         $event->add(array('controller' => 'BASE_CTRL_ApiServer', 'action' => 'request'));
+        $event->add(array('controller' => 'BASE_CTRL_Base', 'action' => 'sitemap'));
     }
 
     public function onAddPasswordProtectedExceptions( BASE_CLASS_EventCollector $event )
@@ -953,6 +955,7 @@ class BASE_CLASS_EventHandler
         $event->add(array('controller' => 'BASE_CTRL_ApiServer', 'action' => 'request'));
         $event->add(array('controller' => 'BASE_CTRL_Unsubscribe', 'action' => 'index'));
         $event->add(array('controller' => 'BASE_CTRL_BaseDocument', 'action' => 'redirectToMobile'));
+        $event->add(array('controller' => 'BASE_CTRL_Base', 'action' => 'sitemap'));
     }
 
     public function onAddMembersOnlyException( BASE_CLASS_EventCollector $event )
@@ -972,6 +975,12 @@ class BASE_CLASS_EventHandler
         $event->add(array('controller' => 'BASE_CTRL_AjaxLoader', 'action' => 'init'));
         $event->add(array('controller' => 'BASE_CTRL_AjaxLoader', 'action' => 'component'));
         $event->add(array('controller' => 'BASE_CTRL_Avatar', 'action' => 'ajaxResponder'));
+        $event->add(array('controller' => 'BASE_CTRL_Base', 'action' => 'sitemap'));
+    }
+
+    public function onAddSplashScreenExceptions( BASE_CLASS_EventCollector $event )
+    {
+        $event->add(array('controller' => 'BASE_CTRL_Base', 'action' => 'sitemap'));
     }
 
     public function onPreferenceMenuItem( BASE_CLASS_EventCollector $event )
