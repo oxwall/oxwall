@@ -99,6 +99,7 @@ class BASE_CLASS_EventHandler
         $eventManager->bind("base.user_list.get_field_data", array($this, 'onGetUserListFieldValue'));
         $eventManager->bind("base.sitemap.get_urls", array($this, 'onSitemapGetUrls'));
         $eventManager->bind("base.provide_page_meta_info", array($this, 'onProvideMetaInfoForPage'));
+        $eventManager->bind("base.on_after_generate_email_verification_code", array($this, 'generateEmailVerificationCode'));
     }
 
     public function init()
@@ -2139,5 +2140,22 @@ class BASE_CLASS_EventHandler
         }
 
         return $text;
+    }
+
+    public function generateEmailVerificationCode(OW_Event $event)
+    {
+        $min = 10000;
+        $max = 99999;
+        $code = mt_rand($min, $max);
+        $service = BOL_EmailVerifyService::getInstance();
+
+        while ($service->findByHash($code) !== null)
+        {
+            $code = mt_rand($min, $max);
+        }
+
+        $event->setData($code);
+
+        return $code;
     }
 }
