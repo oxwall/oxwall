@@ -70,7 +70,7 @@ final class OW
 
         try
         {
-            $isSmart = UTIL_Browser::isSmartphone();
+            $isSmart = UTIL_Browser::isSmartphone() ? true : UTIL_Browser::isTierTablet();
         }
         catch ( Exception $e )
         {
