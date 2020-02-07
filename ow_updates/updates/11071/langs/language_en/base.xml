@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<prefix name="base" label="Base" language_tag="en" language_label="English">
+    <key name="email_verify_template_html">
+        <value>
+Dear {$username},&#x3C;br /&#x3E;
+&#x3C;br /&#x3E;
+Thank you for registering at {$site_name}! Now you need to verify your email. If you&#x27;re on a desktop, &#x3C;a href=&#x22;{$url}&#x22;&#x3E;click here&#x3C;/a&#x3E;&#x3C;br /&#x3E;
+&#x3C;br /&#x3E;
+If you&#x27;re on a mobile, enter the following code in the app: &#x3C;br /&#x3E;{$code}&#x3C;br /&#x3E;
+&#x3C;br /&#x3E;
+Thank you,&#x3C;br /&#x3E;
+{$site_name} administration
+        </value>
+    </key>
+
+    <key name="email_verify_template_text">
+        <value>
+Dear {$username},
+
+Thank you for registering at {$site_name}! Now you need to verify your email. If you&#x27;re on a desktop, click the link below: {$url}
+
+If you&#x27;re on a mobile, enter the following code in the app:
+{$code}
+
+Thank you,
+{$site_name} administration
+        </value>
+    </key>
+</prefix>
