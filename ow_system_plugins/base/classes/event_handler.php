@@ -2051,6 +2051,32 @@ class BASE_CLASS_EventHandler
         {
             $parts = explode("+", $params["title"]);
             $title = $this->processMetaText($language->text($parts[0], $parts[1], $vars), false, BOL_SeoService::META_TITLE_MAX_LENGTH);
+
+            if (!empty($parts[1]) && $parts[1] === 'meta_title_user_page')
+            {
+                if (empty($vars['user_gender']) || empty($vars['user_age']) || empty($vars['user_age'])
+                        || empty($vars['user_location']))
+                {
+                    $delimiter = ', ';
+                    $alterDelimiter = ' | ';
+
+                    $profileTitle = !empty($vars['user_name']) ? $vars['user_name'] : '';
+
+                    $profileTitle = !empty($vars['user_gender']) &&  !empty($vars['user_age'])
+                        ? $profileTitle . $delimiter . $vars['user_gender'] . $delimiter . $vars['user_age']
+                        : $profileTitle;
+
+                    $profileTitle = !empty($vars['user_location'])
+                        ? $profileTitle . $alterDelimiter . $vars['user_location']
+                        : $profileTitle;
+
+                    $profileTitle = $profileTitle . $alterDelimiter . OW::getConfig()->getValue('base', 'site_name');
+
+                    $profileTitle = trim($profileTitle, $delimiter);
+
+                    $title = $this->processMetaText(trim($profileTitle, $alterDelimiter), false, BOL_SeoService::META_TITLE_MAX_LENGTH);
+                }
+            }
         }
 
         if( !empty($params["description"]) )
