@@ -861,10 +861,13 @@ html body .ow_admin_permissions.ow_superwide {
 	background-image: url(images/admin_mobile.svg);
 }
 .ow_admin_menu_item_label {
-	display: table-cell;
-	vertical-align: middle;
-	padding-left: 56px;
-	padding-right: 28px;
+    display: flex;
+    align-items: center;
+    padding-left: 56px;
+    padding-right: 28px;
+    height: 100%;
+    overflow: hidden;
+    word-break: break-word;
 }
 .ow_admin_submenu_title {
 	margin-bottom: 16px;
