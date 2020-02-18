@@ -147,7 +147,7 @@ class ADMIN_CTRL_Theme extends ADMIN_CTRL_Abstract
 
         $fileString = file_get_contents(OW::getThemeManager()->getSelectedTheme()->getRootDir() . BOL_ThemeService::CSS_FILE_NAME);
 
-        $this->assign('code', '<pre class="prettyprint lang-css">' . $fileString . '</pre>');
+        $this->assign('code', $fileString);
 
         $this->addForm(new AddCssForm());
     }
