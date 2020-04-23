@@ -807,8 +807,10 @@ class BOL_ThemeService
         return $image;
     }
 
-    public function moveTemporaryFile( $tmpId, $title = '' )
+    public function moveTemporaryFile( $tmpId, $title = '', $rotate = 0 )
     {
+        $rotate = intval($rotate);
+
         $tmp = BOL_FileTemporaryDao::getInstance()->findById($tmpId);
         $tmpPath = BOL_FileTemporaryService::getInstance()->getTemporaryFilePath($tmpId);
 
@@ -820,6 +822,13 @@ class BOL_ThemeService
         if ( !UTIL_File::validateImage($tmp->filename) )
         {
             throw new LogicException();
+        }
+
+        if ( $rotate !== 0 )
+        {
+            $main = new UTIL_Image($tmpPath);
+            $main->rotate($rotate)
+                ->saveImage($tmpPath);
         }
 
         $image = new BOL_ThemeImage();
