@@ -51,7 +51,7 @@ class UTIL_DateTime
      * 		`Oct 25 '09 | $onlyDate = true
      *
      * @param integer $timeStamp
-     * @param boolean $onlyDate
+     * @param bool $onlyDate
      * @return string
      */
     public static function formatSimpleDate( $timeStamp, $onlyDate = false )
@@ -105,6 +105,11 @@ class UTIL_DateTime
      * @return string
      */
 
+    /**
+     * @param int $timeStamp
+     * @param bool|null $onlyDate
+     * @return string
+     */
     public static function formatDate( $timeStamp, $onlyDate = null )
     {
         if ( !(bool) OW::getConfig()->getValue('base', 'site_use_relative_time') )
@@ -176,9 +181,9 @@ class UTIL_DateTime
 
     /**
      * Converts a date string to a timestamp.
-     * @param string the date string to be parsed
-     * @param string the pattern that the date string is following
-     * @return DateTime for the date string. null if parsing fails.
+     * @param string $value
+     * @param string $pattern
+     * @return int[]|false|null for the date string. null if parsing fails.
      */
     public static function parseDate( $value, $pattern = self::DEFAULT_DATE_FORMAT )
     {
@@ -348,6 +353,10 @@ class UTIL_DateTime
 //               return $dateTime;
     }
 
+    /**
+     * @param string $pattern
+     * @return array
+     */
     private static function tokenize( $pattern )
     {
         if ( !($n = strlen($pattern)) )
@@ -369,6 +378,13 @@ class UTIL_DateTime
         return $tokens;
     }
 
+    /**
+     * @param string $value
+     * @param int $offset
+     * @param int $minLength
+     * @param int $maxLength
+     * @return false|string
+     */
     protected static function parseInteger( $value, $offset, $minLength, $maxLength )
     {
         for ( $len = $maxLength; $len >= $minLength; --$len )
@@ -381,6 +397,12 @@ class UTIL_DateTime
         return false;
     }
 
+    /**
+     * @param int $year
+     * @param int $month
+     * @param int $day
+     * @return int
+     */
     public static function getAge( $year, $month, $day )
     {
         list($y, $m, $d ) = explode(':', date('Y:m:d', time()));
@@ -399,6 +421,12 @@ class UTIL_DateTime
         return $age;
     }
 
+    /**
+     * @param int $year
+     * @param int $month
+     * @param int $day
+     * @return string
+     */
     public static function formatBirthdate( $year, $month, $day )
     {
         $language = OW::getLanguage();
@@ -419,6 +447,9 @@ class UTIL_DateTime
         return $result;
     }
 
+    /**
+     * @return array
+     */
     public static function getTimezones()
     {
         $zones = array(

@@ -44,6 +44,10 @@ class OW_TokenAuthenticator implements OW_IAuthenticator
      */
     private $token;
 
+    /**
+     * OW_TokenAuthenticator constructor.
+     * @param string|null $token
+     */
     public function __construct( $token = null )
     {
         $this->service = BOL_UserService::getInstance();

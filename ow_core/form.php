@@ -262,7 +262,7 @@ class Form
     /**
      * Sets form ajax flag.
      *
-     * @param boolean $isAjax
+     * @param bool $ajax
      * @return Form
      */
     public function setAjax( $ajax = true )
@@ -376,6 +376,9 @@ class Form
         return empty($this->elements[$name]) ? null : $this->elements[$name];
     }
 
+    /**
+     * @param string $elementName
+     */
     public function deleteElement( $elementName )
     {
         if ( empty($elementName) )
@@ -441,7 +444,7 @@ class Form
             OW::getFeedback()->error(OW::getLanguage()->text("base", "invalid_csrf_token_error_message"));
         }
 
-        /* @var $element FormElement */
+        /* @var FormElement $element */
         foreach ( $this->elements as $element )
         {
             $element->setValue(( isset($data[$element->getName()]) ? $data[$element->getName()] : null));
@@ -464,7 +467,7 @@ class Form
     {
         $values = array();
 
-        /* @var $element FormElement */
+        /* @var FormElement $element */
         foreach ( $this->elements as $element )
         {
             $values[$element->getName()] = $element->getValue();
@@ -480,7 +483,7 @@ class Form
      */
     public function setValues( array $values )
     {
-        /* @var $element FormElement */
+        /* @var FormElement $element */
         foreach ( $this->elements as $element )
         {
             if ( isset($values[$element->getName()]) )
@@ -499,7 +502,7 @@ class Form
     {
         $errors = array();
 
-        /* @var $value FormElement */
+        /* @var FormElement $value */
         foreach ( $this->elements as $key => $value )
         {
             $errors[$key] = $value->getErrors();
@@ -515,7 +518,7 @@ class Form
      */
     public function reset()
     {
-        /* @var $element FormElement */
+        /* @var FormElement $element */
         foreach ( $this->elements as $element )
         {
             //TODO remove temp hardcode to avoid token reset
@@ -532,14 +535,14 @@ class Form
      * Returns rendered HTML code of form object.
      *
      * @param string $formContent
-     * @param string $decorator
+     * @param array  $params
      * @return string
      */
     public function render( $formContent, array $params = array() )
     {
         $formElementJS = '';
 
-        /* @var $element FormElement */
+        /* @var FormElement $element */
         foreach ( $this->elements as $element )
         {
             $formElementJS .= $element->getElementJs() . PHP_EOL;
@@ -592,7 +595,7 @@ class Form
 
         $hiddenFieldString = '';
 
-        /* @var $value OW_FormElement */
+        /* @var OW_FormElement $value */
         foreach ( $this->elements as $value )
         {
             if ( $value instanceof HiddenField )

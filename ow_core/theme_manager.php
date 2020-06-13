@@ -59,8 +59,11 @@ class OW_ThemeManager
     {
         $this->decorators = array();
         $this->themeService = BOL_ThemeService::getInstance();
-    }    
+    }
 
+    /**
+     * @param bool $mobile
+     */
     public function initDefaultTheme( $mobile = false )
     {
         $defaultTheme = $this->themeService->getThemeObjectByKey(BOL_ThemeService::DEFAULT_THEME, $mobile);
@@ -134,7 +137,7 @@ class OW_ThemeManager
      * throws InvalidArgumentException
      *
      * @param string $decoratorName
-     * @param string $decoratorDir
+     * @param string $pluginKey
      */
     public function addDecorator( $decoratorName, $pluginKey )
     {
@@ -200,7 +203,7 @@ class OW_ThemeManager
     /**
      * Returns master page template path.
      *
-     * @param string $templateName
+     * @param string $masterPage
      * @return string
      */
     public function getMasterPageTemplate( $masterPage )
@@ -290,7 +293,8 @@ class OW_ThemeManager
      * Renders block decorator and returns result markup.
      *
      * @param string $name
-     * @param array $params
+     * @param array  $params
+     * @param string $content
      * @return string
      */
     public function processBlockDecorator( $name, array $params, $content = '' )
@@ -349,7 +353,7 @@ class OW_ThemeManager
     /**
      * Returns theme css file url.
      *
-     * @param string $cssFileName
+     * @param bool $mobile
      * @return string
      */
     public function getCssFileUrl( $mobile = false )

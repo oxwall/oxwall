@@ -79,7 +79,7 @@ class OW_Router
     }
 
     /**
-     * @param DefaultRoute $defaultRoute
+     * @param OW_DefaultRoute $defaultRoute
      * @return OW_Router
      */
     public function setDefaultRoute( OW_DefaultRoute $defaultRoute )
@@ -137,8 +137,7 @@ class OW_Router
      * All routes should by added before routing process starts.
      * If route with provided name exists exception will be thrown.
      *
-     * @throws LogicException
-     * @param OW_RouteAbstract $route
+     * @param OW_Route $route
      * @return OW_Router
      */
     public function addRoute( OW_Route $route )
@@ -286,7 +285,6 @@ class OW_Router
      * Tries to match requested URI with all added routes. 
      * If matches weren't found default route is used.
      *
-     * @throws Redirect404Exception
      * @return array
      */
     public function route()
@@ -325,7 +323,7 @@ class OW_Router
     /**
      * Returns used route.
      * 
-     * @return type 
+     * @return OW_Route
      */
     public function getUsedRoute()
     {

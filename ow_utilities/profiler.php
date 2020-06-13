@@ -37,7 +37,7 @@ class UTIL_Profiler
     private static $classInstances;
 
     /**
-     * @var int
+     * @var array
      */
     private $checkPoints;
 

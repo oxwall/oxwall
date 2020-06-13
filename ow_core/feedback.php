@@ -131,6 +131,7 @@ class OW_Feedback
 
     /**
      * System method. Don't call it.
+     * @throws Exception
      */
     public function __destruct()
     {

@@ -66,6 +66,7 @@ abstract class OW_ActionController extends OW_Renderable
      * Makes permanent redirect to the same controller and provided action.
      *
      * @param string $action
+     * @throws Exception
      */
     public function redirectToAction( $action )
     {
@@ -78,6 +79,7 @@ abstract class OW_ActionController extends OW_Renderable
      * Makes permanent redirect to provided URL or URI.
      *
      * @param string $redirectTo
+     * @throws Exception
      */
     public function redirect( $redirectTo = null )
     {

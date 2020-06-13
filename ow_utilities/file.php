@@ -260,6 +260,10 @@ class UTIL_File
         return $path;
     }
 
+    /**
+     * @param string $path
+     * @return bool
+     */
     public static function checkDir( $path )
     {
         if ( !file_exists($path) || !is_dir($path) )
@@ -284,8 +288,7 @@ class UTIL_File
      * Validates file
      *
      * @param string $fileName
-     * @param array $avalia
-     * bleExtensions
+     * @param array  $avaliableExtensions
      * @return bool
      */
     public static function validate( $fileName, array $avaliableExtensions = array() )
@@ -351,8 +354,9 @@ class UTIL_File
 
     /**
      * Checks if uploaded file is valid, if not returns localized error string.
-     * 
-     * @param int $errorCode
+     *
+     * @param array $filesItem
+     * @param int|null  $fileSizeLimitInBytes
      * @return array
      */
     public static function checkUploadedFile( array $filesItem, $fileSizeLimitInBytes = null )

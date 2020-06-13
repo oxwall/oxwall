@@ -49,6 +49,9 @@ abstract class OW_Cron
         $this->jobs[$methodName] = $runInterval;
     }
 
+    /**
+     * @return array
+     */
     public function getJobList()
     {
         return $this->jobs;

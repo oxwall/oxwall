@@ -61,7 +61,7 @@ class OW_Theme
     /**
      * Constructor.
      *
-     * @param array $params
+     * @param BOL_Theme $dto
      */
     public function __construct( BOL_Theme $dto )
     {
@@ -153,6 +153,7 @@ class OW_Theme
     /**
      * Returns theme static dir path.
      *
+     * @param bool $mobile
      * @return string
      */
     public function getStaticDir( $mobile = false )
@@ -163,6 +164,7 @@ class OW_Theme
     /**
      * Returns theme static url.
      *
+     * @param bool $mobile
      * @return string
      */
     public function getStaticUrl( $mobile = false )
@@ -173,6 +175,7 @@ class OW_Theme
     /**
      * Returns theme static images dir path.
      *
+     * @param bool $mobile
      * @return string
      */
     public function getStaticImagesDir( $mobile = false )
@@ -183,6 +186,7 @@ class OW_Theme
     /**
      * Returns theme static images url.
      *
+     * @param bool $mobile
      * @return string
      */
     public function getStaticImagesUrl( $mobile = false )
@@ -193,6 +197,7 @@ class OW_Theme
     /**
      * Returns theme root dir path.
      *
+     * @param bool $mobile
      * @return string
      */
     public function getRootDir( $mobile = false )
@@ -213,6 +218,7 @@ class OW_Theme
     /**
      * Returns theme master page dir path.
      *
+     * @param bool $mobile
      * @return string
      */
     public function getMasterPagesDir( $mobile = false )
@@ -223,6 +229,7 @@ class OW_Theme
     /**
      * Returns images dir path.
      *
+     * @param bool $mobile
      * @return string
      */
     public function getImagesDir( $mobile = false )

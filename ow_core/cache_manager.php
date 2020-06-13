@@ -64,16 +64,27 @@ class OW_CacheManager
         $this->cacheEnabled = !false;
     }
 
+
+    /**
+     * @return bool
+     */
     public function getCacheEnabled()
     {
         return $this->cacheEnabled;
     }
 
+    /**
+     * @param bool $cacheEnabled
+     */
     public function setCacheEnabled( $cacheEnabled )
     {
         $this->cacheEnabled = (bool) $cacheEnabled;
     }
 
+    /**
+     * @param string $key
+     * @return mixed|null
+     */
     public function load( $key )
     {
         if ( $this->cacheAvailable() )
@@ -84,6 +95,10 @@ class OW_CacheManager
         return null;
     }
 
+    /**
+     * @param string $key
+     * @return bool
+     */
     public function test( $key )
     {
         if ( $this->cacheAvailable() )
@@ -94,6 +109,13 @@ class OW_CacheManager
         return false;
     }
 
+    /**
+     * @param mixed $data
+     * @param string $key
+     * @param array $tags
+     * @param int|bool $specificLifetime
+     * @return bool
+     */
     public function save( $data, $key, $tags = array(), $specificLifetime = false )
     {
         if ( $this->cacheAvailable() )
@@ -104,6 +126,10 @@ class OW_CacheManager
         return false;
     }
 
+    /**
+     * @param string $key
+     * @return bool
+     */
     public function remove( $key )
     {
         if ( $this->cacheAvailable() )
@@ -114,6 +140,11 @@ class OW_CacheManager
         return false;
     }
 
+    /**
+     * @param array  $tags
+     * @param string $mode
+     * @return bool
+     */
     public function clean( $tags = array(), $mode = self::CLEAN_MATCH_ANY_TAG )
     {
         if ( $this->cacheAvailable() )
@@ -140,6 +171,9 @@ class OW_CacheManager
         $this->lifetime = $lifetime;
     }
 
+    /**
+     * @return bool
+     */
     private function cacheAvailable()
     {
         return $this->cacheBackend !== null && $this->cacheEnabled;

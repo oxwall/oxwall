@@ -51,6 +51,7 @@ class RedirectException extends Exception
      * Constructor.
      *
      * @param string $url
+     * @param int|null   $code
      */
     public function __construct( $url, $code = null )
     {
@@ -92,26 +93,41 @@ class RedirectException extends Exception
     }
 }
 
+/**
+ * Class InterceptException
+ */
 class InterceptException extends Exception
 {
     private $handlerAttrs;
 
+    /**
+     * Construct the exception. Note: The message is NOT binary safe.
+     * @link https://php.net/manual/en/exception.construct.php
+     * @param $attrs
+     */
     public function __construct( $attrs )
     {
         $this->handlerAttrs = $attrs;
     }
 
+    /**
+     * @return array
+     */
     public function getHandlerAttrs()
     {
         return $this->handlerAttrs;
     }
 }
 
+/**
+ * Class AuthorizationException
+ */
 class AuthorizationException extends InterceptException
 {
 
     /**
      * Constructor.
+     * @param string|null $message
      */
     public function __construct( $message = null )
     {
@@ -132,8 +148,9 @@ class Redirect404Exception extends InterceptException
 
     /**
      * Constructor.
+     * @param string|null $message
      */
-    public function __construct()
+    public function __construct($message = null)
     {
         $route = OW::getRouter()->getRoute('base_page_404');
         $params = $route === null ? array('controller' => 'BASE_CTRL_BaseDocument', 'action' => 'page404') : $route->getDispatchAttrs();
@@ -164,6 +181,7 @@ class Redirect403Exception extends InterceptException
 
     /**
      * Constructor.
+     * @param string|null $message
      */
     public function __construct( $message = null )
     {
@@ -181,7 +199,9 @@ class RedirectConfirmPageException extends RedirectException
 {
 
     /**
-     * Constructor.
+     * RedirectConfirmPageException constructor.
+     * @param string $message
+     * @throws Exception
      */
     public function __construct( $message )
     {
@@ -197,7 +217,9 @@ class RedirectAlertPageException extends RedirectException
 {
 
     /**
-     * Constructor.
+     * RedirectAlertPageException constructor.
+     * @param string $message
+     * @throws Exception
      */
     public function __construct( $message )
     {
@@ -221,11 +243,19 @@ class AuthenticateException extends RedirectException
     }
 }
 
+/**
+ * Class ApiResponseErrorException
+ */
 class ApiResponseErrorException extends Exception
 {
     public $data = array();
-    
-    public function __construct($data = array(), $code = 0) 
+
+    /**
+     * ApiResponseErrorException constructor.
+     * @param array $data
+     * @param int   $code
+     */
+    public function __construct($data = array(), $code = 0)
     {
         parent::__construct("", $code);
         
@@ -233,6 +263,9 @@ class ApiResponseErrorException extends Exception
     }
 }
 
+/**
+ * Class ApiAccessException
+ */
 class ApiAccessException extends ApiResponseErrorException
 {
     const TYPE_NOT_AUTHENTICATED = "not_authenticated";
@@ -240,6 +273,11 @@ class ApiAccessException extends ApiResponseErrorException
     const TYPE_NOT_APPROVED = "not_approved";
     const TYPE_NOT_VERIFIED = "not_verified";
 
+    /**
+     * ApiAccessException constructor.
+     * @param string $type
+     * @param array $userData
+     */
     public function __construct( $type, $userData = array() )
     {
         parent::__construct(array(

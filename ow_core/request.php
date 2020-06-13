@@ -201,8 +201,8 @@ class OW_Request
     }
 
     /**
-     * @param array $value
-     * @return array
+     * @param array|string $value
+     * @return array|string
      */
     private function stripSlashesRecursive( $value )
     {
@@ -210,6 +210,9 @@ class OW_Request
         return $value;
     }
 
+    /**
+     * @return bool|null
+     */
     public function isSsl()
     {
         $isHttps = null;

@@ -33,6 +33,9 @@ class OW_User
 {
     private static $classInstance;
 
+    /**
+     * @return OW_User
+     */
     public static function getInstance()
     {
         if ( self::$classInstance === null )
@@ -140,11 +143,17 @@ class OW_User
         return $this->user;
     }
 
+    /**
+     * @return bool
+     */
     public function isAdmin()
     {
         return $this->isAuthorized(BOL_AuthorizationService::ADMIN_GROUP_NAME);
     }
 
+    /**
+     * @param int $userId
+     */
     public function login( $userId )
     {
         $this->auth->login($userId);

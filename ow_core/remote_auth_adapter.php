@@ -1,6 +1,9 @@
 <?php
 
-class OW_RemoteAuthAdapter extends OW_AuthAdapter 
+/**
+ * Class OW_RemoteAuthAdapter
+ */
+class OW_RemoteAuthAdapter extends OW_AuthAdapter
 {
     private $remoteId;
     private $type;
@@ -10,7 +13,12 @@ class OW_RemoteAuthAdapter extends OW_AuthAdapter
      * @var BOL_RemoteAuthService
      */
     private $remoteAuthService;
-    
+
+    /**
+     * OW_RemoteAuthAdapter constructor.
+     * @param int $remoteId
+     * @param string $type
+     */
     public function __construct($remoteId, $type)
     {
         $this->remoteId = $remoteId;
@@ -18,22 +26,35 @@ class OW_RemoteAuthAdapter extends OW_AuthAdapter
         
         $this->remoteAuthService = BOL_RemoteAuthService::getInstance();
     }
-    
+
+    /**
+     * @return string
+     */
     public function getType()
     {
         return $this->type;
     }
-    
+
+    /**
+     * @return int
+     */
     public function getRemoteId()
     {
         return $this->remoteId;
     }
-    
+
+    /**
+     * @return BOL_RemoteAuth
+     */
     public function isRegistered()
     {
         return $this->remoteAuthService->findByRemoteTypeAndId($this->type, $this->remoteId);
     }
-    
+
+    /**
+     * @param int $userId
+     * @param string|null $custom
+     */
     public function register( $userId, $custom = null )
     {
         $entity = new BOL_RemoteAuth();

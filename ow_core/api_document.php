@@ -37,13 +37,20 @@ class OW_ApiDocument extends OW_Document
         $this->type = OW_Document::JSON;
     }
 
+    /** @var string $body */
     private $body;
 
+    /**
+     * @return string
+     */
     public function getBody()
     {
         return $this->body;
     }
 
+    /**
+     * @param string $body
+     */
     public function setBody( $body )
     {
         $this->body = $body;
@@ -58,8 +65,13 @@ class OW_ApiDocument extends OW_Document
         {
             return $this->renderJson();
         }
+
+        return '';
     }
 
+    /**
+     * @return false|string
+     */
     private function renderJson()
     {
         OW::getResponse()->setHeader(OW_Response::HD_CNT_TYPE, "application/json");

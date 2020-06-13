@@ -255,7 +255,6 @@ class OW_HtmlDocument extends OW_Document
     /**
      * Constructor.
      *
-     * @param array $params
      */
     public function __construct()
     {
@@ -275,7 +274,7 @@ class OW_HtmlDocument extends OW_Document
     /**
      * Sets document heading icon class.
      *
-     * @param string $headingIcon
+     * @param string $headingIconClass
      */
     public function setHeadingIconClass( $headingIconClass )
     {
@@ -356,7 +355,6 @@ class OW_HtmlDocument extends OW_Document
      * Sets master page in html document.
      *
      * @param OW_MasterPage $masterPage
-     * @return OW_HtmlDocument
      */
     public function setMasterPage( OW_MasterPage $masterPage )
     {
@@ -366,7 +364,7 @@ class OW_HtmlDocument extends OW_Document
     /**
      * Returns document master page.
      *
-     * @return OW_MobileMasterPage
+     * @return OW_MasterPage
      */
     public function getMasterPage()
     {
@@ -377,6 +375,8 @@ class OW_HtmlDocument extends OW_Document
      * Adds stylesheet file to document.
      *
      * @param string $url
+     * @param string $media
+     * @param int|null $priority
      * @return OW_HtmlDocument
      */
     public function addStyleSheet( $url, $media = 'all', $priority = null )
@@ -403,6 +403,8 @@ class OW_HtmlDocument extends OW_Document
      * Adds head style declarations to document.
      *
      * @param string $style
+     * @param string $media
+     * @param int|null   $priority
      * @return OW_HtmlDocument
      */
     public function addStyleDeclaration( $style, $media = 'all', $priority = null )
@@ -430,6 +432,7 @@ class OW_HtmlDocument extends OW_Document
      *
      * @param string $url
      * @param string $type
+     * @param int|null   $priority
      * @return OW_HtmlDocument
      */
     public function addScript( $url, $type = "text/javascript", $priority = null )
@@ -488,6 +491,7 @@ class OW_HtmlDocument extends OW_Document
      *
      * @param string $script
      * @param string $type
+     * @param int|null   $priority
      * @return OW_HtmlDocument
      */
     public function addScriptDeclaration( $script, $type = "text/javascript", $priority = null )
@@ -520,6 +524,8 @@ class OW_HtmlDocument extends OW_Document
      * Adds onload javascript.
      *
      * @param string $script
+     * @param int|null   $priority
+     * @return OW_HtmlDocument
      */
     public function addOnloadScript( $script, $priority = null )
     {
@@ -544,6 +550,7 @@ class OW_HtmlDocument extends OW_Document
      *
      * @param string $script
      * @param string $type
+     * @param int|null   $priority
      * @return OW_HtmlDocument
      */
     public function addScriptDeclarationBeforeIncludes( $script, $type = "text/javascript", $priority = null )
@@ -568,8 +575,6 @@ class OW_HtmlDocument extends OW_Document
      * Sets document favicon.
      *
      * @param string $url
-     * @param string $type
-     * @param string $relation
      * @return OW_HtmlDocument
      */
     public function setFavicon( $url )
@@ -806,6 +811,10 @@ class OW_HtmlDocument extends OW_Document
         return $renderer->renderTemplate($this->getTemplate());
     }
 
+    /**
+     * @param string $name
+     * @param array $params
+     */
     protected function throwEvent( $name, $params = array() )
     {
         OW::getEventManager()->trigger(new OW_Event($name, $params));

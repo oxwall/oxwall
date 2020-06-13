@@ -48,27 +48,35 @@ class OW_Mailer
     {
         $this->maliService = BOL_MailService::getInstance();
     }
-    
+
     /**
-     * 
-     * @param $state
+     *
      * @return BASE_CLASS_Mail
      */
     public function createMail()
     {
         return $this->maliService->createMail();
     }
-    
+
+    /**
+     * @param BASE_CLASS_Mail $mail
+     */
     public function addToQueue( BASE_CLASS_Mail $mail )
     {
         $this->maliService->addToQueue($mail);
     }
-    
+
+    /**
+     * @param array $list
+     */
     public function addListToQueue( array $list )
     {
         $this->maliService->addListToQueue($list);
     }
-    
+
+    /**
+     * @param BASE_CLASS_Mail $mail
+     */
     public function send( BASE_CLASS_Mail $mail )
     {
         if ( $this->maliService->getTransfer() == BOL_MailService::TRANSFER_SMTP )
@@ -80,7 +88,10 @@ class OW_Mailer
             $this->maliService->send($mail);    
         }
     }
-    
+
+    /**
+     * @return string
+     */
     public function getEmailDomain()
     {
         return $this->maliService->getEmailDomain();

@@ -50,11 +50,19 @@ class OW_Registry
         $this->arrayData = array();
     }
 
+    /**
+     * @param string $key
+     * @param $value
+     */
     public function set( $key, $value )
     {
         $this->data[$key] = $value;
     }
 
+    /**
+     * @param string $key
+     * @return mixed|null
+     */
     public function get( $key )
     {
         if ( !isset($this->data[$key]) )
@@ -65,11 +73,19 @@ class OW_Registry
         return $this->data[$key];
     }
 
+    /**
+     * @param string $key
+     * @param array $value
+     */
     public function setArray( $key, array $value )
     {
         $this->arrayData[$key] = $value;
     }
 
+    /**
+     * @param string $key
+     * @param $value
+     */
     public function addToArray( $key, $value )
     {
         if ( !isset($this->arrayData[$key]) )
@@ -80,6 +96,10 @@ class OW_Registry
         $this->arrayData[$key][] = $value;
     }
 
+    /**
+     * @param string $key
+     * @return array|mixed
+     */
     public function getArray( $key )
     {
         if ( !isset($this->arrayData[$key]) )

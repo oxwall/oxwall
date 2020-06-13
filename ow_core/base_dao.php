@@ -50,7 +50,9 @@ abstract class OW_BaseDao
     /**
      * Finds and returns mapped entity item
      *
-     * @param int $id
+     * @param int   $id
+     * @param int   $cacheLifeTime
+     * @param array $tags
      * @return OW_Entity
      */
     public function findById( $id, $cacheLifeTime = 0, $tags = array() )
@@ -64,6 +66,8 @@ abstract class OW_BaseDao
      * Finds and returns mapped entity list
      *
      * @param array $idList
+     * @param int   $cacheLifeTime
+     * @param array $tags
      * @return array
      */
     public function findByIdList( array $idList, $cacheLifeTime = 0, $tags = array() )
@@ -77,6 +81,12 @@ abstract class OW_BaseDao
         return $this->dbo->queryForObjectList($sql, $this->getDtoClassName(), array(), $cacheLifeTime, $tags);
     }
 
+    /**
+     * @param OW_Example $example
+     * @param int        $cacheLifeTime
+     * @param array      $tags
+     * @return array|string
+     */
     public function findListByExample( OW_Example $example, $cacheLifeTime = 0, $tags = array() )
     {
         if ( $example === null )
@@ -89,6 +99,12 @@ abstract class OW_BaseDao
         return $this->dbo->queryForObjectList($sql, $this->getDtoClassName(), array(), $cacheLifeTime, $tags);
     }
 
+    /**
+     * @param OW_Example $example
+     * @param int        $cacheLifeTime
+     * @param array      $tags
+     * @return mixed|string|null
+     */
     public function countByExample( OW_Example $example, $cacheLifeTime = 0, $tags = array() )
     {
         if ( $example === null )
@@ -101,6 +117,12 @@ abstract class OW_BaseDao
         return $this->dbo->queryForColumn($sql, array(), $cacheLifeTime, $tags);
     }
 
+    /**
+     * @param OW_Example $example
+     * @param int        $cacheLifeTime
+     * @param array      $tags
+     * @return mixed|string|null
+     */
     public function findObjectByExample( OW_Example $example, $cacheLifeTime = 0, $tags = array() )
     {
         if ( $example === null )
@@ -117,6 +139,8 @@ abstract class OW_BaseDao
     /**
      * Returns all mapped entries of table
      *
+     * @param int   $cacheLifeTime
+     * @param array $tags
      * @return array
      */
     public function findAll( $cacheLifeTime = 0, $tags = array() )
@@ -167,7 +191,7 @@ abstract class OW_BaseDao
     {
         if ( $idList === null || count($idList) === 0 )
         {
-            return;
+            return 0;
         }
         $sql = 'DELETE FROM ' . $this->getTableName() . ' WHERE `id` IN(' . $this->dbo->mergeInClause($idList) . ')';
 
@@ -176,6 +200,10 @@ abstract class OW_BaseDao
         return $this->dbo->delete($sql);
     }
 
+    /**
+     * @param OW_Example $example
+     * @return int
+     */
     public function deleteByExample( OW_Example $example )
     {
         if ( $example === null || mb_strlen($example->__toString()) === 0 )
@@ -219,6 +247,9 @@ abstract class OW_BaseDao
         $this->clearCache();
     }
 
+    /**
+     * @param OW_Entity $entity
+     */
     public function saveDelayed( $entity )
     {
         if ( $entity === null || !($entity instanceof OW_Entity) )
@@ -240,12 +271,21 @@ abstract class OW_BaseDao
         $this->clearCache();
     }
 
+    /**
+     * @param OW_Entity $entity
+     */
     public function delete( $entity )
     {
         $this->deleteById($entity->id);
         $this->clearCache();
     }
 
+    /**
+     * @param OW_Example $example
+     * @param int        $cacheLifeTime
+     * @param array      $tags
+     * @return mixed|string|null
+     */
     public function findIdByExample( OW_Example $example, $cacheLifeTime = 0, $tags = array() )
     {
         if ( $example === null )
@@ -259,6 +299,12 @@ abstract class OW_BaseDao
         return $this->dbo->queryForColumn($sql, array(), $cacheLifeTime, $tags);
     }
 
+    /**
+     * @param OW_Example $example
+     * @param int        $cacheLifeTime
+     * @param array      $tags
+     * @return array|string
+     */
     public function findIdListByExample( OW_Example $example, $cacheLifeTime = 0, $tags = array() )
     {
         if ( $example === null )

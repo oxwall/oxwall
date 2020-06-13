@@ -60,7 +60,6 @@ abstract class OW_Validator
      * Sets validator error message.
      *
      * @param string $errorMessage
-     * @return OW_Validator
      * @throws InvalidArgumentException
      */
     public function setErrorMessage( $errorMessage )
@@ -99,7 +98,6 @@ class RequiredValidator extends OW_Validator
     /**
      * Constructor.
      *
-     * @param array $params
      */
     public function __construct()
     {
@@ -114,9 +112,9 @@ class RequiredValidator extends OW_Validator
     }
 
     /**
-     * @see OW_Validator::isValid()
-     *
      * @param mixed $value
+     * @return bool|false
+     * @see OW_Validator::isValid()
      */
     public function isValid( $value )
     {
@@ -164,7 +162,6 @@ class WyswygRequiredValidator extends OW_Validator
     /**
      * Constructor.
      *
-     * @param array $params
      */
     public function __construct()
     {
@@ -179,9 +176,9 @@ class WyswygRequiredValidator extends OW_Validator
     }
 
     /**
-     * @see OW_Validator::isValid()
-     *
      * @param mixed $value
+     * @return int
+     * @see OW_Validator::isValid()
      */
     public function isValid( $value )
     {
@@ -294,9 +291,9 @@ class StringValidator extends OW_Validator
     }
 
     /**
-     * @see OW_Validator::isValid()
-     *
      * @param mixed $value
+     * @return bool
+     * @see OW_Validator::isValid()
      */
     public function isValid( $value )
     {
@@ -323,6 +320,10 @@ class StringValidator extends OW_Validator
         }
     }
 
+    /**
+     * @param string $value
+     * @return bool
+     */
     public function checkValue( $value )
     {
         $trimValue = trim($value);
@@ -340,6 +341,11 @@ class StringValidator extends OW_Validator
         return true;
     }
 
+    /**
+     * Returns validator js object code.
+     *
+     * @return string
+     */
     public function getJsValidator()
     {
         $js = "{
@@ -460,9 +466,9 @@ class RegExpValidator extends OW_Validator
     }
 
     /**
-     * @see OW_Validator::isValid()
-     *
      * @param mixed $value
+     * @return bool
+     * @see OW_Validator::isValid()
      */
     public function isValid( $value )
     {
@@ -489,6 +495,10 @@ class RegExpValidator extends OW_Validator
         }
     }
 
+    /**
+     * @param string $value
+     * @return bool
+     */
     public function checkValue( $value )
     {
         $trimValue = trim($value);
@@ -501,6 +511,9 @@ class RegExpValidator extends OW_Validator
         return true;
     }
 
+    /**
+     * @return string
+     */
     public function getJsValidator()
     {
         $js = "{
@@ -696,7 +709,7 @@ class InArrayValidator extends OW_Validator
     {
         $values = json_encode($this->predefinedValues);
 
-        $js = "{
+        return "{
             validate : function( value )
         	{
         	    if ( $.inArray(value, {$values}) == -1 )
@@ -710,8 +723,6 @@ class InArrayValidator extends OW_Validator
         		return " . json_encode($this->getError()) . "
     		}
         }";
-
-        return $js;
     }
 }
 
@@ -767,16 +778,28 @@ class IntValidator extends OW_Validator
         $this->setErrorMessage($errorMessage);
     }
 
+    /**
+     * @param int $max
+     */
     public function setMaxValue( $max )
     {
         $this->max = (int) $max;
     }
 
+    /**
+     * @param int $min
+     */
     public function setMinValue( $min )
     {
         $this->min = (int) $min;
     }
 
+    /**
+     * Checks if provided value is valid.
+     *
+     * @param $value
+     * @return boolean
+     */
     public function isValid( $value )
     {
         // doesn't check empty values
@@ -802,6 +825,10 @@ class IntValidator extends OW_Validator
         }
     }
 
+    /**
+     * @param int $value
+     * @return bool
+     */
     public function checkValue( $value )
     {
         $intValue = (int) $value;
@@ -824,6 +851,9 @@ class IntValidator extends OW_Validator
         return true;
     }
 
+    /**
+     * @return string
+     */
     public function getJsValidator()
     {
         $js = "{
@@ -958,16 +988,26 @@ class FloatValidator extends OW_Validator
         $this->setErrorMessage($errorMessage);
     }
 
+    /**
+     * @param float $max
+     */
     public function setMaxValue( $max )
     {
         $this->max = (float) $max;
     }
 
+    /**
+     * @param float $min
+     */
     public function setMinValue( $min )
     {
         $this->min = (float) $min;
     }
 
+    /**
+     * @param $value
+     * @return bool
+     */
     public function isValid( $value )
     {
         // doesn't check empty values
@@ -993,6 +1033,10 @@ class FloatValidator extends OW_Validator
         }
     }
 
+    /**
+     * @param float $value
+     * @return bool
+     */
     public function checkValue( $value )
     {
         $floatValue = (float) $value;
@@ -1015,6 +1059,9 @@ class FloatValidator extends OW_Validator
         return true;
     }
 
+    /**
+     * @return string
+     */
     public function getJsValidator()
     {
         $js = "{
@@ -1114,8 +1161,8 @@ class DateValidator extends OW_Validator
     /**
      * Class constructor
      *
-     * @param int $min
-     * @param int $max
+     * @param int $minYear
+     * @param int $maxYear
      */
     public function __construct( $minYear = null, $maxYear = null )
     {
@@ -1139,6 +1186,9 @@ class DateValidator extends OW_Validator
         $this->setErrorMessage($errorMessage);
     }
 
+    /**
+     * @param int $maxYear
+     */
     public function setMaxYear( $maxYear )
     {
         $value = (int) $maxYear;
@@ -1151,6 +1201,9 @@ class DateValidator extends OW_Validator
         $this->maxYear = (int) $value;
     }
 
+    /**
+     * @param string $dateFormat
+     */
     public function setDateFormat( $dateFormat )
     {
         $format = trim($dateFormat);
@@ -1163,6 +1216,9 @@ class DateValidator extends OW_Validator
         $this->dateFormat = trim($format);
     }
 
+    /**
+     * @param int $minYear
+     */
     public function setMinYear( $minYear )
     {
         $value = (int) $minYear;
@@ -1175,6 +1231,12 @@ class DateValidator extends OW_Validator
         $this->minYear = (int) $value;
     }
 
+    /**
+     * Checks if provided value is valid.
+     *
+     * @param $value
+     * @return boolean
+     */
     public function isValid( $value )
     {
         // doesn't check empty values
@@ -1200,6 +1262,10 @@ class DateValidator extends OW_Validator
         }
     }
 
+    /**
+     * @param string $value
+     * @return bool
+     */
     public function checkValue( $value )
     {
         if ( $value === null || mb_strlen(trim($value)) === 0 )
@@ -1232,6 +1298,9 @@ class DateValidator extends OW_Validator
         return true;
     }
 
+    /**
+     * @return string
+     */
     public function getJsValidator()
     {
         return "{
@@ -1265,6 +1334,10 @@ class CaptchaValidator extends OW_Validator
         $this->setErrorMessage($errorMessage);
     }
 
+    /**
+     * @param $value
+     * @return bool
+     */
     public function isValid( $value )
     {
         // doesn't check empty values
@@ -1290,6 +1363,9 @@ class CaptchaValidator extends OW_Validator
         }
     }
 
+    /**
+     * @param string $name
+     */
     public function setJsObjectName( $name )
     {
         if ( !empty($name) )
@@ -1298,11 +1374,18 @@ class CaptchaValidator extends OW_Validator
         }
     }
 
+    /**
+     * @param $value
+     * @return bool
+     */
     public function checkValue( $value )
     {
         return UTIL_Validator::isCaptchaValid($value);
     }
 
+    /**
+     * @return string
+     */
     public function getJsValidator()
     {
         if ( empty($this->jsObjectName) )
@@ -1334,6 +1417,9 @@ class CaptchaValidator extends OW_Validator
     }
 }
 
+/**
+ * Class RangeValidator
+ */
 class RangeValidator extends OW_Validator
 {
     /**
@@ -1359,7 +1445,10 @@ class RangeValidator extends OW_Validator
         
         $this->setErrorMessage($errorMessage);
     }
-    
+
+    /**
+     * @param int $max
+     */
     public function setMaxValue( $max )
     {
         $value = (int) $max;
@@ -1372,6 +1461,9 @@ class RangeValidator extends OW_Validator
         $this->max = (int) $value;
     }
 
+    /**
+     * @param int $min
+     */
     public function setMinValue( $min )
     {
         $value = (int) $min;
@@ -1385,9 +1477,9 @@ class RangeValidator extends OW_Validator
     }
 
     /**
-     * @see OW_Validator::isValid()
-     *
      * @param mixed $value
+     * @return bool
+     * @see OW_Validator::isValid()
      */
     public function isValid( $value )
     {
@@ -1410,6 +1502,10 @@ class RangeValidator extends OW_Validator
         return $this->checkValue($value);
     }
 
+    /**
+     * @param string $value
+     * @return bool
+     */
     public function checkValue( $value )
     {
         $value = trim($value);
@@ -1444,6 +1540,9 @@ class RangeValidator extends OW_Validator
         return true;
     }
 
+    /**
+     * @return string
+     */
     public function getJsValidator()
     {
         $js = "{

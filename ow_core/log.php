@@ -82,7 +82,6 @@ class OW_Log
      * Constructor.
      *
      * @param string $type
-     * @param OW_LogWriter $logWriter
      */
     private function __construct( $type )
     {

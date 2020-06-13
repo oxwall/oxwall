@@ -42,6 +42,7 @@ final class OW_ErrorManager
     /**
      * Returns an instance of class (singleton pattern implementation).
      *
+     * @param bool $debugMode
      * @return OW_ErrorManager
      */
     public static function getInstance( $debugMode = true )
@@ -75,6 +76,7 @@ final class OW_ErrorManager
 
     /**
      * Constructor.
+     * @param bool $debugMode
      */
     private function __construct( $debugMode )
     {
@@ -128,6 +130,9 @@ final class OW_ErrorManager
         return $this->logger;
     }
 
+    /**
+     * @param OW_Log $logger
+     */
     public function setLogger( OW_Log $logger )
     {
         $this->logger = $logger;
@@ -253,12 +258,18 @@ final class OW_ErrorManager
         }
     }
 
+    /**
+     * @param array $data
+     */
     private function handleShow( $data )
     {
         $this->errorOutput->printString($data);
         $this->handleLog($data);
     }
 
+    /**
+     * @param array $data
+     */
     private function handleDie( $data )
     {
         $this->errorOutput->printString($data);
@@ -268,6 +279,9 @@ final class OW_ErrorManager
         exit;
     }
 
+    /**
+     * @param array $data
+     */
     private function handleRedirect( $data )
     {
         $this->handleLog($data);
@@ -277,12 +291,17 @@ final class OW_ErrorManager
         header('Location: ' . OW_URL_HOME . 'e500.php');
     }
 
+    /**
+     * @param array $data
+     */
     private function handleIgnore( $data )
     {
         $this->handleLog($data);
-        return;
     }
 
+    /**
+     * @param array $data
+     */
     private function handleLog( $data )
     {
         if ( $this->logger === null )
@@ -295,7 +314,10 @@ final class OW_ErrorManager
         $this->logger->addEntry($message, $data['type']);
     }
 
-    public function debugBacktrace( )
+    /**
+     * @return string
+     */
+    public function debugBacktrace()
     {
         $stack = '';
         $i = 1;

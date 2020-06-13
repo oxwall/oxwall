@@ -41,7 +41,7 @@ abstract class OW_Renderable extends OW_View
     /**
      * List of registered forms.
      *
-     * @var array
+     * @var OW_Form[]
      */
     protected $forms = array();
 
@@ -101,7 +101,7 @@ abstract class OW_Renderable extends OW_View
     /**
      * Returns added form by key.
      *
-     * @param string $key
+     * @param string $name
      * @return OW_Form
      */
     public function getForm( $name )

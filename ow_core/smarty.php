@@ -56,9 +56,16 @@ class OW_Smarty extends Smarty
     }
 }
 
+/**
+ * Class OW_Smarty_Security
+ */
 class OW_Smarty_Security extends Smarty_Security
 {
 
+    /**
+     * OW_Smarty_Security constructor.
+     * @param $smarty
+     */
     public function __construct( $smarty )
     {
         parent::__construct($smarty);

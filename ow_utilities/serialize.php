@@ -79,7 +79,7 @@ class UTIL_Serialize
     /**
      * Serialize object
      *
-     * @param string $serialized
+     * @param Serializable $object
      * @return string
      */
     public static function serialize(Serializable $object) {
@@ -104,7 +104,7 @@ class UTIL_Serialize
             return null;
         }
 
-        /* @var $object Serializable */
+        /* @var Serializable $object */
         $object = new $className;
         $object->unserialize($serializedData);
 

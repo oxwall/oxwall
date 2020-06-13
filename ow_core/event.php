@@ -56,7 +56,10 @@ class OW_Event
     protected $stop = false;
 
     /**
-     * Constructor.
+     * OW_Event constructor.
+     * @param string $name
+     * @param array $params
+     * @param null  $dataValue
      */
     public function __construct( $name, array $params = array(), $dataValue = null )
     {

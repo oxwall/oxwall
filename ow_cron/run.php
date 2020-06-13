@@ -90,7 +90,7 @@ $plugins = BOL_PluginService::getInstance()->findActivePlugins();
 
 foreach ( $plugins as $plugin )
 {
-    /* @var $plugin BOL_Plugin */
+    /* @var BOL_Plugin $plugin */
     $pluginRootDir = OW::getPluginManager()->getPlugin($plugin->getKey())->getRootDir();
     if ( file_exists($pluginRootDir . 'cron.php') )
     {
@@ -103,7 +103,7 @@ foreach ( $plugins as $plugin )
 
         foreach ( BOL_CronService::getInstance()->findJobList() as $runJob )
         {
-            /* @var $runJob BOL_CronJob */
+            /* @var BOL_CronJob $runJob */
             $runJobs[$runJob->methodName] = $runJob->runStamp;
         }
 

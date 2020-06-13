@@ -68,8 +68,8 @@ class OW_Example
     /**
      * Adds limit clause to query string.
      *
-     * @param integer $count
-     * @param integer $offset
+     * @param int $first
+     * @param int $count
      * @return OW_Example
      */
     public function setLimitClause( $first, $count )
@@ -242,7 +242,6 @@ class OW_Example
      * Adds field is null clause to query.
      *
      * @param string $field
-     * @param mixed $value
      * @return OW_Example
      */
     public function andFieldIsNull( $field )
@@ -255,7 +254,6 @@ class OW_Example
      * Adds field is not null clause to query.
      *
      * @param string $field
-     * @param mixed $value
      * @return OW_Example
      */
     public function andFieldIsNotNull( $field )

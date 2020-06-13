@@ -254,7 +254,7 @@ final class OW
     /**
      * Returns responded HTML document object.
      *
-     * @return OW_HtmlDocument
+     * @return OW_Document
      */
     public static function getDocument()
     {
@@ -361,7 +361,7 @@ final class OW
 
     /**
      * @deprecated
-     * @return OW_Dispatcher
+     * @return OW_RequestHandler
      */
     public static function getDispatcher()
     {
@@ -427,6 +427,10 @@ final class OW
         return self::$storage;
     }
 
+    /**
+     * @param string $logType
+     * @return OW_Log
+     */
     public static function getLogger( $logType = 'ow' )
     {
         return OW_Log::getInstance($logType);
@@ -448,6 +452,12 @@ final class OW
         return OW_CacheManager::getInstance();
     }
 
+    /**
+     * @param string $className
+     * @param null $arguments
+     * @return mixed|object
+     * @throws ReflectionException
+     */
     public static function getClassInstance( $className, $arguments = null )
     {
         $args = func_get_args();
@@ -456,6 +466,12 @@ final class OW
         return self::getClassInstanceArray($className, $constuctorArgs);
     }
 
+    /**
+     * @param string $className
+     * @param array $arguments
+     * @return mixed|object
+     * @throws ReflectionException
+     */
     public static function getClassInstanceArray( $className, array $arguments = array() )
     {
         $params = array(

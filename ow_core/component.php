@@ -57,6 +57,9 @@ abstract class OW_Component extends OW_Renderable
         }
     }
 
+    /**
+     * @return string
+     */
     public function render()
     {
         if ( $this->getTemplate() === null )

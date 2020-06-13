@@ -66,6 +66,9 @@ class OW_AuthResult
 
     /**
      * Constructor.
+     * @param int   $code
+     * @param null  $userId
+     * @param array $messages
      */
     public function __construct( $code, $userId = null, array $messages = array() )
     {
@@ -97,7 +100,7 @@ class OW_AuthResult
      */
     public function isValid()
     {
-        return ( $this->code > 0 ) ? true : false;
+        return $this->code > 0;
     }
 
     /**

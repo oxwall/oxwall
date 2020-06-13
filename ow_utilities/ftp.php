@@ -36,12 +36,12 @@ class UTIL_Ftp
     const ERROR_INVALID_CREDENTIALS_PROVIDED = 'error_invalid_credentials_provided';
 
     /**
-     * @var connection stream
+     * @var resource stream
      */
     private $stream;
 
     /**
-     * @var connection timeout
+     * @var int timeout
      */
     private $timeout = 30;
 
@@ -60,7 +60,6 @@ class UTIL_Ftp
     /**
      * Constructor.
      *
-     * @param array $options
      */
     private function __construct()
     {
@@ -177,6 +176,10 @@ class UTIL_Ftp
         return $connection;
     }
 
+    /**
+     * @param string $path
+     * @return bool
+     */
     private function isFtpRootDir( $path )
     {
         $this->chdir('/');
@@ -200,16 +203,27 @@ class UTIL_Ftp
         return $this->stream;
     }
 
+    /**
+     * @return int
+     */
     public function getTimeout()
     {
         return $this->timeout;
     }
 
+    /**
+     * @param int $timeout
+     */
     public function setTimeout( $timeout )
     {
         $this->timeout = (int) $timeout;
     }
 
+    /**
+     * @param string $host
+     * @param int $port
+     * @return bool
+     */
     public function connect( $host, $port = 21 )
     {
         if ( is_resource($this->stream) )
@@ -221,11 +235,19 @@ class UTIL_Ftp
         return (!empty($this->stream) && is_resource($this->stream));
     }
 
+    /**
+     * @return bool
+     */
     public function isConnected()
     {
         return is_resource($this->stream);
     }
 
+    /**
+     * @param string $username
+     * @param string $password
+     * @return bool
+     */
     public function login( $username, $password )
     {
         if ( ftp_login($this->stream, $username, $password) )
@@ -236,22 +258,37 @@ class UTIL_Ftp
         return $this->loggedIn;
     }
 
+    /**
+     * @return bool
+     */
     public function isLoggedIn()
     {
         return $this->loggedIn;
     }
 
+    /**
+     * @return false|string
+     */
     public function pwd()
     {
         return ftp_pwd($this->stream);
     }
 
+    /**
+     * @param string $path
+     * @return bool
+     */
     public function chdir( $path )
     {
         $path = $this->getPath($path);
         return ftp_chdir($this->stream, $path);
     }
 
+    /**
+     * @param string $fromPath
+     * @param string $toPath
+     * @return bool
+     */
     public function rename( $fromPath, $toPath )
     {
         $fromPath = $this->getPath($fromPath);
@@ -260,6 +297,10 @@ class UTIL_Ftp
         return ftp_rename($this->stream, $fromPath, $toPath);
     }
 
+    /**
+     * @param string $filePath
+     * @return bool
+     */
     public function delete( $filePath )
     {
         $filePath = $this->getPath($filePath);
@@ -267,6 +308,9 @@ class UTIL_Ftp
         return ftp_delete($this->stream, $filePath);
     }
 
+    /**
+     * @param string $dirPath
+     */
     public function rmDir( $dirPath )
     {
         $dirPath = $this->getPath($dirPath);
@@ -290,6 +334,9 @@ class UTIL_Ftp
         ftp_rmdir($this->stream, $dirPath);
     }
 
+    /**
+     * @param string $dirPath
+     */
     public function mkDir( $dirPath )
     {
         $dirPath = $this->getPath($dirPath);
@@ -302,6 +349,11 @@ class UTIL_Ftp
         }
     }
 
+    /**
+     * @param string $dirPath
+     * @param string $type
+     * @return array
+     */
     public function readDir( $dirPath, $type = 'all' )
     {
         $dirPath = $this->getPath($dirPath);
@@ -379,6 +431,10 @@ class UTIL_Ftp
         return $resultArray;
     }
 
+    /**
+     * @param int $mode
+     * @param string $filePath
+     */
     public function chmod( $mode, $filePath )
     {
         $filePath = $this->getPath($filePath);
@@ -391,6 +447,10 @@ class UTIL_Ftp
         }
     }
 
+    /**
+     * @param string $localFile
+     * @param string $remoteFile
+     */
     public function upload( $localFile, $remoteFile )
     {
         $remoteFile = $this->getPath($remoteFile);
@@ -447,6 +507,10 @@ class UTIL_Ftp
         closedir($handle);
     }
 
+    /**
+     * @param string $remoteFile
+     * @param string $localFile
+     */
     public function download( $remoteFile, $localFile )
     {
         $remoteFile = $this->getPath($remoteFile);
@@ -462,6 +526,10 @@ class UTIL_Ftp
         ftp_close($this->stream);
     }
 
+    /**
+     * @param string $path
+     * @return false|string
+     */
     private function getPath( $path )
     {
         if ( $this->ftpRootDir === null )

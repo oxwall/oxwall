@@ -292,8 +292,10 @@ final class OW_Database
      * Enter description here...
      *
      * @param string $sql
-     * @param unknown_type $className
-     * @param array $params
+     * @param string $className
+     * @param array  $params
+     * @param int    $cacheLifeTime
+     * @param array  $tags
      * @return mixed
      */
     public function queryForObject( $sql, $className, array $params = null, $cacheLifeTime = 0, $tags = array() )
@@ -399,7 +401,9 @@ final class OW_Database
      * Enter description here...
      *
      * @param string $sql
-     * @param array $params
+     * @param array  $params
+     * @param int    $cacheLifeTime
+     * @param array  $tags
      * @return array
      */
     public function queryForList( $sql, array $params = null, $cacheLifeTime = 0, $tags = array() )
@@ -422,7 +426,7 @@ final class OW_Database
      * @param array $params
      * @param int $cacheLifeTime
      * @param array $tags
-     * @return type
+     * @return array
      */
     public function queryForColumnList( $sql, array $params = null, $cacheLifeTime = 0, $tags = array() )
     {
@@ -455,7 +459,7 @@ final class OW_Database
     }
 
     /**
-     * @param type $sql
+     * @param string $sql
      * @param array $params
      * @return int
      */
@@ -482,9 +486,9 @@ final class OW_Database
     /**
      * Enter description here...
      *
-     * @param unknown_type $sql
+     * @param string $sql
      * @param array $params
-     * @return unknown
+     * @return int
      */
     public function update( $sql, array $params = null )
     {
@@ -497,6 +501,7 @@ final class OW_Database
      *
      * @param string $tableName
      * @param object $obj
+     * @param bool   $delayed
      * @return int
      */
     public function insertObject( $tableName, $obj, $delayed = false )
@@ -518,11 +523,11 @@ final class OW_Database
     }
 
     /**
-     * @param string $tableName
+     * @param string    $tableName
      * @param OW_Entity $obj
-     * @param string $primaryKeyName
-     * @return type
-     * @throws InvalidArgumentException
+     * @param string    $primaryKeyName
+     * @param bool      $lowPriority
+     * @return bool|int
      */
     public function updateObject( $tableName, $obj, $primaryKeyName = 'id', $lowPriority = false )
     {
@@ -568,6 +573,10 @@ final class OW_Database
         }
     }
 
+    /**
+     * @param array $valueList
+     * @return string
+     */
     public function mergeInClause( array $valueList )
     {
         if ( $valueList === null )
@@ -585,6 +594,11 @@ final class OW_Database
         return $result;
     }
 
+    /**
+     * @param string $tableName
+     * @param array $objects
+     * @param int $batchSize
+     */
     public function batchInsertOrUpdateObjectList( $tableName, $objects, $batchSize = 50 )
     {
         if ( $objects != null && is_array($objects) )
@@ -666,6 +680,9 @@ final class OW_Database
      * @return integer
      */
 
+    /**
+     * @return int
+     */
     public function getAffectedRows()
     {
         return $this->affectedRows;
@@ -674,6 +691,7 @@ final class OW_Database
     /**
      * Returns last insert id
      *
+     * @param $seqname
      * @return integer
      */
     public function getInsertId( $seqname = null )
@@ -695,6 +713,8 @@ final class OW_Database
     /**
      * Returns current PDOStatement
      *
+     * @param string $sql
+     * @param array|null $params
      * @return PDOStatement
      */
     private function execute( $sql, array $params = null )
@@ -704,7 +724,7 @@ final class OW_Database
             $this->profiler->reset();
         }
 
-        /* @var $stmt PDOStatement */
+        /* @var PDOStatement $stmt */
         $stmt = $this->connection->prepare($sql);
         if ( $params !== null )
         {
@@ -762,11 +782,20 @@ final class OW_Database
         }
     }
 
+    /**
+     * @param string $query
+     * @param array $params
+     * @return string
+     */
     private function getCacheKeyForQuery( $query, $params )
     {
         return 'core.sql.' . md5(trim($query) . serialize($params));
     }
 
+    /**
+     * @param bool|int $expTime
+     * @return bool
+     */
     private function cacheEnabled( $expTime )
     {
         return !OW_DEV_MODE && $this->useCashe && ( $expTime === false || $expTime > 0 );
@@ -780,6 +809,12 @@ final class OW_Database
         return OW::getCacheManager();
     }
 
+    /**
+     * @param string $sql
+     * @param array $params
+     * @param int $cacheLifeTime
+     * @return mixed|string
+     */
     private function getFromCache( $sql, $params, $cacheLifeTime )
     {
         if ( $this->cacheEnabled($cacheLifeTime) )
@@ -803,6 +838,13 @@ final class OW_Database
         return self::NO_CACHE_ENTRY;
     }
 
+    /**
+     * @param $result
+     * @param string $sql
+     * @param array $params
+     * @param int $cacheLifeTime
+     * @param array $tags
+     */
     private function saveToCache( $result, $sql, $params, $cacheLifeTime, $tags )
     {
         if ( $this->cacheEnabled($cacheLifeTime) )

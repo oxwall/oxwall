@@ -93,6 +93,7 @@ class OW_Autoload
     /**
      * Main static method registered as autoloader.
      * Don't call it manually.
+     * @param string $className
      */
     public static function autoload( $className )
     {
@@ -113,8 +114,7 @@ class OW_Autoload
     /**
      * Returns class definition file path for provided classname.
      *
-     * @throws InvalidArgumentException
-     * @param string $class
+     * @param string $className
      * @return string
      */
     public function getClassPath( $className )

@@ -86,6 +86,7 @@ class OW_Application
 
     /**
      * Application init actions.
+     * @throws Exception
      */
     public function init()
     {
@@ -167,7 +168,7 @@ class OW_Application
         $staticDocs = $this->findAllStaticDocs();
         $staticPageDispatchAttrs = OW::getRequestHandler()->getStaticPageAttributes();
 
-        /* @var $value BOL_Document */
+        /* @var BOL_Document $value */
         foreach ( $staticDocs as $value )
         {
             OW::getRouter()->addRoute(new OW_Route($value->getKey(), $value->getUri(),
@@ -262,6 +263,8 @@ class OW_Application
 
     /**
      * Finds controller and action for current request.
+     * @throws Redirect404Exception
+     * @throws Exception
      */
     public function route()
     {
@@ -282,7 +285,8 @@ class OW_Application
     }
 
     /**
-     * ---------
+     * @throws Redirect404Exception
+     * @throws Exception
      */
     public function handleRequest()
     {
@@ -473,6 +477,8 @@ class OW_Application
      * Makes header redirect to provided URL or URI.
      *
      * @param string $redirectTo
+     * @param bool   $switchContextTo
+     * @throws Exception
      */
     public function redirect( $redirectTo = null, $switchContextTo = false )
     {
@@ -496,26 +502,41 @@ class OW_Application
         UTIL_Url::redirect($redirectTo);
     }
 
+    /**
+     * @return int|string
+     */
     public function getContext()
     {
         return $this->context;
     }
 
+    /**
+     * @return bool
+     */
     public function isMobile()
     {
         return $this->context == self::CONTEXT_MOBILE;
     }
 
+    /**
+     * @return bool
+     */
     public function isDesktop()
     {
         return $this->context == self::CONTEXT_DESKTOP;
     }
 
+    /**
+     * @return bool
+     */
     public function isApi()
     {
         return $this->context == self::CONTEXT_API;
     }
 
+    /**
+     * @return bool
+     */
     public function isCli()
     {
         return $this->context == self::CONTEXT_CLI;
@@ -541,6 +562,9 @@ class OW_Application
     }
     /* private auxilary methods */
 
+    /**
+     * @return OW_HtmlDocument
+     */
     protected function newDocument()
     {
         $language = BOL_LanguageService::getInstance()->getCurrent();
@@ -612,6 +636,10 @@ class OW_Application
      */
     protected $httpsHandlerAttrsList = array();
 
+    /**
+     * @param string $controller
+     * @param false $action
+     */
     public function addHttpsHandlerAttrs( $controller, $action = false )
     {
         $this->httpsHandlerAttrsList[] = array(OW_RequestHandler::ATTRS_KEY_CTRL => $controller, OW_RequestHandler::ATTRS_KEY_ACTION => $action);
@@ -726,6 +754,10 @@ class OW_Application
         }
     }
 
+    /**
+     * @param string $eventName
+     * @param string $key
+     */
     protected function addCatchAllRequestsException( $eventName, $key )
     {
         $event = new BASE_CLASS_EventCollector($eventName);
@@ -748,26 +780,42 @@ class OW_Application
         OW::getRequestHandler()->setStaticPageAttributes('BASE_CTRL_StaticDocument');
     }
 
+    /**
+     * @return array
+     */
     protected function findAllStaticDocs()
     {
         return BOL_NavigationService::getInstance()->findAllStaticDocuments();
     }
 
+    /**
+     * @param string $availableFor
+     * @return BOL_MenuItem
+     */
     protected function findFirstMenuItem( $availableFor )
     {
         return BOL_NavigationService::getInstance()->findFirstLocal($availableFor, OW_Navigation::MAIN);
     }
 
+    /**
+     * @return OW_Route
+     */
     protected function getSiteRootRoute()
     {
         return new OW_Route('base_default_index', '/', 'BASE_CTRL_ComponentPanel', 'index');
     }
 
+    /**
+     * @return OW_MasterPage
+     */
     protected function getMasterPage()
     {
         return new OW_MasterPage();
     }
 
+    /**
+     * @throws Exception
+     */
     protected function detectLanguage()
     {
         $languageId = 0;

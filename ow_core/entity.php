@@ -51,6 +51,7 @@ class OW_Entity
 
     /**
      * @param int $id
+     * @return self
      */
     public function setId( $id )
     {
@@ -73,6 +74,9 @@ class OW_Entity
         }
     }
 
+    /**
+     * @return array
+     */
     public function getEntinyUpdatedFields()
     {
         $updatedFields = array();

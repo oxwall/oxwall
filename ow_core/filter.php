@@ -90,6 +90,11 @@ class StripTagsFilter implements OW_IFilter
         return strip_tags($value);
     }
 
+    /**
+     * Returns JS code to validate form element data
+     *
+     * @return string
+     */
     public function getJsFilter()
     {
         return "{filter : function( data ){return $(data).text()}}";

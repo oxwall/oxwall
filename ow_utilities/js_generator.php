@@ -1,5 +1,8 @@
 <?php
 
+/**
+ * Class UTIL_JsGenerator
+ */
 class UTIL_JsGenerator
 {
     /**
@@ -26,6 +29,10 @@ class UTIL_JsGenerator
         return new self;
     }
 
+    /**
+     * @param string|array $var
+     * @return string|null
+     */
     protected function getJsVarName( $var )
     {
         if ( is_string($var) )
@@ -45,6 +52,10 @@ class UTIL_JsGenerator
 
     }
 
+    /**
+     * @param $variable
+     * @return bool
+     */
     private function isProperty( $variable )
     {
     	return ( is_array($variable) && ( count($variable) > 1 ) );
@@ -158,8 +169,8 @@ class UTIL_JsGenerator
      * Add Javascript object constraction
      *
      * @param string|array $objectName
-     * @param string $className
-     * @param array $args
+     * @param string       $constructorName
+     * @param array        $args
      *
      * @return UTIL_JsGenerator
      */
@@ -185,7 +196,7 @@ class UTIL_JsGenerator
      * Add Javascript code
      *
      * @param string $code
-     *
+     * @param array  $assignVars
      * @return UTIL_JsGenerator
      */
     public function addScript($code, $assignVars = array())
@@ -202,6 +213,11 @@ class UTIL_JsGenerator
     	return $this;
     }
 
+    /**
+     * @param       $code
+     * @param array $assignVars
+     * @return string|string[]
+     */
     public static function composeJsString($code, $assignVars = array())
     {
         $jsonAssignVars = array_map('json_encode', $assignVars);
@@ -257,7 +273,8 @@ class UTIL_JsGenerator
      * @param string $selector
      * @param string $event
      * @param string $callbackContent
-     * @param array $args
+     * @param array  $args
+     * @param array  $data
      * @return UTIL_JsGenerator
      */
     public function jQueryEvent( $selector, $event, $callbackContent, array $args = array(), $data = array() )
@@ -275,9 +292,12 @@ EOT;
         return $this;
     }
 
+    /**
+     * @return string
+     */
     public function __toString()
     {
-    	return $this->generateJs();
+        return $this->generateJs();
     }
 
     /**

@@ -2,13 +2,17 @@
 
 require_once  OW_DIR_LIB . 'oembed' . DS. 'oembed.php';
 
+/**
+ * Class UTIL_HttpResource
+ */
 class UTIL_HttpResource
 {
 
     /**
      *
      * @param string $url
-     * @return OW_HttpResource
+     * @param int    $timeout
+     * @return string|false
      */
     public static function getContents( $url, $timeout = 20 )
     {

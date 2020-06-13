@@ -43,6 +43,9 @@ class OW_CliApplication extends OW_Application
         $this->cliArgsHandler = new CliArgsHandler();
     }
 
+    /**
+     * @param Command $c
+     */
     public function addCommand(Command $c)
     {
         $this->cliArgsHandler->add($c);
@@ -54,6 +57,9 @@ class OW_CliApplication extends OW_Application
     }
 }
 
+/**
+ * Class CliArgsHandler
+ */
 class CliArgsHandler extends Application
 {
 }

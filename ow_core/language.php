@@ -46,8 +46,15 @@ class OW_Language
     private function __construct()
     {
         $this->eventManager = OW::getEventManager();
-    }    
+    }
 
+    /**
+     * @param string     $prefix
+     * @param string     $key
+     * @param array|null $vars
+     * @param string|null $defaultValue
+     * @return string
+     */
     public function text( $prefix, $key, array $vars = null, $defaultValue = null )
     {
         if ( empty($prefix) || empty($key) )
@@ -73,6 +80,11 @@ class OW_Language
         return $text;
     }
 
+    /**
+     * @param string $prefix
+     * @param string $key
+     * @return bool
+     */
     public function valueExist( $prefix, $key )
     {
         if ( empty($prefix) || empty($key) )
@@ -97,6 +109,10 @@ class OW_Language
         return true;
     }
 
+    /**
+     * @param string $prefix
+     * @param string $key
+     */
     public function addKeyForJs( $prefix, $key )
     {
         $text = json_encode($this->text($prefix, $key));
@@ -104,21 +120,40 @@ class OW_Language
         OW::getDocument()->addOnloadScript("OW.registerLanguageKey('$prefix', '$key', $text);", -99);
     }
 
+    /**
+     * @return int
+     */
     public function getCurrentId()
     {
         return BOL_LanguageService::getInstance()->getCurrent()->getId();
     }
 
+    /**
+     * @param string $path
+     * @param string $key
+     * @param bool $refreshCache
+     * @param bool $addLanguage
+     */
     public function importPluginLangs( $path, $key, $refreshCache = false, $addLanguage = false )
     {
         BOL_LanguageService::getInstance()->importPrefixFromZip($path, $key, $refreshCache, $addLanguage);
     }
-    
+
+    /**
+     * @param string $path
+     * @param bool $refreshCache
+     * @param bool $addLanguage
+     */
     public function importLangsFromZip( $path, $refreshCache = false, $addLanguage = false )
     {
         BOL_LanguageService::getInstance()->importPrefixFromZip($path, uniqid(), $refreshCache, $addLanguage);
     }
 
+    /**
+     * @param string $path
+     * @param bool $refreshCache
+     * @param bool $addLanguage
+     */
     public function importLangsFromDir( $path, $refreshCache = false, $addLanguage = false )
     {
         BOL_LanguageService::getInstance()->importPrefixFromDir($path, $refreshCache, $addLanguage);

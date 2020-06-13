@@ -253,7 +253,7 @@ class OW_EventManager
      *
      * @param string $eventName
      * @param array $eventParams
-     * @return mixed
+     * @return mixed|null
      */
     public function call( $eventName, $eventParams = array() )
     {
@@ -296,6 +296,8 @@ class OW_EventManager
                     'exec' => 0);
             }
         }
+
+        return null;
     }
 
     /**

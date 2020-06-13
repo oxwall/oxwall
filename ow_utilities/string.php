@@ -32,10 +32,10 @@ class UTIL_String
     private static $caps = array('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z');
 
     /**
-     * Replaces upper case chars in string with delimeter + lowercase chars 
+     * Replaces upper case chars in string with delimeter + lowercase chars
      *
      * @param string $string
-     * @param string $divider
+     * @param string $delimiter
      * @return string
      */
     public static function capsToDelimiter( $string, $delimiter = '_' )
@@ -60,9 +60,9 @@ class UTIL_String
     /**
      * Replaces lowercase case chars + delimiter in string uppercase chars
      *
-     * @param unknown_type $string
-     * @param unknown_type $delimiter
-     * @return unknown
+     * @param string $string
+     * @param string $delimiter
+     * @return string|string[]
      */
     public static function delimiterToCaps( $string, $delimiter = '_' )
     {
@@ -105,6 +105,10 @@ class UTIL_String
         return $result;
     }
 
+    /**
+     * @param string $string
+     * @return string
+     */
     public static function removeFirstAndLastSlashes( $string )
     {
         if ( mb_substr($string, 0, 1) === '/' )
@@ -119,7 +123,11 @@ class UTIL_String
         return $string;
     }
 
-    //TODO write description
+    /**
+     * @param            $data
+     * @param array|null $vars
+     * @return string|string[]|null
+     */
     public static function replaceVars( $data, array $vars = null )
     {
         if ( !isset($vars) || count($vars) < 1 )
@@ -218,6 +226,12 @@ class UTIL_String
         return $rndString;
     }
 
+    /**
+     * @param string $string
+     * @param int $length
+     * @param string|null $ending
+     * @return string
+     */
     public static function truncate( $string, $length, $ending = null )
     {
         if ( mb_strlen($string) <= $length )
@@ -256,7 +270,7 @@ class UTIL_String
 
     /**
      * @param string $xmlString
-     * @return array
+     * @return array|false
      */
     public static function xmlToArray( $xmlString )
     {
@@ -270,6 +284,10 @@ class UTIL_String
         return self::processXmlObject($xml);
     }
 
+    /**
+     * @param SimpleXMLElement $el
+     * @return array
+     */
     private static function processXmlObject( SimpleXMLElement $el )
     {
         $result = (array) $el;

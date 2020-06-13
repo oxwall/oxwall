@@ -28,6 +28,9 @@
  */
 require_once(OW_DIR_LIB . 'wideimage' . DS . 'WideImage.php');
 
+/**
+ * Class UTIL_Image
+ */
 class UTIL_Image
 {
     const IMAGE_QUALITY = 80;
@@ -92,7 +95,7 @@ class UTIL_Image
         $iWidth = $this->image->getWidth();
         $iHeight = $this->image->getHeight();
 
-        $this->imageResized = ($width <= $iWidth) || (isset($height) && $height <= $iHeight) ? true : false;
+        $this->imageResized = ($width <= $iWidth) || (isset($height) && $height <= $iHeight);
 
         if ( $width == null )
         {
@@ -218,6 +221,9 @@ class UTIL_Image
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function orientateImage()
     {
         if ( !function_exists('exif_read_data') )
@@ -268,6 +274,9 @@ class UTIL_Image
         return $this->image->getHeight();
     }
 
+    /**
+     * @return bool
+     */
     public function imageResized()
     {
         return $this->imageResized;
@@ -286,6 +295,12 @@ class UTIL_Image
         $this->image->destroy();
     }
 
+    /**
+     * @param int $angle
+     * @param string|null $bgColor
+     * @param bool $ignoreTransparent
+     * @return $this
+     */
     public function rotate( $angle, $bgColor = null, $ignoreTransparent = true )
     {
         if ( (int) $angle !== 0 )

@@ -68,6 +68,7 @@ class OW_Dispatcher
     private $catchAllRequestsExcludes = array();
 
     /**
+     * @param string $key
      * @return array
      */
     public function getCatchAllRequestsAttributes( $key )
@@ -78,7 +79,8 @@ class OW_Dispatcher
     /**
      * <controller> <action> <params> <route> <redirect> <js>
      *
-     * @param array $attributes 
+     * @param string $key
+     * @param array $attributes
      */
     public function setCatchAllRequestsAttributes( $key, array $attributes )
     {
@@ -89,6 +91,7 @@ class OW_Dispatcher
 
     /**
      *
+     * @param string $key
      * @param string $controller
      * @param string $action
      */
@@ -146,6 +149,7 @@ class OW_Dispatcher
 
     /**
      * @param array $attributes
+     * @throws Redirect404Exception
      */
     public function setDispatchAttributes( array $attributes )
     {
@@ -162,7 +166,7 @@ class OW_Dispatcher
     }
 
     /**
-     * @param array $dispatchAttributes
+     * @throws Redirect404Exception
      */
     public function dispatch()
     {
@@ -187,7 +191,7 @@ class OW_Dispatcher
             $this->dispatchAttributes = $catchAllRequests;
         }
 
-        /* @var $controller OW_ActionController */
+        /* @var OW_ActionController $controller */
 
         try
         {
@@ -241,8 +245,6 @@ class OW_Dispatcher
     /**
      * Returns template path for provided controller and action.
      *
-     * @param string $controller
-     * @param string $action
      * @return string<path>
      */
     private function getControllerActionDefaultTemplate()
@@ -258,7 +260,8 @@ class OW_Dispatcher
     /**
      * Returns processed catch all requests attributes.
      *
-     * @return string
+     * @return array|null
+     * @throws Exception
      */
     private function processCatchAllRequestsAttrs()
     {

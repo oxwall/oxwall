@@ -74,7 +74,7 @@ class OW_Navigation
      * @param string $routeName
      * @param string $prefix
      * @param string $key
-     * @param string $visibleFor
+     * @param string|int $visibleFor
      */
     public function addMenuItem( $menuType, $routeName, $prefix, $key, $visibleFor = self::VISIBLE_FOR_ALL )
     {

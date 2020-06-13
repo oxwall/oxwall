@@ -45,6 +45,10 @@ class UTIL_Validator
 
     const ALPHA_NUMERIC_PATTERN = '/^[A-Za-z0-9]+$/';
 
+    /**
+     * @param string $value
+     * @return bool
+     */
     public static function isEmailValid( $value )
     {
         $pattern = self::EMAIL_PATTERN;
@@ -57,6 +61,10 @@ class UTIL_Validator
         return true;
     }
 
+    /**
+     * @param string $value
+     * @return bool
+     */
     public static function isUrlValid( $value )
     {
         $pattern = self::URL_PATTERN;
@@ -69,6 +77,10 @@ class UTIL_Validator
         return true;
     }
 
+    /**
+     * @param int $value
+     * @return bool
+     */
     public static function isIntValid( $value )
     {
         if ( !preg_match(self::INT_PATTERN, $value) )
@@ -79,6 +91,10 @@ class UTIL_Validator
         return true;
     }
 
+    /**
+     * @param float $value
+     * @return bool
+     */
     public static function isFloatValid( $value )
     {
         if ( !preg_match(self::FLOAT_PATTERN, $value) )
@@ -89,6 +105,10 @@ class UTIL_Validator
         return true;
     }
 
+    /**
+     * @param $value
+     * @return bool
+     */
     public static function isAlphaNumericValid( $value )
     {
         $pattern = self::ALPHA_NUMERIC_PATTERN;
@@ -101,6 +121,10 @@ class UTIL_Validator
         return true;
     }
 
+    /**
+     * @param string $value
+     * @return bool
+     */
     public static function isUserNameValid( $value )
     {
         $pattern = self::USER_NAME_PATTERN;
@@ -113,6 +137,12 @@ class UTIL_Validator
         return true;
     }
 
+    /**
+     * @param $month
+     * @param $day
+     * @param $year
+     * @return bool
+     */
     public static function isDateValid( $month, $day, $year )
     {
         if ( !checkdate($month, $day, $year) )
@@ -123,6 +153,10 @@ class UTIL_Validator
         return true;
     }
 
+    /**
+     * @param $value
+     * @return bool
+     */
     public static function isCaptchaValid( $value )
     {
         if ( $value === null )

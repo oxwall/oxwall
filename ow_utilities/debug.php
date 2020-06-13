@@ -33,6 +33,10 @@ final class UTIL_Debug
     private static $pvObjects;
     private static $pvDepth = 10;
 
+    /**
+     * @param       $var
+     * @param false $exit
+     */
     public static function varDump( $var, $exit = false )
     {
         self::addDebugStyles();
@@ -62,6 +66,10 @@ final class UTIL_Debug
         }
     }
 
+    /**
+     * @param $var
+     * @param int $level
+     */
     private static function dumper( $var, $level )
     {
         switch ( gettype($var) )
@@ -149,6 +157,9 @@ final class UTIL_Debug
         }
     }
 
+    /**
+     * @param array $data
+     */
     public static function printDebugMessage( $data )
     {
         self::addDebugStyles();

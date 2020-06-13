@@ -29,5 +29,9 @@
  */
 abstract class OW_LogWriter
 {
+    /**
+     * @param array $entries
+     * @return mixed
+     */
     abstract function processEntries( array $entries );
 }

@@ -1,5 +1,8 @@
 <?php
 
+/**
+ * Trait OW_Singleton
+ */
 trait OW_Singleton
 {
     private static $instance;

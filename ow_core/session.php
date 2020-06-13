@@ -47,6 +47,9 @@ class OW_Session
         }
     }
 
+    /**
+     * @return string
+     */
     public function getName()
     {
         return md5(OW_URL_HOME);
@@ -100,11 +103,19 @@ class OW_Session
         }
     }
 
+    /**
+     * @return string
+     */
     public function getId()
     {
         return session_id();
     }
 
+    /**
+     * @param string $key
+     * @param $value
+     * @throws Exception
+     */
     public function set( $key, $value )
     {
         if ( in_array($key, self::$protectedKeys) )
@@ -115,6 +126,10 @@ class OW_Session
         $_SESSION[$key] = $value;
     }
 
+    /**
+     * @param string $key
+     * @return mixed|null
+     */
     public function get( $key )
     {
         if ( !isset($_SESSION[$key]) )
@@ -125,11 +140,18 @@ class OW_Session
         return $_SESSION[$key];
     }
 
+    /**
+     * @param string $key
+     * @return bool
+     */
     public function isKeySet( $key )
     {
         return isset($_SESSION[$key]);
     }
 
+    /**
+     * @param string $key
+     */
     public function delete( $key )
     {
         unset($_SESSION[$key]);

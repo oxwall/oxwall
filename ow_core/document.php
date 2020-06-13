@@ -228,6 +228,10 @@ abstract class OW_Document
         $this->template = $template;
     }
 
+    /**
+     * @param string $name
+     * @param array $params
+     */
     protected function throwEvent( $name, $params = array() )
     {
         

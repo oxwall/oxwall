@@ -77,6 +77,9 @@ class UTIL_HttpClient
     }
     /* --------------------------------------------------------------------- */
 
+    /**
+     * @return Client
+     */
     private static function getClient()
     {
         if ( self::$client == null )
@@ -94,6 +97,12 @@ class UTIL_HttpClient
         return self::$client;
     }
 
+    /**
+     * @param string $method
+     * @param string $url
+     * @param array $options
+     * @return UTIL_HttpClientResponse|null
+     */
     private static function request( $method, $url, array $options )
     {
         $options[RequestOptions::VERIFY] = false;

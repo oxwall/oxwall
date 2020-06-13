@@ -35,12 +35,14 @@ abstract class OW_MobileComponent extends OW_Component
     /**
      * Constructor.
      *
-     * @param string $template
      */
     public function __construct()
     {
     }
 
+    /**
+     * @return string
+     */
     public function render()
     {
         if ( $this->getTemplate() === null )

@@ -64,6 +64,9 @@ class OW_DeveloperTools
         $this->languageService = BOL_LanguageService::getInstance();
     }
 
+    /**
+     * @throws Exception
+     */
     public function init()
     {
         $configDev = (int) OW::getConfig()->getValue("base", self::CONFIG_NAME);
@@ -161,7 +164,7 @@ class OW_DeveloperTools
     {
         $plugins = $this->pluginService->findAllPlugins();
 
-        /* @var $pluginDto BOL_Plugin */
+        /* @var BOL_Plugin $pluginDto */
         foreach ( $plugins as $pluginDto )
         {
             $this->pluginService->addPluginDirs($pluginDto);
@@ -231,6 +234,12 @@ class OW_DeveloperTools
         $event->add($view->render());
     }
 
+    /**
+     * @param array $sqlData
+     * @param int $totalTime
+     * @param string  $queryFilter
+     * @return array
+     */
     protected function getSqlInfo( array $sqlData, $totalTime, $queryFilter = null )
     {
         foreach ( $sqlData as $key => $query )
@@ -253,6 +262,10 @@ class OW_DeveloperTools
         return array("qet" => $totalTime, "ql" => $sqlData, "qc" => count($sqlData));
     }
 
+    /**
+     * @param array $eventsData
+     * @return array[]
+     */
     protected function getEventInfo( array $eventsData )
     {
         $eventsDataArray = array("bind" => array(), "calls" => array());
@@ -285,6 +298,10 @@ class OW_DeveloperTools
         return $eventsDataArray;
     }
 
+    /**
+     * @param array $eventData
+     * @return array
+     */
     protected function getEventListeners( array $eventData )
     {
         $listenersList = array();
@@ -320,6 +337,10 @@ class OW_DeveloperTools
         return $listenersList;
     }
 
+    /**
+     * @param array $viewData
+     * @return array
+     */
     protected function getViewInfo( array $viewData )
     {
         $viewDataArray = array("mp" => array(), "cmp" => array(), "ctrl" => array());

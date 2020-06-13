@@ -48,7 +48,8 @@ interface OW_BillingAdapter
 
     /**
      * Returns gateway setting fields
-     * 
+     *
+     * @param array|null $params
      * @return array
      */
     public function getFields( $params = null );

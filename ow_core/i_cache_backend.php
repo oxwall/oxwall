@@ -31,9 +31,37 @@
  */
 interface OW_ICacheBackend
 {
-    public function save( $data, $key, array $tags = array(), $expTime );
+    /**
+     * @param       $data
+     * @param string $key
+     * @param array $tags
+     * @param null  $expTime
+     * @return mixed
+     */
+    public function save( $data, $key, array $tags = array(), $expTime = null);
+
+    /**
+     * @param string $key
+     * @return mixed
+     */
     public function load( $key );
+
+    /**
+     * @param string $key
+     * @return mixed
+     */
     public function test( $key );
+
+    /**
+     * @param string $key
+     * @return mixed
+     */
     public function remove( $key );
+
+    /**
+     * @param array $tags
+     * @param       $mode
+     * @return mixed
+     */
     public function clean( array $tags, $mode );
 }

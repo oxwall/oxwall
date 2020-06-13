@@ -150,6 +150,7 @@ class OW_ApiApplication extends OW_Application
 
     /**
      * Finds controller and action for current request.
+     * @throws Redirect404Exception
      */
     public function route()
     {
@@ -168,7 +169,7 @@ class OW_ApiApplication extends OW_Application
     }
 
     /**
-     * ---------
+     * @throws Redirect404Exception
      */
     public function handleRequest()
     {
@@ -326,6 +327,7 @@ class OW_ApiApplication extends OW_Application
      * Makes header redirect to provided URL or URI.
      *
      * @param string $redirectTo
+     * @param bool|string $switchContextTo
      */
     public function redirect( $redirectTo = null, $switchContextTo = false )
     {
@@ -366,52 +368,18 @@ class OW_ApiApplication extends OW_Application
     }
     /* private auxilary methods */
 
+    /**
+     * @return OW_ApiDocument
+     */
     protected function newDocument()
     {
-        $document = new OW_ApiDocument();
-
-        return $document;
-
-//        $language = BOL_LanguageService::getInstance()->getCurrent();
-//        $document = new OW_HtmlDocument();
-//        $document->setCharset('UTF-8');
-//        $document->setMime('text/html');
-//        $document->setLanguage($language->getTag());
-//
-//        if ( $language->getRtl() )
-//        {
-//            $document->setDirection('rtl');
-//        }
-//        else
-//        {
-//            $document->setDirection('ltr');
-//        }
-//
-//        if ( (bool) OW::getConfig()->getValue('base', 'favicon') )
-//        {
-//            $document->setFavicon(OW::getPluginManager()->getPlugin('base')->getUserFilesUrl() . 'favicon.ico');
-//        }
-//
-//        $document->addScript(OW::getPluginManager()->getPlugin('base')->getStaticJsUrl() . 'jquery.min.js', 'text/javascript', (-100));
-//        $document->addScript(OW::getPluginManager()->getPlugin('base')->getStaticJsUrl() . 'jquery-migrate.min.js', 'text/javascript', (-100));
-//
-//        //$document->addScript(OW::getPluginManager()->getPlugin('base')->getStaticJsUrl() . 'json2.js', 'text/javascript', (-99));
-//        $document->addScript(OW::getPluginManager()->getPlugin('base')->getStaticJsUrl() . 'ow.js?' . OW::getConfig()->getValue('base', 'cachedEntitiesPostfix'), 'text/javascript', (-50));
-//
-//        $onloadJs = "OW.bindAutoClicks();OW.bindTips($('body'));";
-//
-//        if ( OW::getUser()->isAuthenticated() )
-//        {
-//            $activityUrl = OW::getRouter()->urlFor('BASE_CTRL_User', 'updateActivity');
-//            $onloadJs .= "OW.getPing().addCommand('user_activity_update').start(600000);";
-//        }
-//
-//        $document->addOnloadScript($onloadJs);
-//        OW::getEventManager()->bind(OW_EventManager::ON_AFTER_REQUEST_HANDLE, array($this, 'onBeforeDocumentRender'));
-
-        return $document;
+        return new OW_ApiDocument();
     }
 
+    /**
+     * @param string $eventName
+     * @param string $key
+     */
     protected function addCatchAllRequestsException( $eventName, $key )
     {
         $event = new BASE_CLASS_EventCollector($eventName);

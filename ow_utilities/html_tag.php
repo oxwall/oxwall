@@ -71,6 +71,10 @@ class UTIL_HtmlTag
     private static $jevix;
 
     /**
+     * @param array|null $tagList
+     * @param array|null $attrList
+     * @param bool $blackListMode
+     * @param bool $mediaSrcValidate
      * @return Jevix
      */
     private static function getJevix( $tagList = null, $attrList = null, $blackListMode = false,
@@ -170,13 +174,11 @@ class UTIL_HtmlTag
     /**
      * Removes all restricted HTML tags and attributes. Works with white and black lists.
      *
-     * @param string $text
-     * @param array $tagList
-     * @param array $attributeList
-     * @param boolean $nlToBr
+     * @param string  $text
+     * @param array   $tagList
+     * @param array   $attributeList
      * @param boolean $blackListMode
-     * @param boolean $autoLink
-     *
+     * @param bool    $mediaSrcValidate
      * @return string
      */
     public static function stripTags( $text, array $tagList = null, array $attributeList = null, $blackListMode = false,
@@ -292,7 +294,7 @@ class UTIL_HtmlTag
      * to rawurlencode() which now implements RFC 3986 since PHP 5.3 completely.
      *
      * @param string $string
-     * @return string
+     * @return string|null
      */
     public static function escapeUrl( $string = null )
     {
@@ -309,7 +311,7 @@ class UTIL_HtmlTag
      * of special meaning. Internally this will use htmlspecialchars().
      *
      * @param string $string
-     * @return string
+     * @return string|null
      */
     public static function escapeHtml( $string = null )
     {
@@ -327,7 +329,7 @@ class UTIL_HtmlTag
      * might be unquoted or quoted illegally (e.g. backticks are valid quotes for IE).
      *
      * @param string $string
-     * @return string
+     * @return string|null
      */
     public static function escapeHtmlAttr( $string = null )
     {
@@ -343,7 +345,7 @@ class UTIL_HtmlTag
      * Escapes chars to make sure that string doesn't contain valid JS code
      * 
      * @param string $string
-     * @return string
+     * @return string|null
      */
     public static function escapeJs( $string = null )
     {

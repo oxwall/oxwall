@@ -37,6 +37,9 @@ class OW_AjaxDocument extends OW_HtmlDocument
         $this->setType(OW_Document::AJAX);
     }
 
+    /**
+     * @return string
+     */
     public function getOnloadScript()
     {
         $onloadJS = '';
@@ -53,7 +56,10 @@ class OW_AjaxDocument extends OW_HtmlDocument
 
         return $onloadJS;
     }
-    
+
+    /**
+     * @return string
+     */
     public function getScriptBeforeIncludes()
     {
         $onloadJS = '';
@@ -74,6 +80,9 @@ class OW_AjaxDocument extends OW_HtmlDocument
         return $onloadJS;
     }
 
+    /**
+     * @return array
+     */
     public function getScripts()
     {
         $jsUrlList = array();
@@ -94,6 +103,11 @@ class OW_AjaxDocument extends OW_HtmlDocument
         return $jsUrlList;
     }
 
+    /**
+     * Returns all stylesheets.
+     *
+     * @return array
+     */
     public function getStyleSheets()
     {
         $cssFiles = array();
@@ -114,6 +128,9 @@ class OW_AjaxDocument extends OW_HtmlDocument
         return $cssFiles;
     }
 
+    /**
+     * @return string
+     */
     public function getStyleDeclarations()
     {
         $cssCode = '';
@@ -134,6 +151,9 @@ class OW_AjaxDocument extends OW_HtmlDocument
         return $cssCode;
     }
 
+    /**
+     * @return string
+     */
     public function render()
     {
         //TODO compile all scripts, styles, assigned vars and send as JSON array

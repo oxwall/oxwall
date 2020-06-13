@@ -71,6 +71,7 @@ class OW_RequestHandler
     protected $catchAllRequestsExcludes = array();
 
     /**
+     * @param string $key
      * @return array
      */
     public function getCatchAllRequestsAttributes( $key )
@@ -81,7 +82,8 @@ class OW_RequestHandler
     /**
      * <controller> <action> <params> <route> <redirect> <js>
      *
-     * @param array $attributes 
+     * @param string $key
+     * @param array $attributes
      */
     public function setCatchAllRequestsAttributes( $key, array $attributes )
     {
@@ -92,8 +94,10 @@ class OW_RequestHandler
 
     /**
      *
+     * @param string $key
      * @param string $controller
      * @param string $action
+     * @param null   $params
      */
     public function addCatchAllRequestsExclude( $key, $controller, $action = null, $params = null )
     {
@@ -197,7 +201,7 @@ class OW_RequestHandler
             $this->handlerAttributes = $catchAllRequests;
         }
 
-        /* @var $controller OW_ActionController */
+        /* @var OW_ActionController $controller */
         try
         {
             $controller = OW::getClassInstance($this->handlerAttributes[self::ATTRS_KEY_CTRL]);
@@ -277,7 +281,8 @@ class OW_RequestHandler
     /**
      * Returns processed catch all requests attributes.
      *
-     * @return string
+     * @return array|null
+     * @throws Exception
      */
     protected function processCatchAllRequestsAttrs()
     {

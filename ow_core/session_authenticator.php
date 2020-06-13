@@ -63,6 +63,7 @@ class OW_SessionAuthenticator implements OW_IAuthenticator
      * Logins user by provided user id.
      *
      * @param integer $userId
+     * @throws Exception
      */
     public function login( $userId )
     {

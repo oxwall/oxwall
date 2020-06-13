@@ -49,7 +49,7 @@ abstract class FormElement
     /**
      * Added filters
      * 
-     * @var type 
+     * @var array
      */
     protected $filters = array();
 
@@ -301,6 +301,9 @@ abstract class FormElement
         return $this;
     }
 
+    /**
+     * @param OW_IFilter $filter
+     */
     public function addFilter( OW_IFilter $filter )
     {
         $this->filters[] = $filter;
@@ -317,7 +320,7 @@ abstract class FormElement
     {
         if ( !$validator instanceof OW_Validator )
         {
-            throw new InvalidArgumentException('Provided object is not instance of Validator class!');
+            throw new InvalidArgumentException('Provided object is not instance of OW_Validator class!');
         }
 
         $this->validators[] = $validator;
@@ -378,11 +381,11 @@ abstract class FormElement
      * Sets form element value.
      *
      * @param mixed $value
-     * @return FormElement
+     * @return self
      */
     public function setValue( $value )
     {
-        /* @var $filter OW_IFilter  */
+        /* @var OW_IFilter $filter */
         foreach ( $this->filters as $filter )
         {
             $value = $filter->filter($value);
@@ -410,7 +413,7 @@ abstract class FormElement
      */
     public function isValid()
     {
-        /* @var $value Validator  */
+        /* @var  OW_Validator $value */
         foreach ( $this->validators as $value )
         {
             if ( $value->isValid($this->getValue()) )
@@ -483,13 +486,13 @@ abstract class FormElement
     {
         $jsString = "";
 
-        /** @var $value OW_Validator  */
+        /** @var OW_Validator $value */
         foreach ( $this->validators as $value )
         {
             $jsString .= "{$varName}.addValidator(" . $value->getJsValidator() . ");";
         }
 
-        /** @var $filter OW_IFilter  */
+        /** @var OW_IFilter $filter */
         foreach ( $this->filters as $filter )
         {
             $jsString .= "{$varName}.addFilter(" . $filter->getJsFilter() . ");";
@@ -502,7 +505,6 @@ abstract class FormElement
      * Returns generated input html tag.
      *
      * @param array $params
-     * @return string
      */
     protected function renderInput( $params = null )
     {
@@ -538,6 +540,7 @@ abstract class InvitationFormElement extends FormElement
 
     /**
      * Constructor.
+     * @param string $name
      */
     public function __construct( $name )
     {
@@ -556,7 +559,7 @@ abstract class InvitationFormElement extends FormElement
 
     /**
      * @param string $invitation
-     * @return Selectbox
+     * @return self
      */
     public function setInvitation( $invitation )
     {
@@ -567,6 +570,7 @@ abstract class InvitationFormElement extends FormElement
 
     /**
      * @param boolean $hasInvitation
+     * @return self
      */
     public function setHasInvitation( $hasInvitation )
     {
@@ -582,6 +586,9 @@ abstract class InvitationFormElement extends FormElement
         return $this->hasInvitation;
     }
 
+    /**
+     * @param array|null $params
+     */
     public function renderInput( $params = null )
     {
         parent::renderInput($params);
@@ -633,6 +640,9 @@ class TextField extends InvitationFormElement
         return UTIL_HtmlTag::generateTag('input', $this->attributes);
     }
 
+    /**
+     * @return string
+     */
     public function getElementJs()
     {
         $jsString = "var formElement = new OwTextField(" . json_encode($this->getId()) . ", " . json_encode($this->getName()) . ");";
@@ -694,31 +704,51 @@ class DateField extends FormElement
         return $this;
     }
 
+    /**
+     * @return int
+     */
     public function getMinYear()
     {
         return $this->minYear;
     }
 
+    /**
+     * @return int
+     */
     public function getMaxYear()
     {
         return $this->maxYear;
     }
 
+    /**
+     * @return array
+     */
     public function getDefaultDate()
     {
         return $this->defaultDate;
     }
 
+    /**
+     * @return string
+     */
     public function getDateFormat()
     {
         return $this->dateFormat;
     }
 
+    /**
+     * @param $year
+     */
     public function setMaxYear( $year )
     {
         $this->maxYear = (int) $year;
     }
 
+    /**
+     * @param $year
+     * @param $month
+     * @param $day
+     */
     private function setDefaultDate( $year, $month, $day )
     {
         if ( UTIL_Validator::isDateValid((int) $month, (int) $day, (int) $year) )
@@ -733,11 +763,17 @@ class DateField extends FormElement
         }
     }
 
+    /**
+     * @param $year
+     */
     public function setMinYear( $year )
     {
         $this->minYear = (int) $year;
     }
 
+    /**
+     * @param $format
+     */
     public function setDateFormat( $format )
     {
         if ( empty($format) )
@@ -748,6 +784,10 @@ class DateField extends FormElement
         $this->dateFormat = $format;
     }
 
+    /**
+     * @param array|null $params
+     * @return string
+     */
     public function renderInput( $params = null )
     {
         parent::renderInput($params);
@@ -835,8 +875,6 @@ class DateField extends FormElement
 
         $config = OW::getConfig()->getValue('base', 'date_field_format');
 
-        $result = "";
-
         if ( $config === 'dmy' )
         {
             $result = '<div class="' . $this->getAttribute('name') . '">
@@ -880,6 +918,9 @@ class Textarea extends InvitationFormElement
         parent::__construct($name);
     }
 
+    /**
+     * @return string
+     */
     public function getElementJs()
     {
         $jsString = "var formElement = new OwTextArea(" . json_encode($this->getId()) . ", " . json_encode($this->getName()) . ");";
@@ -910,9 +951,7 @@ class Textarea extends InvitationFormElement
         $content = $this->getAttribute('value');
         $this->removeAttribute('value');
 
-        $markup = UTIL_HtmlTag::generateTag('textarea', $this->attributes, true, $content);
-
-        return $markup;
+        return UTIL_HtmlTag::generateTag('textarea', $this->attributes, true, $content);
     }
 }
 
@@ -939,8 +978,9 @@ class HiddenField extends FormElement
     }
 
     /**
+     * @param array|null $params
+     * @return string
      * @see FormElement::renderInput()
-     *
      */
     public function renderInput( $params = null )
     {
@@ -970,6 +1010,7 @@ class Submit extends FormElement
      * Constructor.
      *
      * @param string $name
+     * @param string $decorator
      */
     public function __construct( $name, $decorator = 'button' )
     {
@@ -1036,6 +1077,10 @@ class Submit extends FormElement
 class Button extends Submit
 {
 
+    /**
+     * Button constructor.
+     * @param $name
+     */
     public function __construct( $name )
     {
         parent::__construct($name);
@@ -1121,11 +1166,17 @@ class RadioField extends FormElement
         return $this->options;
     }
 
+    /**
+     * @return int
+     */
     public function getColumnCount()
     {
         return (int) $this->columnCount;
     }
 
+    /**
+     * @param $count
+     */
     public function setColumnCount( $count )
     {
         $this->columnCount = (int) $count;
@@ -1254,7 +1305,7 @@ class RadioField extends FormElement
 class CheckboxGroup extends FormElement
 {
     /**
-     * @var unknown_type
+     * @var int
      */
     protected $columnsCount;
 
@@ -1287,12 +1338,19 @@ class CheckboxGroup extends FormElement
         return $this->options;
     }
 
+    /**
+     * @return int
+     */
     public function getColumnsCount()
     {
         return (int) $this->columnsCount;
     }
 
 //TODO rename getter or setter
+
+    /**
+     * @param $count
+     */
     public function setColumnCount( $count )
     {
         $this->columnsCount = (int) $count;
@@ -1497,8 +1555,8 @@ class Selectbox extends InvitationFormElement
     /**
      * Adds input option.
      *
+     * @param string $key
      * @param string $value
-     * @param string $label
      * @return Selectbox
      */
     public function addOption( $key, $value )
@@ -1648,6 +1706,10 @@ class Multiselect extends FormElement
     private $options;
     private $size;
 
+    /**
+     * Multiselect constructor.
+     * @param $name
+     */
     public function __construct( $name )
     {
         parent::__construct($name);
@@ -1657,11 +1719,17 @@ class Multiselect extends FormElement
         $this->size = 10;
     }
 
+    /**
+     * @return int
+     */
     public function getSize()
     {
         return $this->size;
     }
 
+    /**
+     * @param $size
+     */
     public function setSize( $size )
     {
         $this->size = (int) $size;
@@ -1697,6 +1765,10 @@ class Multiselect extends FormElement
         $this->options[$value] = $label;
     }
 
+    /**
+     * @param array|null $params
+     * @return string
+     */
     public function renderInput( $params = null )
     {
         parent::renderInput($params);
@@ -1743,6 +1815,9 @@ class Multiselect extends FormElement
             </table>';
     }
 
+    /**
+     * @return string
+     */
     public function getElementJs()
     {
         // TODO remake js in general style
@@ -1758,6 +1833,9 @@ class Multiselect extends FormElement
     }
 }
 
+/**
+ * Class FileField
+ */
 class FileField extends FormElement
 {
 
@@ -1787,6 +1865,9 @@ class FileField extends FormElement
     }
 }
 
+/**
+ * Class SuggestField
+ */
 class SuggestField extends FormElement
 {
     private $responderUrl;
@@ -1794,11 +1875,19 @@ class SuggestField extends FormElement
     private $initialLabel;
     private $minChars = 2;
 
+    /**
+     * SuggestField constructor.
+     * @param $name
+     */
     public function __construct( $name )
     {
         parent::__construct($name);
     }
 
+    /**
+     * @param $responderUrl
+     * @return $this
+     */
     public function setResponderUrl( $responderUrl )
     {
         $this->responderUrl = json_encode($responderUrl);
@@ -1806,6 +1895,10 @@ class SuggestField extends FormElement
         return $this;
     }
 
+    /**
+     * @param $label
+     * @return $this
+     */
     public function setInitialLabel( $label )
     {
         $this->initialLabel = $label;
@@ -1813,6 +1906,10 @@ class SuggestField extends FormElement
         return $this;
     }
 
+    /**
+     * @param $value
+     * @return $this
+     */
     public function setInitialValue( $value )
     {
         $this->initialValue = $value;
@@ -1820,6 +1917,10 @@ class SuggestField extends FormElement
         return $this;
     }
 
+    /**
+     * @param $value
+     * @return $this
+     */
     public function setMinChars( $value )
     {
         $this->minChars = (int) $value;
@@ -1827,6 +1928,10 @@ class SuggestField extends FormElement
         return $this;
     }
 
+    /**
+     * @param array|null $params
+     * @return string
+     */
     public function renderInput( $params = null )
     {
         parent::renderInput($params);
@@ -1871,16 +1976,21 @@ class SuggestField extends FormElement
     }
 }
 
+/**
+ * Class MultiFileField
+ */
 class MultiFileField extends FormElement
 {
     private $inputs;
+    /** @var array  */
     private $labels;
 
     /**
      * Constructor.
      *
      * @param string $name
-     * @param int $inputs
+     * @param int    $inputs
+     * @param array|null   $labels
      */
     public function __construct( $name, $inputs = 5, $labels = null )
     {
@@ -1892,11 +2002,17 @@ class MultiFileField extends FormElement
         $this->addAttribute('type', 'file');
     }
 
+    /**
+     * @return mixed|null
+     */
     public function getValue()
     {
         return isset($_FILES[$this->getName()]) ? $_FILES[$this->getName()] : null;
     }
 
+    /**
+     * @return string
+     */
     public function getElementJs()
     {
         $js = "var formElement = new OwFormElement('" . $this->getId() . "', '" . $this->getName() . "');";
@@ -1962,10 +2078,18 @@ class MultiFileField extends FormElement
     }
 }
 
+/**
+ * Class TagsField
+ */
 class TagsField extends FormElement
 {
     private $tags;
 
+    /**
+     * TagsField constructor.
+     * @param       $name
+     * @param array $tags
+     */
     public function __construct( $name, $tags = array() )
     {
         parent::__construct($name);
@@ -1973,6 +2097,10 @@ class TagsField extends FormElement
         $this->setValue(implode(',', $this->tags) . '|sep|');
     }
 
+    /**
+     * @param $raw
+     * @return array|false|string[]
+     */
     public static function getTags( $raw )
     {
         $arr = explode(',', str_replace('|sep|', '', $raw));
@@ -2108,6 +2236,10 @@ class CaptchaField extends FormElement
         $this->addValidator(new CaptchaValidator());
     }
 
+    /**
+     * @param $validator
+     * @return CaptchaField
+     */
     public function addValidator( $validator )
     {
         if ( $validator instanceof CaptchaValidator )
@@ -2159,6 +2291,9 @@ class CaptchaField extends FormElement
     }
 }
 
+/**
+ * Class AgeRange
+ */
 class AgeRange extends FormElement implements DateRangeInterface
 {
     const MIN_YEAR = 1900;
@@ -2185,8 +2320,6 @@ class AgeRange extends FormElement implements DateRangeInterface
      * Sets form element value.
      *
      * @param array $value
-
-     * @return FormElement
      */
     public function setValue( $value )
     {
@@ -2204,16 +2337,26 @@ class AgeRange extends FormElement implements DateRangeInterface
         }
     }
 
+    /**
+     * @return int
+     */
     public function getMinAge()
     {
         return $this->minAge;
     }
 
+    /**
+     * @return int
+     */
     public function getMaxAge()
     {
         return $this->maxAge;
     }
 
+    /**
+     * @param $age
+     * @return $this
+     */
     public function setMaxAge( $age )
     {
         $this->maxAge = (int) $age;
@@ -2221,6 +2364,10 @@ class AgeRange extends FormElement implements DateRangeInterface
         return $this;
     }
 
+    /**
+     * @param $age
+     * @return $this
+     */
     public function setMinAge( $age )
     {
         $this->minAge = (int) $age;
@@ -2228,6 +2375,10 @@ class AgeRange extends FormElement implements DateRangeInterface
         return $this;
     }
 
+    /**
+     * @param $year
+     * @return $this|mixed
+     */
     public function setMaxYear( $year )
     {
         $this->minAge = (int) date("Y") - (int) $year;
@@ -2235,6 +2386,10 @@ class AgeRange extends FormElement implements DateRangeInterface
         return $this;
     }
 
+    /**
+     * @param $year
+     * @return $this|mixed
+     */
     public function setMinYear( $year )
     {
         $this->maxAge = (int) date("Y") - (int) $year;
@@ -2242,16 +2397,26 @@ class AgeRange extends FormElement implements DateRangeInterface
         return $this;
     }
 
+    /**
+     * @return int
+     */
     public function getMaxYear()
     {
         return (int) date("Y") - (int) $this->minAge;
     }
 
+    /**
+     * @return int
+     */
     public function getMinYear()
     {
         return (int) date("Y") - (int) $this->maxAge;
     }
 
+    /**
+     * @param array|null $params
+     * @return string
+     */
     public function renderInput( $params = null )
     {
         parent::renderInput($params);
@@ -2295,15 +2460,13 @@ class AgeRange extends FormElement implements DateRangeInterface
 
         $language = OW::getLanguage();
 
-        $result = '<div id="' . $this->getAttribute('id') . '"class="' . $this->getAttribute('name') . '">
+        return '<div id="' . $this->getAttribute('id') . '" class="' . $this->getAttribute('name') . '">
                         <div class="ow_range_from ow_inline ">' . $language->text('base', 'form_element_from') . '</div>
                         <div class="ow_inline">' . UTIL_HtmlTag::generateTag('select', $fromAgeAttrs, true, $fromAgeOptionsString) . '</div>
                         <div class="ow_range_to ow_inline">' . $language->text('base', 'form_element_to') . '</div>
                         <div class="ow_inline">' . UTIL_HtmlTag::generateTag('select', $toAgeAttrs, true, $toAgeOptionsString) . '</div>
                         <div class="ow_range_label ow_inline">' . $language->text('base', 'form_element_age_range') . '</div>
                     </div>';
-
-        return $result;
     }
 
     /**
@@ -2331,15 +2494,15 @@ class AgeRange extends FormElement implements DateRangeInterface
     }
 }
 
+/**
+ * Class MatchAgeRange
+ */
 class MatchAgeRange extends AgeRange
 {
 
     /**
      * Sets form element value.
-     *
-     * @param array $value
-
-     * @return FormElement
+     * @param array|string $value
      */
     public function setValue( $value )
     {
@@ -2384,6 +2547,9 @@ class MatchAgeRange extends AgeRange
         }
     }
 
+    /**
+     * @return string
+     */
     public function getElementJs()
     {
         $js = "var formElement = new OwRange(" . json_encode($this->getId()) . ", " . json_encode($this->getName()) . ");";
@@ -2392,6 +2558,9 @@ class MatchAgeRange extends AgeRange
     }
 }
 
+/**
+ * Class Range
+ */
 class Range extends FormElement
 {
     protected $minValue;
@@ -2418,10 +2587,7 @@ class Range extends FormElement
 
     /**
      * Sets form element value.
-     *
-     * @param array $value
-
-     * @return FormElement
+     * @param array|string $value
      */
     public function setValue( $value )
     {
@@ -2466,16 +2632,26 @@ class Range extends FormElement
         }
     }
 
+    /**
+     * @return int
+     */
     public function getMinValue()
     {
         return $this->maxValue;
     }
 
+    /**
+     * @return int
+     */
     public function getMaxValue()
     {
         return $this->minValue;
     }
 
+    /**
+     * @param $value
+     * @return $this
+     */
     public function setMaxValue( $value )
     {
         $this->maxValue = (int) $value;
@@ -2483,6 +2659,10 @@ class Range extends FormElement
         return $this;
     }
 
+    /**
+     * @param $value
+     * @return $this
+     */
     public function setMinValue( $value )
     {
         $this->minValue = (int) $value;
@@ -2490,6 +2670,10 @@ class Range extends FormElement
         return $this;
     }
 
+    /**
+     * @param array|null $params
+     * @return string
+     */
     public function renderInput( $params = null )
     {
         parent::renderInput($params);
@@ -2533,17 +2717,18 @@ class Range extends FormElement
 
         $language = OW::getLanguage();
 
-        $result = '<div id="' . $this->getAttribute('id') . '"class="' . $this->getAttribute('name') . '">
+        return '<div id="' . $this->getAttribute('id') . '" class="' . $this->getAttribute('name') . '">
                         <div style="display:inline;padding-left:5px;padding-right:5px;">' . $language->text('base', 'form_element_from') . '</div>
                         <div style="display:inline;">' . UTIL_HtmlTag::generateTag('select', $fromValueAttrs, true, $fromValueOptionsString) . '</div>
                         <div style="display:inline;padding-left:5px;padding-right:5px;">' . $language->text('base', 'form_element_to') . '</div>
                         <div style="display:inline;">' . UTIL_HtmlTag::generateTag('select', $toValueAttrs, true, $toValueOptionsString) . '</div>
                         <div style="display:inline;padding-left:5px;">&nbsp;</div>
                     </div>';
-
-        return $result;
     }
 
+    /**
+     * @return string
+     */
     public function getElementJs()
     {
         $js = "var formElement = new OwRange(" . json_encode($this->getId()) . ", " . json_encode($this->getName()) . ");";
@@ -2552,6 +2737,9 @@ class Range extends FormElement
     }
 }
 
+/**
+ * Class DateRange
+ */
 class DateRange extends FormElement implements DateRangeInterface
 {
     protected $minDate;
@@ -2596,26 +2784,37 @@ class DateRange extends FormElement implements DateRangeInterface
         return $this;
     }
 
+    /**
+     * @return array|mixed
+     */
     public function getValue()
     {
-        $value = array(
+        return array(
             'from' => $this->minDate->getValue(),
             'to' => $this->maxDate->getValue()
         );
-
-        return $value;
     }
 
+    /**
+     * @return int
+     */
     public function getMinYear()
     {
         return $this->minDate->getMinYear();
     }
 
+    /**
+     * @return int
+     */
     public function getMaxYear()
     {
         return $this->minDate->getMaxYear();
     }
 
+    /**
+     * @param $year
+     * @return $this|mixed
+     */
     public function setMaxYear( $year )
     {
         $this->minDate->setMaxYear($year);
@@ -2624,6 +2823,10 @@ class DateRange extends FormElement implements DateRangeInterface
         return $this;
     }
 
+    /**
+     * @param $year
+     * @return $this|mixed
+     */
     public function setMinYear( $year )
     {
         $this->minDate->setMinYear($year);
@@ -2632,22 +2835,27 @@ class DateRange extends FormElement implements DateRangeInterface
         return $this;
     }
 
+    /**
+     * @param array|null $params
+     * @return string
+     */
     public function renderInput( $params = null )
     {
         parent::renderInput($params);
 
         $language = OW::getLanguage();
 
-        $result = '<div id="' . $this->getAttribute('id') . '" class="' . $this->getAttribute('name') . '">
+        return '<div id="' . $this->getAttribute('id') . '" class="' . $this->getAttribute('name') . '">
                        ' . $language->text('base', 'form_element_from') . '  <div class="ow_inline">' . ( $this->minDate->renderInput() ) . '</div>
                        ' . $language->text('base', 'form_element_to') . '
                        <div class="ow_inline">' . ( $this->maxDate->renderInput() ) . '</div>
                     </div>';
-
-        return $result;
     }
 }
 
+/**
+ * Class BillingGatewaySelectionField
+ */
 class BillingGatewaySelectionField extends FormElement
 {
 
@@ -2666,16 +2874,15 @@ class BillingGatewaySelectionField extends FormElement
      */
     public function getElementJs()
     {
-        $js = "var formElement = new OwFormElement('" . $this->getId() . "', '" . $this->getName() . "');";
-
-        return $js;
+        return "var formElement = new OwFormElement('" . $this->getId() . "', '" . $this->getName() . "');";
     }
 
     /**
-     * @see FormElement::renderInput()
-     *
      * @param array $params
      * @return string
+     * @throws ReflectionException
+     * @see FormElement::renderInput()
+     *
      */
     public function renderInput( $params = null )
     {
@@ -2768,6 +2975,11 @@ class BillingGatewaySelectionField extends FormElement
         return $renderedString;
     }
 
+    /**
+     * @param $option
+     * @param $field
+     * @return string
+     */
     protected function getItemMarkUp( $option, $field )
     {
         return '<li style="display: inline-block;">
@@ -2775,18 +2987,26 @@ class BillingGatewaySelectionField extends FormElement
                 </li>';
     }
 
+    /**
+     * @return array
+     */
     protected function getActiveGatewaysList()
     {
         return BOL_BillingService::getInstance()->getActiveGatewaysList();
     }
 
+    /**
+     * @param $gateways
+     * @return array
+     * @throws ReflectionException
+     */
     protected function getAdapterData( $gateways )
     {
         $paymentOptions = array();
 
         foreach ( $gateways as $gateway )
         {
-            /* @var $adapter OW_BillingAdapter */
+            /* @var OW_BillingAdapter $adapter */
             if ( $adapter = OW::getClassInstance($gateway->adapterClassName) )
             {
                 $paymentOptions[$gateway->gatewayKey]['dto'] = $gateway;
@@ -2799,9 +3019,17 @@ class BillingGatewaySelectionField extends FormElement
     }
 }
 
+/**
+ * Class MobileBillingGatewaySelectionField
+ */
 class MobileBillingGatewaySelectionField extends BillingGatewaySelectionField
 {
 
+    /**
+     * @param $option
+     * @param $field
+     * @return string
+     */
     protected function getItemMarkUp( $option, $field )
     {
         $name = str_replace('billing', '', $option['dto']->gatewayKey);
@@ -2816,19 +3044,27 @@ class MobileBillingGatewaySelectionField extends BillingGatewaySelectionField
                 <label class="'. implode(' ', $style_classes) .'">' . $field . '</label>
         </div>';
     }
-    
+
+    /**
+     * @return array
+     */
     protected function getActiveGatewaysList()
     {
         return BOL_BillingService::getInstance()->getActiveGatewaysList(true);
     }
 
+    /**
+     * @param $gateways
+     * @return array
+     * @throws ReflectionException
+     */
     protected function getAdapterData( $gateways )
     {
         $paymentOptions = array();
 
         foreach ( $gateways as $gateway )
         {
-            /* @var $adapter OW_BillingAdapter */
+            /* @var OW_BillingAdapter $adapter */
             if ( $adapter = OW::getClassInstance($gateway->adapterClassName) )
             {
                 $paymentOptions[$gateway->gatewayKey]['dto'] = $gateway;
@@ -2841,6 +3077,9 @@ class MobileBillingGatewaySelectionField extends BillingGatewaySelectionField
     }
 }
 
+/**
+ * Class YearRange
+ */
 class YearRange extends FormElement implements DateRangeInterface
 {
     const MIN_YEAR = 1800;
@@ -2868,8 +3107,6 @@ class YearRange extends FormElement implements DateRangeInterface
      * Sets form element value.
      *
      * @param array $value
-
-     * @return FormElement
      */
     public function setValue( $value )
     {
@@ -2887,6 +3124,9 @@ class YearRange extends FormElement implements DateRangeInterface
         }
     }
 
+    /**
+     * @return string
+     */
     public function getElementJs()
     {
         $jsString = " var formElement = new AgeRangeFormElement(" . json_encode($this->getId()) . ", " . json_encode($this->getName()) . "); ";
@@ -2894,36 +3134,60 @@ class YearRange extends FormElement implements DateRangeInterface
         return $jsString.$this->generateValidatorAndFilterJsCode("formElement");
     }
 
+    /**
+     * @return int
+     */
     public function getMinAge()
     {
         return $this->maxYear;
     }
 
+    /**
+     * @return int
+     */
     public function getMaxAge()
     {
         return $this->minYear;
     }
 
+    /**
+     * @param $year
+     * @return mixed|void
+     */
     public function setMaxYear( $year )
     {
         $this->minYear = (int) $year;
     }
 
+    /**
+     * @param $year
+     * @return mixed|void
+     */
     public function setMinYear( $year )
     {
         $this->maxYear = (int) $year;
     }
 
+    /**
+     * @return int
+     */
     public function getMaxYear()
     {
         return $this->maxYear;
     }
 
+    /**
+     * @return int
+     */
     public function getMinYear()
     {
         return $this->minYear;
     }
 
+    /**
+     * @param array|null $params
+     * @return string
+     */
     public function renderInput( $params = null )
     {
         parent::renderInput($params);
@@ -2966,15 +3230,13 @@ class YearRange extends FormElement implements DateRangeInterface
 
         $language = OW::getLanguage();
 
-        $result = '<div id="' . $this->getAttribute('id') . '"class="' . $this->getAttribute('name') . '">
+        return '<div id="' . $this->getAttribute('id') . '" class="' . $this->getAttribute('name') . '">
                         <div class="ow_range_from ow_inline">' . $language->text('base', 'form_element_from') . '</div>
                         <div class="ow_inline">' . UTIL_HtmlTag::generateTag('select', $fromYearAttrs, true, $fromAgeOptionsString) . '</div>
                         <div class="ow_range_to ow_inline">' . $language->text('base', 'form_element_to') . '</div>
                         <div class="ow_inline">' . UTIL_HtmlTag::generateTag('select', $toYearAttrs, true, $toAgeOptionsString) . '</div>
                         <div class="ow_range_label ow_inline">' . $language->text('base', 'form_element_year_range') . '</div>
                     </div>';
-
-        return $result;
     }
 }
 
@@ -3143,7 +3405,7 @@ class WysiwygTextarea extends InvitationFormElement
     const SIZE_L = 300;
 
     /**
-     * @var type
+     * @var bool
      */
     private $init;
 
@@ -3176,7 +3438,9 @@ class WysiwygTextarea extends InvitationFormElement
     /**
      * Constructor.
      *
-     * @param string $name
+     * @param string     $name
+     * @param array|null $buttons
+     * @param bool       $init
      */
     public function __construct( $name, array $buttons = null, $init = true )
     {
@@ -3250,6 +3514,9 @@ class WysiwygTextarea extends InvitationFormElement
         $this->buttons = $this->processButtons($buttons);
     }
 
+    /**
+     * @return string
+     */
     public function getElementJs()
     {
         if ( $this->textarea !== null )
@@ -3262,7 +3529,7 @@ class WysiwygTextarea extends InvitationFormElement
         $jsString = "var formElement = new OwWysiwyg(" . json_encode($this->getId()) . ", " . json_encode($this->getName()) . ", " . json_encode($invitation) . ");            
         ";
 
-        /** @var $value Validator  */
+        /** @var OW_Validator $value */
         foreach ( $this->validators as $value )
         {
             $jsString .= "formElement.addValidator(" . $value->getJsValidator() . ");";
@@ -3271,6 +3538,9 @@ class WysiwygTextarea extends InvitationFormElement
         return $jsString;
     }
 
+    /**
+     * @param array $buttons
+     */
     public function forceAddButtons( array $buttons = array() )
     {
         $this->buttons = array_merge($this->buttons, $buttons);
@@ -3332,7 +3602,7 @@ class WysiwygTextarea extends InvitationFormElement
                     )
                 ),
                 'buttonCode' => OW::getThemeManager()->processDecorator('button', array('label' => '#label#', 'class' => 'ow_ic_add mn_submit')),
-                'rtl' => ( ( $languageDto !== null && (bool) $languageDto->getRtl() ) ? true : false )
+                'rtl' => $languageDto !== null && (bool) $languageDto->getRtl()
             );
 
 
@@ -3383,6 +3653,9 @@ class WysiwygTextarea extends InvitationFormElement
         return $markup;
     }
 
+    /**
+     * @return mixed|string|string[]
+     */
     public function getValue()
     {
         if ( $this->textarea !== null )
@@ -3393,6 +3666,10 @@ class WysiwygTextarea extends InvitationFormElement
         return BOL_TextFormatService::getInstance()->processWsForOutput($this->value, array('buttons' => $this->buttons));
     }
 
+    /**
+     * @param mixed $value
+     * @return Textarea|WysiwygTextarea|null
+     */
     public function setValue( $value )
     {
         if ( $this->textarea !== null )
@@ -3401,8 +3678,14 @@ class WysiwygTextarea extends InvitationFormElement
         }
 
         $this->value = $value;
+
+        return null;
     }
 
+    /**
+     * @param $buttons
+     * @return array
+     */
     private function processButtons( $buttons )
     {
         $keysToUnset = array();
@@ -3436,11 +3719,17 @@ class WysiwygTextarea extends InvitationFormElement
         return array_values($buttons);
     }
 
+    /**
+     * @return string
+     */
     public function getCustomBodyClass()
     {
         return $this->customBodyClass;
     }
 
+    /**
+     * @param $customBodyClass
+     */
     public function setCustomBodyClass( $customBodyClass )
     {
         $this->customBodyClass = $customBodyClass;
@@ -3474,6 +3763,9 @@ class WysiwygTextarea extends InvitationFormElement
     }
 }
 
+/**
+ * Class TagsInputField
+ */
 class TagsInputField extends FormElement
 {
     private $invLabel;
@@ -3483,6 +3775,10 @@ class TagsInputField extends FormElement
     private $maxChars = 0;
     private $phpRegexp;
 
+    /**
+     * TagsInputField constructor.
+     * @param $name
+     */
     public function __construct( $name )
     {
         parent::__construct($name);
@@ -3491,21 +3787,33 @@ class TagsInputField extends FormElement
         $this->delimiterChars = array('.');
     }
 
+    /**
+     * @param $value
+     */
     public function setMinChars( $value )
     {
         $this->minChars = (int) $value;
     }
 
+    /**
+     * @param $value
+     */
     public function setMaxChars( $value )
     {
         $this->minChars = (int) $value;
     }
 
+    /**
+     * @param $label
+     */
     public function setInvitation( $label )
     {
         $this->invLabel = $label;
     }
 
+    /**
+     * @param array $chars
+     */
     public function setDelimiterChars( array $chars )
     {
         $this->delimiterChars = $chars;
@@ -3525,9 +3833,7 @@ class TagsInputField extends FormElement
 
         $this->addAttribute('value', $this->value ? implode(',', $this->value) : '');
 
-        $markup = UTIL_HtmlTag::generateTag('input', $this->attributes);
-
-        return $markup;
+        return UTIL_HtmlTag::generateTag('input', $this->attributes);
     }
 
     /**
@@ -3571,11 +3877,18 @@ var formElement = new OwFormElement('" . $this->getId() . "', '" . $this->getNam
         return $js;
     }
 
+    /**
+     * @return array|mixed
+     */
     public function getValue()
     {
         return $this->value;
     }
 
+    /**
+     * @param mixed $value
+     * @return TagsInputField|void
+     */
     public function setValue( $value )
     {
         if ( is_string($value) )
@@ -3589,17 +3902,26 @@ var formElement = new OwFormElement('" . $this->getId() . "', '" . $this->getNam
         }
     }
 
+    /**
+     * @param $jsRegexp
+     */
     public function setJsRegexp( $jsRegexp )
     {
         $this->jsRegexp = $jsRegexp;
     }
 
+    /**
+     * @param $phpRegexp
+     */
     public function setPhpRegexp( $phpRegexp )
     {
         $this->phpRegexp = $phpRegexp;
     }
 }
 
+/**
+ * Interface DateRangeInterface
+ */
 interface DateRangeInterface
 {
 
@@ -3607,11 +3929,22 @@ interface DateRangeInterface
 
     public function getMaxYear();
 
+    /**
+     * @param $year
+     * @return mixed
+     */
     public function setMaxYear( $year );
 
+    /**
+     * @param $year
+     * @return mixed
+     */
     public function setMinYear( $year );
 }
 
+/**
+ * Class CsrfHiddenField
+ */
 class CsrfHiddenField extends HiddenField
 {
     /**

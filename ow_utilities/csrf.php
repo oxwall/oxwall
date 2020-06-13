@@ -33,8 +33,9 @@ class UTIL_Csrf
 
     /**
      * Generates and returns CSRF token
-     * 
+     *
      * @return string
+     * @throws Exception
      */
     public static function generateToken()
     {
@@ -60,11 +61,18 @@ class UTIL_Csrf
     }
     /* -------------------------------------------------------------------------------------------------------------- */
 
+    /**
+     * @return array|mixed|null
+     */
     private static function getTokenList()
     {
         return OW::getSession()->isKeySet(self::SESSION_VAR_NAME) ? OW::getSession()->get(self::SESSION_VAR_NAME) : array();
     }
 
+    /**
+     * @param array $list
+     * @throws Exception
+     */
     private static function saveTokenList( array $list )
     {
         OW::getSession()->set(self::SESSION_VAR_NAME, $list);

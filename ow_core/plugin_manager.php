@@ -93,7 +93,7 @@ class OW_PluginManager
             return ($a->getId() > $b->getId()) ? 1 : -1;
         });
 
-        /* @var $value BOL_Plugin */
+        /* @var BOL_Plugin $value */
         foreach ( $plugins as $plugin )
         {
             if ( !array_key_exists($plugin->getKey(), $this->cachedObjects) )
@@ -107,6 +107,7 @@ class OW_PluginManager
 
     /**
      * Includes init script for provided plugin
+     * @param OW_Plugin $pluginObject
      */
     public function initPlugin( OW_Plugin $pluginObject )
     {
@@ -188,7 +189,7 @@ class OW_PluginManager
     {
         $plugins = $this->pluginService->findActivePlugins();
 
-        /* @var $plugin BOL_Plugin */
+        /* @var BOL_Plugin $plugin */
         foreach ( $plugins as $plugin )
         {
             if ( $plugin->getModule() == $moduleName )
@@ -213,7 +214,7 @@ class OW_PluginManager
 
         if ( $plugin == null )
         {
-            throw new InvalidArgumentException("There is no active plugin with key `{$key}`");
+            throw new InvalidArgumentException("There is no active plugin with key `{$pluginKey}`");
         }
 
         return $plugin->getModule();

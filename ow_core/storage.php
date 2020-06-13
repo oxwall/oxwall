@@ -74,12 +74,11 @@ interface OW_Storage
      */
     public function fileGetContent ( $destPath );
 
-     /**
+    /**
      * Set storage file content
      *
      * @param string $destPath
-     * @param string $content
-     *
+     * @param string $conent
      * @return boolean
      */
     public function fileSetContent ( $destPath, $conent );
@@ -157,13 +156,12 @@ interface OW_Storage
      * @return boolean
      */
     public function mkdir ( $path );
-    
-     /**
+
+    /**
      * Tells whether the filename is writable
      *
-     * @param string $path
-     *
-     * @return boolean
+     * @param string $filename
+     * @return bool
      */
     public function isWritable ( $filename );
 
@@ -188,4 +186,4 @@ interface OW_Storage
     public function chmod ( $destPath, $premissions );
 }
 
-?>
+

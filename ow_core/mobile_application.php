@@ -41,7 +41,7 @@ class OW_MobileApplication extends OW_Application
     }
 
     /**
-     * ---------
+     * @throws Redirect404Exception
      */
     public function handleRequest()
     {
@@ -180,6 +180,9 @@ class OW_MobileApplication extends OW_Application
         
     }
 
+    /**
+     * @return OW_HtmlDocument
+     */
     protected function newDocument()
     {
         $language = BOL_LanguageService::getInstance()->getCurrent();
@@ -217,21 +220,34 @@ class OW_MobileApplication extends OW_Application
         OW::getRequestHandler()->setStaticPageAttributes('BASE_MCTRL_BaseDocument', 'staticDocument');
     }
 
+    /**
+     * @return array
+     */
     protected function findAllStaticDocs()
     {
         return BOL_NavigationService::getInstance()->findAllMobileStaticDocuments();
     }
 
+    /**
+     * @param string $availableFor
+     * @return BOL_MenuItem
+     */
     protected function findFirstMenuItem( $availableFor )
     {
         return BOL_NavigationService::getInstance()->findFirstLocal($availableFor, OW_Navigation::MOBILE_TOP);
     }
 
+    /**
+     * @return OW_Route
+     */
     protected function getSiteRootRoute()
     {
         return new OW_Route('base_default_index', '/', 'BASE_MCTRL_WidgetPanel', 'index');
     }
 
+    /**
+     * @return OW_MobileMasterPage
+     */
     protected function getMasterPage()
     {
         return new OW_MobileMasterPage();

@@ -115,7 +115,7 @@ class UTIL_Url
     * Secure uri
     *
     * @param string $uri
-    * @return string
+    * @return string|null
     */
     public static function secureUri( $uri )
     {
@@ -151,6 +151,9 @@ class UTIL_Url
         }
     }
 
+    /**
+     * @return string
+     */
     public static function selfUrl()
     {
         $s = (!empty($_SERVER["HTTPS"]) && ($_SERVER["HTTPS"] == "on") ) ? 's' : '';
@@ -160,6 +163,10 @@ class UTIL_Url
         return $protocol . "://" . $_SERVER['SERVER_NAME'] . self::secureUri($_SERVER['REQUEST_URI']);
     }
 
+    /**
+     * @param string $uri
+     * @return string|null
+     */
     public static function getLocalPath( $uri )
     {
         $userFilesUrl = OW::getStorage()->getFileUrl(OW_DIR_USERFILES);

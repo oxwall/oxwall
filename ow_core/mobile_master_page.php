@@ -102,6 +102,9 @@ class OW_MobileMasterPage extends OW_MasterPage
         parent::onBeforeRender();
     }
 
+    /**
+     * @param string $template
+     */
     public function setTemplate( $template )
     {
         //TODO remove dirty hack for backcompat

@@ -81,7 +81,7 @@ abstract class OW_ApiActionController
     /**
      * Returns rendered markup.
      *
-     * @return string
+     * @return array
      */
     public function render()
     {

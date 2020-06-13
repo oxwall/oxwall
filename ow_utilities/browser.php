@@ -28,8 +28,14 @@
  */
 require_once OW_DIR_LIB . 'browser' . DS . 'browser.php';
 
+/**
+ * Class UTIL_Browser
+ */
 class UTIL_Browser
 {
+    /**
+     * @return bool
+     */
     public static function isSmartphone()
     {
         require_once OW_DIR_LIB . 'mobileesp' . DS . 'mdetect.php';
