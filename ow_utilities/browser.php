@@ -34,13 +34,29 @@ require_once OW_DIR_LIB . 'browser' . DS . 'browser.php';
 class UTIL_Browser
 {
     /**
+     * Is smart phone
+     *
      * @return bool
      */
     public static function isSmartphone()
     {
-        require_once OW_DIR_LIB . 'mobileesp' . DS . 'mdetect.php';
-        $obj = new uagent_info();
-        return (bool) $obj->DetectSmartphone();
+        return (bool) self::getUagentInfoObj()->DetectSmartphone();
+    }
+
+    /**
+     * Is tier tablet
+     *
+     * @return bool
+     */
+    public static function isTierTablet()
+    {
+        if ( self::getUagentInfoObj()->isAndroid || self::getUagentInfoObj()->isIphone
+                || self::getUagentInfoObj()->isTierTablet )
+        {
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -95,6 +111,15 @@ class UTIL_Browser
     private static function getBrowserObj( $agentString )
     {
         return new CSBrowser($agentString);
+    }
+
+    /**
+     * @return object uagent_info
+     */
+    private static function getUagentInfoObj()
+    {
+        require_once OW_DIR_LIB . 'mobileesp' . DS . 'mdetect.php';
+        return new uagent_info();
     }
 
     private static function getWurfl()

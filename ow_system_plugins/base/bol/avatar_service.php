@@ -1040,6 +1040,12 @@ class BOL_AvatarService
 
             if ( $avatar )
             {
+                // copy original avatar
+                $originalPath = $this->getTempAvatarPath($key, 3);
+                $avatarOriginalPath = $this->getAvatarPath($userId, 3, $avatar->hash);
+
+                OW::getStorage()->copyFile($originalPath, $avatarOriginalPath);
+
                 $event = new OW_Event('base.after_avatar_change', array(
                     'userId' => $userId,
                     'avatarId' => $avatar->id,
