@@ -277,7 +277,7 @@ body .ow_table_2 tr.ow_tr_titles th:last-child, body .ow_table_1 tr.ow_tr_titles
 }
 
 .ow_marked_cell{
-    background-image: url(images/ic_ok.png);
+    background-image: url(images/ic_ok.svg);
     background-repeat: no-repeat;
     background-position: center center;
 }
