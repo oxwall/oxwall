@@ -229,7 +229,7 @@ class BOL_CommentDao extends OW_BaseDao
 				" . $queryParts['join'] . "
 			WHERE `ce`.`" . BOL_CommentEntityDao::ENTITY_TYPE . "` = :entityType AND `ce`.`" . BOL_CommentEntityDao::ENTITY_ID . "` IN  ( " . $this->dbo->mergeInClause($idList) . " )
 			AND " . $queryParts['where'] . "
-			GROUP BY `" . BOL_CommentEntityDao::ENTITY_ID . "`";
+			GROUP BY `ce`.`" . BOL_CommentEntityDao::ENTITY_ID . "`";
 
         $boundParams = array_merge(array('entityType' => $entityType), $queryParts['params']);
 
