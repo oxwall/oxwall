@@ -180,7 +180,9 @@ class BOL_RateDao extends OW_BaseDao
             "  . $queryParts['join'] . "
             WHERE `r`.`" . self::ENTITY_TYPE . "` = :entityType AND `r`.`" . self::ACTIVE . "` = 1" . $excludeCond . " AND " . $queryParts['where'] . "";
 
-        return (int) $this->dbo->queryForColumn($query, array('entityType' => $entityType));
+        $boundParams = array_merge(array('entityType' => $entityType), $queryParts['params']);
+
+        return (int) $this->dbo->queryForColumn($query, $boundParams);
     }
 
     public function updateEntityStatus( $entityType, $entityId, $status )
