@@ -191,13 +191,13 @@ class BOL_EmailVerifyService
         {
             $hash = BOL_EmailVerifyService::getInstance()->generateHash();
 
-            $event = new OW_Event('base.on_after_generate_email_verification_code', [], $hash);
-            OW::getEventManager()->trigger($event);
-            $hash = $event->getData();
-
             if ( OW::getApplication()->getContext() == OW_Application::CONTEXT_API ) {
                 $hash = mb_substr($hash, 0, 8);
             }
+            
+            $event = new OW_Event('base.on_after_generate_email_verification_code', [], $hash);
+            OW::getEventManager()->trigger($event);
+            $hash = $event->getData();
 
             $emailVerifiedData = new BOL_EmailVerify();
             $emailVerifiedData->userId = $userId;
