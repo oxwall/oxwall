@@ -9,6 +9,9 @@ AddEncoding gzip .gzip
 <FilesMatch "\.(css.gz|css.gzip)$">
   ForceType text/css
 </FilesMatch>
+<FilesMatch "\.(jpe?g|png)$">
+  Header set Access-Control-Allow-Origin "*"
+</FilesMatch>
 
 
 RewriteCond %{REQUEST_URI} !^/index\.php
