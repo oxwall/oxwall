@@ -172,9 +172,9 @@ final class BOL_BillingService
         
         if ( !isset($sale->hash) )
         {
-            $sale->hash = $this->getMD5Hash();
+            $sale->hash = $this->getSaleHash();
         }
-        
+
         $sale->timeStamp = time();
 
         if ( !isset($sale->currency) )
@@ -406,10 +406,11 @@ final class BOL_BillingService
      * 
      * @return string
      */
-    public function getMD5Hash()
+    public function getSaleHash()
     {
-        return md5(time()); // TODO: smth not so trivial
+        return sha1(microtime());
     }
+
     /* Billing product methods */
 
     /**
