@@ -189,11 +189,7 @@ class BOL_EmailVerifyService
 
         if ( $emailVerifiedData === null )
         {
-            $hash = BOL_EmailVerifyService::getInstance()->generateHash();
-
-            if ( OW::getApplication()->getContext() == OW_Application::CONTEXT_API ) {
-                $hash = mb_substr($hash, 0, 8);
-            }
+            $hash = UTIL_String::getRandomString(4, UTIL_String::RND_STR_NUMERIC);
             
             $event = new OW_Event('base.on_after_generate_email_verification_code', [], $hash);
             OW::getEventManager()->trigger($event);
