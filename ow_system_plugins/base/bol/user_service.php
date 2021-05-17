@@ -1362,8 +1362,9 @@ final class BOL_UserService
      */
     public function getNewResetPassword( $userId )
     {
-    	$code = md5(UTIL_String::getRandomString(8, 5));
-
+    	//$code = md5(UTIL_String::getRandomString(8, 5));
+        $code = rand(1000, 9999);
+        
         $event = new OW_Event('base.on_after_generate_password_reset_code', [], $code);
         OW::getEventManager()->trigger($event);
 
