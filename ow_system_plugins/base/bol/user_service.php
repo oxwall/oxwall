@@ -48,7 +48,7 @@ final class BOL_UserService
     const USER_CONTEXT_MOBILE = BOL_UserOnlineDao::CONTEXT_VAL_MOBILE;
     const USER_CONTEXT_API = BOL_UserOnlineDao::CONTEXT_VAL_API;
     const USER_CONTEXT_CLI = BOL_UserOnlineDao::CONTEXT_VAL_CLI;
-    const PASSWORD_RESET_CODE_EXPIRATION_TIME = 3600;
+    const PASSWORD_RESET_CODE_EXPIRATION_TIME = 1200;
     const PASSWORD_RESET_CODE_UPDATE_TIME = 600;
     const BEFORE_USER_ONLINE = 'base.before_user_online';
     const EVENT_GET_USER_VIEW_QUESTIONS = 'base.get_user_view_questions';
@@ -1362,9 +1362,8 @@ final class BOL_UserService
      */
     public function getNewResetPassword( $userId )
     {
-    	//$code = md5(UTIL_String::getRandomString(8, 5));
-        $code = rand(1000, 9999);
-        
+    	$code = md5(UTIL_String::getRandomString(8, 5));
+
         $event = new OW_Event('base.on_after_generate_password_reset_code', [], $code);
         OW::getEventManager()->trigger($event);
 
