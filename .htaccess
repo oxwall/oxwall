@@ -16,7 +16,7 @@ AddEncoding gzip .gzip
 # return gzipped files for the mobile app
 RewriteCond %{HTTP:Accept-encoding} gzip
 RewriteCond %{REQUEST_URI} ^/m/(.*.(js|css|map|xml|ttf|otf|json))$
-RewriteRule (.*) ow_static/plugins/skmobileapp/src/%1.gzip [END]
+RewriteRule (.*) ow_static/plugins/skmobileapp/src/%1.gz [END]
 
 RewriteCond %{REQUEST_URI} ^/m/(.*)$
 RewriteRule (.*) ow_static/plugins/skmobileapp/src/%1 [END]
