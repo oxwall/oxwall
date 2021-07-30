@@ -283,6 +283,7 @@ final class BOL_BillingService
     public function registerRebillSale( OW_BillingAdapter $adapter, BOL_BillingSale $parentSale, $rebillTransId )
     {
         $parentSale->id = null;
+        $parentSale->hash = null;
         $parentSale->transactionUid = $rebillTransId;
 
         /** @var BOL_BillingGateway $gateway */
