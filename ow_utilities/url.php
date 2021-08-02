@@ -165,17 +165,38 @@ class UTIL_Url
         $userFilesUrl = OW::getStorage()->getFileUrl(OW_DIR_USERFILES);
         $path = null;
 
-        if ( stripos($uri, OW_URL_HOME) !== false )
+        if ( stripos($uri, OW_URL_HOME) === 0 )
         {
             $path = str_replace(OW_URL_HOME, OW_DIR_ROOT, $uri);
             $path = str_replace('/', DS, $path);
         }
-        else if ( stripos($uri, $userFilesUrl) !== false )
+        else if ( stripos($uri, $userFilesUrl) === 0 )
         {
             $path = str_replace($userFilesUrl, OW_DIR_USERFILES, $uri);
             $path = str_replace('/', DS, $path);
         }
 
         return $path;
+    }
+
+    public static function ensureHttpScheme( $url )
+    {
+        while( !empty($urlPort = parse_url($url, PHP_URL_PORT)) )
+        {
+            $url = str_replace(":{$urlPort}", "", $url);
+        }
+
+        $urlScheme = parse_url($url, PHP_URL_SCHEME);
+
+        if ( empty($urlScheme) )
+        {
+            $url = 'http://' . $url;
+        }
+        else if ( strpos($urlScheme, 'http') !== 0 )
+        {
+            $url = str_replace($urlScheme, 'http', $url);
+        }
+
+        return $url;
     }
 }

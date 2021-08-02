@@ -115,6 +115,11 @@ class BASE_CMP_ComponentSettings extends OW_Component
 
             if ( $setting['presentation'] == BASE_CLASS_Widget::PRESENTATION_CUSTOM )
             {
+                if ( !$this->validateRenderCallback($setting['render']) )
+                {
+                    throw new LogicException('PHP render callable is not valid!');
+                }
+
                 $setting['markup'] = call_user_func($setting['render'], $this->uniqName, $name, empty($setting['value']) ? null : $setting['value']);
             }
 
@@ -150,6 +155,27 @@ class BASE_CMP_ComponentSettings extends OW_Component
         $this->assign('hidden', $this->hiddenFieldList);
     }
 
+    protected function validateRenderCallback($callable)
+    {
+        $regexClassName = '[a-z0-9]+(_CMP_|_MCMP_)[a-z0-9]+';
+        $regexMethodName = '\w+';
+
+        if ( is_string($callable) )
+        {
+            return preg_match("/\A{$regexClassName}::{$regexMethodName}\z/i", $callable);
+        }
+        else if ( is_array($callable) )
+        {
+            return
+                count($callable) === 2
+                && preg_match("/\A{$regexClassName}\z/i", is_object($callable[0]) ? get_class($callable[0]) : $callable[0])
+                && preg_match("/\A{$regexMethodName}\z/i", $callable[1]);
+        }
+        else
+        {
+            return is_callable($callable);
+        }
+    }
 }
 
 class IconCollection

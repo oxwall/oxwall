@@ -57,21 +57,16 @@ class BASE_CTRL_AjaxUsersApi extends OW_ActionController
         $command = trim($_GET['command']);
         $query = json_decode($_GET['params'], true);
 
-        $response = call_user_func(array($this, $command), $query);
-        
-        /*try
+        if ( $command !== __FUNCTION__ )
         {
             $response = call_user_func(array($this, $command), $query);
+            $response = empty($response) ? array() : $response;
         }
-        catch ( Exception $e )
+        else
         {
-            $response = array(
-                "error" => $e->getMessage(),
-                'type' => 'error'
-            );
-        }*/
+            $response = array();
+        }
 
-        $response = empty($response) ? array() : $response;
         echo json_encode($response);
         exit;
     }

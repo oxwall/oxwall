@@ -46,7 +46,12 @@ class BASE_CTRL_AjaxLoader extends OW_ActionController
 
         $cmpClass = trim($_GET['cmpClass']);
         $params = empty($_POST['params']) ? array() : json_decode($_POST['params'], true);
-        
+
+        if ( strpos($cmpClass, "_CMP_") === false && strpos($cmpClass, "_MCMP_") === false )
+        {
+            throw new LogicException('Only OxWall components are available for rendering!');
+        }
+
         $cmp = OW::getClassInstanceArray($cmpClass, $params);
         $responce = $this->getComponentMarkup($cmp);
 

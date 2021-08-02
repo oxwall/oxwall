@@ -458,6 +458,11 @@ final class OW
 
     public static function getClassInstanceArray( $className, array $arguments = array() )
     {
+        if ( !self::isInternalClass($className) )
+        {
+            throw new LogicException('Only internal OxWall classes are allowed for instantiating!');
+        }
+
         $params = array(
             'className' => $className,
             'arguments' => $arguments
@@ -500,5 +505,28 @@ final class OW
     public static function getTextSearchManager()
     {
         return OW_TextSearchManager::getInstance();
+    }
+
+    /**
+     * Checks if argument class name is OxWall class type.
+     *
+     * @param string $className
+     * @return bool
+     */
+    private static function isInternalClass( $className )
+    {
+        $allowedClassTypes = array("OW_", "BOL_", "_BOL_", "_CLASS_", "_CMP_", "_CTRL_", "_MCLASS_", "_MCMP_", "_MCTRL_");
+
+        foreach ( $allowedClassTypes as $classType )
+        {
+            $pos = strpos($className, $classType);
+
+            if ( $pos !== false )
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
