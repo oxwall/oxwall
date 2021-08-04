@@ -460,7 +460,7 @@ final class OW
     {
         if ( !self::isInternalClass($className) )
         {
-            throw new LogicException('Only internal OxWall classes are allowed for instantiating!');
+            throw new LogicException('Only internal OxWall classes that adherence to the naming convention are allowed for instantiating!');
         }
 
         $params = array(
@@ -516,9 +516,6 @@ final class OW
     private static function isInternalClass( $className )
     {
         $allowedClassTypes = array(
-            "JoinForm",
-            "BASE_Members",
-            "MainSearchForm",
             "OW_",
             "BOL_",
             "_BOL_",
@@ -527,7 +524,12 @@ final class OW
             "_CTRL_",
             "_MCLASS_",
             "_MCMP_",
-            "_MCTRL_"
+            "_MCTRL_",
+            "JoinForm",
+            "BASE_Members",
+            "MainSearchForm",
+            "EditQuestionForm",
+            "UserSettingsForm",
         );
 
         foreach ( $allowedClassTypes as $classType )
