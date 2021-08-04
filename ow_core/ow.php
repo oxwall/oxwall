@@ -515,7 +515,20 @@ final class OW
      */
     private static function isInternalClass( $className )
     {
-        $allowedClassTypes = array("OW_", "BOL_", "_BOL_", "_CLASS_", "_CMP_", "_CTRL_", "_MCLASS_", "_MCMP_", "_MCTRL_");
+        $allowedClassTypes = array(
+            "JoinForm",
+            "BASE_Members",
+            "MainSearchForm",
+            "OW_",
+            "BOL_",
+            "_BOL_",
+            "_CLASS_",
+            "_CMP_",
+            "_CTRL_",
+            "_MCLASS_",
+            "_MCMP_",
+            "_MCTRL_"
+        );
 
         foreach ( $allowedClassTypes as $classType )
         {
