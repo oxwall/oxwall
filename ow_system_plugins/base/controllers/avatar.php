@@ -61,7 +61,14 @@ class BASE_CTRL_Avatar extends OW_ActionController
         {
             $callFunc = (string) $request['ajaxFunc'];
 
-            $result = call_user_func(array($this, $callFunc), $request);
+            if ( $callFunc !== __FUNCTION__ )
+            {
+                $result = call_user_func(array($this, $callFunc), $request);
+            }
+            else
+            {
+                $result = array();
+            }
         }
         else
         {
