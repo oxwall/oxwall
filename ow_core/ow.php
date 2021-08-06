@@ -530,6 +530,7 @@ final class OW
             "MainSearchForm",
             "EditQuestionForm",
             "UserSettingsForm",
+            "YearRange",
         );
 
         foreach ( $allowedClassTypes as $classType )
