@@ -114,6 +114,35 @@ class BOL_LogDao extends OW_BaseDao
         $this->deleteByExample($example);
     }
 
+    public function findAllPaginated( $first, $count )
+    {
+        $example = new OW_Example();
+        $example->setOrder(self::TIME_STAMP . ' DESC');
+        $example->setLimitClause($first, $count);
+
+        return $this->findListByExample($example);
+    }
+
+    public function findByTypePaginated( $type, $first, $count )
+    {
+        $example = new OW_Example();
+        $example->andFieldEqual(self::TYPE, $type);
+        $example->setOrder(self::TIME_STAMP . ' DESC');
+        $example->setLimitClause($first, $count);
+
+        return $this->findListByExample($example);
+    }
+
+    public function findByKeyPaginated( $key, $first, $count )
+    {
+        $example = new OW_Example();
+        $example->andFieldEqual(self::KEY, $key);
+        $example->setOrder(self::TIME_STAMP . ' DESC');
+        $example->setLimitClause($first, $count);
+
+        return $this->findListByExample($example);
+    }
+
     public function findByTypeAndKey( $type, $key )
     {
         $example = new OW_Example();
@@ -129,5 +158,21 @@ class BOL_LogDao extends OW_BaseDao
         $example->andFieldEqual(self::TYPE, trim($type));
 
         return $this->findListByExample($example);
+    }
+
+    public function countByType( $type )
+    {
+        $example = new OW_Example();
+        $example->andFieldEqual(self::TYPE, $type);
+
+        return $this->countByExample($example);
+    }
+
+    public function countByKey( $key )
+    {
+        $example = new OW_Example();
+        $example->andFieldEqual(self::KEY, $key);
+
+        return $this->countByExample($example);
     }
 }

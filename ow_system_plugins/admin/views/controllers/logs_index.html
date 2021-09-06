@@ -1,0 +1,55 @@
+<div class="ow_stdmargin">
+    <h1>{text key='base+admin_logs'}</h1>
+
+    {if isset($isEmpty)}
+        <p>{text key='base+admin_logs_empty'}</p>
+    {else}
+        <table class="ow_table_1 ow_table_logs">
+            <tr class="ow_tr_first {cycle values='ow_alt2,ow_alt1'}">
+                <th>{text key='base+admin_logs_log_message'}</th>
+                <th>{text key='base+admin_logs_log_type'}</th>
+                <th>{text key='base+admin_logs_log_key'}</th>
+                <th>{text key='base+admin_logs_log_time'}</th>
+            </tr>
+
+            {foreach from=$entries item='entry'}
+                <tr class="{cycle values='ow_alt2,ow_alt1'}">
+                    <td class="ow_td_log_message">
+                        <a href="{$entry['viewUrl']}">{$entry['message']}</a>
+                    </td>
+                    <td class="ow_td_log_type">
+                        <a href="{$entry['filterByTypeUrl']}">{$entry['type']}</a>
+                    </td>
+                    <td class="ow_td_log_key">
+                        <a href="{$entry['filterByKeyUrl']}">{$entry['key']}</a>
+                    </td>
+                    <td class="ow_td_log_timestamp">
+                        <abbr title="{$entry['timeString']}">{$entry['timestampReadable']}</abbr>
+                    </td>
+                </tr>
+            {/foreach}
+        </table>
+
+        {$paging}
+    {/if}
+</div>
+
+{style}
+    .ow_table_logs {
+        margin-top: 24px;
+        text-align: center;
+        width: 100%;
+    }
+
+    .ow_table_logs td {
+        font-family: monospace;
+    }
+
+    .ow_table_logs td abbr {
+        text-decoration: none;
+    }
+
+    .ow_td_log_message {
+        min-width: 60%;
+    }
+{/style}

@@ -1,0 +1,21 @@
+<div class="ow_stdmargin">
+    <h1>{text key='base+admin_log_entry'}</h1>
+
+    <div class="admin_log_entry_view">
+        {if isset($customView)}
+            {$customView}
+        {else}
+            <pre class="ow_log_entry_message">{$entry['messageFull']}</pre>
+        {/if}
+    </div>
+</div>
+
+{style}
+    .admin_log_entry_view {
+        margin-top: 24px;
+    }
+
+    .ow_log_entry_message {
+        font-family: monospace;
+    }
+{/style}
