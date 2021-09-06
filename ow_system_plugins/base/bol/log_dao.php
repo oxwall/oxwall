@@ -143,6 +143,25 @@ class BOL_LogDao extends OW_BaseDao
         return $this->findListByExample($example);
     }
 
+    public function findByQueryPaginated($query, $first, $count )
+    {
+        $sql = "
+            SELECT `id`, `message`, `type`, `key`, `timeStamp`
+            FROM `" . $this->getTableName() . "`
+            WHERE `message` LIKE :query OR `key` LIKE :query OR `type` LIKE :query
+            ORDER BY `timeStamp` DESC
+            LIMIT :first, :count
+        ";
+
+        $query = '%' . $query . '%';
+
+        return $this->dbo->queryForObjectList($sql, BOL_Log::class, array(
+            'query' => $query,
+            'first' => $first,
+            'count' => $count
+        ));
+    }
+
     public function findByTypeAndKey( $type, $key )
     {
         $example = new OW_Example();
@@ -158,6 +177,28 @@ class BOL_LogDao extends OW_BaseDao
         $example->andFieldEqual(self::TYPE, trim($type));
 
         return $this->findListByExample($example);
+    }
+
+    public function countBySearchQuery( $query )
+    {
+        $sql = "
+            SELECT COUNT(`id`) AS `count`
+            FROM `" . $this->getTableName() . "`
+            WHERE `message` LIKE :query OR `key` LIKE :query OR `type` LIKE :query
+        ";
+
+        $query = '%' . $query . '%';
+
+        $result = $this->dbo->queryForRow($sql, array(
+            'query' => $query
+        ));
+
+        if ( !is_array($result) )
+        {
+            return 0;
+        }
+
+        return (int) $result['count'];
     }
 
     public function countByType( $type )

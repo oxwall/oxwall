@@ -31,6 +31,9 @@
  */
 final class BOL_LogService
 {
+    const LOG_ENTRY_DATETIME_FORMAT = 'm/d/Y h:i:s';
+    const LOG_ENTRY_SHORT_MESSAGE_LENGTH = 64;
+
     /**
      * @var BOL_LogDao
      */
@@ -114,6 +117,17 @@ final class BOL_LogService
     }
 
     /**
+     * Count all log entries returned when searching using the given query.
+     *
+     * @param string $query
+     * @return int
+     */
+    public function countByQuery( $query )
+    {
+        return $this->logDao->countBySearchQuery($query);
+    }
+
+    /**
      * Returns total number of saved log entries with the given `$key`.
      *
      * @param string $key
@@ -179,6 +193,20 @@ final class BOL_LogService
     }
 
     /**
+     * Returns log entry entity object found when searching using the provided `$query`. Skips `$first` and returns at
+     * most `$count` entries.
+     *
+     * @param string $query
+     * @param int $first
+     * @param int $count
+     * @return array<BOL_Log>
+     */
+    public function findByQueryPaginated( $query, $first, $count )
+    {
+        return $this->logDao->findByQueryPaginated($query, $first, $count);
+    }
+
+    /**
      * Returns log list for provided type.
      *
      * @param string $type
@@ -210,45 +238,63 @@ final class BOL_LogService
     public function processEntries( $entries )
     {
         return array_map(function ( $entry ) {
+            // Form type filter query string.
             $filterByTypeQuery = http_build_query(array('type' => $entry->getType()), '', '&', PHP_QUERY_RFC3986);
+
+            // Form key filter query string.
             $filterByKeyQuery = http_build_query(array('key' => $entry->getKey()), '', '&', PHP_QUERY_RFC3986);
 
+            // Create view and filter URLs for the processed entry.
             $viewUrl = OW::getRouter()->urlForRoute('admin_developer_tools_logs_entry', array('id' => $entry->getId()));
             $filterByTypeUrl = OW::getRouter()->urlForRoute('admin_developer_tools_logs') . '?' . $filterByTypeQuery;
             $filterByKeyUrl = OW::getRouter()->urlForRoute('admin_developer_tools_logs') . '?' . $filterByKeyQuery;
 
+            // Sanitize the log message to avoid messing up the HTML code.
             $sanitizedMessage = htmlspecialchars($entry->getMessage());
 
             $result = array(
                 'id' => $entry->getId(),
                 'type' => $entry->getType(),
                 'key' => $entry->getKey(),
-                'messageFull' => htmlspecialchars($sanitizedMessage),
+                'messageFull' => $sanitizedMessage,
                 'timestamp' => $entry->getTimeStamp(),
-                'timestampReadable' => UTIL_DateTime::formatDate($entry->getTimeStamp()),
-                'timeString' => date('m/d/Y h:i:s', $entry->getTimeStamp()),
+                'timeString' => date(self::LOG_ENTRY_DATETIME_FORMAT, $entry->getTimeStamp()),
                 'viewUrl' => $viewUrl,
                 'filterByTypeUrl' => $filterByTypeUrl,
                 'filterByKeyUrl' => $filterByKeyUrl
             );
 
+            // Attempt to call custom message processor for this log entry.
             $processLogMessageEvent = new OW_Event(OW_EventManager::ON_PROCESS_LOG_ENTRY_MESSAGE, array(
                 'entry' => $entry
             ));
 
             OW::getEventManager()->trigger($processLogMessageEvent);
 
+            // Retrieve the processed message from the custom processor. The `$processedLogMessage` variable will be
+            // `null` if no custom processor was called.
             $processedLogMessage = $processLogMessageEvent->getData();
 
+            // If the custom processor returned valid string value, use it as short log message, otherwise just shorten
+            // whatever there is in the database.
             $result['message'] = !empty($processedLogMessage) && is_string($processedLogMessage)
                 ? $processedLogMessage
-                : (
-                    mb_strlen($sanitizedMessage) > 64
-                        ? mb_substr($sanitizedMessage, 0, 61) . '...'
-                        : $sanitizedMessage
-                );
+                : $this->shortenLogMessage($sanitizedMessage);
 
             return $result;
         }, $entries);
+    }
+
+    /**
+     * Shorten the given log `$message`.
+     *
+     * @param string $message
+     * @return string
+     */
+    protected function shortenLogMessage( $message )
+    {
+        return mb_strlen($message) > self::LOG_ENTRY_SHORT_MESSAGE_LENGTH
+            ? mb_substr($message, 0, self::LOG_ENTRY_SHORT_MESSAGE_LENGTH - 3) . '...'
+            : $message;
     }
 }
