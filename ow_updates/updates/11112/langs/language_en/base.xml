@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<prefix name="base" label="Base" language_tag="en" language_label="English">
+    <key name="admin_logs"><value>Logs</value></key>
+    <key name="admin_logs_empty"><value>Logs table is empty</value></key>
+    <key name="admin_logs_log_message"><value>Message</value></key>
+    <key name="admin_logs_log_type"><value>Type</value></key>
+    <key name="admin_logs_log_key"><value>Key</value></key>
+    <key name="admin_logs_log_time"><value>Date added</value></key>
+    <key name="admin_log_entry"><value>Log entry details</value></key>
+</prefix>
