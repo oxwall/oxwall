@@ -41,56 +41,6 @@ class ADMIN_CTRL_Logs extends ADMIN_CTRL_Abstract
         $this->service = BOL_LogService::getInstance();
     }
 
-    public function onBeforeRender()
-    {
-        OW::getDocument()->addStyleDeclaration("
-            .admin_logs_info,
-            .admin_logs_drop_filters,
-            .admin_logs_table_empty {
-                margin-top: 24px;
-            }
-
-            .admin_logs_info p {
-                margin: 0;
-            }
-
-            .admin_table_logs {
-                margin-top: 24px;
-                text-align: center;
-                width: 100%;
-            }
-
-            .admin_table_logs td {
-                font-family: monospace;
-            }
-
-            .admin_td_log_message {
-                min-width: 60%;
-            }
-
-            .admin_log_entry_view {
-                margin-top: 24px;
-            }
-
-            .admin_log_entry_message {
-                font-family: monospace;
-            }
-
-            .admin_log_entry_info {
-                margin: 24px 0;
-                border: 0;
-            }
-
-            .admin_log_entry_info_key {
-                font-weight: 600;
-            }
-
-            .admin_log_entry_info_value {
-                font-family: monospace;
-            }
-        ");
-    }
-
     /**
      * Display list of all log entries.
      */
