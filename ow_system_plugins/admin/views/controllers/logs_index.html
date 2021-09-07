@@ -1,0 +1,60 @@
+<div class="ow_stdmargin clearfix">
+    <h1>{text key='base+admin_logs'}</h1>
+
+    {if isset($isEmpty)}
+        <p class="admin_logs_table_empty">{text key='base+admin_logs_empty'}</p>
+
+        {if isset($isFiltersApplied)}
+            <div class="admin_logs_drop_filters">
+                <a href="{$dropFiltersUrl}">{text key="base+admin_logs_drop_filters"}</a>
+            </div>
+        {/if}
+    {else}
+        <div class="admin_logs_info">
+            <p>{text key="base+admin_logs_total"}: {$totalEntriesText}</p>
+            <p>{text key="base+admin_logs_per_page"}: {$entriesPerPageText}</p>
+        </div>
+
+        {if isset($isFiltersApplied)}
+            <div class="admin_logs_drop_filters">
+                <a href="{$dropFiltersUrl}">{text key="base+admin_logs_drop_filters"}</a>
+            </div>
+        {/if}
+
+        <div class="ow_right ow_superwide ow_txtright">
+            <form method="get">
+                <div class="ow_box ow_admin_search_box ow_smallmargin">
+                    <label for="log_search_input">{text key="base+admin_log_search"}</label>
+                    <input type="text" id="log_search_input" name="search" style="width: 280px" value="{$currentSearchValue}">
+                    {decorator name='button' type="submit" langLabel='admin+go'}
+                </div>
+            </form>
+        </div>
+
+        <table class="ow_table_1 admin_table_logs">
+            <tr class="ow_tr_first {cycle values='ow_alt2,ow_alt1'}">
+                <th>{text key='base+admin_logs_log_message'}</th>
+                <th>{text key='base+admin_logs_log_type'}</th>
+                <th>{text key='base+admin_logs_log_key'}</th>
+                <th>{text key='base+admin_logs_log_time'}</th>
+            </tr>
+
+            {foreach from=$entries item='entry'}
+                <tr class="{cycle values='ow_alt2,ow_alt1'}">
+                    <td class="admin_td_log_message">
+                        <a href="{$entry['viewUrl']}">{$entry['message']}</a>
+                    </td>
+                    <td class="admin_td_log_type">
+                        <a href="{$entry['filterByTypeUrl']}">{$entry['type']}</a>
+                    </td>
+                    <td class="admin_td_log_key">
+                        <a href="{$entry['filterByKeyUrl']}">{$entry['key']}</a>
+                    </td>
+                    <td class="admin_td_log_timestamp">{$entry['timeString']}</td>
+                </tr>
+            {/foreach}
+        </table>
+
+        {$paging}
+    {/if}
+</div>

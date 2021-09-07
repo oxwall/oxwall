@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<prefix name="base" label="Base" language_tag="en" language_label="English">
+    <key name="admin_logs_drop_filters"><value>Drop filters</value></key>
+    <key name="admin_logs"><value>Logs</value></key>
+    <key name="admin_logs_empty"><value>Logs table is empty</value></key>
+    <key name="admin_logs_log_message"><value>Message</value></key>
+    <key name="admin_logs_log_type"><value>Type</value></key>
+    <key name="admin_logs_log_key"><value>Key</value></key>
+    <key name="admin_logs_log_time"><value>Date added</value></key>
+    <key name="admin_logs_total"><value>Total entries</value></key>
+    <key name="admin_logs_per_page"><value>Entries per page</value></key>
+    <key name="admin_logs_total_entries_sing"><value>&lt;strong&gt;{$number}&lt;/strong&gt; entry</value></key>
+    <key name="admin_logs_total_entries_mul"><value>&lt;strong&gt;{$number}&lt;/strong&gt; entries</value></key>
+    <key name="admin_log_entry"><value>Log entry details</value></key>
+    <key name="admin_log_entry_date_added"><value>Date added</value></key>
+    <key name="admin_log_entry_added_timestamp"><value>Timestamp</value></key>
+    <key name="admin_log_entry_key"><value>Entry key</value></key>
+    <key name="admin_log_entry_type"><value>Entry type</value></key>
+    <key name="admin_log_search"><value>Search</value></key>
+</prefix>
