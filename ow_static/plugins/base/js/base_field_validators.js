@@ -146,7 +146,7 @@ var OW_BaseFieldValidators = function($params, $emailPattern, $usernamePattern, 
             }
             else if ( password.val() !== passwordRepeat.val() & passwordRepeat.val().length > 0 )
             {
-                self.errors['password']['error'] = OW.getLanguageText('base', 'join_error_password_not_valid');
+                self.errors['password']['error'] = OW.getLanguageText('base', 'join_error_password_not_matching');
                 return false;
             }
 

@@ -61,7 +61,7 @@ abstract class BASE_CLASS_PasswordValidator extends OW_Validator
         }
         else if ( isset($_POST['repeatPassword']) && $value !== $_POST['repeatPassword'] )
         {
-            $this->setErrorMessage($language->text('base', 'join_error_password_not_valid'));
+            $this->setErrorMessage($language->text('base', 'join_error_password_not_matching'));
             return false;
         }
 
