@@ -29,6 +29,21 @@
  */
 class BASE_CLASS_UserQuestionForm extends Form
 {
+    /**
+     * Page edit
+     */
+    const PAGE_EDIT = 'edit';
+
+    /**
+     * Page search
+     */
+    const PAGE_SEARCH = 'search';
+
+    /**
+     * Current page
+     * @var string (join|edit|search)
+     */
+    protected $page;
 
     /**
      * Return form element presentation class
@@ -55,6 +70,36 @@ class BASE_CLASS_UserQuestionForm extends Form
 
         if ( empty($label) )
         {
+            $langKey = '';
+
+            switch( $this->page )
+            {
+                case self::PAGE_EDIT :
+                    $langKey = BOL_QuestionService::getInstance()->
+                    getQuestionLangKeyName(BOL_QuestionService::LANG_KEY_TYPE_QUESTION_LABEL_EDIT, $question['name']);
+                    break;
+
+                case self::PAGE_SEARCH :
+                    $langKey = BOL_QuestionService::getInstance()->
+                        getQuestionLangKeyName(BOL_QuestionService::LANG_KEY_TYPE_QUESTION_LABEL_SEARCH, $question['name']);
+                    break;
+
+                default :
+            }
+
+            if ( $langKey )
+            {
+                $label = OW::getLanguage()->text( 'base', $langKey, null, '' );
+
+                if ( $label && $label != '&nbsp;' )
+                {
+                    $formField->setLabel($label);
+
+                    return;
+                }
+            }
+
+            // get default lang
             $formField->setLabel(OW::getLanguage()->text('base', 'questions_question_' . $question['name'] . '_label'));
         }
     }
@@ -86,15 +131,10 @@ class BASE_CLASS_UserQuestionForm extends Form
             {
                 $formField->setLabel($data['label']);
             }
-            else
-            {
-                $formField->setLabel(OW::getLanguage()->text('base', 'questions_question_' . $question['name'] . '_label'));
-            }
-
 
             $this->setLabel($formField, $question);
 
-            if ( in_array($question['type'], array( BOL_QuestionService::QUESTION_VALUE_TYPE_MULTISELECT, BOL_QuestionService::QUESTION_VALUE_TYPE_SELECT) ) 
+            if ( in_array($question['type'], array( BOL_QuestionService::QUESTION_VALUE_TYPE_MULTISELECT, BOL_QuestionService::QUESTION_VALUE_TYPE_SELECT) )
                 && method_exists($formField, 'setColumnCount') )
             {
                 $this->setColumnCount($formField, $question);

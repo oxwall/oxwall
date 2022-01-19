@@ -1807,7 +1807,19 @@ final class BOL_UserService
 
                 $label = $event->getData();
 
-                $questionLabelList[$question['name']] = !empty($label) ? $label : BOL_QuestionService::getInstance()->getQuestionLang($question['name']);
+                if ( empty($label) )
+                {
+                    $label = BOL_QuestionService::getInstance()->
+                            getQuestionLangByType($question['name'], BOL_QuestionService::LANG_KEY_TYPE_QUESTION_LABEL_VIEW, '');
+
+                    // get default label
+                    if ( !$label || $label == '&nbsp;' )
+                    {
+                        $label = BOL_QuestionService::getInstance()->getQuestionLang($question['name']);
+                    }
+                }
+
+                $questionLabelList[$question['name']] = $label;
 
                 $event = new OW_Event('base.questions_field_get_value', array(
                     'presentation' => $question['presentation'],

@@ -61,6 +61,12 @@ class BOL_QuestionService
 
     const LANG_KEY_TYPE_QUESTION_LABEL = 'label';
     const LANG_KEY_TYPE_QUESTION_DESCRIPTION = 'description';
+    const LANG_KEY_TYPE_QUESTION_LABEL_JOIN = 'labelJoin';
+    const LANG_KEY_TYPE_QUESTION_DESCRIPTION_JOIN = 'descriptionJoin';
+    const LANG_KEY_TYPE_QUESTION_LABEL_EDIT = 'labelEdit';
+    const LANG_KEY_TYPE_QUESTION_DESCRIPTION_EDIT = 'descriptionEdit';
+    const LANG_KEY_TYPE_QUESTION_LABEL_SEARCH = 'labelSearch';
+    const LANG_KEY_TYPE_QUESTION_LABEL_VIEW = 'labelView';
     const LANG_KEY_TYPE_QUESTION_SECTION = 'section';
     const LANG_KEY_TYPE_QUESTION_VALUE = 'value';
     const LANG_KEY_TYPE_ACCOUNT_TYPE = 'account_type';
@@ -930,6 +936,41 @@ class BOL_QuestionService
         $serviceLang->addOrUpdateValue($currentLanguageId, self::QUESTION_LANG_PREFIX, $this->getQuestionLangKeyName(self::LANG_KEY_TYPE_QUESTION_LABEL, $questionName), empty($label) ? ' ' : $label, $generateCahce );
     }
 
+    public function setQuestionExtraLabels( $questionName, array $labels = [], $generateCache = true )
+    {
+        if ( empty($questionName) )
+        {
+            throw new InvalidArgumentException('invalid questionName');
+        }
+
+        $systemLangs = array(
+            self::LANG_KEY_TYPE_QUESTION_LABEL_JOIN,
+            self::LANG_KEY_TYPE_QUESTION_DESCRIPTION_JOIN,
+            self::LANG_KEY_TYPE_QUESTION_LABEL_EDIT,
+            self::LANG_KEY_TYPE_QUESTION_DESCRIPTION_EDIT,
+            self::LANG_KEY_TYPE_QUESTION_LABEL_SEARCH,
+            self::LANG_KEY_TYPE_QUESTION_LABEL_VIEW
+        );
+
+        $serviceLang = BOL_LanguageService::getInstance();
+        $currentLanguageId = OW::getLanguage()->getCurrentId();
+
+        foreach($systemLangs  as $systemLang)
+        {
+            $questionLabel = !empty($labels[$systemLang]) ? $labels[$systemLang] : '';
+            $nameKey = $serviceLang->findKey( self::QUESTION_LANG_PREFIX, $this->getQuestionLangKeyName($systemLang, $questionName));
+
+            if ( $nameKey !== null )
+            {
+                $serviceLang->deleteKey($nameKey->id);
+            }
+
+            // update lang
+            $serviceLang->addOrUpdateValue($currentLanguageId,
+                self::QUESTION_LANG_PREFIX, $this->getQuestionLangKeyName($systemLang, $questionName), $questionLabel, $generateCache );
+        }
+    }
+
     public function setQuestionDescription( $questionName, $description, $generateCahce = true )
     {
         if ( empty($questionName) )
@@ -1274,6 +1315,26 @@ class BOL_QuestionService
             if ( $key !== null )
             {
                 BOL_LanguageService::getInstance()->deleteKey($key->id);
+            }
+
+            // delete extra langs
+            $extraLangs = array(
+                BOL_QuestionService::LANG_KEY_TYPE_QUESTION_LABEL_JOIN,
+                BOL_QuestionService::LANG_KEY_TYPE_QUESTION_DESCRIPTION_JOIN,
+                BOL_QuestionService::LANG_KEY_TYPE_QUESTION_LABEL_EDIT,
+                BOL_QuestionService::LANG_KEY_TYPE_QUESTION_DESCRIPTION_EDIT,
+                BOL_QuestionService::LANG_KEY_TYPE_QUESTION_LABEL_SEARCH,
+                BOL_QuestionService::LANG_KEY_TYPE_QUESTION_LABEL_VIEW
+            );
+
+            foreach ( $extraLangs as $extraLang )
+            {
+                $key = BOL_LanguageService::getInstance()->findKey(self::QUESTION_LANG_PREFIX, $this->getQuestionLangKeyName($extraLang, $question->name));
+
+                if ( $key !== null )
+                {
+                    BOL_LanguageService::getInstance()->deleteKey($key->id);
+                }
             }
 
             $event = new OW_Event( self::EVENT_ON_QUESTION_DELETE, array( 'questionName' => $question->name, 'dto' => $question ) );
@@ -2071,7 +2132,31 @@ class BOL_QuestionService
             case self::LANG_KEY_TYPE_QUESTION_DESCRIPTION:
                 $key = 'questions_question_' . $name . '_description';
                 break;
-            
+
+            case self::LANG_KEY_TYPE_QUESTION_LABEL_JOIN:
+                $key = 'questions_question_' . $name . '_join_label';
+                break;
+
+            case self::LANG_KEY_TYPE_QUESTION_DESCRIPTION_JOIN:
+                $key = 'questions_question_' . $name . '_join_description';
+                break;
+
+            case self::LANG_KEY_TYPE_QUESTION_LABEL_EDIT:
+                $key = 'questions_question_' . $name . '_edit_label';
+                break;
+
+            case self::LANG_KEY_TYPE_QUESTION_DESCRIPTION_EDIT:
+                $key = 'questions_question_' . $name . '_edit_description';
+                break;
+
+            case self::LANG_KEY_TYPE_QUESTION_LABEL_SEARCH:
+                $key = 'questions_question_' . $name . '_search_label';
+                break;
+
+            case self::LANG_KEY_TYPE_QUESTION_LABEL_VIEW:
+                $key = 'questions_question_' . $name . '_view_label';
+                break;
+
             case self::LANG_KEY_TYPE_QUESTION_SECTION:
                 $key = 'questions_section_' . $name . '_label';
                 break;
@@ -2097,17 +2182,35 @@ class BOL_QuestionService
         return $key;
     }
 
-    public function getQuestionDescriptionLang( $questionName )
+    public function getQuestionDescriptionLang( $questionName, $page = null )
     {
-        $key = $this->getQuestionLangKeyName(self::LANG_KEY_TYPE_QUESTION_DESCRIPTION, $questionName);
-        $text = OW::getLanguage()->text(self::QUESTION_LANG_PREFIX,$key);
+        switch ($page) {
+            case 'edit' :
+                $key = $this->getQuestionLangKeyName(self::LANG_KEY_TYPE_QUESTION_DESCRIPTION_EDIT, $questionName);
+                $text = OW::getLanguage()->text(self::QUESTION_LANG_PREFIX,$key, null, '');
+                break;
 
-        if( preg_match('/^'.preg_quote(self::QUESTION_LANG_PREFIX."+".$key).'$/', $text) )
+            case 'join' :
+                $key = $this->getQuestionLangKeyName(self::LANG_KEY_TYPE_QUESTION_DESCRIPTION_JOIN, $questionName);
+                $text = OW::getLanguage()->text(self::QUESTION_LANG_PREFIX,$key, null, '');
+                break;
+
+            default :
+        }
+
+        // get default desc
+        if ( !$text || $text == '&nbsp;' )
         {
-            $text = '';
+            $key = $this->getQuestionLangKeyName(self::LANG_KEY_TYPE_QUESTION_DESCRIPTION, $questionName);
+            $text = OW::getLanguage()->text(self::QUESTION_LANG_PREFIX,$key, null, '');
         }
 
         return $text;
+    }
+
+    public function getQuestionLangByType($questionName, $type, $defaultValue = null)
+    {
+        return OW::getLanguage()->text(self::QUESTION_LANG_PREFIX, $this->getQuestionLangKeyName($type, $questionName), null, $defaultValue);
     }
 
     public function getQuestionLang( $questionName )
@@ -2172,17 +2275,18 @@ class BOL_QuestionService
         return $this->questionDao->findSearchQuestionsForAccountType($accountType);
     }
 
-    public function createQuestion( BOL_Question $question, $label, $description = '', $values = array(), $saveValuesKeys = false, $generateCache = true )
+    public function createQuestion( BOL_Question $question, $label, $description = '', $values = array(), $saveValuesKeys = false, $generateCache = true, array $extraLabels = [] )
     {
         if ( empty($question) )
         {
             return;
         }
-        
+
         $this->saveOrUpdateQuestion($question);
         $this->setQuestionDescription($question->name, $description, false);
         $this->setQuestionLabel($question->name, $label, false);
-        
+        $this->setQuestionExtraLabels( $question->name, $extraLabels, false );
+
         //add question values
         if ( !empty($values) && is_array($values) && count($values) > 0 && in_array( $question->type,  array('fselect','select', 'multiselect') ) )
         {

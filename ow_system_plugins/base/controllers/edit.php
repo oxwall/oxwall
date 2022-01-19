@@ -643,6 +643,7 @@ class editEmailValidator extends OW_Validator
 class EditQuestionForm extends BASE_CLASS_UserQuestionForm
 {
     private $userId = null;
+    protected $page = self::PAGE_EDIT;
 
     public function __construct( $name, $userId = null )
     {

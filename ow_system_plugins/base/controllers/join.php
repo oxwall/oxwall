@@ -516,6 +516,19 @@ class JoinForm extends BASE_CLASS_UserQuestionForm
                 }
                 else
                 {
+                    $langKey = BOL_QuestionService::getInstance()->
+                            getQuestionLangKeyName(BOL_QuestionService::LANG_KEY_TYPE_QUESTION_LABEL_JOIN, $question['realName']);
+
+                    $label = OW::getLanguage()->text('base', $langKey, null, '');
+
+                    if ( $label && $label != '&nbsp;' )
+                    {
+                        $this->getElement($question['name'])->setLabel($label);
+
+                        continue;
+                    }
+
+                    // set default lang value
                     $this->getElement($question['name'])->setLabel(OW::getLanguage()->text('base', 'questions_question_' . $question['realName'] . '_label'));
                 }
 
