@@ -57,7 +57,7 @@ class BASE_CTRL_Avatar extends OW_ActionController
     {
         $request = $_POST;
 
-        if ( isset($request['ajaxFunc']) && OW::getRequest()->isAjax() && OW::getSession()->isKeySet('base.avatar_change_key') )
+        if ( isset($request['ajaxFunc']) && OW::getRequest()->isAjax() )
         {
             $callFunc = (string) $request['ajaxFunc'];
 
