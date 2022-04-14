@@ -434,7 +434,8 @@ class ADMIN_CTRL_Settings extends ADMIN_CTRL_Abstract
 
         $mailSettingsForm->getElement('mailSmtpHost')->setValue($configs['mail_smtp_host'])->setRequired(true);
         $mailSettingsForm->getElement('mailSmtpUser')->setValue($configs['mail_smtp_user']);
-        $mailSettingsForm->getElement('mailSmtpPassword')->setValue($configs['mail_smtp_password']);
+        $mailSettingsForm->getElement('mailSmtpPassword')->setHasInvitation(true);
+        $mailSettingsForm->getElement('mailSmtpPassword')->setInvitation($language->text('admin', 'change_password'));
         $mailSettingsForm->getElement('mailSmtpPort')->setValue($configs['mail_smtp_port']);
         $mailSettingsForm->getElement('mailSmtpConnectionPrefix')->setValue($configs['mail_smtp_connection_prefix']);
 
@@ -1041,7 +1042,12 @@ class MailSettingsForm extends Form
         $config->saveConfig('base', 'mail_smtp_enabled', $values['mailSmtpEnabled'] ? '1' : '0');
         $config->saveConfig('base', 'mail_smtp_host', $values['mailSmtpHost']);
         $config->saveConfig('base', 'mail_smtp_user', $values['mailSmtpUser']);
-        $config->saveConfig('base', 'mail_smtp_password', $values['mailSmtpPassword']);
+        
+        $iv = mcrypt_create_iv(mcrypt_get_iv_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_ECB), MCRYPT_RAND);
+        $encryptPassword = mcrypt_encrypt(MCRYPT_RIJNDAEL_256, OW_PASSWORD_SALT . substr(OW_PASSWORD_SALT, 2, 3), $values['mailSmtpPassword'], MCRYPT_MODE_ECB, $iv);
+        $db_value = base64_encode($encryptPassword);
+        
+        $config->saveConfig('base', 'mail_smtp_password', $db_value);
         $config->saveConfig('base', 'mail_smtp_port', $values['mailSmtpPort']);
         $config->saveConfig('base', 'mail_smtp_connection_prefix', $values['mailSmtpConnectionPrefix']);
 

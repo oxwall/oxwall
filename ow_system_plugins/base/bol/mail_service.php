@@ -167,7 +167,11 @@ class BOL_MailService
         }
 
         $mailer->Username = $settingList['user'];
-        $mailer->Password = $settingList['password'];
+        
+        $iv = mcrypt_create_iv(mcrypt_get_iv_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_ECB), MCRYPT_RAND);
+        $db_value = base64_decode($settingList['password']);
+        
+        $mailer->Password = mcrypt_decrypt(MCRYPT_RIJNDAEL_256, OW_PASSWORD_SALT . substr(OW_PASSWORD_SALT, 2, 3), $db_value, MCRYPT_MODE_ECB, $iv);
     }
 
     public function smtpTestConnection()
