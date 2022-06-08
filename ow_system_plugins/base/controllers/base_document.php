@@ -52,8 +52,8 @@ class BASE_CTRL_BaseDocument extends OW_ActionController
         OW::getDocument()->getMasterPage()->setTemplate(OW::getThemeManager()->getMasterPageTemplate(OW_MasterPage::TEMPLATE_BLANK));
         $this->assign('text', OW::getSession()->get('baseConfirmPageMessage'));
         OW::getSession()->delete('baseConfirmPageMessage');
-        $this->assign('okBackUrl', OW::getRequest()->buildUrlQueryString(OW_URL_HOME . urldecode($_GET['back_uri']), array('confirm-result' => 1)));
-        $this->assign('clBackUrl', OW::getRequest()->buildUrlQueryString(OW_URL_HOME . urldecode($_GET['back_uri']), array('confirm-result' => 0)));
+        $this->assign('okBackUrl', OW::getRequest()->buildUrlQueryString(OW_URL_HOME . urlencode($_GET['back_uri']), array('confirm-result' => 1)));
+        $this->assign('clBackUrl', OW::getRequest()->buildUrlQueryString(OW_URL_HOME . urlencode($_GET['back_uri']), array('confirm-result' => 0)));
     }
 
     public function page404()
