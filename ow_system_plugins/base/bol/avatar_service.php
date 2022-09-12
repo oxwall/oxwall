@@ -332,7 +332,7 @@ class BOL_AvatarService
         return true;
     }
 
-    public function setUserAvatar( $userId, $uploadedFileName, array $editionalParams = array() )
+    public function setUserAvatar( $userId, $uploadedFileName, array $editionalParams = array(), $rotateAngle = 0 )
     {
         $avatar = $this->findByUserId($userId);
 
@@ -412,6 +412,22 @@ class BOL_AvatarService
             $storage->copyFile($avatarPFOriginalPath, $avatarOriginalPath);
             $storage->copyFile($avatarPFBigPath, $avatarBigPath);
             $storage->copyFile($avatarPFPath, $avatarPath);
+
+            if ($rotateAngle)
+            {
+                if (file_exists($avatarOriginalPath)) {
+                    $image = new UTIL_Image($avatarOriginalPath);
+                    $image->rotate($rotateAngle)->saveImage($avatarOriginalPath);
+                }
+                if (file_exists($avatarBigPath)) {
+                    $image = new UTIL_Image($avatarBigPath);
+                    $image->rotate($rotateAngle)->saveImage($avatarBigPath);
+                }
+                if (file_exists($avatarPath)) {
+                    $image = new UTIL_Image($avatarPath);
+                    $image->rotate($rotateAngle)->saveImage($avatarPath);
+                }
+            }
 
             @unlink($avatarPFPath);
             @unlink($avatarPFBigPath);
@@ -1008,7 +1024,7 @@ class BOL_AvatarService
         }
     }
 
-    public function createAvatar( $userId, $isModerable = true, $trackAction = true)
+    public function createAvatar( $userId, $isModerable = true, $trackAction = true, $rotateAngle = null )
     {
         $key = $this->getAvatarChangeSessionKey();
         $path = $this->getTempAvatarPath($key, 2);
@@ -1032,7 +1048,7 @@ class BOL_AvatarService
         ));
         OW::getEventManager()->trigger($event);
 
-        $avatarSet = $this->setUserAvatar($userId, $path, array('isModerable' => $isModerable, 'trackAction' => $trackAction ));
+        $avatarSet = $this->setUserAvatar($userId, $path, array('isModerable' => $isModerable, 'trackAction' => $trackAction), $rotateAngle);
 
         if ( $avatarSet )
         {
