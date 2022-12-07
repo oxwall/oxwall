@@ -631,7 +631,13 @@ class BOL_ThemeService
             foreach ( $params as $value )
             {
                 $tempArray = explode(":", $value);
-                $itemArray[trim($tempArray[0])] = trim($tempArray[1]);
+                
+                //mod to cover if array and element[1] is empty
+                if(!empty($tempArray) && !empty($tempArray[1]))
+                {
+                 $itemArray[trim($tempArray[0])] = trim($tempArray[1]);
+                }
+                //end mod
             }
 
             if ( array_key_exists($controlKey, $resultArray) )
