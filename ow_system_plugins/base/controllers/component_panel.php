@@ -249,7 +249,7 @@ class BASE_CTRL_ComponentPanel extends OW_ActionController
     {
         $userService = BOL_UserService::getInstance();
         /* @var $userDao BOL_User */
-        $userDto = $userService->findByUsername($paramList['username']);
+        $userDto = $userService->findByUsername(urldecode($paramList['username']));
 
         if ( $userDto === null )
         {
