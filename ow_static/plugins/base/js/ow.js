@@ -444,6 +444,8 @@ var OwUtils = function(){
             	{
                     options.onReady.call(this, r);
             	}
+
+                OW.trigger('base.ajax_floatbox_loaded', { cmpClass: cmpClass });
             }
         })
 
@@ -1039,6 +1041,8 @@ function OW_FloatBox(options)
     }
 
     window.OWActiveFloatBox = this;
+
+    OW.trigger('base.floatbox_loaded');
 }
 
 OW_FloatBox.version = 3;

@@ -72,6 +72,8 @@ class OW_EventManager
     const ON_BEFORE_USER_COMPLETE_PROFILE = 'base.on_before_user_complete_profile';
     const ON_AFTER_USER_COMPLETE_PROFILE = 'base.on_after_user_complete_profile';
     const ON_BEFORE_USER_COMPLETE_ACCOUNT_TYPE = 'base.on_before_user_complete_account_type';
+    const ON_PROCESS_LOG_ENTRY_MESSAGE = 'core.admin_process_log_entry_message';
+    const ON_LOG_ENTRY_CUSTOM_VIEW = 'core.admin_log_entry_custom_view';
 
     /**
      * @var array

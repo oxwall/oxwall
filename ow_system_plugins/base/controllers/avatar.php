@@ -61,7 +61,14 @@ class BASE_CTRL_Avatar extends OW_ActionController
         {
             $callFunc = (string) $request['ajaxFunc'];
 
-            $result = call_user_func(array($this, $callFunc), $request);
+            if ( $callFunc !== __FUNCTION__ )
+            {
+                $result = call_user_func(array($this, $callFunc), $request);
+            }
+            else
+            {
+                $result = array();
+            }
         }
         else
         {
@@ -71,7 +78,7 @@ class BASE_CTRL_Avatar extends OW_ActionController
         exit(json_encode($result));
     }
 
-    public function ajaxUploadImage( $params )
+    protected function ajaxUploadImage( $params )
     {
         if ( isset($_FILES['file']) )
         {
@@ -81,7 +88,7 @@ class BASE_CTRL_Avatar extends OW_ActionController
         return array('result' => false);
     }
 
-    public function ajaxDeleteImage( $params )
+    protected function ajaxDeleteImage( $params )
     {
         $avatarService = BOL_AvatarService::getInstance();
 
@@ -91,7 +98,7 @@ class BASE_CTRL_Avatar extends OW_ActionController
         return array('result' => true);
     }
 
-    public function ajaxLoadMore( $params )
+    protected function ajaxLoadMore( $params )
     {
         if ( isset($params['entityType']) && isset($params['entityId']) && isset($params['offset']) )
         {
@@ -113,7 +120,7 @@ class BASE_CTRL_Avatar extends OW_ActionController
         return array('result' => false);
     }
 
-    public function ajaxCropPhoto( $params )
+    protected function ajaxCropPhoto( $params )
     {
         if ( !isset($params['coords']) || !isset($params['view_size']) )
         {
@@ -219,8 +226,8 @@ class BASE_CTRL_Avatar extends OW_ActionController
             );
         }
     }
-    
-    public function ajaxAvatarApprove( $params )
+
+    protected function ajaxAvatarApprove( $params )
     {
         if ( isset($params['avatarId']) && OW::getUser()->isAuthorized('base') )
         {

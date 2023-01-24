@@ -53,11 +53,7 @@ class BASE_CTRL_Attachment extends OW_ActionController
 
         $url = $_POST['url'];
 
-        $urlInfo = parse_url($url);
-        if ( empty($urlInfo['scheme']) )
-        {
-            $url = 'http://' . $url;
-        }
+        $url = UTIL_Url::ensureHttpScheme($url);
 
         $url = str_replace("'", '%27', $url);
 

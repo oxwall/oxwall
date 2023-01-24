@@ -1233,6 +1233,11 @@ class BOL_LanguageService
         $filename = $this->getLanguageCacheDir() . $this->getCacheFilename($this->getCurrent()->getId());
         $language = array();
 
+        if ( function_exists('opcache_invalidate') )
+        {
+            opcache_invalidate($filename);
+        }
+
         // include cache file
         include $filename;
 

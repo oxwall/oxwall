@@ -123,7 +123,7 @@ class BASE_CTRL_User extends OW_ActionController
                     $this->redirect();
                 }
 
-                $this->redirect(OW::getRouter()->urlForRoute('base.reset_user_password', array('code' => $resetPassword->getCode())));
+                $this->redirect(OW::getRouter()->urlForRoute('base.reset_user_password', array('code' => $data['code'])));
             }
             else
             {

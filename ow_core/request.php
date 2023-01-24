@@ -43,14 +43,7 @@ class OW_Request
     /**
      * Constructor.
      */
-    private function __construct()
-    {
-        if ( get_magic_quotes_gpc() )
-        {
-            $_GET = $this->stripSlashesRecursive($_GET);
-            $_POST = $this->stripSlashesRecursive($_POST);
-        }
-    }
+    private function __construct() {}
 
     /**
      * @return array

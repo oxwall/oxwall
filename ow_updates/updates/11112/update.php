@@ -22,40 +22,4 @@
  * which combines Covered Code or portions thereof with code not governed by the terms of the CPAL.
  */
 
-/**
- * @author Alex Ermashev <alexermashev@gmail.com>
- * @package ow.ow_system_plugins.base.mobile.controllers
- * @since 1.6.0
- */
-class BASE_MCTRL_Oembed extends OW_MobileActionController
-{
-    /**
-     * Get embed code
-     * 
-     * @return string
-     */
-    public function getAjaxEmbedCode()
-    {
-        $result = array();
-
-        if ( !OW::getUser()->isAuthenticated() )
-        {
-            die(json_encode($result));
-        }
-
-        $url = !empty($_GET['url']) ? urldecode($_GET['url']) : null;
-
-        if ( $url )
-        {
-            $url = UTIL_Url::ensureHttpScheme($url);
-
-            $embedInfo = UTIL_HttpResource::getOEmbed($url);
-
-            if ( !empty($embedInfo['html']) ) {
-                $result = $embedInfo;
-            }
-        }
-
-        die(json_encode($result));
-    }
-}
+Updater::getLanguageService()->importPrefixFromDir(__DIR__ . DS . "langs", true);

@@ -165,6 +165,9 @@ class OEmbedDefaultProvider extends OEmbedProvider
         $matches = array();
         preg_match_all('/<\s*img\s*.*?src=[\'"](.+?)[\'"].*?>/i',$content, $matches);
 
+        $linkImages = array();
+        preg_match_all('/<\s*link\s*[^\>]*?rel=[\'"]image_src[\'"][^\>]*?\s*>/i', $content, $linkImages);
+
         $images = array();
 
         foreach ( $matches[1] as $img )
@@ -200,6 +203,21 @@ class OEmbedDefaultProvider extends OEmbedProvider
 
         $firstImg = reset($images);
         $firstImg = $firstImg ? $firstImg : null;
+
+        if ( empty($firstImg) && isset($linkImages[0]) )
+        {
+            foreach ( $linkImages[0] as $img )
+            {
+                $imageUrl = [];
+                preg_match('/https\:\/\/[\w\-\.\/]+/', $img, $imageUrl);
+                if ( !empty($imageUrl[0]) )
+                {
+                    $images[] = $imageUrl[0];
+                }
+            }
+            $firstImg = reset($images);
+            $firstImg = $firstImg ? $firstImg : null;
+        }
 
         return array(
             'type' => 'link',

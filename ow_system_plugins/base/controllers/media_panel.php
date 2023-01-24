@@ -28,7 +28,7 @@ class BASE_CTRL_MediaPanel extends OW_ActionController
         $pluginKey = $params['pluginKey'];
         $result = array();
 
-        if (OW::getRequest()->isPost())
+        if ( OW::getRequest()->isPost() && OW::getUser()->isAuthenticated() )
         {
             if ( !empty($_POST['command']) && $_POST['command'] == 'image-upload' )
             {

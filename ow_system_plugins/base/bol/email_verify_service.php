@@ -195,10 +195,6 @@ class BOL_EmailVerifyService
             OW::getEventManager()->trigger($event);
             $hash = $event->getData();
 
-            if ( OW::getApplication()->getContext() == OW_Application::CONTEXT_API ) {
-                $hash = mb_substr($hash, 0, 8);
-            }
-
             $emailVerifiedData = new BOL_EmailVerify();
             $emailVerifiedData->userId = $userId;
             $emailVerifiedData->email = trim($email);

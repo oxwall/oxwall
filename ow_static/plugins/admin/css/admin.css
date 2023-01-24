@@ -1341,3 +1341,48 @@ pre {
     background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2220%22%20height%3D%2220%22%20viewBox%3D%220%200%2020%2020%22%20enable-background%3D%22new%200%200%2020%2020%22%3E%3Cg%20fill%3D%22%23fff%22%3E%3Cpath%20d%3D%22m16.958%209c.553%200%201%20.448%201%201%200%20.553-.447%201-1%201h-13.999c-.552%200-1-.447-1-1%200-.552.448-1%201-1h13.999%22/%3E%3Cpath%20d%3D%22m17.665%209.293c.391.391.391%201.024%200%201.414-.39.39-1.023.391-1.414%200l-6.898-6.898c-.391-.391-.391-1.025%200-1.414.39-.391%201.023-.391%201.414%200l6.898%206.898%22/%3E%3Cpath%20d%3D%22m16.251%209.293c.391-.391%201.024-.391%201.414%200%20.391.39.391%201.023%200%201.414l-6.898%206.899c-.391.391-1.024.39-1.415%200-.39-.391-.391-1.023%200-1.414l6.899-6.899%22/%3E%3C/g%3E%3C/svg%3E");
     color: #fff;
 }
+
+.admin_logs_info,
+.admin_logs_drop_filters,
+.admin_logs_table_empty {
+    margin-top: 24px;
+}
+
+.admin_logs_info p {
+    margin: 0;
+}
+
+.admin_table_logs {
+    margin-top: 24px;
+    text-align: center;
+    width: 100%;
+}
+
+.admin_table_logs td {
+    font-family: monospace;
+}
+
+.admin_td_log_message {
+    min-width: 60%;
+}
+
+.admin_log_entry_view {
+    margin-top: 24px;
+}
+
+.admin_log_entry_message {
+    font-family: monospace;
+}
+
+.admin_log_entry_info {
+    margin: 24px 0;
+    border: 0;
+}
+
+.admin_log_entry_info_key {
+    font-weight: 600;
+}
+
+.admin_log_entry_info_value {
+    font-family: monospace;
+}

@@ -48,7 +48,7 @@ final class BOL_UserService
     const USER_CONTEXT_MOBILE = BOL_UserOnlineDao::CONTEXT_VAL_MOBILE;
     const USER_CONTEXT_API = BOL_UserOnlineDao::CONTEXT_VAL_API;
     const USER_CONTEXT_CLI = BOL_UserOnlineDao::CONTEXT_VAL_CLI;
-    const PASSWORD_RESET_CODE_EXPIRATION_TIME = 3600;
+    const PASSWORD_RESET_CODE_EXPIRATION_TIME = 1200;
     const PASSWORD_RESET_CODE_UPDATE_TIME = 600;
     const BEFORE_USER_ONLINE = 'base.before_user_online';
     const EVENT_GET_USER_VIEW_QUESTIONS = 'base.get_user_view_questions';
@@ -1358,26 +1358,27 @@ final class BOL_UserService
 
     /**
      * @param integer $userId
-     * @return BOL_UserResetPassword
+     * @return string
      */
-    public function getNewResetPassword( $userId )
+    public function getNewResetPasswordCode( $userId )
     {
-    	$code = md5(UTIL_String::getRandomString(8, 5));
+    	$code = sha1(UTIL_String::getRandomString(8, 5));
+    	$hashedCode = md5($code);
 
-        $event = new OW_Event('base.on_after_generate_password_reset_code', [], $code);
+        $event = new OW_Event('base.on_after_generate_password_reset_code', [], $hashedCode);
         OW::getEventManager()->trigger($event);
 
-        $code = $event->getData();
+        $hashedCode = $event->getData();
 
         $resetPassword = new BOL_UserResetPassword();
         $resetPassword->setUserId($userId);
         $resetPassword->setExpirationTimeStamp(( time() + self::PASSWORD_RESET_CODE_EXPIRATION_TIME));
         $resetPassword->setUpdateTimeStamp(time() + self::PASSWORD_RESET_CODE_UPDATE_TIME);
-        $resetPassword->setCode($code);
+        $resetPassword->setCode($hashedCode);
 
         $this->resetPasswordDao->save($resetPassword);
 
-        return $resetPassword;
+        return $code;
     }
 
     /**
@@ -1386,6 +1387,8 @@ final class BOL_UserService
      */
     public function findResetPasswordByCode( $code )
     {
+        $code = md5(trim($code));
+
         return $this->resetPasswordDao->findByCode($code);
     }
 
@@ -1556,31 +1559,32 @@ final class BOL_UserService
 
         if ( $resetPassword !== null )
         {
-            if ( $resetPassword->getUpdateTimeStamp() > time() )
-            {
-                throw new LogicException($language->text('base', 'forgot_password_request_exists_error_message'));
-            }
-            else
-            {
-                $resetPassword->setUpdateTimeStamp($resetPassword->getUpdateTimeStamp() + self::PASSWORD_RESET_CODE_UPDATE_TIME);
-                $this->resetPasswordDao->save($resetPassword);
-            }
+            $this->resetPasswordDao->deleteById($resetPassword->getId());
         }
-        else
+
+        $resetPasswordCode = $this->getNewResetPasswordCode($user->getId());
+
+        try
         {
-            $resetPassword = $this->getNewResetPassword($user->getId());
+            $vars = array(
+                'code' => $resetPasswordCode,
+                'username' => $user->getUsername(),
+                'requestUrl' => OW::getRouter()->urlForRoute('base.reset_user_password_request'),
+                'resetUrl' => OW::getRouter()->urlForRoute('base.reset_user_password', array('code' => $resetPasswordCode))
+            );
+
+            $mail = OW::getMailer()->createMail();
+            $mail->addRecipientEmail($email);
+            $mail->setSubject($language->text('base', 'reset_password_mail_template_subject'));
+            $mail->setTextContent($language->text('base', 'reset_password_mail_template_content_txt', $vars));
+            $mail->setHtmlContent($language->text('base', 'reset_password_mail_template_content_html', $vars));
+
+            OW::getMailer()->send($mail);
         }
+        catch ( Exception $e )
+        {
 
-
-        $vars = array('code' => $resetPassword->getCode(), 'username' => $user->getUsername(), 'requestUrl' => OW::getRouter()->urlForRoute('base.reset_user_password_request'),
-            'resetUrl' => OW::getRouter()->urlForRoute('base.reset_user_password', array('code' => $resetPassword->getCode())));
-
-        $mail = OW::getMailer()->createMail();
-        $mail->addRecipientEmail($email);
-        $mail->setSubject($language->text('base', 'reset_password_mail_template_subject'));
-        $mail->setTextContent($language->text('base', 'reset_password_mail_template_content_txt', $vars));
-        $mail->setHtmlContent($language->text('base', 'reset_password_mail_template_content_html', $vars));
-        OW::getMailer()->send($mail);
+        }
     }
 
     public function getResetPasswordRequestFrom( $formName = 'reset-password-request' )
