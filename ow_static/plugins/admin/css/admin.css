@@ -793,7 +793,7 @@ html body .ow_admin_permissions.ow_superwide {
 	padding-top: 70px;
 }
 .ow_admin_menu_item {
-	display: table;
+	display: block;
 	position: relative;
 	width: 200px;
 	height: 56px;
@@ -805,6 +805,7 @@ html body .ow_admin_permissions.ow_superwide {
 	-moz-box-sizing: border-box;
 	-webkit-box-sizing: border-box;
 	transition: background-color 300ms ease-in-out 0s;
+	padding: 5px 0;
 }
 .ow_admin_menu_item > a {
 	color: #e9eff5;	
