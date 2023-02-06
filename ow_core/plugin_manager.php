@@ -213,7 +213,7 @@ class OW_PluginManager
 
         if ( $plugin == null )
         {
-            throw new InvalidArgumentException("There is no active plugin with key `{$key}`");
+            throw new InvalidArgumentException("There is no active plugin with key `{$pluginKey}`");
         }
 
         return $plugin->getModule();

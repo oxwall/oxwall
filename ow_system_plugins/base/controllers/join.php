@@ -32,7 +32,17 @@
 class BASE_CTRL_Join extends OW_ActionController
 {
     const JOIN_CONNECT_HOOK = 'join_connect_hook';
+
     protected $responderUrl;
+
+    /**
+     * @var BOL_UserService
+     */
+    protected $userService;
+
+    /**
+     * @var JoinForm
+     */
     protected $joinForm;
 
     public function __construct()
@@ -44,7 +54,10 @@ class BASE_CTRL_Join extends OW_ActionController
         $this->userService = BOL_UserService::getInstance();
     }
 
-    public function index( $params )
+    /**
+     * @param $params
+     */
+    public function index($params )
     {
         $session = OW::getSession();
 
@@ -55,7 +68,7 @@ class BASE_CTRL_Join extends OW_ActionController
 
         $language = OW::getLanguage();
         $this->setPageHeading($language->text('base', 'join_index'));
-        
+
         //TODO DELETE config who_can_join from join
         if ( (int) OW::getConfig()->getValue('base', 'who_can_join') === BOL_UserService::PERMISSIONS_JOIN_BY_INVITATIONS )
         {
@@ -88,10 +101,9 @@ class BASE_CTRL_Join extends OW_ActionController
         {
             $urlParams = array_merge($_GET, $params);
         }
-        
+
         $this->joinForm = OW::getClassInstance('JoinForm', $this);
         $this->joinForm->setAction(OW::getRouter()->urlFor('BASE_CTRL_Join', 'joinFormSubmit', $urlParams));
-        $step = $this->joinForm->getStep();
 
         $this->addForm($this->joinForm);
 

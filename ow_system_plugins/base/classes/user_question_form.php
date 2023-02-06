@@ -66,7 +66,7 @@ class BASE_CLASS_UserQuestionForm extends Form
      * @param array $questionList
      * @param array $questionValueList
      *
-     * @return BASE_UserQuestionForm
+     * @return BASE_CLASS_UserQuestionForm
      */
     public function addQuestions( $questionList, $questionValueList = array(), $questionData = array() )
     {
@@ -173,11 +173,9 @@ class BASE_CLASS_UserQuestionForm extends Form
 
         $accounts = array();
 
-
-
-        /* @var $value BOL_QuestionAccount */
-        foreach ( $accountTypes as $key => $value )
+        foreach ( $accountTypes as $value )
         {
+            /* @var $value BOL_QuestionAccountType */
             $accounts[$value->name] = OW::getLanguage()->text('base', 'questions_account_type_' . $value->name);
         }
 

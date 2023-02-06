@@ -207,7 +207,6 @@ class OW_RequestHandler
                 $this->handlerAttributes[self::ATTRS_KEY_ACTION] = $controller->getDefaultAction();
             }
 
-            $action = new ReflectionMethod(get_class($controller), $this->handlerAttributes[self::ATTRS_KEY_ACTION]);
         }
         catch ( ReflectionException $e )
         {
@@ -223,7 +222,7 @@ class OW_RequestHandler
         // call optional init method
         $controller->init();
 
-        $this->processControllerAction($action, $controller);
+        $this->processControllerAction($this->handlerAttributes[self::ATTRS_KEY_ACTION],  $controller);
     }
 
     /**
@@ -236,10 +235,10 @@ class OW_RequestHandler
     }
 
     /**
-     * @param ReflectionMethod $action
+     * @param $actionName
      * @param OW_ActionController $controller
      */
-    protected function processControllerAction( $action, $controller )
+    protected function processControllerAction($actionName, $controller )
     {
         $args = array(
             self::ATTRS_KEY_VARLIST =>
@@ -247,7 +246,7 @@ class OW_RequestHandler
         );
         OW::getEventManager()->trigger(new OW_Event("core.performance_test",
             array("key" => "controller_call.start", "handlerAttrs" => $this->handlerAttributes)));
-        $action->invokeArgs($controller, $args);
+        $controller->$actionName($args['params']);
         OW::getEventManager()->trigger(new OW_Event("core.performance_test",
             array("key" => "controller_call.end", "handlerAttrs" => $this->handlerAttributes)));
         // set default template for controller action if template wasn"t set
@@ -277,7 +276,7 @@ class OW_RequestHandler
     /**
      * Returns processed catch all requests attributes.
      *
-     * @return string
+     * @return array
      */
     protected function processCatchAllRequestsAttrs()
     {
@@ -288,7 +287,11 @@ class OW_RequestHandler
 
         $catchRequest = true;
 
-        $lastKey = array_search(end($this->catchAllRequestsAttributes), $this->catchAllRequestsAttributes);
+        $lastKey = $this->getKeyWithHighestPriority();
+
+        if(!$lastKey){
+            $lastKey = array_search(end($this->catchAllRequestsAttributes), $this->catchAllRequestsAttributes);
+        }
 
         foreach ( $this->catchAllRequestsExcludes[$lastKey] as $exclude )
         {
@@ -353,5 +356,23 @@ class OW_RequestHandler
         }
 
         return null;
+    }
+
+    protected function getKeyWithHighestPriority()
+    {
+        $highestKey = null;
+        $priorityValue = null;
+
+        foreach ($this->catchAllRequestsAttributes as $key => $attribute){
+            if(isset($attribute['priority'])){
+                if($priorityValue === null || (int)$priorityValue > (int)$attribute['priority']){
+
+                    $priorityValue = $attribute['priority'];
+                    $highestKey = $key;
+                }
+            }
+        }
+
+        return $highestKey;
     }
 }

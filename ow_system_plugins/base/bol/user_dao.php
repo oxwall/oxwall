@@ -875,7 +875,7 @@ class BOL_UserDao extends OW_BaseDao
      * @param boolean $isAdmin
      * @param boolean $type
      *
-     * @return BOL_User
+     * @return array
      */
     public function findUserIdListByQuestionValues( $questionValues, $first, $count, $isAdmin = false, $aditionalParams = array() )
     {

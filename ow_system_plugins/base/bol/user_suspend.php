@@ -54,7 +54,7 @@ class BOL_UserSuspend extends OW_Entity
 
     public function getTimestamp()
     {
-        return $this->$timestamp;
+        return $this->timestamp;
     }
 
     /**

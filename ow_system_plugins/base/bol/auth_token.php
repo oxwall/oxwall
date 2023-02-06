@@ -34,7 +34,7 @@ class BOL_AuthToken extends OW_Entity
      */
     public $userId;
     /**
-     * @var ineteger
+     * @var int
      */
     public $token;
     /**

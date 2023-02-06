@@ -132,7 +132,7 @@ class OW_Response
                 }
                 else if ( mb_strtolower($headerName) === 'status' )
                 {
-                    header(ucfirst(mb_strtolower($headerName)) . ': ' . $headerValue, null, (int) $headerValue);
+                    header(ucfirst(mb_strtolower($headerName)) . ': ' . $headerValue, false, (int) $headerValue);
                 }
                 else
                 {

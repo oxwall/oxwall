@@ -154,6 +154,15 @@ class BOL_QuestionDataDao extends OW_BaseDao
         $this->deleteByExample($example);
     }
 
+    public function deleteByUserIdAndQuestionName( $userId, $questionName )
+    {
+        $example = new OW_Example();
+        $example->andFieldEqual('userId', (int) $userId);
+        $example->andFieldEqual('questionName', $questionName);
+
+        $this->deleteByExample($example);
+    }
+
     public function deleteByQuestionListAndUserId(array $questionNameList, $userId)
     {
         if ( !$questionNameList )

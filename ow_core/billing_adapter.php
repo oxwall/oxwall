@@ -33,7 +33,7 @@ interface OW_BillingAdapter
 {
 
     /**
-     * Prepairs sale
+     * Prepare sale
      * 
      * @param BOL_BillingSale $sale
      */

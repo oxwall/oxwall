@@ -292,7 +292,7 @@ final class OW_Database
      * Enter description here...
      *
      * @param string $sql
-     * @param unknown_type $className
+     * @param string $className
      * @param array $params
      * @return mixed
      */
@@ -422,7 +422,7 @@ final class OW_Database
      * @param array $params
      * @param int $cacheLifeTime
      * @param array $tags
-     * @return type
+     * @return array|false
      */
     public function queryForColumnList( $sql, array $params = null, $cacheLifeTime = 0, $tags = array() )
     {
@@ -455,7 +455,7 @@ final class OW_Database
     }
 
     /**
-     * @param type $sql
+     * @param string $sql
      * @param array $params
      * @return int
      */
@@ -482,9 +482,9 @@ final class OW_Database
     /**
      * Enter description here...
      *
-     * @param unknown_type $sql
+     * @param string $sql
      * @param array $params
-     * @return unknown
+     * @return int
      */
     public function update( $sql, array $params = null )
     {
@@ -518,10 +518,49 @@ final class OW_Database
     }
 
     /**
+     * Insert object lisy $obj to table $tableName. Returns last_insert_id
+     * throws InvalidArgumentException
+     *
+     * @param string $tableName
+     * @param object[] $objList
+     * @return integer
+     */
+    public function insertObjectList($tableName, array $objList, $delayed = false )
+    {
+        $sqlList = '';
+        $params = [];
+        $paramNames = [];
+        $number = 1;
+
+        foreach ( $objList as $obj )
+        {
+            if ( $obj != null && is_object($obj) )
+            {
+                $objectVars = get_object_vars($obj);
+                foreach ( $objectVars as $objKey => $objVar )
+                {
+                    $params["{$objKey}_$number"] = $objVar;
+                    $paramNames[] = "{$objKey}_$number";
+                }
+                $columns = UTIL_String::arrayToDelimitedString(array_keys($objectVars), ',', '`', '`');
+                $values = UTIL_String::arrayToDelimitedString($paramNames, ',', ':');
+                $sqlList .= "INSERT" . ($delayed ? " DELAYED" : "") . " INTO `{$tableName}` ({$columns}) VALUES ({$values});";
+
+                $paramNames = [];
+                $number++;
+            }
+        }
+
+        $this->execute($sqlList, $params)->closeCursor();
+
+        return (int) $this->connection->lastInsertId();
+    }
+
+    /**
      * @param string $tableName
      * @param OW_Entity $obj
      * @param string $primaryKeyName
-     * @return type
+     * @return bool
      * @throws InvalidArgumentException
      */
     public function updateObject( $tableName, $obj, $primaryKeyName = 'id', $lowPriority = false )
@@ -568,6 +607,73 @@ final class OW_Database
         }
     }
 
+    /**
+     * @param string $tableName
+     * @param array $objList
+     * @param string $primaryKeyName
+     * @return PDOStatement|bool
+     * @throws InvalidArgumentException
+     */
+    public function updateObjectList( $tableName, array $objList, $primaryKeyName = 'id', $lowPriority = false )
+    {
+        $sqlList = '';
+        $number = 1;
+        $updatedParams = array();
+
+        foreach ( $objList as $obj )
+        {
+            if ( $obj != null && is_object($obj) )
+            {
+                $params = get_object_vars($obj);
+
+                if ( !array_key_exists($primaryKeyName, $params) )
+                {
+                    continue;
+                }
+
+                $fieldsToUpdate = $obj->getEntinyUpdatedFields();
+
+                if ( empty($fieldsToUpdate) )
+                {
+                    continue;
+                }
+
+                $updateArray = array();
+                foreach ( $params as $key => $value )
+                {
+                    if ( $key !== $primaryKeyName )
+                    {
+                        if ( in_array($key, $fieldsToUpdate) )
+                        {
+                            $updateArray[] = "`$key`=:{$key}_$number";
+                            $updatedParams["{$key}_$number"] = $value;
+                        }
+                        else
+                        {
+                            unset($params[$key]);
+                        }
+                    }
+                    else
+                    {
+                        $updatedParams["{$primaryKeyName}_$number"] = $value;
+                    }
+                }
+
+                $updateStmt = UTIL_String::arrayToDelimitedString($updateArray);
+                $sqlList .= "UPDATE" . ($lowPriority ? " LOW_PRIORITY" : "") . " `{$tableName}` SET {$updateStmt} WHERE {$primaryKeyName}=:{$primaryKeyName}_$number;";
+
+                $number++;
+            }
+        }
+
+        if ( empty($sqlList) )
+        {
+            return false;
+        }
+
+        return $this->execute($sqlList, $updatedParams);
+    }
+
     public function mergeInClause( array $valueList )
     {
         if ( $valueList === null )
@@ -581,8 +687,7 @@ final class OW_Database
             $result .= ( '\'' . $this->escapeString($value) . '\',' ); //"'$value',"
         }
 
-        $result = mb_substr($result, 0, mb_strlen($result) - 1);
-        return $result;
+        return mb_substr($result, 0, mb_strlen($result) - 1);
     }
 
     public function batchInsertOrUpdateObjectList( $tableName, $objects, $batchSize = 50 )
@@ -657,7 +762,7 @@ final class OW_Database
      */
     public function escapeString( $string )
     {
-        $quotedString = $this->connection->quote($string); // real_escape_string( $string );
+        $quotedString = $this->connection->quote($string ?? ''); // real_escape_string( $string );
         return mb_substr($quotedString, 1, mb_strlen($quotedString) - 2); //dirty hack to delete quotes
     }
     /*     * 206.123.0

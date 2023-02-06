@@ -234,7 +234,7 @@ $path[] = "v1.0";
 
         if (!$return_code) {
             $this->error_str .= ": Failed to obtain valid HTTP response.";
-            array(0,$this->error_str,array());
+            return array(0,$this->error_str,array());
         }
         if ($return_code == 401) {
             return array($return_code,"Unauthorized",array());
@@ -478,16 +478,20 @@ $this->create_array();
 
         if (!$return_code) {
             $this->error_str .= ": Failed to obtain valid HTTP response.";
-            array(0,$this->error_str,0,0);
+            $response = array(0,$this->error_str,0,0);
         }
-        if ($return_code == 404) {
-            return array($return_code,"Account not found.",0,0);
+        else if ($return_code == 404) {
+            $response =  array($return_code,"Account not found.",0,0);
         }
-        if ($return_code == 204) {
-            return array($return_code,$this->response_reason,
+        else if ($return_code == 204) {
+            $response =  array($return_code,$this->response_reason,
                 $this->_account_container_count, $this->_account_bytes_used);
         }
-        return array($return_code,$this->response_reason,0,0);
+        else{
+            $response =  array($return_code,$this->response_reason,0,0);
+        }
+
+        return $response;
     }
 
     # PUT /v1/Account/Container
@@ -668,7 +672,7 @@ $this->create_array();
 
         if (!$return_code) {
             $this->error_str .= ": Failed to obtain valid HTTP response.";
-            array(0,$this->error_str,0,0);
+            return array(0,$this->error_str,0,0);
         }
         if ($return_code == 404) {
             return array($return_code,"Container not found.",0,0);
@@ -697,11 +701,11 @@ $this->create_array();
 
         if (!$return_code) {
             $this->error_str .= ": Failed to obtain valid HTTP response.";
-            return array($return_code0,$this->error_str,NULL);
+            return array($return_code,$this->error_str,NULL);
         }
         if ($return_code == 404) {
             $this->error_str = "Object not found.";
-            return array($return_code0,$this->error_str,NULL);
+            return array($return_code,$this->error_str,NULL);
         }
         if (($return_code < 200) || ($return_code > 299
                 && $return_code != 412 && $return_code != 304)) {

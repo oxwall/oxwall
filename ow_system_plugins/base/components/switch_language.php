@@ -30,9 +30,7 @@ class BASE_CMP_SwitchLanguage extends OW_Component
     public function __construct($languages)
     {
         parent::__construct();
-
         $this->assign('languages', $languages);
-
     }
 
 }

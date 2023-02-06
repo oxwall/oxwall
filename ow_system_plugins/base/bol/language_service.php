@@ -772,6 +772,7 @@ class BOL_LanguageService
         $this->save($languageClone);
 
         $prefixes = ( null == ($prefixes = $this->getPrefixList()) ) ? array() : $prefixes;
+        $valueList = [];
 
         foreach ( $prefixes as $prefix ) /* @var $prefix BOL_LanguagePrefix */
         {
@@ -784,10 +785,12 @@ class BOL_LanguageService
                     continue;
                 $valueClone = new BOL_LanguageValue();
                 $valueClone->setKeyId($value->getKeyId())->setLanguageId($languageClone->getId())->setValue($value->getValue());
-                $this->saveValue($valueClone, false);
+
+                $valueList[] = $valueClone;
             }
         }
 
+        $this->saveValueList($valueList);
         $this->generateCache($languageClone->getId());
     }
 
@@ -830,6 +833,20 @@ class BOL_LanguageService
         if ( $generateCache === true )
         {
             $this->generateCache($dto->languageId);
+        }
+    }
+
+    /**
+     * @param array $dto
+     * @param bool $generateCache
+     */
+    public function saveValueList( array $dtoList, $generateCache = true )
+    {
+        $this->valueDao->saveList($dtoList);
+
+        if ( $generateCache === true && !empty($dtoList) )
+        {
+            $this->generateCache($dtoList[0]->languageId);
         }
     }
 

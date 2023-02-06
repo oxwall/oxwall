@@ -43,14 +43,14 @@ class BOL_EmailVerifyDao extends OW_BaseDao
     /**
      * Singleton instance.
      *
-     * @var BOL_EmailVerifiedDao
+     * @var BOL_EmailVerify
      */
     private static $classInstance;
 
     /**
      * Returns an instance of class (singleton pattern implementation).
      *
-     * @return BOL_EmailVerifiedDao
+     * @return BOL_EmailVerify
      */
     public static function getInstance()
     {
@@ -80,7 +80,7 @@ class BOL_EmailVerifyDao extends OW_BaseDao
 
     /**
      * @param string $email
-     * @return BOL_EmailVerified
+     * @return BOL_EmailVerify
      */
     public function findByEmail( $email, $type )
     {
@@ -113,7 +113,7 @@ class BOL_EmailVerifyDao extends OW_BaseDao
 
     /**
      * @param string $hash
-     * @return BOL_EmailVerified
+     * @return BOL_EmailVerify
      */
     public function findByHash( $hash )
     {

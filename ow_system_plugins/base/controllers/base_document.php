@@ -29,12 +29,6 @@
  */
 class BASE_CTRL_BaseDocument extends OW_ActionController
 {
-
-    public function index()
-    {
-        //TODO implement
-    }
-
     public function alertPage()
     {
         OW::getDocument()->getMasterPage()->setTemplate(OW::getThemeManager()->getMasterPageTemplate(OW_MasterPage::TEMPLATE_BLANK));

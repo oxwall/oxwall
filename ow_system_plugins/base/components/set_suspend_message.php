@@ -31,9 +31,6 @@
 
 class BASE_CMP_SetSuspendMessage extends OW_Component
 {
-    /**
-     * @return Constructor.
-     */
     public function __construct()
     {
         parent::__construct();
@@ -51,15 +48,7 @@ class BASE_CMP_SetSuspendMessage extends OW_Component
         $submit->setLabel(OW::getLanguage()->text('base', 'submit'));
         
         $form->addElement($submit);
-        
 
-        
-//        $form->bindJsFunction(Form::BIND_SUBMIT, ' function(e) { 
-//                return false;  } 
-//                
-//                ');
-        
-        
         $this->addForm($form);
         
         $this->bindJs($form);

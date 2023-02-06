@@ -174,6 +174,21 @@ class BOL_QuestionValueDao extends OW_BaseDao
         return array();
     }
 
+    public function findQuestionValuesList( $questionName )
+    {
+        if ( $questionName === null )
+        {
+            return array();
+        }
+
+        $sql = "SELECT `q`.`value` FROM {$this->getTableName()} AS `q` WHERE `q`.`questionName` = :questionName" ;
+
+        $result = $this->dbo->queryForColumnList($sql, ['questionName' => $questionName]);
+
+        return $result;
+
+    }
+
     public function findRealQuestionValues( $questionName )
     {
         if ( $questionName === null )

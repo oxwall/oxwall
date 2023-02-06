@@ -136,7 +136,7 @@ class ADMIN_CTRL_AjaxUpload extends ADMIN_CTRL_Abstract
         {
             $tmpId = $tmpFile['dto']->id;
 
-            $rotate = isset($_POST['rotate'][$tmpId]) ? fmod(intval($_POST['rotate'][$tmpId]), 360) : 0;
+            //$rotate = isset($_POST['rotate'][$tmpId]) ? fmod(intval($_POST['rotate'][$tmpId]), 360) : 0;
             $file = $themeService->moveTemporaryFile($tmpId, !empty($_POST['desc'][$tmpId]) ? $_POST['desc'][$tmpId] : '', $rotate);
 
             $fileTmpService->deleteTemporaryFile($tmpId);

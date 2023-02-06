@@ -20,8 +20,6 @@ class BASE_CTRL_CompleteProfile extends OW_ActionController
         $item->setUrl(OW::getRouter()->urlForRoute("base.complete_required_questions"));
         $item->setKey('complete_profile');
         $item->setOrder(1);
-        
-        $masterpage = OW::getDocument()->getMasterPage();
 
         $masterpage = OW::getDocument()->getMasterPage();
         
@@ -235,7 +233,6 @@ class BASE_CTRL_CompleteProfile extends OW_ActionController
 
         $accounts = array();
 
-        /* @var $value BOL_QuestionAccount */
         foreach ( $accountTypes as $key => $value )
         {
             $accounts[$value->name] = OW::getLanguage()->text('base', 'questions_account_type_' . $value->name);

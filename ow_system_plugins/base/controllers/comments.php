@@ -102,7 +102,7 @@ class BASE_CTRL_Comments extends OW_ActionController
             'userId' => OW::getUser()->getId(),
             'commentId' => $comment->getId(),
             'pluginKey' => $params->getPluginKey(),
-            'attachment' => json_decode($attachment, true)
+            'attachment' => json_decode($attachment ?? "", true)
         ));
 
         OW::getEventManager()->trigger($event);

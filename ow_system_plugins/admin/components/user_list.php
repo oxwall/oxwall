@@ -30,17 +30,17 @@
  * @since 1.0
  */
 class ADMIN_CMP_UserList extends OW_Component
-{    
+{
     /**
      * Constructor.
-     * 
-     * @param string $type
-     * @param array $extra
+     *
+     * @param ADMIN_UserListParams $params
+     * @throws Exception
      */
     public function __construct( ADMIN_UserListParams $params )
     {
         parent::__construct();
-        
+
         $language = OW::getLanguage();
         $userService = BOL_UserService::getInstance();
         $authService = BOL_AuthorizationService::getInstance();
@@ -49,7 +49,7 @@ class ADMIN_CMP_UserList extends OW_Component
         $extra = $params->getExtra();
         $formAction = $params->getAction();
         $this->assign('action', $formAction);
-        
+
         // handle form
         if ( OW::getRequest()->isPost() && !empty($_POST['users']) )
         {

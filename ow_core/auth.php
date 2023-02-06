@@ -96,6 +96,10 @@ class OW_Auth
      */
     public function getUserId()
     {
+        if (!$this->authenticator) {
+            return 0;
+        }
+
         return $this->authenticator->getUserId();
     }
 

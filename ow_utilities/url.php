@@ -95,7 +95,7 @@ class UTIL_Url
      */
     public static function getRealRequestUri( $urlHome, $requestUri )
     {
-        $urlArray = parse_url($urlHome);
+        $urlArray = parse_url($urlHome ?? '');
 
         $originalUri = UTIL_String::removeFirstAndLastSlashes($requestUri);
         $originalPath = UTIL_String::removeFirstAndLastSlashes($urlArray['path']);
@@ -165,12 +165,12 @@ class UTIL_Url
         $userFilesUrl = OW::getStorage()->getFileUrl(OW_DIR_USERFILES);
         $path = null;
 
-        if ( stripos($uri, OW_URL_HOME) === 0 )
+        if ( stripos($uri, OW_URL_HOME) !== false )
         {
             $path = str_replace(OW_URL_HOME, OW_DIR_ROOT, $uri);
             $path = str_replace('/', DS, $path);
         }
-        else if ( stripos($uri, $userFilesUrl) === 0 )
+        else if ( stripos($uri, $userFilesUrl) !== false )
         {
             $path = str_replace($userFilesUrl, OW_DIR_USERFILES, $uri);
             $path = str_replace('/', DS, $path);

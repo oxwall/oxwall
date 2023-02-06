@@ -29,89 +29,93 @@ abstract class BaseIterator implements Iterator
 
     public function __construct($items, $limit=null) {
 
-            $this->items = $items;
-            $this->limit = $limit;
+        $this->items = $items;
+        $this->limit = $limit;
     }
 
+    #[\ReturnTypeWillChange]
     public function rewind() {
-            $this->currentItem = 0;
+        $this->currentItem = 0;
     }
 
+    #[\ReturnTypeWillChange]
     public function valid() {
-            return $this->currentItem < $this->items->length &&
-                    (is_null($this->limit) || $this->limit == 0 || $this->currentItem < $this->limit);
+        return $this->currentItem < $this->items->length &&
+            (is_null($this->limit) || $this->limit == 0 || $this->currentItem < $this->limit);
     }
-
+    #[\ReturnTypeWillChange]
     public function key() {
-            return $this->currentItem;
+        return $this->currentItem;
     }
-
+    #[\ReturnTypeWillChange]
     public function next() {
-            $this->currentItem++;
+        $this->currentItem++;
     }
 
     public function seek($itemNumber) {
-            $this->currentItem = $itemNumber;
+        $this->currentItem = $itemNumber;
     }
 }
 
 /**
-  * RSSIterator
-  * This class is used to load and iterate an RSS Feed
-  *
-  */
+ * RSSIterator
+ * This class is used to load and iterate an RSS Feed
+ *
+ */
 
 class RSSIterator extends BaseIterator
 {
-	public function current()
+    #[\ReturnTypeWillChange]
+    public function current()
+    {
+        $title = '';
+        $description = '';
+        $link = '';
+        $date = '';
+
+        $itemNode = $this->items->item($this->currentItem);
+
+        $titleNode = $itemNode->getElementsByTagName("title")->item(0);
+        if ( !empty($titleNode) )
         {
-            $title = '';
-            $description = '';
-            $link = '';
-            $date = '';
+            $title = $titleNode->nodeValue;
+        }
 
-            $itemNode = $this->items->item($this->currentItem);
+        $dateNode = $itemNode->getElementsByTagName("pubDate")->item(0);
+        if ( !empty($dateNode) )
+        {
+            $date = $dateNode->nodeValue;
+        }
 
-            $titleNode = $itemNode->getElementsByTagName("title")->item(0);
-            if ( !empty($titleNode) )
-            {
-                $title = $titleNode->nodeValue;
-            }
+        $linkNode = $itemNode->getElementsByTagName("link")->item(0);
+        if ( !empty($linkNode) )
+        {
+            $link = $linkNode->nodeValue;
+        }
 
-            $dateNode = $itemNode->getElementsByTagName("pubDate")->item(0);
-            if ( !empty($dateNode) )
-            {
-                $date = $dateNode->nodeValue;
-            }
+        $descriptionNode = $itemNode->getElementsByTagName("description")->item(0);
 
-            $linkNode = $itemNode->getElementsByTagName("link")->item(0);
-            if ( !empty($linkNode) )
-            {
-                $link = $linkNode->nodeValue;
-            }
+        if ( !empty($descriptionNode) )
+        {
+            $description = $descriptionNode->nodeValue;
+        }
 
-            $descriptionNode = $itemNode->getElementsByTagName("description")->item(0);
-
+        if ( empty($description) )
+        {
+            $descriptionNode = $itemNode->getElementsByTagName("content")->item(0);
             if ( !empty($descriptionNode) )
             {
                 $description = $descriptionNode->nodeValue;
             }
+        }
 
-            if ( empty($description) )
-            {
-                $descriptionNode = $itemNode->getElementsByTagName("content")->item(0);
-                if ( !empty($descriptionNode) )
-                {
-                    $description = $descriptionNode->nodeValue;
-                }
-            }
-
-            return new RSSItem($title, $description, $link, $date);
-	}
+        return new RSSItem($title, $description, $link, $date);
+    }
 }
 
 class AtomIterator extends BaseIterator
 {
+    #[\ReturnTypeWillChange]
     public function current()
     {
         $title = '';

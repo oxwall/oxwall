@@ -58,6 +58,11 @@ class BASE_CMP_SiteStatistic  extends OW_Component
     protected $period;
 
     /**
+     * @var array
+     */
+    protected $entityTypes;
+
+    /**
      * Class constructor
      *
      * @param string $chartId

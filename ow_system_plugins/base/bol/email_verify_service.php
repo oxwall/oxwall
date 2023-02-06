@@ -36,7 +36,7 @@ class BOL_EmailVerifyService
 
 
     /**
-     * @var BOL_QuestionDao
+     * @var BOL_EmailVerifyDao
      */
     private $emailVerifiedDao;
 
@@ -69,9 +69,9 @@ class BOL_EmailVerifyService
     }
 
     /**
-     * @param BOL_EmailVerified $object
+     * @param BOL_EmailVerify $object
      */
-    public function saveOrUpdate( BOL_EmailVerified $object )
+    public function saveOrUpdate( BOL_EmailVerify $object )
     {
         $this->emailVerifiedDao->save($object);
     }
@@ -79,7 +79,7 @@ class BOL_EmailVerifyService
     /**
      * @param string $email
      * @param string $type
-     * @return BOL_EmailVerified
+     * @return BOL_EmailVerify
      */
     public function findByEmail( $email, $type )
     {
@@ -90,7 +90,7 @@ class BOL_EmailVerifyService
      * @param string $email
      * @param int $userId
      * @param string $type
-     * @return BOL_EmailVerified
+     * @return BOL_EmailVerify
      */
     public function findByEmailAndUserId( $email, $userId, $type )
     {
@@ -99,7 +99,7 @@ class BOL_EmailVerifyService
 
     /**
      * @param string $hash
-     * @return BOL_EmailVerified
+     * @return BOL_EmailVerify
      */
     public function findByHash( $hash )
     {
@@ -285,7 +285,6 @@ class BOL_EmailVerifyService
     {
         $language = OW::getLanguage();
 
-        /* @var BOL_EmailVerified */
         $data =  $this->verifyEmailCode($code);
 
         if ( $data['isValid'] )
@@ -309,13 +308,16 @@ class BOL_EmailVerifyService
 
     /**
      * @param string $code
+     * @param bool $loginUser
+     * @return array
      */
     public function verifyEmailCode( $code, $loginUser = true )
     {
         $result = ["isValid" => false, "type" => "", "message" => ""];
 
-        /* @var BOL_EmailVerified */
+        /** @var BOL_EmailVerify $emailVerifyData */
         $emailVerifyData = $this->findByHash($code);
+
         if ( $emailVerifyData !== null )
         {
             $result["type"] = $emailVerifyData->type;

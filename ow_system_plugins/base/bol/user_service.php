@@ -169,7 +169,7 @@ final class BOL_UserService
     /**
      * Finds user by id.
      *
-     * @param integer $id
+     * @param int $id
      * @return BOL_User
      */
     public function findUserById( $id )
@@ -240,7 +240,7 @@ final class BOL_UserService
 
             if ( isset($questionValues[$value]) )
             {
-                $resultArray[$value] = isset($questionValues[$value][$questionName]) ? htmlspecialchars($questionValues[$value][$questionName]) : '';
+                $resultArray[$value] = isset($questionValues[$value][$questionName]) ? htmlspecialchars($questionValues[$value][$questionName], ENT_HTML5, 'UTF-8') : '';
 
                 if ( !$resultArray[$value] )
                 {
@@ -731,6 +731,7 @@ final class BOL_UserService
             return;
         }
 
+        /** @var BOL_User $user */
         $user = $this->userDao->findById($userId);
         $userOnline = $this->userOnlineDao->findByUserId($userId);
 
@@ -1247,9 +1248,11 @@ final class BOL_UserService
 
     /**
      *
-     * @param int $userId
-     * return array<BOL_User>
-     *
+     * @param $questionValues
+     * @param $first
+     * @param $count
+     * @param bool $isAdmin
+     * @return array
      */
     public function findUserListByQuestionValues( $questionValues, $first, $count, $isAdmin = false )
     {
@@ -1518,7 +1521,7 @@ final class BOL_UserService
             {
                 $loginCookie = $this->saveLoginCookie(OW::getUser()->getId());
 
-                setcookie('ow_login', $loginCookie->getCookie(), (time() + 86400 * 7), '/', null, null, true);
+                setcookie('ow_login', $loginCookie->getCookie(), (time() + 86400 * 7), '/', '', false, true);
             }
         }
 

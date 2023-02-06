@@ -315,8 +315,6 @@ class ADMIN_CTRL_Languages extends ADMIN_CTRL_Abstract
 
         $this->assign('paging', $paging->render());
 
-//~~
-
         $this->assign('list', $list);
 
         $prefixes = $languageService->getPrefixList();
@@ -700,6 +698,7 @@ class ADMIN_CTRL_Languages extends ADMIN_CTRL_Abstract
                 $file = $dir . "{$langDto->getTag()}.xml";
                 $fd = fopen($file, 'w');
                 $xml = $languageService->getLanguageXML($langDto->getId());
+
                 fwrite($fd, $xml);
                 $za->addFile($file, $langDir . "language.xml");
 
@@ -712,7 +711,6 @@ class ADMIN_CTRL_Languages extends ADMIN_CTRL_Abstract
                     $file = $dir . "{$prefixDto->getPrefix()}.xml";
                     $fd = fopen($file, 'w');
                     fwrite($fd, $xml);
-
                     $za->addFile($file, $langDir . "{$prefixDto->getPrefix()}.xml");
                 }
             }
@@ -776,26 +774,26 @@ class ADMIN_CTRL_Languages extends ADMIN_CTRL_Abstract
 
         $languages = array_merge($active_langs, $inactive_langs);
 
-//try to get additinal langs
         $langsEventParam = new stdClass();
         $langsEventParam->languages = $languages;
         $langsEventParam->inactiveLangs = $inactive_langs;
+
         $event = new OW_Event('admin.get_additional_langs', array('langs' => $langsEventParam));
         OW::getEventManager()->trigger($event);
+
         $inactive_langs = $langsEventParam->inactiveLangs;
 
         $this->assign('langs', $languages);
         $prefixes = $languageService->getPrefixList();
 
         $this->assign('prefixes', $prefixes);
-
         $this->assign('active_langs', $active_langs);
         $this->assign('inactive_langs', $inactive_langs);
 
         $importLangForm = new ImportLangForm();
         $importLangForm->setAction(OW::getRouter()->urlForRoute('admin_settings_language_mod'). "/#lang_import");
-        $this->addForm($importLangForm);
 
+        $this->addForm($importLangForm);
         $this->addForm(new CloneForm());
     }
 
@@ -866,11 +864,9 @@ class ADMIN_CTRL_Languages extends ADMIN_CTRL_Abstract
 
     public function ajaxAddKey()
     {
-
         $languageService = BOL_LanguageService::getInstance();
 
         $prefixes = $languageService->getPrefixList();
-
         $language = $languageService->findById($_POST['language']);
 
         $addKeyForm = new AddKeyForm($prefixes, $language);
@@ -885,8 +881,6 @@ class ADMIN_CTRL_Languages extends ADMIN_CTRL_Abstract
                 $key = $languageService->generateCustomKey(trim($data['value']));
 
                 $i = 0;
-
-//$u = $languageService->isKeyUnique( 'ow_custom', $data['key'] );
 
                 $unique = $key;
 

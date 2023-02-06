@@ -230,25 +230,12 @@ final class BOL_TextFormatService
 
     public function processWsForInput( $text, array $params = array() )
     {
-        //printVar($text);
-//        if ( in_array('html', $params['buttons']) )
-//        {
-//            $htmlResult = $this->processHtml($text, false);
-//            $text = str_replace($htmlResult['search'], $htmlResult['replace'], $htmlResult['text']);
-//        }
-//
-//        if ( in_array('video', $params['buttons']) )
-//        {
-//            $videoResult = $this->processVideo($text, false);
-//            $text = str_replace($videoResult['search'], $videoResult['replace'], $videoResult['text']);
-//        }
-        //printVar($videoResult);
         if ( in_array(self::WS_BTN_MORE, $params['buttons']) )
         {
-            $text = str_replace('<!--more-->', '&lt;!--more--&gt;', $text);
+            $text = str_replace('<!--more-->', '&lt;!--more--&gt;', $text ?? '');
         }
-        //printVar($text);
-        return $text;
+
+        return $text ?? '';
     }
 
     public function isCodeResourceValid( $code )

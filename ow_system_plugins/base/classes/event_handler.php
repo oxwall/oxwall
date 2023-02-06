@@ -360,7 +360,7 @@ class BASE_CLASS_EventHandler
         {
             $newToken = UTIL_String::getRandomString(32);
             OW::getConfig()->saveConfig('base', 'admin_cookie', $newToken);
-            setcookie('adminToken', $newToken, time() + 3600 * 24 * 100, '/', null, false, true);
+            setcookie('adminToken', $newToken, time() + 3600 * 24 * 100, '/', '', false, true);
         }
     }
 
@@ -583,7 +583,6 @@ class BASE_CLASS_EventHandler
         }
         catch ( Exception $e )
         {
-            //printVar($e);
             //Skip invalid notification
         }
     }

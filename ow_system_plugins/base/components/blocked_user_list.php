@@ -96,7 +96,7 @@ class BASE_CMP_BlockedUserList extends BASE_CMP_Users
 
                 for ( $i = 0; $i < BOL_QuestionService::MAX_QUESTION_VALUES_COUNT; $i++ )
                 {
-                    $val = pow(2, $i);
+                    $val = (1<< $i);
                     if ( (int) $sex & $val )
                     {
                         $sexValue .= BOL_QuestionService::getInstance()->getQuestionValueLang('sex', $val) . ', ';

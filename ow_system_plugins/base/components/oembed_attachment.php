@@ -75,7 +75,7 @@ class BASE_CMP_OembedAttachment extends OW_Component
     
     public function render()
     {
-        if ( $this->oembed["type"] == "video" && !empty($this->oembed["html"]) )
+        if (isset($this->oembed["type"]) && $this->oembed["type"] == "video" && !empty($this->oembed["html"]) )
         {
             $this->initJs();
         }

@@ -78,8 +78,6 @@ class BASE_CTRL_Preference extends OW_ActionController
         
         $preferenceForm->addElement($preferenceSubmit);
 
-        // --
-
         $sectionList = BOL_PreferenceService::getInstance()->findAllSections();
         $preferenceList = BOL_PreferenceService::getInstance()->findAllPreference();
 
@@ -127,9 +125,9 @@ class BASE_CTRL_Preference extends OW_ActionController
             if( $preferenceForm->isValid($_POST) )
             {
                 $values = $preferenceForm->getValues();
-                $restul = BOL_PreferenceService::getInstance()->savePreferenceValues($values, $userId);
+                $result = BOL_PreferenceService::getInstance()->savePreferenceValues($values, $userId);
 
-                if ( $restul )
+                if ( $result )
                 {
                     OW::getFeedback()->info($language->text('base', 'preference_preference_data_was_saved'));
                 }
