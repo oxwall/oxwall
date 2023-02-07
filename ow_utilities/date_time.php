@@ -72,13 +72,13 @@ class UTIL_DateTime
         if ($currentDate->diff($givenDate)->y === 0) {
             return $militaryTime
                 ? self::formatDateByPattern($fmt, "LLL d, H:mm", $givenDate->getTimestamp())
-                : self::formatDateByPattern($fmt, "LLL d, h:mma", $givenDate->getTimestamp());
+                : self::formatDateByPattern($fmt, "LLL d, h:mm a", $givenDate->getTimestamp());
 
         }
 
         return $militaryTime
             ? self::formatDateByPattern($fmt, "LLL d ''y, H:mm", $givenDate->getTimestamp())
-            : self::formatDateByPattern($fmt, "LLL d ''y, h:mma", $givenDate->getTimestamp());
+            : self::formatDateByPattern($fmt, "LLL d ''y, h:mm a", $givenDate->getTimestamp());
     }
 
     /**
@@ -154,7 +154,7 @@ class UTIL_DateTime
 
             $formattedDate = $militaryTime
                 ? self::formatDateByPattern($fmt, "H:mm", $givenDate->getTimestamp())
-                : self::formatDateByPattern($fmt, "h:mma", $givenDate->getTimestamp());
+                : self::formatDateByPattern($fmt, "h:mm a", $givenDate->getTimestamp());
 
             return $language->text('base', 'date_time_yesterday') . ', ' . $formattedDate;
         }
@@ -359,11 +359,25 @@ class UTIL_DateTime
     }
 
     /**
+     * Format date by given pattern.
+     *
+     * @param IntlDateFormatter $fmt
+     * @param string $pattern
+     * @param int $timestamp
+     * @return string
+     */
+    public static function formatDateByPattern($fmt, $pattern, $timestamp)
+    {
+        $fmt->setPattern($pattern);
+        return datefmt_format($fmt, $timestamp);
+    }
+
+    /**
      * Create intl date formatter.
      *
      * @return IntlDateFormatter|null
      */
-    protected static function getDateTimeFmt()
+    public static function getDateTimeFmt()
     {
         $languageService = BOL_LanguageService::getInstance();
 
@@ -374,20 +388,6 @@ class UTIL_DateTime
             date_default_timezone_get(),
             IntlDateFormatter::GREGORIAN,
         );
-    }
-
-    /**
-     * Format date by given pattern.
-     *
-     * @param IntlDateFormatter $fmt
-     * @param string $pattern
-     * @param int $timestamp
-     * @return string
-     */
-    protected static function formatDateByPattern($fmt, $pattern, $timestamp)
-    {
-        $fmt->setPattern($pattern);
-        return datefmt_format($fmt, $timestamp);
     }
 
     protected static function parseInteger( $value, $offset, $minLength, $maxLength )

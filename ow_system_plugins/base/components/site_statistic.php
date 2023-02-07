@@ -27,7 +27,7 @@
  * @package ow_system_plugins.base.components
  * @since 1.7.6
  */
-class BASE_CMP_SiteStatistic  extends OW_Component
+class BASE_CMP_SiteStatistic extends OW_Component
 {
     /**
      * Chart Id
@@ -161,17 +161,18 @@ class BASE_CMP_SiteStatistic  extends OW_Component
      */
     protected function getMonths($count)
     {
+        $fmt = UTIL_DateTime::getDateTimeFmt();
+        $fmt->setTimeZone("UTC");
+        $fmt->setPattern("LLLL");
+
         $months = array();
-        $language = OW::getLanguage();
 
         for ($i = $count - 1; $i > 0; $i--)
         {
-            $months[] = $language->
-                    text('base', 'month_' . date('n', strtotime('first day of -' . $i . ' month')));
+            $months[] = datefmt_format($fmt, strtotime('first day of -' . $i . ' month'));
         }
 
-        $months[] = $language->
-                text('base', 'month_' . date('n', strtotime('today -' . $i . ' month')));
+        $months[] = datefmt_format($fmt, strtotime('today -' . $i . ' month'));
 
         return $months;
     }
@@ -183,21 +184,21 @@ class BASE_CMP_SiteStatistic  extends OW_Component
      */
     protected function getHours()
     {
-        $hours = array();
-        $hours[] = '12:00 AM';
-        $hour  = 1;
+        $fmt = UTIL_DateTime::getDateTimeFmt();
+        $fmt->setTimeZone("UTC");
 
-        for ($i = 0; $i < 23; $i++)
-        {
-            $suffix = $i < 11 ? 'AM' : 'PM';
+        $militaryTime = (bool) OW::getConfig()->getValue('base', 'military_time');
 
-            if ($i == 12)
-            {
-                $hour = 1;
-            }
+        if ($militaryTime) {
+            $fmt->setPattern('H:mm');
+        } else {
+            $fmt->setPattern('h:mm a');
+        }
 
-            $hours[] = $hour . ':00 ' . $suffix;
-            $hour++;
+        $hours = [];
+
+        for ($i = 0, $timestamp = 0; $i < 24; $i++, $timestamp += 3600) {
+            $hours[] = datefmt_format($fmt, $timestamp);
         }
 
         return $hours;
@@ -215,10 +216,10 @@ class BASE_CMP_SiteStatistic  extends OW_Component
 
         for ($i = $count - 1; $i > 0; $i--)
         {
-            $days[] = UTIL_DateTime::formatDate(strtotime('today -' . $i . ' days'), true);
+            $days[] = UTIL_DateTime::formatDate(strtotime('today -' . $i . ' days'));
         }
 
-        $days[] = UTIL_DateTime::formatDate(strtotime('today'), true);
+        $days[] = UTIL_DateTime::formatDate(strtotime('today'));
 
         return $days;
     }
