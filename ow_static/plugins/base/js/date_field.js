@@ -76,6 +76,7 @@ var DateField = function( $name )
 
        }
 
+       // Useful when we need to notify plugins about field value changes.
        OW.trigger('form.date_field_changed', {}, self.day);
 
        self.updateValue();
