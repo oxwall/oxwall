@@ -22,6 +22,8 @@
  * which combines Covered Code or portions thereof with code not governed by the terms of the CPAL.
  */
 
+use PHPMailer\PHPMailer\Exception as phpMailerException;
+
 /**
  * @author Sardar Madumarov <madumarov@gmail.com>
  * @package ow_system_plugins.base.bol
@@ -1407,7 +1409,7 @@ final class BOL_UserService
 
     public function sendWellcomeLetter( BOL_User $user )
     {
-        if ( $user === null )
+        if ( $user === null || empty($user->email) )
         {
             return;
         }
@@ -1437,7 +1439,7 @@ final class BOL_UserService
         {
             OW::getMailer()->send($mail);
         }
-        catch ( phpmailerException $e )
+        catch (phpMailerException $e )
         {
             $user->emailVerify = false;
             $this->saveOrUpdate($user);
