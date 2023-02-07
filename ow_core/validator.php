@@ -1543,3 +1543,63 @@ class RangeValidator extends OW_Validator
         return $js;
     }
 }
+
+class AgeValidator extends OW_Validator
+{
+    /**
+     * Minimal allowed age.
+     *
+     * @var int
+     */
+    private $minAge;
+
+    public function __construct($minAge)
+    {
+        $this->minAge = $minAge;
+    }
+
+    public function isValid($value)
+    {
+        if (isset($value)) {
+            $birthDate = new DateTimeImmutable($value);
+
+            $birthYear = $birthDate->format('Y');
+            $birthMonth = $birthDate->format('m');
+            $birthDay = $birthDate->format('d');
+
+            $actualAge = UTIL_DateTime::getAge($birthYear, $birthMonth, $birthDay);
+
+            return $actualAge >= $this->minAge;
+        }
+
+        return true;
+    }
+
+    public function getJsValidator()
+    {
+        return "{
+            validate: function(value)
+            {
+                if (!value) {
+                    return;
+                }   
+                         
+                let birthDate = new Date(value);
+                let currentDate = new Date();
+                let diff = new Date(currentDate - birthDate);
+                
+                let age = diff.getUTCFullYear() - 1970;
+                
+                if (age < " . $this->minAge . ") {
+                    throw " . json_encode($this->getError()) . ";
+                }
+                
+                return;
+            },
+            getErrorMessage : function()
+            {
+                return " . json_encode($this->getError()) . ";
+            }
+        }";
+    }
+}
