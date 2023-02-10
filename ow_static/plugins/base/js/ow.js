@@ -941,16 +941,16 @@ function OW_FloatBox(options)
         });
     }
 
-    this.$canvas.click(function(e)
-    {
-        if ( $(e.target).is(this) )
-        {
-            fl_box.close({
-                sender: "canvas",
-                canvas: this
-            });
-        }
-    });
+    // this.$canvas.click(function(e)
+    // {
+    //     if ( $(e.target).is(this) )
+    //     {
+    //         fl_box.close({
+    //             sender: "canvas",
+    //             canvas: this
+    //         });
+    //     }
+    // });
 
     this.$container = jQuery('.floatbox_container', this.$canvas);
 

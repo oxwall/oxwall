@@ -172,7 +172,7 @@ class UTIL_DateTime
     {
         $tokens = self::tokenize($pattern);
         $i = 0;
-        $n = strlen($value);
+        $n = strlen($value ?? '');
         foreach ( $tokens as $token )
         {
             switch ( $token )
@@ -394,7 +394,7 @@ class UTIL_DateTime
     {
         for ( $len = $maxLength; $len >= $minLength; --$len )
         {
-            $v = substr($value, $offset, $len);
+            $v = substr($value ?? '', $offset, $len);
             if ( ctype_digit($v) )
                 return $v;
         }

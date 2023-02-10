@@ -421,7 +421,6 @@ class SaveForm extends Form
         $menuItem->setType($params['type']);
 
         $order = $service->findMaxSortOrderForMenuType($params['type']);
-        $order;
         $menuItem->setOrder($order);
 
         $visibleFor = 0;
@@ -694,5 +693,3 @@ class ExternalPageUrlValidator extends UrlValidator
     }
 
 }
-
-?>
