@@ -51,6 +51,16 @@ class BOL_UserDao extends OW_BaseDao
     private static $classInstance;
 
     /**
+     * @var array
+     */
+    protected $cachedItems = [];
+
+    /**
+     * @var array
+     */
+    protected $cachedIds = [];
+
+    /**
      * Returns an instance of class (singleton pattern implementation).
      *
      * @return BOL_UserDao
@@ -1075,7 +1085,6 @@ class BOL_UserDao extends OW_BaseDao
 
         return $this->dbo->queryForColumnList($sqlString, array('start' => $start, 'count' => $count));
     }
-    protected $cachedItems = array();
 
     public function findById( $id, $cacheLifeTime = 0, $tags = array() )
     {

@@ -2,6 +2,8 @@
 
 class BASE_CMP_Breadcrumb extends OW_Component
 {
+    protected $items;
+
     public function __construct( $items, $title = '' )
     {
         parent::__construct();
