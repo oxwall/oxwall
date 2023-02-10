@@ -162,7 +162,6 @@ class BASE_CMP_SiteStatistic extends OW_Component
     protected function getMonths($count)
     {
         $fmt = UTIL_DateTime::getDateTimeFmt();
-        $fmt->setTimeZone("UTC");
         $fmt->setPattern("LLLL");
 
         $months = array();
