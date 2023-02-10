@@ -455,6 +455,7 @@ class BASE_CLASS_EventHandler
                         OW::getRequestHandler()->addCatchAllRequestsExclude('base.complete_profile.account_type', 'BASE_CTRL_BaseDocument', 'installCompleted');
                         OW::getRequestHandler()->addCatchAllRequestsExclude('base.complete_profile.account_type', 'BASE_CTRL_AjaxLoader');
                         OW::getRequestHandler()->addCatchAllRequestsExclude('base.complete_profile.account_type', 'BASE_CTRL_AjaxComponentAdminPanel');
+                        $this->excludeStaticPage('base.complete_profile.account_type');
                     }
                     else
                     {
@@ -475,6 +476,7 @@ class BASE_CLASS_EventHandler
                                 OW::getRequestHandler()->addCatchAllRequestsExclude('base.complete_profile', 'BASE_CTRL_BaseDocument', 'installCompleted');
                                 OW::getRequestHandler()->addCatchAllRequestsExclude('base.complete_profile', 'BASE_CTRL_AjaxLoader');
                                 OW::getRequestHandler()->addCatchAllRequestsExclude('base.complete_profile', 'BASE_CTRL_AjaxComponentAdminPanel');
+                                $this->excludeStaticPage('base.complete_profile');
                             }
                             else
                             {
@@ -2182,5 +2184,37 @@ class BASE_CLASS_EventHandler
         $event->setData($code);
 
         return $code;
+    }
+
+    /**
+     * Exclude tos and privacy pages from request catching.
+     *
+     * @param string $key
+     * @return void
+     */
+    protected function excludeStaticPage($key)
+    {
+        $usedRoute = OW::getRouter()->getUsedRoute();
+
+        if ($usedRoute) {
+            $dispatchAttrs = $usedRoute->getDispatchAttrs();
+
+            if ($dispatchAttrs['controller'] === 'BASE_CTRL_StaticDocument') {
+                $navService = BOL_NavigationService::getInstance();
+                $staticDoc = $navService->findStaticDocument(OW::getRequest()->getRequestUri());
+
+                if ($staticDoc) {
+                    $exclude = in_array(UTIL_String::removeFirstAndLastSlashes($staticDoc->getUri()), [
+                        "terms-of-use", "privacy", "privacy-policy"
+                    ]);
+
+                    if ($exclude) {
+                        OW::getRequestHandler()->addCatchAllRequestsExclude(
+                            $key, $dispatchAttrs['controller'], $dispatchAttrs['action']
+                        );
+                    }
+                }
+            }
+        }
     }
 }
