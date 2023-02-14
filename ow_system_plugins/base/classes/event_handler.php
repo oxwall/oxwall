@@ -82,8 +82,6 @@ class BASE_CLASS_EventHandler
         $eventManager->bind(OW_EventManager::ON_USER_REGISTER, array($this, 'deleteInviteCode'));
         $eventManager->bind('base.before_save_user', array($this, 'setUserRoleOnChangeAccountType'));
 
-        $eventManager->bind('base.questions_field_add_fake_questions', array($this, 'addFakeQuestions'));
-
         $eventManager->bind(OW_EventManager::ON_JOIN_FORM_RENDER, array($this, 'onInviteMembersProcessJoinForm'));
 
         $eventManager->bind(BASE_CMP_ModerationToolsWidget::EVENT_COLLECT_CONTENTS, array($this, 'onCollectModerationWidgetContent'));
@@ -1881,16 +1879,6 @@ class BASE_CLASS_EventHandler
                 BOL_AuthorizationService::getInstance()->deleteUserRole($user->id, $accountTypeDto->roleId);
                 BOL_AuthorizationService::getInstance()->saveUserRole($user->id, $accountTypeDto->roleId);
             }
-        }
-    }
-
-    public function addFakeQuestions( OW_Event $e )
-    {
-        $params = $e->getParams();
-
-        if ( !empty($params['name']) && $params['name'] == 'email' )
-        {
-            $e->setData(false);
         }
     }
 
