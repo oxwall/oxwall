@@ -177,6 +177,8 @@ class BASE_CTRL_CompleteProfile extends OW_ActionController
             OW::getDocument()->addOnloadScript(" OW.info(".  json_encode(OW::getLanguage()->text('base', 'complete_profile_info')).") ");
         }
 
+        $form->setStaticIdsForFields('requiredQuestionsForm');
+
         $this->addForm($form);
 
         $language->addKeyForJs('base', 'join_error_username_not_valid');

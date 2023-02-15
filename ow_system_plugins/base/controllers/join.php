@@ -332,6 +332,8 @@ class BASE_CTRL_Join extends OW_ActionController
 
 class JoinForm extends BASE_CLASS_UserQuestionForm
 {
+    const FORM_NAME = 'joinForm';
+
     const SESSION_JOIN_DATA = 'joinData';
 
     const SESSION_JOIN_STEP = 'joinStep';
@@ -356,9 +358,9 @@ class JoinForm extends BASE_CLASS_UserQuestionForm
 
     public function __construct( $controller )
     {
-        parent::__construct('joinForm');
+        parent::__construct(self::FORM_NAME);
 
-        $this->setId('joinForm');
+        $this->setId(self::FORM_NAME);
 
         $stamp = OW::getSession()->get(self::SESSION_START_STAMP);
 
@@ -459,6 +461,9 @@ class JoinForm extends BASE_CLASS_UserQuestionForm
             $this->addLastStepQuestions($controller);
         }
 
+        // Override random field ids with static one.
+        $this->setStaticIdsForFields(self::FORM_NAME);
+
         $controller->assign('step', $step);
         $controller->assign('questionArray', $this->questionListBySection);
         $controller->assign('displayAccountType', $this->displayAccountType);
@@ -480,7 +485,7 @@ class JoinForm extends BASE_CLASS_UserQuestionForm
         }
     }
 
-        public function checkSession()
+    public function checkSession()
     {
         $stamp = BOL_QuestionService::getInstance()->getQuestionsEditStamp();
         $sessionStamp = OW::getSession()->get(self::SESSION_START_STAMP);

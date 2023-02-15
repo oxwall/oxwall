@@ -152,6 +152,7 @@ class BASE_CTRL_Edit extends OW_ActionController
         $this->setPageHeadingIconClass('ow_ic_user');
         // -- Edit form --
 
+        /** @var EditQuestionForm $editForm */
         $editForm = OW::getClassInstanceArray('EditQuestionForm', ['editForm', $editUserId]);
         $editForm->setId('editForm');
 
@@ -245,6 +246,8 @@ class BASE_CTRL_Edit extends OW_ActionController
                 $this->process($editForm, $user->id, $questionArray, $adminMode);
             }
         }
+
+        $editForm->setStaticIdsForFields('editForm');
 
         $this->addForm($editForm);
 
