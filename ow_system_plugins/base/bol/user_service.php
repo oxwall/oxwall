@@ -1475,26 +1475,26 @@ final class BOL_UserService
      */
     public function getSignInForm( $formName = 'sign-in', $submitDecorator = 'button' )
     {
-        $form = new Form($formName);
+        $form = new Form($formName, 'base');
 
-        $username = new TextField('identity');
+        $username = new TextField('identity', 'base');
         $username->setRequired(true);
         $username->setHasInvitation(true);
         $username->setInvitation(OW::getLanguage()->text('base', 'component_sign_in_login_invitation'));
         $form->addElement($username);
 
-        $password = new PasswordField('password');
+        $password = new PasswordField('password', 'base');
         $password->setHasInvitation(true);
         $password->setInvitation(OW::getLanguage()->text('base', 'component_sign_in_password_invitation'));
         $password->setRequired(true);
         $form->addElement($password);
 
-        $remeberMe = new CheckboxField('remember');
-        $remeberMe->setLabel(OW::getLanguage()->text('base', 'sign_in_remember_me_label'));
-        $remeberMe->setValue(true);
-        $form->addElement($remeberMe);
+        $rememberMe = new CheckboxField('remember', 'base');
+        $rememberMe->setLabel(OW::getLanguage()->text('base', 'sign_in_remember_me_label'));
+        $rememberMe->setValue(true);
+        $form->addElement($rememberMe);
 
-        $submit = new Submit('submit', $submitDecorator);
+        $submit = new Submit('submit', 'base', $submitDecorator);
         $submit->setValue(OW::getLanguage()->text('base', 'sign_in_submit_label'));
         $form->addElement($submit);
 

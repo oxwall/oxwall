@@ -39,27 +39,27 @@ class BASE_CMP_ChangePassword extends OW_Component
         $form = new Form("change-user-password");
         $form->setId("change-user-password");
 
-        $oldPassword = new PasswordField('oldPassword');
+        $oldPassword = new PasswordField('oldPassword', 'change-user-password');
         $oldPassword->setLabel($language->text('base', 'change_password_old_password'));
         $oldPassword->addValidator(new OldPasswordValidator());
         $oldPassword->setRequired();
         
         $form->addElement( $oldPassword );
 
-        $newPassword = new PasswordField('password');
+        $newPassword = new PasswordField('password', 'change-user-password');
         $newPassword->setLabel($language->text('base', 'change_password_new_password'));
         $newPassword->setRequired();
         $newPassword->addValidator( new NewPasswordValidator() );
 
         $form->addElement( $newPassword );
 
-        $repeatPassword = new PasswordField('repeatPassword');
+        $repeatPassword = new PasswordField('repeatPassword', 'change-user-password');
         $repeatPassword->setLabel($language->text('base', 'change_password_repeat_password'));
         $repeatPassword->setRequired();
         
         $form->addElement( $repeatPassword );
 
-        $submit = new Submit("change");
+        $submit = new Submit("change", 'change-user-password');
         $submit->setLabel($language->text('base', 'change_password_submit'));
 
         $form->setAjax(true);

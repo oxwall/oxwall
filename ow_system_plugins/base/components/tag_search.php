@@ -40,16 +40,19 @@ class BASE_CMP_TagSearch extends OW_Component
      */
     private $routeName;
 
+    private $pluginKey;
+
     /**
      * Constructor.
      * 
      * @param string $entityType
      * @param string $url
      */
-    public function __construct( $url = null )
+    public function __construct( $url = null, $pluginKey = '' )
     {
         parent::__construct();
         $this->url = $url;
+        $this->pluginKey = $pluginKey;
     }
 
     /**
@@ -69,9 +72,14 @@ class BASE_CMP_TagSearch extends OW_Component
      */
     public function onBeforeRender()
     {
-        $randId = rand(1, 100000);
-        $formId = 'tag_search_form_' . $randId;
-        $elId = 'tag_search_input_' . $randId;
+        if (empty($this->pluginKey)) {
+            $id = rand(1, 100000);
+        } else  {
+            $id = $this->pluginKey;
+        }
+
+        $formId = 'tag_search_form_' . $id;
+        $elId = 'tag_search_input_' . $id;
 
         $this->assign('form_id', $formId);
         $this->assign('el_id', $elId);
@@ -79,7 +87,7 @@ class BASE_CMP_TagSearch extends OW_Component
         $urlToRedirect = ($this->routeName === null) ? OW::getRequest()->buildUrlQueryString($this->url, array('tag' => '_tag_')) : OW::getRouter()->urlForRoute($this->routeName, array('tag' => '#tag#'));
 
         $script = "
-			var tsVar" . $randId . " = '" . $urlToRedirect . "';
+			var tsVar" . $id . " = '" . $urlToRedirect . "';
 			
 			$('#" . $formId . "').bind( 'submit', 
 				function(){
@@ -89,7 +97,7 @@ class BASE_CMP_TagSearch extends OW_Component
 					}
 					else
 					{
-						window.location = tsVar" . $randId . ".replace(/_tag_/, $('#" . $elId . "').val());
+						window.location = tsVar" . $id . ".replace(/_tag_/, $('#" . $elId . "').val());
 					}
 
 					return false;  
