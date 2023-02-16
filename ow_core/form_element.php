@@ -2832,7 +2832,7 @@ class BillingGatewaySelectionField extends FormElement
         if (empty($gatewayElementId)) {
             $this->gatewayElementId = UTIL_HtmlTag::generateAutoId('input');
         } else {
-            $this->gatewayElementId = $gatewayElementId;
+            $this->gatewayElementId = 'input_gateway_' . $gatewayElementId;
         }
     }
 
