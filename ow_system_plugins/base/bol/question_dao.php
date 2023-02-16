@@ -356,7 +356,7 @@ class BOL_QuestionDao extends OW_BaseDao
         $sql = " SELECT MAX( `sortOrder`) FROM `" . $this->getTableName() . "` ";
 
         $result = null;
-        if ( isset($sectionName) && count(trim($sectionName)) > 0 )
+        if ( isset($sectionName) && strlen(trim($sectionName)) > 0 )
         {
             $sql .= ' WHERE `sectionName`= :sectionName ';
             $result = $this->dbo->queryForColumn($sql, array('sectionName' => trim($sectionName)));
