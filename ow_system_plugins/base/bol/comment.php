@@ -52,6 +52,10 @@ class BOL_Comment extends OW_Entity
      */
     public $attachment;
 
+    public $entityId;
+
+    public $entityType;
+
     public function getUserId()
     {
         return $this->userId;
