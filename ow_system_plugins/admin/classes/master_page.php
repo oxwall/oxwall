@@ -49,7 +49,7 @@ class ADMIN_CLASS_MasterPage extends OW_MasterPage
             BOL_NavigationService::MENU_TYPE_PLUGINS,
             BOL_NavigationService::MENU_TYPE_SETTINGS,
             BOL_NavigationService::MENU_TYPE_USERS,
-            BOL_NavigationService::MENU_TYPE_MOBILE
+//            BOL_NavigationService::MENU_TYPE_MOBILE
         );
 
         $menuItems = BOL_NavigationService::getInstance()->findMenuItemsForMenuList($menuTypes);
@@ -75,7 +75,7 @@ class ADMIN_CLASS_MasterPage extends OW_MasterPage
             'menu_appearance' => BOL_NavigationService::MENU_TYPE_APPEARANCE,
             'menu_pages' => BOL_NavigationService::MENU_TYPE_PAGES,
             'menu_plugins' => BOL_NavigationService::MENU_TYPE_PLUGINS,
-            'menu_mobile' => BOL_NavigationService::MENU_TYPE_MOBILE
+//            'menu_mobile' => BOL_NavigationService::MENU_TYPE_MOBILE
         );
 
         foreach ( $menuDataArray as $key => $value )

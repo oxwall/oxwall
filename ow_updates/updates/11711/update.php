@@ -23,3 +23,10 @@
  */
 
 Updater::getLanguageService()->importPrefixFromDir(__DIR__ . DS . "langs", true);
+
+$configService = Updater::getConfigService();
+
+// Permanently disable mobile context.
+if ($configService->configExists('base', 'disable_mobile_context')) {
+    $configService->saveConfig('base', 'disable_mobile_context', 1);
+}
