@@ -628,9 +628,9 @@ class BOL_ThemeService
 
             $params = explode(",", $pockets[1][$key]);
 
-            foreach ( $params as $value )
+            foreach ( $params as $param )
             {
-                $tempArray = explode(":", $value);
+                $tempArray = explode(":", $param);
                 $itemArray[trim($tempArray[0])] = trim($tempArray[1]);
             }
 
@@ -735,7 +735,7 @@ class BOL_ThemeService
 
             if ( $namedControls[$key]["type"] == "image" )
             {
-                list($width, $height) = getimagesize($value["tmp_name"]);
+                list($width, $height) = !empty($value['tmp_name']) ? getimagesize($value["tmp_name"]) : ['width', 'height'];
 
                 $image = $this->addImage($value);
 
@@ -767,8 +767,8 @@ class BOL_ThemeService
 
     /**
      * 
-     * @param string $fileArr
-     * @return \BOL_ThemeImage
+     * @param array $fileArr
+     * @return BOL_ThemeImage
      */
     public function addImage( $fileArr )
     {
@@ -1097,7 +1097,7 @@ class BOL_ThemeService
     /**
      * Removes all css comments and returns result string.
      *
-     * @param strign $string
+     * @param string $string
      * @return string
      */
     private function removeCssComments( $string )
