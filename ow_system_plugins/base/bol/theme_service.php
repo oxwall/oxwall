@@ -376,20 +376,20 @@ class BOL_ThemeService
         {
             $controlsContent = file_get_contents($themeRootDir . self::CSS_FILE_NAME);
             $themeControls = $this->getThemeControls($controlsContent);
-            $mobileControls = array();
-
-            if ( file_exists($mobileRootDir . self::CSS_FILE_NAME) )
-            {
-                $controlsContent .= PHP_EOL . file_get_contents($mobileRootDir . self::CSS_FILE_NAME);
-                $mobileControls = $this->getThemeControls(file_get_contents($mobileRootDir . self::CSS_FILE_NAME));
-
-                foreach ( $mobileControls as $key => $val )
-                {
-                    $mobileControls[$key]["mobile"] = true;
-                }
-            }
-
-            $themeControls = array_merge($mobileControls, $themeControls);
+//            $mobileControls = array();
+//
+//            if ( file_exists($mobileRootDir . self::CSS_FILE_NAME) )
+//            {
+//                $controlsContent .= PHP_EOL . file_get_contents($mobileRootDir . self::CSS_FILE_NAME);
+//                $mobileControls = $this->getThemeControls(file_get_contents($mobileRootDir . self::CSS_FILE_NAME));
+//
+//                foreach ( $mobileControls as $key => $val )
+//                {
+//                    $mobileControls[$key]["mobile"] = true;
+//                }
+//            }
+//
+//            $themeControls = array_merge($mobileControls, $themeControls);
 
             // adding theme controls in DB
             if ( !empty($themeControls) )
