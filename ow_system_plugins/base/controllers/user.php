@@ -74,7 +74,7 @@ class BASE_CTRL_User extends OW_ActionController
                 }
 
                 OW::getFeedback()->info($language->text('base', 'forgot_password_success_message'));
-                $this->redirect();
+                $this->redirect(OW::getRouter()->getBaseUrl());
             }
             else
             {
