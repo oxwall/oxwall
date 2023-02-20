@@ -125,7 +125,7 @@ abstract class OW_Document
      */
     public function setDescription( $description )
     {
-        $description = str_replace(PHP_EOL, "", $description);
+        $description = str_replace(PHP_EOL, "", $description ?? '');
         $this->throwEvent("core.set_document_description", array("str" => $description));
         $this->description = $description;
     }

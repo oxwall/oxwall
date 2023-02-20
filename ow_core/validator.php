@@ -422,17 +422,21 @@ class RegExpValidator extends OW_Validator
      */
     protected $pattern;
 
+    protected $invert;
+
     /**
      * Class constructor.
      *
      * @param string pattern
      */
-    public function __construct( $pattern = null )
+    public function __construct( $pattern = null, $invert = false )
     {
         if ( isset($pattern) )
         {
             $this->setPattern($pattern);
         }
+
+        $this->invert = $invert;
 
         $errorMessage = OW::getLanguage()->text('base', 'form_validator_regexp_error_message');
 
@@ -493,7 +497,7 @@ class RegExpValidator extends OW_Validator
     {
         $trimValue = trim($value);
 
-        if ( !preg_match($this->pattern, $trimValue) )
+        if ( !preg_match($this->pattern, $trimValue) && !$this->invert )
         {
             return false;
         }
@@ -537,7 +541,21 @@ class RegExpValidator extends OW_Validator
     		},
         ";
 
-        $js .= "
+        if($this->invert){
+            $js .= "
+            checkValue : function( value )
+            {
+                var pattern = " . $this->pattern . ";
+        		
+            	if( pattern.test( value ) )
+            	{
+            		throw " . json_encode($this->getError()) . ";
+        		}
+        	}}
+        ";
+        }
+        else{
+            $js .= "
             checkValue : function( value )
             {
                 var pattern = " . $this->pattern . ";
@@ -548,6 +566,9 @@ class RegExpValidator extends OW_Validator
         		}
         	}}
         ";
+        }
+
+
 
         return $js;
     }
@@ -694,7 +715,7 @@ class InArrayValidator extends OW_Validator
      */
     public function getJsValidator()
     {
-        $values = json_encode($this->predefinedValues);
+        $values = json_encode(array_map('strval', $this->predefinedValues), JSON_UNESCAPED_UNICODE);
 
         $js = "{
             validate : function( value )
@@ -1520,5 +1541,65 @@ class RangeValidator extends OW_Validator
     		}";
 
         return $js;
+    }
+}
+
+class AgeValidator extends OW_Validator
+{
+    /**
+     * Minimal allowed age.
+     *
+     * @var int
+     */
+    private $minAge;
+
+    public function __construct($minAge)
+    {
+        $this->minAge = $minAge;
+    }
+
+    public function isValid($value)
+    {
+        if (isset($value)) {
+            $birthDate = new DateTimeImmutable($value);
+
+            $birthYear = $birthDate->format('Y');
+            $birthMonth = $birthDate->format('m');
+            $birthDay = $birthDate->format('d');
+
+            $actualAge = UTIL_DateTime::getAge($birthYear, $birthMonth, $birthDay);
+
+            return $actualAge >= $this->minAge;
+        }
+
+        return true;
+    }
+
+    public function getJsValidator()
+    {
+        return "{
+            validate: function(value)
+            {
+                if (!value) {
+                    return;
+                }   
+                         
+                let birthDate = new Date(value);
+                let currentDate = new Date();
+                let diff = new Date(currentDate - birthDate);
+                
+                let age = diff.getUTCFullYear() - 1970;
+                
+                if (age < " . $this->minAge . ") {
+                    throw " . json_encode($this->getError()) . ";
+                }
+                
+                return;
+            },
+            getErrorMessage : function()
+            {
+                return " . json_encode($this->getError()) . ";
+            }
+        }";
     }
 }

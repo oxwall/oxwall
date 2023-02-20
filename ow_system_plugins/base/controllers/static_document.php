@@ -34,6 +34,11 @@ class BASE_CTRL_StaticDocument extends OW_ActionController
      */
     private $navService;
 
+    /**
+     * @var string
+     */
+    private $documentKey;
+
     public function __construct()
     {
         parent::__construct();

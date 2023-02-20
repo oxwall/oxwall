@@ -206,7 +206,7 @@ class BOL_SeoService
 
                         OW::getEventManager()->trigger($event);
 
-                        $newUrlsCount = count($event->getData());
+                        $newUrlsCount = $event->getData() ? count($event->getData()) : 0;
                         $totalUrlsCount = (int) $item['urls_count'] + $newUrlsCount;
                         $isAllEntitiesFetched = false;
 

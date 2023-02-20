@@ -34,6 +34,8 @@ class BASE_CTRL_EmailVerify extends OW_ActionController
     protected $questionService;
     protected $emailVerifyService;
 
+    protected $userService;
+
     public function __construct()
     {
         parent::__construct();

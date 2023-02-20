@@ -29,7 +29,7 @@ var DateField = function( $name )
 
     this.changeMonth = function()
     {
-        if( self.month.val() != ''  & self.year.val() != ''  )
+        if( self.month.val() != '' && self.year.val() != ''  )
         {
             var $dayVal = 0;
 
@@ -75,6 +75,10 @@ var DateField = function( $name )
 
 
        }
+
+       // Useful when we need to notify plugins about field value changes.
+       OW.trigger('form.date_field_changed', {}, self.day);
+
        self.updateValue();
     }
 

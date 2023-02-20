@@ -82,7 +82,7 @@ class OW_DefaultRoute
 
         foreach ( $params as $key => $value )
         {
-            $paramString .= trim($key) . '/' . urlencode(trim($value)) . '/';
+            $paramString .= trim($key) . '/' . ( $value ? urlencode(trim($value)) : '' ) . '/';
         }
 
         $className = str_replace(OW::getAutoloader()->getPackagePointer($controller) . '_', '', $controller);
@@ -155,7 +155,7 @@ class OW_DefaultRoute
 
                 $ctrClass = $classPrefix . '_' . UTIL_String::delimiterToCaps('-' . $uriArray[$i], '-');
 
-                if ( !file_exists(OW::getAutoloader()->getClassPath($ctrClass)) )
+                if ( ( $classPath = OW::getAutoloader()->getClassPath($ctrClass) ) && !file_exists($classPath) || !$classPath )
                 {
                     throw new Redirect404Exception('Invalid uri was provided for routing!');
                 }

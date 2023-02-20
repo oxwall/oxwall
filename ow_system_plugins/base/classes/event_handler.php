@@ -82,8 +82,6 @@ class BASE_CLASS_EventHandler
         $eventManager->bind(OW_EventManager::ON_USER_REGISTER, array($this, 'deleteInviteCode'));
         $eventManager->bind('base.before_save_user', array($this, 'setUserRoleOnChangeAccountType'));
 
-        $eventManager->bind('base.questions_field_add_fake_questions', array($this, 'addFakeQuestions'));
-
         $eventManager->bind(OW_EventManager::ON_JOIN_FORM_RENDER, array($this, 'onInviteMembersProcessJoinForm'));
 
         $eventManager->bind(BASE_CMP_ModerationToolsWidget::EVENT_COLLECT_CONTENTS, array($this, 'onCollectModerationWidgetContent'));
@@ -360,7 +358,7 @@ class BASE_CLASS_EventHandler
         {
             $newToken = UTIL_String::getRandomString(32);
             OW::getConfig()->saveConfig('base', 'admin_cookie', $newToken);
-            setcookie('adminToken', $newToken, time() + 3600 * 24 * 100, '/', null, false, true);
+            setcookie('adminToken', $newToken, time() + 3600 * 24 * 100, '/', '', false, true);
         }
     }
 
@@ -455,6 +453,7 @@ class BASE_CLASS_EventHandler
                         OW::getRequestHandler()->addCatchAllRequestsExclude('base.complete_profile.account_type', 'BASE_CTRL_BaseDocument', 'installCompleted');
                         OW::getRequestHandler()->addCatchAllRequestsExclude('base.complete_profile.account_type', 'BASE_CTRL_AjaxLoader');
                         OW::getRequestHandler()->addCatchAllRequestsExclude('base.complete_profile.account_type', 'BASE_CTRL_AjaxComponentAdminPanel');
+                        $this->excludeStaticPage('base.complete_profile.account_type');
                     }
                     else
                     {
@@ -475,6 +474,7 @@ class BASE_CLASS_EventHandler
                                 OW::getRequestHandler()->addCatchAllRequestsExclude('base.complete_profile', 'BASE_CTRL_BaseDocument', 'installCompleted');
                                 OW::getRequestHandler()->addCatchAllRequestsExclude('base.complete_profile', 'BASE_CTRL_AjaxLoader');
                                 OW::getRequestHandler()->addCatchAllRequestsExclude('base.complete_profile', 'BASE_CTRL_AjaxComponentAdminPanel');
+                                $this->excludeStaticPage('base.complete_profile');
                             }
                             else
                             {
@@ -583,7 +583,6 @@ class BASE_CLASS_EventHandler
         }
         catch ( Exception $e )
         {
-            //printVar($e);
             //Skip invalid notification
         }
     }
@@ -1883,16 +1882,6 @@ class BASE_CLASS_EventHandler
         }
     }
 
-    public function addFakeQuestions( OW_Event $e )
-    {
-        $params = $e->getParams();
-
-        if ( !empty($params['name']) && $params['name'] == 'email' )
-        {
-            $e->setData(false);
-        }
-    }
-
     public function onAfterAvatarUpdate( OW_Event $e )
     {
         $params = $e->getParams();
@@ -2183,5 +2172,37 @@ class BASE_CLASS_EventHandler
         $event->setData($code);
 
         return $code;
+    }
+
+    /**
+     * Exclude tos and privacy pages from request catching.
+     *
+     * @param string $key
+     * @return void
+     */
+    protected function excludeStaticPage($key)
+    {
+        $usedRoute = OW::getRouter()->getUsedRoute();
+
+        if ($usedRoute) {
+            $dispatchAttrs = $usedRoute->getDispatchAttrs();
+
+            if ($dispatchAttrs['controller'] === 'BASE_CTRL_StaticDocument') {
+                $navService = BOL_NavigationService::getInstance();
+                $staticDoc = $navService->findStaticDocument(OW::getRequest()->getRequestUri());
+
+                if ($staticDoc) {
+                    $exclude = in_array(UTIL_String::removeFirstAndLastSlashes($staticDoc->getUri()), [
+                        "terms-of-use", "privacy", "privacy-policy"
+                    ]);
+
+                    if ($exclude) {
+                        OW::getRequestHandler()->addCatchAllRequestsExclude(
+                            $key, $dispatchAttrs['controller'], $dispatchAttrs['action']
+                        );
+                    }
+                }
+            }
+        }
     }
 }

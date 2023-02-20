@@ -117,6 +117,8 @@ abstract class OW_BaseDao
     /**
      * Returns all mapped entries of table
      *
+     * @param int $cacheLifeTime
+     * @param array $tags
      * @return array
      */
     public function findAll( $cacheLifeTime = 0, $tags = array() )
@@ -217,6 +219,63 @@ abstract class OW_BaseDao
         }
 
         $this->clearCache();
+    }
+
+    /**
+     * Saves and updates Entity item
+     * throws InvalidArgumentException
+     *
+     * @param OW_Entity[] $entityList
+     *
+     * @throws InvalidArgumentException
+     */
+    public function saveList( array $entityList )
+    {
+        $updateList = [];
+
+        foreach ( $entityList as $index => $entity )
+        {
+            if ( $entity === null || !($entity instanceof OW_Entity) )
+            {
+                unset($entityList[$index]);
+
+                continue;
+            }
+
+            $entity->id = (int) $entity->id;
+
+            if ( $entity->id > 0 )
+            {
+                $updateList[] = $entity;
+
+                unset($entityList[$index]);
+            }
+        }
+
+        if ( !empty($updateList) )
+        {
+            $this->dbo->updateObjectList($this->getTableName(), $updateList);
+        }
+
+        if ( !empty($entityList) )
+        {
+            $entityList = array_values($entityList);
+
+            $lastInsertId = $this->dbo->insertObjectList($this->getTableName(), $entityList);
+
+            if ( $lastInsertId > 0 )
+            {
+                $entityCount = count($entityList);
+
+                for ( $number = 1; $number <= $entityCount; $number++ )
+                {
+                    $entity = $entityList[$entityCount - $number];
+                    $entity->id = $lastInsertId--;
+                }
+            }
+
+            $this->clearCache();
+        }
     }
 
     public function saveDelayed( $entity )

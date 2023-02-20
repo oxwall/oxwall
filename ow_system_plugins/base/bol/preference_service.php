@@ -183,9 +183,9 @@ class BOL_PreferenceService
     }
 
     /**
-     * @param array $preferenceList
+     * @param $preferenceKey
      * @param int $userId
-     * @return array[userId][preferenceName]
+     * @return integer
      */
     public function getPreferenceValue( $preferenceKey, $userId )
     {
@@ -315,8 +315,9 @@ class BOL_PreferenceService
 
 
     /**
-     * @param array $preferenceList <$key, value>
-     * @param array $userId
+     * @param $preferenceKey
+     * @param $value
+     * @param $userId
      * @return boolean
      */
     public function savePreferenceValue( $preferenceKey, $value, $userId )
@@ -326,10 +327,10 @@ class BOL_PreferenceService
 
     /**
      * @param array $preferenceList <$key, value>
-     * @param array $userId
+     * @param integer $userId
      * @return boolean
      */
-    public function savePreferenceValues( array $preferenceList, $userId )
+    public function savePreferenceValues(array $preferenceList, int $userId )
     {
         if ( $preferenceList === null || !is_array($preferenceList) || count($preferenceList) === 0 )
         {
@@ -381,7 +382,7 @@ class BOL_PreferenceService
     
     public function deletePreferenceDataByUserId( $userId )
     {
-        return $this->preferenceDataDao->deleteByUserId( $userId );
+        $this->preferenceDataDao->deleteByUserId( $userId );
     }
 
     public function savePreference( BOL_Preference $preferenceDto )

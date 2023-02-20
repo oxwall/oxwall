@@ -22,18 +22,11 @@
  * which combines Covered Code or portions thereof with code not governed by the terms of the CPAL.
  */
 
-/**
- * DEPRECATED CLASS
- *
- * @author Aybat Duyshokov <duyshokov@gmail.com>
- * @package ow_system_plugins.base.classes
- * @since 1.0
- * @deprecated
- */
+Updater::getLanguageService()->importPrefixFromDir(__DIR__ . DS . "langs", true);
 
-interface BASE_CLASS_IprofileActionTool
-{
-	function getToolData( $userId );
-	
-//	function isVisible($userId);
+$configService = Updater::getConfigService();
+
+// Permanently disable mobile context.
+if ($configService->configExists('base', 'disable_mobile_context')) {
+    $configService->saveConfig('base', 'disable_mobile_context', 1);
 }

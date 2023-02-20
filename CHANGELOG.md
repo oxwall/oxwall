@@ -1,3 +1,17 @@
+Oxwall 1.9.0, February 20, 2023
+====================================
+
+Platform[core]:
+- php 8 support
+- removed mobile version support
+- fixed terms of use and privacy policy pages could not be viewed on complete profile
+- added the possibility to pass a static id for a form element when creating it
+- removed fake elements on forms
+- fixed url validation error when creating static pages
+- fixed admin side menu elements padding in firefox browser
+- fixed date range dynamic update for the Date form element
+- prevent floatbox from closing when click outside of active window area
+
 Oxwall 1.8.4, July 26, 2016
 ====================================
 

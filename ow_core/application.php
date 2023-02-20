@@ -721,7 +721,7 @@ class OW_Application
             {
                 OW_User::getInstance()->login($id);
                 $loginCookie = BOL_UserService::getInstance()->findLoginCookieByUserId($id);
-                setcookie('ow_login', $loginCookie->getCookie(), (time() + 86400 * 7), '/', null, false, true);
+                setcookie('ow_login', $loginCookie->getCookie(), (time() + 86400 * 7), '/', '', false, true);
             }
         }
     }

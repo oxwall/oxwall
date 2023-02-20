@@ -37,8 +37,6 @@ class BASE_CMP_BlockUser extends OW_Component
     {
         parent::__construct();
 
-        $userId = (int) $params['userId'];
-
         $js = UTIL_JsGenerator::composeJsString('$("#baseBlockButton").click(function(){
            _scope.confirmCallback();
         });');

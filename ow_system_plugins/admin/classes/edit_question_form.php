@@ -86,7 +86,7 @@ class ADMIN_CLASS_EditQuestionForm extends ADMIN_CLASS_AddQuestionForm
         $this->addElement($element);
 
         $presentationConfigList = !empty($this->configToPresentation[$question->presentation]) ? $this->configToPresentation[$question->presentation] : array();
-        $presentationConfigValues = json_decode($question->custom, true);
+        $presentationConfigValues = json_decode($question->custom ?? '', true);
 
         foreach ( $presentationConfigList as $config )
         {
@@ -129,7 +129,6 @@ class ADMIN_CLASS_EditQuestionForm extends ADMIN_CLASS_AddQuestionForm
                         $this->disableFormElement('qst_column_count');
                         break;
                     case 'disable_display_config' :
-                        
                         foreach ( $this->configToPresentation as $configs )
                         {
                             foreach ( $configs as $config )

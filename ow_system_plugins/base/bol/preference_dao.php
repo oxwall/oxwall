@@ -163,7 +163,7 @@ class BOL_PreferenceDao extends OW_BaseDao
         }
 
         $example = new OW_Example();
-        $example->andFieldEqual(self::KEY, $section);
+        $example->andFieldEqual(self::SECTION, $section);
 
         return $this->findListByExample($example);
     }

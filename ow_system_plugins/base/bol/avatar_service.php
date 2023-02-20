@@ -95,7 +95,7 @@ class BOL_AvatarService
      * Find avatar object by userId list
      *
      * @param int $userId
-     * @return BOL_Avatar
+     * @return array
      */
     public function findByUserIdList( $userIdList )
     {
@@ -801,6 +801,13 @@ class BOL_AvatarService
         $fileName = $this->getAvatarFileName($userId, $hash, $size);
 
         return $fileName ? $dir . $fileName : null;
+    }
+
+    public function getOriginalTempAvatarPath( $key, $format = '.jpg' )
+    {
+        $dir = $this->getAvatarsDir() . 'tmp' . DS;
+
+        return $dir . self::AVATAR_ORIGINAL_PREFIX . $key . $format;
     }
 
     public function getTempAvatarPath( $key, $size = 1 )

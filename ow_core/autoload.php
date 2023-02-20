@@ -98,12 +98,13 @@ class OW_Autoload
     {
         $thisObj = self::getInstance();
 
-        try
-        {
+        try {
             $path = $thisObj->getClassPath($className);
+            if (!$path) {
+                return;
+            }
         }
-        catch ( Exception $e )
-        {
+        catch ( Exception $e ) {
             return;
         }
 

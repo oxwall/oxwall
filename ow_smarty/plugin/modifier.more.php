@@ -33,7 +33,7 @@ function smarty_modifier_more( $string, $length )
 {
     $truncated = UTIL_String::truncate($string, $length);
     
-    if ( strlen($string) - strlen($truncated) < 50 )
+    if ( strlen($string ?? '') - strlen($truncated ?? '') < 50 )
     {
         return $string;
     }

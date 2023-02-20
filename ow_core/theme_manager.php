@@ -41,7 +41,7 @@ class OW_ThemeManager
     private $themeService;
 
     /**
-     * @var type
+     * @var array
      */
     private $themeObjects = array();
 
@@ -278,9 +278,11 @@ class OW_ThemeManager
         $event = new BASE_CLASS_PropertyEvent('base.before_decorator', $params);
         OW::getEventManager()->trigger($event);
         $params = $event->getProperties();
+
         $viewRenderer->assignVar('data', $params);
         $markup = $viewRenderer->renderTemplate($this->getDecorator($name));
         $viewRenderer->clearAssignedVars();
+
         $viewRenderer->assignVars($prevVars);
 
         return $markup;

@@ -355,7 +355,7 @@
 		 */
 		static function isValidImageHandle($handle)
 		{
-			return (is_resource($handle) && get_resource_type($handle) == 'gd');
+			return $handle instanceof \GdImage ;
 		}
 		
 		/**

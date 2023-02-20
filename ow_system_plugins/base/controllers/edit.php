@@ -36,6 +36,11 @@ class BASE_CTRL_Edit extends OW_ActionController
 
     private $questionService;
 
+    /**
+     * @var BOL_UserService
+     */
+    protected $userService;
+
     public function __construct()
     {
         parent::__construct();
@@ -118,7 +123,6 @@ class BASE_CTRL_Edit extends OW_ActionController
             $accounts = array();
 
             if (count($accountTypes) > 1) {
-                /* @var $value BOL_QuestionAccount */
                 foreach ($accountTypes as $key => $value) {
                     $accounts[$value->name] = OW::getLanguage()->text('base', 'questions_account_type_' . $value->name);
                 }
@@ -148,6 +152,7 @@ class BASE_CTRL_Edit extends OW_ActionController
         $this->setPageHeadingIconClass('ow_ic_user');
         // -- Edit form --
 
+        /** @var EditQuestionForm $editForm */
         $editForm = OW::getClassInstanceArray('EditQuestionForm', ['editForm', $editUserId]);
         $editForm->setId('editForm');
 
@@ -171,10 +176,12 @@ class BASE_CTRL_Edit extends OW_ActionController
 
         $userId = !empty($params['userId']) ? $params['userId'] : $viewerId;
 
-        // add avatar field
+
+        /** @var BASE_CLASS_AvatarField $editAvatar */
         $editAvatar = OW::getClassInstance("BASE_CLASS_AvatarField", 'avatar', false);
         $editAvatar->setLabel(OW::getLanguage()->text('base', 'questions_question_user_photo_label'));
         $editAvatar->setValue(BOL_AvatarService::getInstance()->getAvatarUrl($userId, 1, null, true, false));
+        $editAvatar->addAttribute('accept', 'image/*');
         $displayPhotoUpload = OW::getConfig()->getValue('base', 'join_display_photo_upload');
 
         // add the required avatar validator
@@ -239,6 +246,8 @@ class BASE_CTRL_Edit extends OW_ActionController
                 $this->process($editForm, $user->id, $questionArray, $adminMode);
             }
         }
+
+        $editForm->setStaticIdsForFields('editForm');
 
         $this->addForm($editForm);
 
@@ -604,7 +613,7 @@ class editEmailValidator extends OW_Validator
         if ( BOL_UserService::getInstance()->isExistEmail($value) )
         {
             $userId = $this->userId;
-            $user = BOL_UserService::getInstance()->findUserById($userId);
+            $user = BOL_UserService::getInstance()->findUserById((int) $userId);
 
             if ( !$user || $value !== $user->email )
             {

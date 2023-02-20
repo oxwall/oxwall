@@ -64,7 +64,11 @@ class ADMIN_CTRL_Pages extends ADMIN_CTRL_Abstract
 
         function compare( $item, $item2 )
         {
-            return $item['order'] > $item2['order'];
+            if ($item['order'] === $item2['order']) {
+                return 0;
+            }
+
+            return ($item['order'] < $item2['order']) ? -1 : 1;
         }
 
         $mainMenuItems = $service->findMenuItems(BOL_NavigationService::MENU_TYPE_MAIN);
@@ -417,7 +421,6 @@ class SaveForm extends Form
         $menuItem->setType($params['type']);
 
         $order = $service->findMaxSortOrderForMenuType($params['type']);
-        $order;
         $menuItem->setOrder($order);
 
         $visibleFor = 0;
@@ -690,5 +693,3 @@ class ExternalPageUrlValidator extends UrlValidator
     }
 
 }
-
-?>

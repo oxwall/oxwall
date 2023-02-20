@@ -376,20 +376,20 @@ class BOL_ThemeService
         {
             $controlsContent = file_get_contents($themeRootDir . self::CSS_FILE_NAME);
             $themeControls = $this->getThemeControls($controlsContent);
-            $mobileControls = array();
-
-            if ( file_exists($mobileRootDir . self::CSS_FILE_NAME) )
-            {
-                $controlsContent .= PHP_EOL . file_get_contents($mobileRootDir . self::CSS_FILE_NAME);
-                $mobileControls = $this->getThemeControls(file_get_contents($mobileRootDir . self::CSS_FILE_NAME));
-
-                foreach ( $mobileControls as $key => $val )
-                {
-                    $mobileControls[$key]["mobile"] = true;
-                }
-            }
-
-            $themeControls = array_merge($mobileControls, $themeControls);
+//            $mobileControls = array();
+//
+//            if ( file_exists($mobileRootDir . self::CSS_FILE_NAME) )
+//            {
+//                $controlsContent .= PHP_EOL . file_get_contents($mobileRootDir . self::CSS_FILE_NAME);
+//                $mobileControls = $this->getThemeControls(file_get_contents($mobileRootDir . self::CSS_FILE_NAME));
+//
+//                foreach ( $mobileControls as $key => $val )
+//                {
+//                    $mobileControls[$key]["mobile"] = true;
+//                }
+//            }
+//
+//            $themeControls = array_merge($mobileControls, $themeControls);
 
             // adding theme controls in DB
             if ( !empty($themeControls) )
@@ -628,9 +628,9 @@ class BOL_ThemeService
 
             $params = explode(",", $pockets[1][$key]);
 
-            foreach ( $params as $value )
+            foreach ( $params as $param )
             {
-                $tempArray = explode(":", $value);
+                $tempArray = explode(":", $param);
                 $itemArray[trim($tempArray[0])] = trim($tempArray[1]);
             }
 
@@ -735,7 +735,7 @@ class BOL_ThemeService
 
             if ( $namedControls[$key]["type"] == "image" )
             {
-                list($width, $height) = getimagesize($value["tmp_name"]);
+                list($width, $height) = !empty($value['tmp_name']) ? getimagesize($value["tmp_name"]) : ['width', 'height'];
 
                 $image = $this->addImage($value);
 
@@ -767,8 +767,8 @@ class BOL_ThemeService
 
     /**
      * 
-     * @param string $fileArr
-     * @return \BOL_ThemeImage
+     * @param array $fileArr
+     * @return BOL_ThemeImage
      */
     public function addImage( $fileArr )
     {
@@ -807,8 +807,10 @@ class BOL_ThemeService
         return $image;
     }
 
-    public function moveTemporaryFile( $tmpId, $title = '' )
+    public function moveTemporaryFile( $tmpId, $title = '', $rotate = 0 )
     {
+        $rotate = intval($rotate);
+
         $tmp = BOL_FileTemporaryDao::getInstance()->findById($tmpId);
         $tmpPath = BOL_FileTemporaryService::getInstance()->getTemporaryFilePath($tmpId);
 
@@ -820,6 +822,13 @@ class BOL_ThemeService
         if ( !UTIL_File::validateImage($tmp->filename) )
         {
             throw new LogicException();
+        }
+
+        if ( $rotate !== 0 )
+        {
+            $main = new UTIL_Image($tmpPath);
+            $main->rotate($rotate)
+                ->saveImage($tmpPath);
         }
 
         $image = new BOL_ThemeImage();
@@ -1088,7 +1097,7 @@ class BOL_ThemeService
     /**
      * Removes all css comments and returns result string.
      *
-     * @param strign $string
+     * @param string $string
      * @return string
      */
     private function removeCssComments( $string )

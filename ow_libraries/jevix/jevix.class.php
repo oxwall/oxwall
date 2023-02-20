@@ -76,7 +76,7 @@ class Jevix
     protected function &strToArray( $str )
     {
         $chars = null;
-        preg_match_all('/./su', $str, $chars);
+        preg_match_all('/./su', $str ?? '', $chars);
         return $chars[0];
     }
 
@@ -698,7 +698,6 @@ class Jevix
 
     protected function comment()
     {
-        return false;
         if ( !$this->matchStr('<!--') )
         {
             return false;
@@ -1003,7 +1002,7 @@ class Jevix
 
 function uniord( $c )
 {
-    $h = ord($c{0});
+    $h = ord($c[0]);
     if ( $h <= 0x7F )
     {
         return $h;
@@ -1014,15 +1013,15 @@ function uniord( $c )
     }
     else if ( $h <= 0xDF )
     {
-        return ($h & 0x1F) << 6 | (ord($c{1}) & 0x3F);
+        return ($h & 0x1F) << 6 | (ord($c[1]) & 0x3F);
     }
     else if ( $h <= 0xEF )
     {
-        return ($h & 0x0F) << 12 | (ord($c{1}) & 0x3F) << 6 | (ord($c{2}) & 0x3F);
+        return ($h & 0x0F) << 12 | (ord($c[1]) & 0x3F) << 6 | (ord($c[2]) & 0x3F);
     }
     else if ( $h <= 0xF4 )
     {
-        return ($h & 0x0F) << 18 | (ord($c{1}) & 0x3F) << 12 | (ord($c{2}) & 0x3F) << 6 | (ord($c{3}) & 0x3F);
+        return ($h & 0x0F) << 18 | (ord($c[1]) & 0x3F) << 12 | (ord($c[2]) & 0x3F) << 6 | (ord($c[3]) & 0x3F);
     }
     else
     {

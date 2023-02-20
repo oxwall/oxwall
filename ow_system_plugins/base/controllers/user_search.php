@@ -54,12 +54,15 @@ class BASE_CTRL_UserSearch extends OW_ActionController
             return;
         }
 
+        /** @var MainSearchForm $mainSearchForm */
         $mainSearchForm = OW::getClassInstance('MainSearchForm', $this);
         $mainSearchForm->process($_POST);
+        $mainSearchForm->setStaticIdsForFields('MainSearchForm');
         $this->addForm($mainSearchForm);
 
         $displayNameSearchForm = new DisplayNameSearchForm($this);
         $displayNameSearchForm->process($_POST);
+        $displayNameSearchForm->setStaticIdsForFields('DisplayNameSearchForm');
         $this->addForm($displayNameSearchForm);
 
         // set meta info

@@ -134,6 +134,15 @@ final class BOL_AttachmentService
         }
     }
 
+    /**
+     * @param $id
+     * @return BOL_Attachment
+     */
+    public function getAttachmentById($id )
+    {
+        return $this->attachmentDao->findById($id);
+    }
+
 //    public function saveTempImage( $id )
 //    {
 //        $attch = $this->attachmentDao->findById($id);

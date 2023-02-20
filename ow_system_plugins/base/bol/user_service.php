@@ -22,6 +22,8 @@
  * which combines Covered Code or portions thereof with code not governed by the terms of the CPAL.
  */
 
+use PHPMailer\PHPMailer\Exception as phpMailerException;
+
 /**
  * @author Sardar Madumarov <madumarov@gmail.com>
  * @package ow_system_plugins.base.bol
@@ -169,7 +171,7 @@ final class BOL_UserService
     /**
      * Finds user by id.
      *
-     * @param integer $id
+     * @param int $id
      * @return BOL_User
      */
     public function findUserById( $id )
@@ -240,7 +242,7 @@ final class BOL_UserService
 
             if ( isset($questionValues[$value]) )
             {
-                $resultArray[$value] = isset($questionValues[$value][$questionName]) ? htmlspecialchars($questionValues[$value][$questionName]) : '';
+                $resultArray[$value] = isset($questionValues[$value][$questionName]) ? htmlspecialchars($questionValues[$value][$questionName], ENT_HTML5, 'UTF-8') : '';
 
                 if ( !$resultArray[$value] )
                 {
@@ -731,6 +733,7 @@ final class BOL_UserService
             return;
         }
 
+        /** @var BOL_User $user */
         $user = $this->userDao->findById($userId);
         $userOnline = $this->userOnlineDao->findByUserId($userId);
 
@@ -1247,9 +1250,11 @@ final class BOL_UserService
 
     /**
      *
-     * @param int $userId
-     * return array<BOL_User>
-     *
+     * @param $questionValues
+     * @param $first
+     * @param $count
+     * @param bool $isAdmin
+     * @return array
      */
     public function findUserListByQuestionValues( $questionValues, $first, $count, $isAdmin = false )
     {
@@ -1404,7 +1409,7 @@ final class BOL_UserService
 
     public function sendWellcomeLetter( BOL_User $user )
     {
-        if ( $user === null )
+        if ( $user === null || empty($user->email) )
         {
             return;
         }
@@ -1434,7 +1439,7 @@ final class BOL_UserService
         {
             OW::getMailer()->send($mail);
         }
-        catch ( phpmailerException $e )
+        catch (phpMailerException $e )
         {
             $user->emailVerify = false;
             $this->saveOrUpdate($user);
@@ -1470,26 +1475,26 @@ final class BOL_UserService
      */
     public function getSignInForm( $formName = 'sign-in', $submitDecorator = 'button' )
     {
-        $form = new Form($formName);
+        $form = new Form($formName, 'base');
 
-        $username = new TextField('identity');
+        $username = new TextField('identity', 'base');
         $username->setRequired(true);
         $username->setHasInvitation(true);
         $username->setInvitation(OW::getLanguage()->text('base', 'component_sign_in_login_invitation'));
         $form->addElement($username);
 
-        $password = new PasswordField('password');
+        $password = new PasswordField('password', 'base');
         $password->setHasInvitation(true);
         $password->setInvitation(OW::getLanguage()->text('base', 'component_sign_in_password_invitation'));
         $password->setRequired(true);
         $form->addElement($password);
 
-        $remeberMe = new CheckboxField('remember');
-        $remeberMe->setLabel(OW::getLanguage()->text('base', 'sign_in_remember_me_label'));
-        $remeberMe->setValue(true);
-        $form->addElement($remeberMe);
+        $rememberMe = new CheckboxField('remember', 'base');
+        $rememberMe->setLabel(OW::getLanguage()->text('base', 'sign_in_remember_me_label'));
+        $rememberMe->setValue(true);
+        $form->addElement($rememberMe);
 
-        $submit = new Submit('submit', $submitDecorator);
+        $submit = new Submit('submit', 'base', $submitDecorator);
         $submit->setValue(OW::getLanguage()->text('base', 'sign_in_submit_label'));
         $form->addElement($submit);
 
@@ -1518,7 +1523,7 @@ final class BOL_UserService
             {
                 $loginCookie = $this->saveLoginCookie(OW::getUser()->getId());
 
-                setcookie('ow_login', $loginCookie->getCookie(), (time() + 86400 * 7), '/', null, null, true);
+                setcookie('ow_login', $loginCookie->getCookie(), (time() + 86400 * 7), '/', '', false, true);
             }
         }
 

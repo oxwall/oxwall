@@ -367,13 +367,10 @@ class BASE_MenuItem
 
     /**
      * @param string $url
-     * @return boolean
+     * @return BASE_MenuItem
      */
     public function activate( $url )
     {
-        if ( UTIL_String::removeFirstAndLastSlashes($this->url) === UTIL_String::removeFirstAndLastSlashes($url) )
-        {
-            $this->setActive(true);
-        }
+        return $this->setActive(UTIL_String::removeFirstAndLastSlashes($this->url) === UTIL_String::removeFirstAndLastSlashes($url));
     }
 }

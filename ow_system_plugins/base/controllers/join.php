@@ -32,7 +32,17 @@
 class BASE_CTRL_Join extends OW_ActionController
 {
     const JOIN_CONNECT_HOOK = 'join_connect_hook';
+
     protected $responderUrl;
+
+    /**
+     * @var BOL_UserService
+     */
+    protected $userService;
+
+    /**
+     * @var JoinForm
+     */
     protected $joinForm;
 
     public function __construct()
@@ -44,7 +54,10 @@ class BASE_CTRL_Join extends OW_ActionController
         $this->userService = BOL_UserService::getInstance();
     }
 
-    public function index( $params )
+    /**
+     * @param $params
+     */
+    public function index($params )
     {
         $session = OW::getSession();
 
@@ -55,7 +68,7 @@ class BASE_CTRL_Join extends OW_ActionController
 
         $language = OW::getLanguage();
         $this->setPageHeading($language->text('base', 'join_index'));
-        
+
         //TODO DELETE config who_can_join from join
         if ( (int) OW::getConfig()->getValue('base', 'who_can_join') === BOL_UserService::PERMISSIONS_JOIN_BY_INVITATIONS )
         {
@@ -88,10 +101,9 @@ class BASE_CTRL_Join extends OW_ActionController
         {
             $urlParams = array_merge($_GET, $params);
         }
-        
+
         $this->joinForm = OW::getClassInstance('JoinForm', $this);
         $this->joinForm->setAction(OW::getRouter()->urlFor('BASE_CTRL_Join', 'joinFormSubmit', $urlParams));
-        $step = $this->joinForm->getStep();
 
         $this->addForm($this->joinForm);
 
@@ -133,9 +145,8 @@ class BASE_CTRL_Join extends OW_ActionController
 
     public function joinFormSubmit( $params )
     {
-	$this->setTemplate(OW::getPluginManager()->getPlugin('base')->getCtrlViewDir().'join_index.html');
+        $this->setTemplate(OW::getPluginManager()->getPlugin('base')->getCtrlViewDir().'join_index.html');
 
-	//TODO DELETE config who_can_join from join
         if ( (int) OW::getConfig()->getValue('base', 'who_can_join') === BOL_UserService::PERMISSIONS_JOIN_BY_INVITATIONS )
         {
             $code = null;
@@ -166,69 +177,61 @@ class BASE_CTRL_Join extends OW_ActionController
     {
         if ( OW::getRequest()->isPost() )
         {
-            if ( !$this->joinForm->isBot() )
+            if ( $this->joinForm->isValid($this->joinForm->getPost()) )
             {
-                if ( $this->joinForm->isValid($this->joinForm->getPost()) )
+                $session = OW::getSession();
+                $joinData = $session->get(JoinForm::SESSION_JOIN_DATA);
+
+                if ( !isset($joinData) || !is_array($joinData) )
                 {
-                    $session = OW::getSession();
-                    $joinData = $session->get(JoinForm::SESSION_JOIN_DATA);
+                    $joinData = array();
+                }
 
-                    if ( !isset($joinData) || !is_array($joinData) )
+                $data = $this->joinForm->getRealValues();
+
+                unset($data['repeatPassword']);
+                $this->joinForm->clearSession();
+
+                foreach ( $this->joinForm->questions as $question )
+                {
+                    switch ( $question['presentation'] )
                     {
-                        $joinData = array();
-                    }
+                        case BOL_QuestionService::QUESTION_PRESENTATION_MULTICHECKBOX:
 
-                    $data = $this->joinForm->getRealValues();
+                            if ( is_array($data[$question['name']]) )
+                            {
+                                $data[$question['name']] = array_sum($data[$question['name']]);
+                            }
+                            else
+                            {
+                                $data[$question['name']] = 0;
+                            }
 
-                    unset($data['repeatPassword']);
-                    $this->joinForm->clearSession();
-
-                    foreach ( $this->joinForm->questions as $question )
-                    {
-                        switch ( $question['presentation'] )
-                        {
-                            case BOL_QuestionService::QUESTION_PRESENTATION_MULTICHECKBOX:
-
-                                if ( is_array($data[$question['name']]) )
-                                {
-                                    $data[$question['name']] = array_sum($data[$question['name']]);
-                                }
-                                else
-                                {
-                                    $data[$question['name']] = 0;
-                                }
-
-                                break;
-                        }
-                    }
-
-                    $joinData = array_merge($joinData, $data);
-
-                    if ( $this->joinForm->isLastStep() )
-                    {
-                        $session->set(JoinForm::SESSION_JOIN_DATA, $joinData);
-                        $this->joinUser($joinData, $this->joinForm->getAccountType(), $params);
-
-                        $this->redirect(OW::getRouter()->getBaseUrl());
-                    }
-                    else
-                    {
-                        $step = $this->joinForm->getStep();
-
-                        $step++;
-
-                        $session->set(JoinForm::SESSION_JOIN_DATA, $joinData);
-                        $session->set(JoinForm::SESSION_JOIN_STEP, $step);
-
-                        $this->redirect(OW::getRequest()->buildUrlQueryString(OW::getRouter()->urlForRoute('base_join'), $params));
-
+                            break;
                     }
                 }
-            }
-            else
-            {
-                $this->joinForm->clearSession();
-                $this->redirect(OW::getRequest()->buildUrlQueryString(OW::getRouter()->urlForRoute('base_join'), $params));
+
+                $joinData = array_merge($joinData, $data);
+
+                if ( $this->joinForm->isLastStep() )
+                {
+                    $session->set(JoinForm::SESSION_JOIN_DATA, $joinData);
+                    $this->joinUser($joinData, $this->joinForm->getAccountType(), $params);
+
+                    $this->redirect(OW::getRouter()->getBaseUrl());
+                }
+                else
+                {
+                    $step = $this->joinForm->getStep();
+
+                    $step++;
+
+                    $session->set(JoinForm::SESSION_JOIN_DATA, $joinData);
+                    $session->set(JoinForm::SESSION_JOIN_STEP, $step);
+
+                    $this->redirect(OW::getRequest()->buildUrlQueryString(OW::getRouter()->urlForRoute('base_join'), $params));
+
+                }
             }
         }
         else
@@ -329,6 +332,8 @@ class BASE_CTRL_Join extends OW_ActionController
 
 class JoinForm extends BASE_CLASS_UserQuestionForm
 {
+    const FORM_NAME = 'joinForm';
+
     const SESSION_JOIN_DATA = 'joinData';
 
     const SESSION_JOIN_STEP = 'joinStep';
@@ -348,15 +353,14 @@ class JoinForm extends BASE_CLASS_UserQuestionForm
     protected $questionListBySection = array();
     protected $questionValuesList = array();
     protected $accountType = null;
-    protected $isBot = false;
     protected $data = array();
     protected $toggleClass = '';
 
     public function __construct( $controller )
     {
-        parent::__construct('joinForm');
+        parent::__construct(self::FORM_NAME);
 
-        $this->setId('joinForm');
+        $this->setId(self::FORM_NAME);
 
         $stamp = OW::getSession()->get(self::SESSION_START_STAMP);
 
@@ -444,7 +448,7 @@ class JoinForm extends BASE_CLASS_UserQuestionForm
 
         $this->questionValuesList = BOL_QuestionService::getInstance()->findQuestionsValuesByQuestionNameList($questionNameList);
 
-        $this->addFakeQuestions();
+        $this->processQuestions();
 
         $this->addQuestions($this->sortedQuestionsList, $this->questionValuesList, $this->updateJoinData());
 
@@ -456,6 +460,9 @@ class JoinForm extends BASE_CLASS_UserQuestionForm
         {
             $this->addLastStepQuestions($controller);
         }
+
+        // Override random field ids with static one.
+        $this->setStaticIdsForFields(self::FORM_NAME);
 
         $controller->assign('step', $step);
         $controller->assign('questionArray', $this->questionListBySection);
@@ -478,7 +485,7 @@ class JoinForm extends BASE_CLASS_UserQuestionForm
         }
     }
 
-        public function checkSession()
+    public function checkSession()
     {
         $stamp = BOL_QuestionService::getInstance()->getQuestionsEditStamp();
         $sessionStamp = OW::getSession()->get(self::SESSION_START_STAMP);
@@ -559,23 +566,7 @@ class JoinForm extends BASE_CLASS_UserQuestionForm
         return $class;
     }
 
-    protected function randQuestionClass()
-    {
-        $rand = rand(0, 1);
-
-        if ( !$rand )
-        {
-            $class = 'ow_alt1';
-        }
-        else
-        {
-            $class = 'ow_alt2';
-        }
-
-        return $class;
-    }
-
-    protected function addFakeQuestions()
+    protected function processQuestions()
     {
         $step = $this->getStep();
         $realQuestionList = array();
@@ -597,15 +588,8 @@ class JoinForm extends BASE_CLASS_UserQuestionForm
             {
                 $this->questionListBySection[$question['sectionName']][] = $question;
 
-                if ( $question['fake'] == true )
-                {
-                    $this->addDisplayNoneClass(preg_replace('/\s+(ow_alt1|ow_alt2)/', '', $question['trClass']));
-                }
-                else
-                {
-                    $this->addEmptyClass(preg_replace('/\s+(ow_alt1|ow_alt2)/', '', $question['trClass']));
-                }
-                
+                $this->addEmptyClass(preg_replace('/\s+(ow_alt1|ow_alt2)/', '', $question['trClass']));
+
                 if ( !empty($valueList[$question['realName']]) )
                 {
                     $this->questionValuesList[$question['name']] = $valueList[$question['realName']];
@@ -623,77 +607,21 @@ class JoinForm extends BASE_CLASS_UserQuestionForm
                         $section = $question['sectionName'];
                     }
 
-                    $event = new OW_Event('base.questions_field_add_fake_questions', $question, true);
+                    $this->questions[$sort]['realName'] = $question['name'];
 
-                    OW::getEventManager()->trigger($event);
+                    $this->questions[$sort]['trClass'] = $this->toggleQuestionClass();
 
-                    $addFakes = $event->getData();
-
-                    if ( !$addFakes || in_array( $this->questions[$sort]['presentation'], array('password', 'range') ) )
+                    if ( $this->questions[$sort]['presentation'] == 'password' )
                     {
-                        $this->questions[$sort]['fake'] = false;
-                        $this->questions[$sort]['realName'] = $question['name'];
-
-                        $this->questions[$sort]['trClass'] = $this->toggleQuestionClass();
-
-                        if ( $this->questions[$sort]['presentation'] == 'password' )
-                        {
-                            $this->toggleQuestionClass();
-                        }
-
-                        $this->sortedQuestionsList[$question['name']] = $this->questions[$sort];
-                        $this->questionListBySection[$section][] = $this->questions[$sort];
-                        
-                        if ( !empty($valueList[$question['name']]) )
-                        {
-                            $this->questionValuesList[$question['name']] = $valueList[$question['name']];
-                        }
-                        
-                        continue;
+                        $this->toggleQuestionClass();
                     }
 
-                    $fakesCount = rand(2, 5);
-                    $fakesCount = $fakesCount + 1;
-                    $randId = rand(0, $fakesCount);
+                    $this->sortedQuestionsList[$question['name']] = $this->questions[$sort];
+                    $this->questionListBySection[$section][] = $this->questions[$sort];
 
-                    for ( $i = 0; $i <= $fakesCount; $i++ )
+                    if ( !empty($valueList[$question['name']]) )
                     {
-                        $randName = uniqid(UTIL_String::getRandomString(rand(5, 13), 2)); 
-                        $question['trClass'] = uniqid('ow_'. UTIL_String::getRandomString(rand(5, 10), 2));
-
-                        if ( $i == $randId )
-                        {
-                            $realQuestionList[$randName] = $this->questions[$sort]['name'];
-                            $question['fake'] = false;
-                            $question['required'] = $this->questions[$sort]['required'];
-
-                            $this->addEmptyClass($question['trClass']);
-
-                            $question['trClass'] = $question['trClass'] . " " . $this->toggleQuestionClass();
-
-                        }
-                        else
-                        {
-                            $question['required'] = 0;
-                            $question['fake'] = true;
-
-                            $this->addDisplayNoneClass($question['trClass']);
-
-                            $question['trClass'] = $question['trClass'] . " " . $this->randQuestionClass();
-                        }
-                        
-                        $question['realName'] = $this->questions[$sort]['name'];
-
-                        $question['name'] = $randName;
-
-                        $this->sortedQuestionsList[$randName] = $question;
-
-                        if ( !empty($valueList[$this->questions[$sort]['name']]) )
-                        {
-                            $this->questionValuesList[$randName] = $valueList[$this->questions[$sort]['name']];
-                        }
-
-                        $this->questionListBySection[$section][] = $question;
+                        $this->questionValuesList[$question['name']] = $valueList[$question['name']];
                     }
                 }
             }
@@ -724,21 +652,7 @@ class JoinForm extends BASE_CLASS_UserQuestionForm
                         $this->post[$newKey] = $_POST[$key];
                     }
                 }
-
-                foreach ( $allQuestionList as $question )
-                {
-                    if ( !empty($question['fake']) && !empty($_POST[$question['name']]) )
-                    {
-                        $this->isBot = true;
-                    }
-                }
             }
-        }
-
-        if ( $this->isBot )
-        {
-            $event = new OW_Event('base.bot_detected', array('isBot' => true));
-            OW::getEventManager()->trigger($event);
         }
 
         OW::getSession()->set(self::SESSION_REAL_QUESTION_LIST, $realQuestionList);
@@ -782,16 +696,16 @@ class JoinForm extends BASE_CLASS_UserQuestionForm
 
         if ( !empty($list) )
         {
-            foreach ( $values as $fakeName => $value )
+            foreach ( $values as $name => $value )
             {
-                if ( !empty($list[$fakeName]) && isset($list[$fakeName]['fake']) && $list[$fakeName]['fake'] == false )
+                if ( !empty($list[$name]) )
                 {
-                    $result[$list[$fakeName]['realName']] = $value;
+                    $result[$list[$name]['realName']] = $value;
                 }
 
-                if ( $fakeName == 'accountType' )
+                if ( $name == 'accountType' )
                 {
-                    $result[$fakeName] = $value;
+                    $result[$name] = $value;
                 }
             }
         }
@@ -915,12 +829,12 @@ class JoinForm extends BASE_CLASS_UserQuestionForm
 
         if ( (string) $question['base'] === '1' )
         {
-            if ( !empty($questionInfo['realName']) && $questionInfo['realName'] === 'email' && $questionInfo['fake'] == false )
+            if ( !empty($questionInfo['realName']) && $questionInfo['realName'] === 'email' )
             {
                 $formField->addValidator(new BASE_CLASS_JoinEmailValidator());
             }
 
-            if ( !empty($questionInfo['realName']) && $questionInfo['realName'] === 'username' && $questionInfo['fake'] == false )
+            if ( !empty($questionInfo['realName']) && $questionInfo['realName'] === 'username' )
             {
                 $formField->addValidator(new BASE_CLASS_JoinUsernameValidator());
             }
@@ -950,11 +864,6 @@ class JoinForm extends BASE_CLASS_UserQuestionForm
         parent::setFieldOptions($formField, $name, $questionValues);
     }
 
-    public function isBot()
-    {
-        return $this->isBot;
-    }
-
     public function isLastStep()
     {
         return $this->isLastStep;
@@ -976,15 +885,6 @@ class JoinForm extends BASE_CLASS_UserQuestionForm
             .{$className}
             {
                 
-            } ");
-    }
-
-    public function addDisplayNoneClass( $className )
-    {
-        OW::getDocument()->addStyleDeclaration("
-            .{$className}
-            {
-                display:none;
             } ");
     }
 

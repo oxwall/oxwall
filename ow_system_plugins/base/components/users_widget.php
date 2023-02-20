@@ -30,9 +30,7 @@
 abstract class BASE_CMP_UsersWidget extends BASE_CLASS_Widget
 {
     protected $forceDisplayMenu = false;
-    /**
-     * @return Constructor.
-     */
+
     public function __construct( BASE_CLASS_WidgetParameter $params )
     {
         parent::__construct();

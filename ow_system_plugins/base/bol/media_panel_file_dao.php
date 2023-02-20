@@ -41,7 +41,7 @@ class BOL_MediaPanelFileDao extends OW_BaseDao
     /**
      * Singleton instance.
      *
-     * @var BOL_MediapFileDao
+     * @var BOL_MediaPanelFileDao
      */
     private static $classInstance;
 
@@ -78,7 +78,7 @@ class BOL_MediaPanelFileDao extends OW_BaseDao
         return OW_DB_PREFIX . 'base_media_panel_file';
     }
 
-    public function findImages( $plugin, $userId=null, $first, $count )
+    public function findImages( $plugin, $first, $count, $userId = null )
     {
         $ex = new OW_Example();
             $ex->andFieldEqual('plugin', $plugin);
@@ -114,7 +114,7 @@ class BOL_MediaPanelFileDao extends OW_BaseDao
 
     public function deleteImages( $plugin, $count )
     {
-        $images = $this->findImages($plugin, null, 0, $count);
+        $images = $this->findImages($plugin, 0, $count);
 
         foreach ( $images as $image )
         {

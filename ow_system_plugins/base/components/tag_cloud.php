@@ -51,7 +51,7 @@ class BASE_CMP_TagCloud extends OW_Component
     /**
      * Constructor.
      *
-     * @param array<count,label> $tagList
+     * @param array $tagList
      *
      */
     public function __construct( array $tagList = null, $url = null )

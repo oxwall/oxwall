@@ -32,6 +32,11 @@
 class BASE_CLASS_AvatarField extends FormElement
 {
     /**
+     * @var bool
+     */
+    protected $changeUserAvatar;
+
+    /**
      * @param string $name
      */
     public function __construct( $name, $changeUserAvatar = true )

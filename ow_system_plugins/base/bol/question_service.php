@@ -1332,7 +1332,7 @@ class BOL_QuestionService
     /**
      * Get default account type
      *
-     * @return array<BOL_QuestionAccountType>
+     * @return BOL_QuestionAccountType
      */
     public function getDefaultAccountType()
     {

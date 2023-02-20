@@ -80,7 +80,7 @@ $SizeMax=-1;
 
 for($p=0;$p<count($Ikona);$p++)
 {
-$Ikona[$p]["NumberOfColors"]=pow(2,$Ikona[$p]["Info"]["BitsPerPixel"]);
+$Ikona[$p]["NumberOfColors"]=(1<<$Ikona[$p]["Info"]["BitsPerPixel"]);
 };
 
 
@@ -258,7 +258,7 @@ $p=$id;
  if($Ikona[$p]["Info"]["BitsPerPixel"]<=8)
   {
 
- $barev=pow(2,$biBitCount);
+ $barev=(1<<$biBitCount);
 
   for($b=0;$b<$barev;$b++)
     {
@@ -670,7 +670,7 @@ $PalSize=0;
 
 $Size=40+($Width/(8/$BitCount)+$Zbytek)*$Height+(($Width/8+$ZbytekMask) * $Height);
 if($BitCount<24)
- $Size+=pow(2,$BitCount)*4;
+ $Size+=(1<<$BitCount)*4;
 $IconId=1;
 $ret.=jpexs_inttodword($Size); //SIZE
 $OffSet=6+16*$ImageCount+$FullSize;
@@ -766,7 +766,7 @@ if($BitCount<=8)
    if($color==$Transparent)
     $color=imagecolorexact($img,0,0,0);
    if($color==-1) $color=0;
-   if($color>pow(2,$BitCount)-1) $color=0;
+   if($color>(1<<$BitCount)-1) $color=0;
 
    $bWrite.=jpexs_decbinx($color,$BitCount);
    if(strlen($bWrite)==8)

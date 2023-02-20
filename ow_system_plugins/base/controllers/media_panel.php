@@ -107,7 +107,7 @@ class BASE_CTRL_MediaPanel extends OW_ActionController
 
         $service = BOL_MediaPanelService::getInstance();
 
-        $list = $service->findGalleryImages($pluginKey, OW::getUser()->getId(), 0, 500);
+        $list = $service->findGalleryImages($pluginKey, 0, 500, OW::getUser()->getId());
         $list = array_reverse($list);
         $images = array();
 
