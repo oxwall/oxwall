@@ -411,7 +411,7 @@ class BOL_SearchEntityDao extends OW_BaseDao
                     self::ENTITY_ID . '
                 FROM 
                     (' . $subQuery . ') result
-            )as rows';
+            )as rowsd';
 
         $result = $this->dbo->queryForRow($query, $queryParams);
 
@@ -636,7 +636,7 @@ class BOL_SearchEntityDao extends OW_BaseDao
                     self::ENTITY_ID . '
                 FROM 
                     (' . $subQuery . ') result
-            )as rows';
+            )as rowsd';
 
         $result = $this->dbo->queryForRow($query, $queryParams);
 
