@@ -106,7 +106,7 @@ class UTIL_DateTime
      * @return string
      */
 
-    public static function formatDate( $timestamp, $onlyDate = true )
+    public static function formatDate( $timestamp, $onlyDate = false )
     {
         if (!(bool) OW::getConfig()->getValue('base', 'site_use_relative_time')) {
             return self::formatSimpleDate($timestamp, $onlyDate);
