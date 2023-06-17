@@ -2988,7 +2988,7 @@ class MobileBillingGatewaySelectionField extends BillingGatewaySelectionField
         );
 
         return'<div class="owm_payment_provider_item owm_std_margin_bottom">
-                <label class="'. implode(' ', $style_classes) .'">' . $field . '</label>
+                <label class="'. implode(' ', $style_classes) .'"><img src="'.$option['logoUrl'].'"> ' . $field . '</label>
         </div>';
     }
 
