@@ -121,7 +121,7 @@ class UTIL_DateTime
 
         $dateDiff = $currentDate->diff($givenDate);
 
-        if ($dateDiff->d === 0) {
+        if ($dateDiff->days === 0) {
             if ($onlyDate) {
                 return $language->text('base', 'date_time_today');
             }
@@ -145,7 +145,7 @@ class UTIL_DateTime
                 default:
                     return $language->text('base', 'date_time_hours_ago', array('hours' => floor($secondsPast / 3600)));
             }
-        } else if ($dateDiff->d === 1) {
+        } else if ($dateDiff->days === 1) {
             if ($onlyDate) {
                 return $language->text('base', 'date_time_yesterday');
             }
