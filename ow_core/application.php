@@ -296,6 +296,12 @@ class OW_Application
                 OW_RequestHandler::CATCH_ALL_REQUEST_KEY_ACTION => 'standardSignIn'
             );
 
+            $handler = OW::getRequestHandler()->getHandlerAttributes();
+
+            if ($handler[OW_RequestHandler::ATTRS_KEY_CTRL] == 'CONSOLE_CTRL_Random') {
+                $attributes = [];
+            }
+
             OW::getRequestHandler()->setCatchAllRequestsAttributes('base.members_only', $attributes);
             $this->addCatchAllRequestsException('base.members_only_exceptions', 'base.members_only');
         }

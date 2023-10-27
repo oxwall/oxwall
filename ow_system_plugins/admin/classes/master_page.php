@@ -45,6 +45,7 @@ class ADMIN_CLASS_MasterPage extends OW_MasterPage
         $menuTypes = array(
             BOL_NavigationService::MENU_TYPE_ADMIN,
             BOL_NavigationService::MENU_TYPE_APPEARANCE,
+            BOL_NavigationService::MENU_TYPE_CONSOLE,
             BOL_NavigationService::MENU_TYPE_PAGES,
             BOL_NavigationService::MENU_TYPE_PLUGINS,
             BOL_NavigationService::MENU_TYPE_SETTINGS,
@@ -71,6 +72,7 @@ class ADMIN_CLASS_MasterPage extends OW_MasterPage
         $menuDataArray = array(
             'menu_admin' => BOL_NavigationService::MENU_TYPE_ADMIN,
             'menu_users' => BOL_NavigationService::MENU_TYPE_USERS,
+            'menu_console' => BOL_NavigationService::MENU_TYPE_CONSOLE,
             'menu_settings' => BOL_NavigationService::MENU_TYPE_SETTINGS,
             'menu_appearance' => BOL_NavigationService::MENU_TYPE_APPEARANCE,
             'menu_pages' => BOL_NavigationService::MENU_TYPE_PAGES,

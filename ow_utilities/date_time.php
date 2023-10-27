@@ -106,7 +106,7 @@ class UTIL_DateTime
      * @return string
      */
 
-    public static function formatDate( $timestamp, $onlyDate = true )
+    public static function formatDate( $timestamp, $onlyDate = false )
     {
         if (!(bool) OW::getConfig()->getValue('base', 'site_use_relative_time')) {
             return self::formatSimpleDate($timestamp, $onlyDate);
@@ -121,12 +121,12 @@ class UTIL_DateTime
 
         $dateDiff = $currentDate->diff($givenDate);
 
-        if ($dateDiff->d === 0 && $dateDiff->m === 0 && $dateDiff->y === 0) {
+        if ($dateDiff->days === 0) {
             if ($onlyDate) {
                 return $language->text('base', 'date_time_today');
             }
 
-            $secondsPast = $dateDiff->s;
+            $secondsPast = $currentDate->getTimestamp() - $givenDate->getTimestamp();
 
             switch (true)
             {
@@ -145,7 +145,7 @@ class UTIL_DateTime
                 default:
                     return $language->text('base', 'date_time_hours_ago', array('hours' => floor($secondsPast / 3600)));
             }
-        } else if ($dateDiff->d === 0 && $dateDiff->m === 1 && $dateDiff->y === 0) {
+        } else if ($dateDiff->days === 1) {
             if ($onlyDate) {
                 return $language->text('base', 'date_time_yesterday');
             }

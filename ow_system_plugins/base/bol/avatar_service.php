@@ -890,7 +890,7 @@ class BOL_AvatarService
         OW::getEventManager()->trigger($event);
     }
 
-    public function getDataForUserAvatars( $userIdList, $src = true, $url = true, $dispName = true, $role = true )
+    public function getDataForUserAvatars( $userIdList, $src = true, $url = true, $dispName = true, $role = true, $size = 1 )
     {
         if ( !count($userIdList) )
         {
@@ -901,7 +901,7 @@ class BOL_AvatarService
 
         if ( $src )
         {
-            $srcArr = $this->getAvatarsUrlList($userIdList);
+            $srcArr = $this->getAvatarsUrlList($userIdList, $size);
         }
 
         $userService = BOL_UserService::getInstance();

@@ -13,6 +13,8 @@ AddEncoding gzip .gzip
   Header set Access-Control-Allow-Origin "*"
 </FilesMatch>
 
+SetEnvIf Authorization "(.*)" HTTP_AUTHORIZATION=$1
+
 # return gzipped files for the mobile app
 RewriteCond %{HTTP:Accept-encoding} gzip
 RewriteCond %{REQUEST_URI} ^/m/(.*.(js|css|map|xml|ttf|otf|json))$

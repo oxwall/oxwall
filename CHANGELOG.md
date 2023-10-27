@@ -1,3 +1,9 @@
+Oxwall 1.9.1, October 27, 2023
+====================================
+Platform[core]:
+- added fixes for known bugs
+- added fake console support
+
 Oxwall 1.9.0, February 20, 2023
 ====================================
 

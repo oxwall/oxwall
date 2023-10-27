@@ -355,7 +355,11 @@
 		 */
 		static function isValidImageHandle($handle)
 		{
-			return $handle instanceof \GdImage ;
+            if (PHP_VERSION_ID < 80000) {
+                return (is_resource($handle) && get_resource_type($handle) == 'gd');
+            }
+
+            return $handle instanceof \GdImage ;
 		}
 		
 		/**

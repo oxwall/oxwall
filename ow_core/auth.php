@@ -37,7 +37,7 @@ class OW_Auth
     /**
      * @var OW_IAuthenticator
      */
-    private $authenticator;
+    protected $authenticator;
 
     /**
      * @return OW_IAuthenticator

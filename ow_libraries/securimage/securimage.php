@@ -74,16 +74,16 @@
 /**
  * Output images in JPEG format
  */
-define('SI_IMAGE_JPEG', 1);
+const SI_IMAGE_JPEG = 1;
 /**
  * Output images in PNG format
  */
-define('SI_IMAGE_PNG',  2);
+const SI_IMAGE_PNG = 2;
 /**
  * Output images in GIF format
  * Must have GD >= 2.0.28!
  */
-define('SI_IMAGE_GIF',  3);
+const SI_IMAGE_GIF = 3;
 
 /**
  * Securimage CAPTCHA Class.
@@ -92,6 +92,7 @@ define('SI_IMAGE_GIF',  3);
  * @subpackage classes
  *
  */
+#[AllowDynamicProperties]
 class Securimage {
 
 	/**
@@ -676,7 +677,7 @@ class Securimage {
 		for ($line = 0; $line < $this->num_lines; ++$line) {
 			$x = $this->image_width * (1 + $line) / ($this->num_lines + 1);
 			$x += (0.5 - $this->frand()) * $this->image_width / $this->num_lines;
-			$y = rand($this->image_height * 0.1, $this->image_height * 0.9);
+			$y = rand((int) ($this->image_height * 0.1), (int) ($this->image_height * 0.9));
 			 
 			$theta = ($this->frand()-0.5) * M_PI * 0.7;
 			$w = $this->image_width;
@@ -698,8 +699,8 @@ class Securimage {
 			$ldy = round($dx * $lwid);
 			 
 			for ($i = 0; $i < $n; ++$i) {
-				$x = $x0 + $i * $dx + $amp * $dy * sin($k * $i * $step + $phi);
-				$y = $y0 + $i * $dy - $amp * $dx * sin($k * $i * $step + $phi);
+				$x = (int) ($x0 + $i * $dx + $amp * $dy * sin($k * $i * $step + $phi));
+				$y = (int) ($y0 + $i * $dy - $amp * $dx * sin($k * $i * $step + $phi));
 				imagefilledrectangle($this->im, $x, $y, $x + $lwid, $y + $lwid, $linecolor);
 			}
 		}
@@ -727,7 +728,7 @@ class Securimage {
 				$font = $this->gd_font_file;
 			}
 
-			$color = imagecolorallocate($this->im, hexdec(substr($this->text_color, 1, 2)), hexdec(substr($this->text_color, 3, 2)), hexdec(substr($this->text_color, 5, 2)));
+			$color = imagecolorallocate($this->im, hexdec($this->text_color->r), hexdec($this->text_color->g), hexdec($this->text_color->b));
 			imagestring($this->im, $font, $this->text_x_start, ($this->image_height / 2) - ($this->gd_font_size / 2), $this->code, $color);
 		} else { //ttf font
 			$font_size = $height2 * .35;
@@ -789,7 +790,7 @@ class Securimage {
 						$max_x = $font_size + ($this->iscale * 5);
 					}
 					 
-					$x += rand($min_x, $max_x);
+					$x += rand((int) $min_x, (int) $max_x);
 				} //for loop
 			} // angled or multi-color
 		} //else ttf font
@@ -814,7 +815,7 @@ class Securimage {
 		// make array of poles AKA attractor points
 		for ($i = 0; $i < $numpoles; ++$i) {
 			$px[$i]  = rand($this->image_width * 0.3, $this->image_width * 0.7);
-			$py[$i]  = rand($this->image_height * 0.3, $this->image_height * 0.7);
+			$py[$i]  = rand((int) ($this->image_height * 0.3), (int)($this->image_height * 0.7));
 			$rad[$i] = rand($this->image_width * 0.4, $this->image_width * 0.7);
 			$tmp     = -$this->frand() * 0.15 - 0.15;
 			$amp[$i] = $this->perturbation * $tmp;
@@ -850,7 +851,7 @@ class Securimage {
 				$y *= $this->iscale;
 
 				if ($x >= 0 && $x < $width2 && $y >= 0 && $y < $height2) {
-					$c = imagecolorat($this->tmpimg, $x, $y);
+					$c = imagecolorat($this->tmpimg, (int) $x, (int) $y);
 				}
 
 				if ($c != $bgCol) { // only copy pixels of letters to preserve any background image
@@ -1154,7 +1155,7 @@ class Securimage {
 	 * Take care not to "break" the audio file by leaving the header data intact.
 	 *
 	 * @since 2.0
-	 * @param $data Sound data in mp3 of wav format
+	 * @param string $data Sound data in mp3 of wav format
 	 */
 	function scrambleAudioData(&$data, $format)
 	{
@@ -1276,9 +1277,9 @@ class Securimage_Color {
 	 * Example: The code for the HTML color #4A203C is:<br />
 	 * $color = new Securimage_Color(0x4A, 0x20, 0x3C);
 	 *
-	 * @param $red Red component 0-255
-	 * @param $green Green component 0-255
-	 * @param $blue Blue component 0-255
+	 * @param int $red component 0-255
+	 * @param int $green component 0-255
+	 * @param int $blue component 0-255
 	 */
 	function __construct($red, $green = null, $blue = null)
 	{

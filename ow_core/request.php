@@ -225,7 +225,7 @@ class OW_Request
 
         if ( array_key_exists("HTTPS", $_SERVER) )
         {
-            $isHttps = (strtolower($_SERVER["HTTPS"]) == "on");
+            $isHttps = ($_SERVER["HTTPS"] == "on");
         }
         else if ( array_key_exists("REQUEST_SCHEME", $_SERVER) )
         {
@@ -233,11 +233,11 @@ class OW_Request
         }
         else if ( array_key_exists("HTTP_X_FORWARDED_PROTO", $_SERVER) )
         {
-            $isHttps = (strtolower($_SERVER["HTTP_X_FORWARDED_PROTO"]) == "https");
+            $isHttps = ($_SERVER["HTTP_X_FORWARDED_PROTO"] == "https");
         }
         else if ( array_key_exists("SERVER_PORT", $_SERVER) )
         {
-            $isHttps = (strtolower($_SERVER["SERVER_PORT"]) == "443");
+            $isHttps = ($_SERVER["SERVER_PORT"] == "443");
         }
 
         return $isHttps;

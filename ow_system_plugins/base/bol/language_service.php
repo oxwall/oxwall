@@ -1282,4 +1282,9 @@ class BOL_LanguageService
 
         return ( $prefixDto !== null);
     }
+
+    public function getLanguage($langId) {
+        return isset($this->language[$langId]) ? $this->language[$langId] : [];
+    }
+
 }

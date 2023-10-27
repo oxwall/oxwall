@@ -163,5 +163,9 @@ class OW_User
             $this->user = null;
         }
     }
+
+    public function setAuth(OW_Auth $auth) {
+        $this->auth = $auth;
+    }
 }
 
