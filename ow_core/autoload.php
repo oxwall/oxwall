@@ -128,7 +128,7 @@ class OW_Autoload
             // throw exception if package pointer is not registered
             if ( !isset($this->packagePointers[$packagePointer]) )
             {
-                throw new InvalidArgumentException("Package pointer `" . $packagePointer . "` is not registered!");
+                throw new Redirect404Exception();
             }
 
             $this->classPathArray[$className] = $this->packagePointers[$packagePointer] . $this->classToFilename($className);
