@@ -1,37 +1,34 @@
-CONTENT OF THIS FILE 
-====================
+# CONTENT OF THIS FILE
 
 * Backup
 * Core update
 * Plugin update
 * Theme update
 
-BACKUP
-========
+# BACKUP
 
 Make a full backup of all files, directories, and your database(s) before
 starting, and save it outside your Oxwall installation directory.
 
-CORE UPDATE
-===========
+# CORE UPDATE
 
-Auto update:
+**Auto update:**
+
 Auto-update is all about clicking a button in admin area and entering your FTP details. We hope to make this feature run smooth on all possible server setups.
 
-Manual update:
-If autoupdate can't be applied you can try manual core update:
+**Manual update:**
+
+If auto update can't be applied you can try manual core update:
 
  - Download Oxwall Update Pack at http://www.oxwall.org/download/;
  - Unpack it to the root folder of your software install;
  - Finalize update by calling http://www.yoursite.com/ow_updates
 
-PLUGIN UPDATE
-=============
+# PLUGIN UPDATE
 
 Plugin update works pretty much as core update with possible auto- and manual updates. You should try auto-updates unless manual update recommended. Always read release notes from developers for special instructions before trying to update plugins.
 
-THEME UPDATE
-============
+# THEME UPDATE
 
 Currently, theme can be updated manually only. To update theme, follow these steps:
 

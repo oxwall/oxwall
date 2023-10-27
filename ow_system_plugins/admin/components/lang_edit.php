@@ -38,8 +38,8 @@ class ADMIN_CMP_LangEdit extends OW_Component
 
     /**
      * Constructor.
-     * 
-     * @param array $itemsList
+     *
+     * @param $langId
      */
     public function __construct( $langId )
     {
@@ -74,7 +74,11 @@ class ADMIN_CMP_LangEdit extends OW_Component
         $labelTextField->setValue($languageDto->getLabel());
         $form->addElement($labelTextField);
 
+        $isoTagValidator = new RegExpValidator("/^[a-z]{2}$|[a-z]{2}[-,_][A-Z,a-z]{2}$/");
+        $isoTagValidator->setErrorMessage(OW::getLanguage()->text('admin', 'incorrect_iso_tag_format'));
+
         $tagTextField = new TextField('tag');
+        $tagTextField->addValidator($isoTagValidator);
         $tagTextField->setLabel($language->text('admin', 'clone_form_lbl_tag'));
         $tagTextField->setDescription($language->text('admin', 'clone_form_descr_tag'));
         $tagTextField->setRequired();

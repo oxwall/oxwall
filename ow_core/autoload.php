@@ -98,12 +98,13 @@ class OW_Autoload
     {
         $thisObj = self::getInstance();
 
-        try
-        {
+        try {
             $path = $thisObj->getClassPath($className);
+            if (!$path) {
+                return;
+            }
         }
-        catch ( Exception $e )
-        {
+        catch ( Exception $e ) {
             return;
         }
 
@@ -127,7 +128,7 @@ class OW_Autoload
             // throw exception if package pointer is not registered
             if ( !isset($this->packagePointers[$packagePointer]) )
             {
-                throw new InvalidArgumentException("Package pointer `" . $packagePointer . "` is not registered!");
+                throw new Redirect404Exception();
             }
 
             $this->classPathArray[$className] = $this->packagePointers[$packagePointer] . $this->classToFilename($className);

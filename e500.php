@@ -34,7 +34,7 @@ $errorDetails = '';
 
 if ( $session->isKeySet('errorData') )
 {
-    $errorData = unserialize($session->get('errorData'));    
+    $errorData = unserialize($session->get('errorData'), ['allowed_classes' => false]);
     $trace = '';
 
     if ( !empty($errorData['trace']) )

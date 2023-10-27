@@ -20,3 +20,6 @@ Disallow:/README.txt
 Disallow:/UPDATE.txt
 Disallow:/CHANGELOG.txt
 Disallow:/admin/
+Disallow: /user/
+Disallow: /photo/
+Disallow: /users/

@@ -8,18 +8,21 @@ class UTIL_HttpResource
     /**
      *
      * @param string $url
-     * @return OW_HttpResource
+     * @return false|string
      */
     public static function getContents( $url, $timeout = 20 )
     {
-        $context = stream_context_create( array(
-            'http'=>array(
-                'timeout' => $timeout,
-                'header' => "User-Agent: Oxwall Content Fetcher\r\n"
-            )
-        ));
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_TIMEOUT, $timeout);
+        curl_setopt($ch, CURLOPT_HEADER, "User-Agent: Oxwall Content Fetcher\r\n");
+        curl_setopt($ch, CURLOPT_MAXREDIRS, 1);
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 0);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        $output = curl_exec($ch);
+        curl_close($ch);
 
-        return file_get_contents($url, false, $context);
+        return $output;
     }
 
     /**

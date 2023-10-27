@@ -29,6 +29,8 @@
  * @package ow_system_plugins.base.bol
  * @since 1.0
  */
+
+#[AllowDynamicProperties]
 class BOL_Comment extends OW_Entity
 {
     /**

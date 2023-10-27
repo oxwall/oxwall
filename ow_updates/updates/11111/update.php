@@ -22,12 +22,5 @@
  * which combines Covered Code or portions thereof with code not governed by the terms of the CPAL.
  */
 
-/**
- * @author Sardar Madumarov <madumarov@gmail.com>
- * @package ow_utilities
- * @since 1.0
- */
-class UTIL_Array
-{
-    
-}
+Updater::getDbo()->query('ALTER TABLE `' . OW_DB_PREFIX . 'base_billing_sale` MODIFY COLUMN `hash` VARCHAR(60) NOT NULL');
+Updater::getDbo()->query('ALTER TABLE `' . OW_DB_PREFIX . 'base_billing_sale` ADD UNIQUE INDEX `idx_sale_hash` (`hash`)');

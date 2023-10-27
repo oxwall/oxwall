@@ -221,6 +221,7 @@ class OW_Dispatcher
         try
         {
             $action = $reflectionClass->getMethod($this->dispatchAttributes[self::ATTRS_KEY_ACTION]);
+            $action->invokeArgs($controller, array(self::ATTRS_KEY_VARLIST => ( empty($this->dispatchAttributes[self::ATTRS_KEY_VARLIST]) ? array() : $this->dispatchAttributes[self::ATTRS_KEY_VARLIST] )));
         }
         catch ( Exception $e )
         {
@@ -243,7 +244,7 @@ class OW_Dispatcher
      *
      * @param string $controller
      * @param string $action
-     * @return string<path>
+     * @return string
      */
     private function getControllerActionDefaultTemplate()
     {
@@ -258,7 +259,7 @@ class OW_Dispatcher
     /**
      * Returns processed catch all requests attributes.
      *
-     * @return string
+     * @return array
      */
     private function processCatchAllRequestsAttrs()
     {

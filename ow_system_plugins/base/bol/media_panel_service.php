@@ -79,9 +79,9 @@ class BOL_MediaPanelService
         return $o->getId();
     }
 
-    public function findGalleryImages( $plugin, $userId=null, $first, $count )
+    public function findGalleryImages( $plugin, $first, $count, $userId=null )
     {
-        return $this->dao->findImages($plugin, $userId, $first, $count);
+        return $this->dao->findImages($plugin, $first, $count, $userId);
     }
 
     public function findImage( $imageId )

@@ -1,0 +1,46 @@
+<div class="ow_stdmargin">
+    <h1>{text key='base+admin_log_entry'}</h1>
+
+    <div class="admin_log_entry_view">
+        {if isset($customView)}
+            {$customView}
+        {else}
+            <pre class="admin_log_entry_message">{$entry['messageFull']}</pre>
+
+            <table class="admin_log_entry_info">
+                <tr class="{cycle values='ow_alt1,ow_alt2'}">
+                    <td class="admin_log_entry_info_key">
+                        {text key='base+admin_log_entry_date_added'}
+                    </td>
+                    <td class="admin_log_entry_info_value">
+                        {$entry['timeString']}
+                    </td>
+                </tr>
+                <tr class="{cycle values='ow_alt1,ow_alt2'}">
+                    <td class="admin_log_entry_info_key">
+                        {text key='base+admin_log_entry_added_timestamp'}
+                    </td>
+                    <td class="admin_log_entry_info_value">
+                        {$entry['timestamp']}
+                    </td>
+                </tr>
+                <tr class="{cycle values='ow_alt1,ow_alt2'}">
+                    <td class="admin_log_entry_info_key">
+                        {text key='base+admin_log_entry_key'}
+                    </td>
+                    <td class="admin_log_entry_info_value">
+                        {$entry['key']}
+                    </td>
+                </tr>
+                <tr class="{cycle values='ow_alt1,ow_alt2'}">
+                    <td class="admin_log_entry_info_key">
+                        {text key='base+admin_log_entry_type'}
+                    </td>
+                    <td class="admin_log_entry_info_value">
+                        {$entry['type']}
+                    </td>
+                </tr>
+            </table>
+        {/if}
+    </div>
+</div>

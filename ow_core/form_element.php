@@ -49,7 +49,7 @@ abstract class FormElement
     /**
      * Added filters
      * 
-     * @var type 
+     * @var array
      */
     protected $filters = array();
 
@@ -99,18 +99,25 @@ abstract class FormElement
      * Constructor.
      *
      * @param string $name
+     * @param string $id
      * @throws InvalidArgumentException
      */
-    public function __construct( $name )
+    public function __construct( $name, $id = '' )
     {
         if ( $name === null || !$name || strlen(trim($name)) === 0 )
         {
-            throw new InvalidArgumentException('Invalid form element name!');
+            throw new InvalidArgumentException('Invalid form element name provided.');
+        }
+
+        if (empty($id)) {
+            $id = UTIL_HtmlTag::generateAutoId('input_' . uniqid(UTIL_String::getRandomString(rand(8, 13), UTIL_String::RND_STR_ALPHA_NUMERIC)));
+        } else {
+            $id = 'input_' . $id . '_' . $name;
         }
 
         $this->setName($name);
 
-        $this->setId(UTIL_HtmlTag::generateAutoId('input_' . uniqid(UTIL_String::getRandomString(rand(8, 13), UTIL_String::RND_STR_ALPHA_NUMERIC))));
+        $this->setId($id);
     }
 
     /**
@@ -410,7 +417,7 @@ abstract class FormElement
      */
     public function isValid()
     {
-        /* @var $value Validator  */
+        /* @var $value OW_Validator  */
         foreach ( $this->validators as $value )
         {
             if ( $value->isValid($this->getValue()) )
@@ -539,9 +546,9 @@ abstract class InvitationFormElement extends FormElement
     /**
      * Constructor.
      */
-    public function __construct( $name )
+    public function __construct( $name, $id = '')
     {
-        parent::__construct($name);
+        parent::__construct($name, $id);
         $this->setHasInvitation(false);
         $this->setInvitation(OW::getLanguage()->text('base', 'form_element_common_invitation_text'));
     }
@@ -556,7 +563,7 @@ abstract class InvitationFormElement extends FormElement
 
     /**
      * @param string $invitation
-     * @return Selectbox
+     * @return InvitationFormElement
      */
     public function setInvitation( $invitation )
     {
@@ -603,9 +610,9 @@ class TextField extends InvitationFormElement
      *
      * @param string $name
      */
-    public function __construct( $name )
+    public function __construct( $name, $id = '')
     {
-        parent::__construct($name);
+        parent::__construct($name, $id);
 
         $this->addAttribute('type', 'text');
     }
@@ -661,10 +668,11 @@ class DateField extends FormElement
      * Constructor.
      *
      * @param string $name
+     * @param string $id
      */
-    public function __construct( $name )
+    public function __construct( $name, $id = '' )
     {
-        parent::__construct($name);
+        parent::__construct($name, $id);
 
         $this->maxYear = ( (int) date("Y") - 18);
 
@@ -759,7 +767,7 @@ class DateField extends FormElement
         $language = OW::getLanguage();
 
         $yearOptionsString = UTIL_HtmlTag::generateTag('option', array('value' => ''), true, $language->text('base', 'year'));
-        $mounthOptionsString = UTIL_HtmlTag::generateTag('option', array('value' => ''), true, $language->text('base', 'month'));
+        $monthOptionsString = UTIL_HtmlTag::generateTag('option', array('value' => ''), true, $language->text('base', 'month'));
         $dayOptionsString = UTIL_HtmlTag::generateTag('option', array('value' => ''), true, $language->text('base', 'day'));
 
         for ( $i = $this->maxYear; $i >= $this->minYear; $i-- )
@@ -779,7 +787,7 @@ class DateField extends FormElement
 
             $attrs['value'] = $i;
 
-            $mounthOptionsString .= UTIL_HtmlTag::generateTag('option', $attrs, true, $language->text('base', 'date_time_month_short_' . $i));
+            $monthOptionsString .= UTIL_HtmlTag::generateTag('option', $attrs, true, $language->text('base', 'date_time_month_short_' . $i));
         }
 
         $lastDay = 31;
@@ -842,7 +850,7 @@ class DateField extends FormElement
             $result = '<div class="' . $this->getAttribute('name') . '">
                             ' . UTIL_HtmlTag::generateTag('input', $attributes) . '
                             <div class="ow_inline owm_inline">' . UTIL_HtmlTag::generateTag('select', $dayAttributes, true, $dayOptionsString) . '</div>
-                            <div class="ow_inline owm_inline">' . UTIL_HtmlTag::generateTag('select', $monthAttributes, true, $mounthOptionsString) . '</div>
+                            <div class="ow_inline owm_inline">' . UTIL_HtmlTag::generateTag('select', $monthAttributes, true, $monthOptionsString) . '</div>
                             <div class="ow_inline owm_inline">' . UTIL_HtmlTag::generateTag('select', $yearAttributes, true, $yearOptionsString) . '</div>
                         </div>';
         }
@@ -850,7 +858,7 @@ class DateField extends FormElement
         {
             $result = '<div class="' . $this->getAttribute('name') . '">
                             ' . UTIL_HtmlTag::generateTag('input', $attributes) . '
-                            <div class="ow_inline owm_inline">' . UTIL_HtmlTag::generateTag('select', $monthAttributes, true, $mounthOptionsString) . '</div>
+                            <div class="ow_inline owm_inline">' . UTIL_HtmlTag::generateTag('select', $monthAttributes, true, $monthOptionsString) . '</div>
                             <div class="ow_inline owm_inline">' . UTIL_HtmlTag::generateTag('select', $dayAttributes, true, $dayOptionsString) . '</div>
                             <div class="ow_inline owm_inline">' . UTIL_HtmlTag::generateTag('select', $yearAttributes, true, $yearOptionsString) . '</div>
                         </div>';
@@ -869,22 +877,22 @@ class DateField extends FormElement
  */
 class Textarea extends InvitationFormElement
 {
-
     /**
      * Constructor.
      *
      * @param string $name
+     * @param string $id
      */
-    public function __construct( $name )
+    public function __construct( $name, $id = '' )
     {
-        parent::__construct($name);
+        parent::__construct($name, $id);
     }
 
     public function getElementJs()
     {
         $jsString = "var formElement = new OwTextArea(" . json_encode($this->getId()) . ", " . json_encode($this->getName()) . ");";
 
-        return $jsString.$this->generateValidatorAndFilterJsCode("formElement");
+        return $jsString . $this->generateValidatorAndFilterJsCode("formElement");
     }
 
     /**
@@ -930,10 +938,11 @@ class HiddenField extends FormElement
      * Constructor.
      *
      * @param string $name
+     * @param string $id
      */
-    public function __construct( $name )
+    public function __construct( $name, $id = '' )
     {
-        parent::__construct($name);
+        parent::__construct($name, $id);
 
         $this->addAttribute('type', 'hidden');
     }
@@ -970,10 +979,11 @@ class Submit extends FormElement
      * Constructor.
      *
      * @param string $name
+     * @param string $id
      */
-    public function __construct( $name, $decorator = 'button' )
+    public function __construct( $name, $id = '',  $decorator = 'button' )
     {
-        parent::__construct($name);
+        parent::__construct($name, $id);
 
         $this->addAttribute('type', 'submit');
 
@@ -1036,9 +1046,13 @@ class Submit extends FormElement
 class Button extends Submit
 {
 
-    public function __construct( $name )
+    /**
+     * @param string $name
+     * @param string $id
+     */
+    public function __construct( $name, $id = '' )
     {
-        parent::__construct($name);
+        parent::__construct($name, $id);
         $this->addAttribute('type', 'button');
     }
 }
@@ -1057,10 +1071,11 @@ class PasswordField extends TextField
      * Constructor.
      *
      * @param string $name
+     * @param string $id
      */
-    public function __construct( $name )
+    public function __construct( $name, $id = '' )
     {
-        parent::__construct($name);
+        parent::__construct($name, $id);
 
         $this->addAttribute('type', 'password');
     }
@@ -1101,13 +1116,19 @@ class RadioField extends FormElement
     protected $options;
 
     /**
+     * @var array
+     */
+    protected $optionElementIds;
+
+    /**
      * Constructor.
      *
      * @param string $name
+     * @param string $id
      */
-    public function __construct( $name )
+    public function __construct( $name, $id = '' )
     {
-        parent::__construct($name);
+        parent::__construct($name, $id);
 
         $this->addAttribute('type', 'radio');
         $this->columnCount = 1;
@@ -1186,6 +1207,61 @@ class RadioField extends FormElement
     }
 
     /**
+     * @param $elementIds
+     * @return $this
+     */
+    public function addOptionElementIds( $elementIds )
+    {
+        if ( $elementIds === null || !is_array($elementIds) )
+        {
+            throw new InvalidArgumentException('Array is expected!');
+        }
+
+        foreach ( $elementIds as $key => $value )
+        {
+            $this->addOptionElementId($key, $value);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param $key
+     * @param $id
+     * @return $this
+     */
+    public function addOptionElementId( $key, $id )
+    {
+        $this->optionElementIds[trim($key)] = trim($id);
+
+        return $this;
+    }
+
+    /**
+     * @param $elementIds
+     * @return $this
+     */
+    public function setOptionElementIds( $elementIds )
+    {
+        if ( $elementIds === null || !is_array($elementIds) )
+        {
+            throw new InvalidArgumentException('Array is expected!');
+        }
+
+        $this->optionElementIds = $elementIds;
+
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getOptionElementIds()
+    {
+        return $this->optionElementIds;
+    }
+
+    /**
      * @see FormElement::renderLabel()
      *
      * @return string
@@ -1231,7 +1307,13 @@ class RadioField extends FormElement
                 $this->addAttribute(FormElement::ATTR_CHECKED, 'checked');
             }
 
-            $this->setId(UTIL_HtmlTag::generateAutoId('input'));
+            if (isset($this->optionElementIds[$key])) {
+                $id = $this->optionElementIds[$key];
+            } else {
+                $id = UTIL_HtmlTag::generateAutoId('input_' . uniqid(UTIL_String::getRandomString(rand(8, 13), UTIL_String::RND_STR_ALPHA_NUMERIC)));
+            }
+
+            $this->setId($id);
 
             $this->addAttribute('value', $key);
 
@@ -1254,7 +1336,7 @@ class RadioField extends FormElement
 class CheckboxGroup extends FormElement
 {
     /**
-     * @var unknown_type
+     * @var int
      */
     protected $columnsCount;
 
@@ -1266,13 +1348,19 @@ class CheckboxGroup extends FormElement
     protected $options = array();
 
     /**
+     * @var array
+     */
+    protected $optionElementIds = array();
+
+    /**
      * Constructor.
      *
      * @param string $name
+     * @param string $id
      */
-    public function __construct( $name )
+    public function __construct( $name, $id = '' )
     {
-        parent::__construct($name);
+        parent::__construct($name, $id);
 
         $this->setName($name);
         $this->addAttribute('type', 'checkbox');
@@ -1287,12 +1375,11 @@ class CheckboxGroup extends FormElement
         return $this->options;
     }
 
-    public function getColumnsCount()
+    public function getColumnCount()
     {
         return (int) $this->columnsCount;
     }
 
-//TODO rename getter or setter
     public function setColumnCount( $count )
     {
         $this->columnsCount = (int) $count;
@@ -1349,6 +1436,61 @@ class CheckboxGroup extends FormElement
         }
 
         return $this;
+    }
+
+    /**
+     * @param $elementIds
+     * @return $this
+     */
+    public function addOptionElementIds( $elementIds )
+    {
+        if ( $elementIds === null || !is_array($elementIds) )
+        {
+            throw new InvalidArgumentException('Array is expected!');
+        }
+
+        foreach ( $elementIds as $key => $value )
+        {
+            $this->addOptionElementId($key, $value);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param $key
+     * @param $id
+     * @return $this
+     */
+    public function addOptionElementId( $key, $id )
+    {
+        $this->optionElementIds[trim($key)] = trim($id);
+
+        return $this;
+    }
+
+    /**
+     * @param $elementIds
+     * @return $this
+     */
+    public function setOptionElementIds( $elementIds )
+    {
+        if ( $elementIds === null || !is_array($elementIds) )
+        {
+            throw new InvalidArgumentException('Array is expected!');
+        }
+
+        $this->optionElementIds = $elementIds;
+
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getOptionElementIds()
+    {
+        return $this->optionElementIds;
     }
 
     /**
@@ -1425,7 +1567,13 @@ class CheckboxGroup extends FormElement
                 $this->addAttribute(FormElement::ATTR_CHECKED, 'checked');
             }
 
-            $this->setId(UTIL_HtmlTag::generateAutoId('input'));
+            if (isset($this->optionElementIds[$key])) {
+                $id = $this->optionElementIds[$key];
+            } else {
+                $id = UTIL_HtmlTag::generateAutoId('input_' . uniqid(UTIL_String::getRandomString(rand(8, 13), UTIL_String::RND_STR_ALPHA_NUMERIC)));
+            }
+
+            $this->setId($id);
 
             $this->addAttribute('value', $key);
 
@@ -1458,10 +1606,11 @@ class Selectbox extends InvitationFormElement
      * Constructor.
      *
      * @param string $name
+     * @param string $id
      */
-    public function __construct( $name )
+    public function __construct( $name, $id = '' )
     {
-        parent::__construct($name);
+        parent::__construct($name, $id);
 
         $this->setInvitation(OW::getLanguage()->text('base', 'form_element_select_field_invitation_label'));
         $this->setHasInvitation(true);
@@ -1568,15 +1717,15 @@ class Selectbox extends InvitationFormElement
  */
 class CheckboxField extends FormElement
 {
-
     /**
      * Constructor.
      *
      * @param string $name
+     * @param string $id
      */
-    public function __construct( $name )
+    public function __construct( $name, $id = '' )
     {
-        parent::__construct($name);
+        parent::__construct($name, $id);
 
         $this->addAttribute('type', 'checkbox');
     }
@@ -1648,9 +1797,13 @@ class Multiselect extends FormElement
     private $options;
     private $size;
 
-    public function __construct( $name )
+    /**
+     * @param string $name
+     * @param string $id
+     */
+    public function __construct( $name, $id = '' )
     {
-        parent::__construct($name);
+        parent::__construct($name, $id);
 
         $this->options = array();
         $this->value = array();
@@ -1766,9 +1919,9 @@ class FileField extends FormElement
      *
      * @param string $name
      */
-    public function __construct( $name )
+    public function __construct( $name, $id = '' )
     {
-        parent::__construct($name);
+        parent::__construct($name, $id);
 
         $this->addAttribute('type', 'file');
     }
@@ -1794,9 +1947,13 @@ class SuggestField extends FormElement
     private $initialLabel;
     private $minChars = 2;
 
-    public function __construct( $name )
+    /**
+     * @param string $name
+     * @param string $id
+     */
+    public function __construct( $name, $id = '' )
     {
-        parent::__construct($name);
+        parent::__construct($name, $id);
     }
 
     public function setResponderUrl( $responderUrl )
@@ -1880,11 +2037,12 @@ class MultiFileField extends FormElement
      * Constructor.
      *
      * @param string $name
+     * @param string $id
      * @param int $inputs
      */
-    public function __construct( $name, $inputs = 5, $labels = null )
+    public function __construct( $name, $id = '', $inputs = 5, $labels = null )
     {
-        parent::__construct($name);
+        parent::__construct($name, $id);
 
         $this->inputs = $inputs;
         $this->labels = $labels;
@@ -1953,7 +2111,7 @@ class MultiFileField extends FormElement
         for ( $i = 0; $i < $this->inputs; $i++ )
         {
             $label = isset($this->labels[$i]) ? $this->labels[$i] . ' ' : '';
-            $this->setId(UTIL_HtmlTag::generateAutoId('input'));
+            $this->setId(UTIL_HtmlTag::generateAutoId('input_' . uniqid(UTIL_String::getRandomString(rand(8, 13), UTIL_String::RND_STR_ALPHA_NUMERIC))));
 
             $markup .= $label . '<input type="file" id="' . $this->getId() . '" name="' . $this->getName() . '[]" /><br />';
         }
@@ -1966,9 +2124,9 @@ class TagsField extends FormElement
 {
     private $tags;
 
-    public function __construct( $name, $tags = array() )
+    public function __construct( $name, $id = '', $tags = array() )
     {
-        parent::__construct($name);
+        parent::__construct($name, $id);
         $this->tags = $tags;
         $this->setValue(implode(',', $this->tags) . '|sep|');
     }
@@ -2096,10 +2254,11 @@ class CaptchaField extends FormElement
      * Constructor.
      *
      * @param string $name
+     * @param string $id
      */
-    public function __construct( $name )
+    public function __construct( $name, $id = '' )
     {
-        parent::__construct($name);
+        parent::__construct($name, $id);
 
         $this->addAttribute('type', 'text');
         $this->jsObjectName = self::CAPTCHA_PREFIX . preg_replace('/[^\d^\w]/', '_', $this->getId());
@@ -2170,10 +2329,11 @@ class AgeRange extends FormElement implements DateRangeInterface
      * Constructor.
      *
      * @param string $name
+     * @param string $id
      */
-    public function __construct( $name )
+    public function __construct( $name, $id = '' )
     {
-        parent::__construct($name);
+        parent::__construct($name, $id);
 
         $this->minAge = 18;
 
@@ -2316,7 +2476,7 @@ class AgeRange extends FormElement implements DateRangeInterface
         $js = "var formElement = new OwFormElement('" . $this->getId() . "', '" . $this->getName() . "');";
 
         $js .= $this->generateValidatorAndFilterJsCode("formElement");
-        
+
         $js .= "
 			formElement.getValue = function(){
 				var value = {};
@@ -2401,10 +2561,11 @@ class Range extends FormElement
      * Constructor.
      *
      * @param string $name
+     * @param string $id
      */
-    public function __construct( $name )
+    public function __construct( $name, $id = '' )
     {
-        parent::__construct($name);
+        parent::__construct($name, $id);
 
         $this->minValue = 18;
 
@@ -2562,13 +2723,16 @@ class DateRange extends FormElement implements DateRangeInterface
      * Constructor.
      *
      * @param string $name
+     * @param string $id
+     * @param string $minDateId
+     * @param string $maxDateId
      */
-    public function __construct( $name )
+    public function __construct($name, $id = '', $minDateId = '', $maxDateId = '')
     {
-        parent::__construct($name);
+        parent::__construct($name, $id);
 
-        $this->minDate = new DateField($name . '[from]');
-        $this->maxDate = new DateField($name . '[to]');
+        $this->minDate = new DateField($name . '[from]', $minDateId);
+        $this->maxDate = new DateField($name . '[to]', $maxDateId);
 
         $this->minDate->setMaxYear(date("Y"));
         //$this->minDate->setValue($this->minDate->getMinYear().'/1/1');
@@ -2652,13 +2816,24 @@ class BillingGatewaySelectionField extends FormElement
 {
 
     /**
+     * @var string
+     */
+    protected $gatewayElementId;
+
+    /**
      * Constructor.
      *
      * @param string $name
      */
-    public function __construct( $name )
+    public function __construct( $name, $id = '', $gatewayElementId = '' )
     {
-        parent::__construct($name);
+        parent::__construct($name, $id);
+
+        if (empty($gatewayElementId)) {
+            $this->gatewayElementId = UTIL_HtmlTag::generateAutoId('input');
+        } else {
+            $this->gatewayElementId = 'input_gateway_' . $gatewayElementId;
+        }
     }
 
     /**
@@ -2697,7 +2872,7 @@ class BillingGatewaySelectionField extends FormElement
 
             $gatewaysNumber = count($paymentOptions);
 
-            $id = UTIL_HtmlTag::generateAutoId('input');
+            $id = $this->gatewayElementId;
 
             $urlFieldAttrs = array(
                 'type' => 'hidden',
@@ -2816,7 +2991,7 @@ class MobileBillingGatewaySelectionField extends BillingGatewaySelectionField
                 <label class="'. implode(' ', $style_classes) .'">' . $field . '</label>
         </div>';
     }
-    
+
     protected function getActiveGatewaysList()
     {
         return BOL_BillingService::getInstance()->getActiveGatewaysList(true);
@@ -2853,10 +3028,11 @@ class YearRange extends FormElement implements DateRangeInterface
      * Constructor.
      *
      * @param string $name
+     * @param string $id
      */
-    public function __construct( $name )
+    public function __construct( $name, $id = '' )
     {
-        parent::__construct($name);
+        parent::__construct($name, $id);
 
         $this->minYear = self::MIN_YEAR;
         $this->maxYear = self::MAX_YEAR;
@@ -3017,12 +3193,13 @@ class MobileWysiwygTextarea extends Textarea
      * Constructor.
      *
      * @param string $name
+     * @param string $id
      * @param string $pluginKey
      * @param array $buttons
      */
-    public function __construct( $name, $pluginKey = 'blog', array $buttons = array() )
+    public function __construct( $name, $id = '',  $pluginKey = 'blog', array $buttons = array() )
     {
-        parent::__construct($name);
+        parent::__construct($name, $id);
 
         $this->pluginKey = $pluginKey;
         $this->textFormatService = BOL_TextFormatService::getInstance();
@@ -3143,7 +3320,7 @@ class WysiwygTextarea extends InvitationFormElement
     const SIZE_L = 300;
 
     /**
-     * @var type
+     * @var bool
      */
     private $init;
 
@@ -3177,10 +3354,11 @@ class WysiwygTextarea extends InvitationFormElement
      * Constructor.
      *
      * @param string $name
+     * @param string $id
      */
-    public function __construct( $name, array $buttons = null, $init = true )
+    public function __construct( $name, $id = '', array $buttons = null, $init = true )
     {
-        parent::__construct($name);
+        parent::__construct($name, $id);
 
         $this->service = BOL_TextFormatService::getInstance();
         $this->init = (bool) $init;
@@ -3483,9 +3661,9 @@ class TagsInputField extends FormElement
     private $maxChars = 0;
     private $phpRegexp;
 
-    public function __construct( $name )
+    public function __construct( $name, $id = '')
     {
-        parent::__construct($name);
+        parent::__construct($name, $id);
         $this->value = array();
         $this->invLabel = OW::getLanguage()->text('base', 'tags_input_field_invitation');
         $this->delimiterChars = array('.');

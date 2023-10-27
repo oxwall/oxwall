@@ -66,6 +66,7 @@ class BASE_CLASS_EventHandler
         $eventManager->bind('base.before_decorator', array($this, 'onBeforeDecoratorRender'));
         $eventManager->bind('plugin.privacy.get_action_list', array($this, 'onPrivacyAddAction'));
         $eventManager->bind('base.members_only_exceptions', array($this, 'onAddMembersOnlyException'));
+        $eventManager->bind('base.splash_screen_exceptions', array($this, 'onAddSplashScreenExceptions'));
         $eventManager->bind('base.password_protected_exceptions', array($this, 'onAddPasswordProtectedExceptions'));
         $eventManager->bind('base.maintenance_mode_exceptions', array($this, 'onAddMaintenanceModeExceptions'));
         $eventManager->bind(OW_EventManager::ON_USER_LOGIN, array($this, 'onUserLoginSetAdminCookie'));
@@ -80,8 +81,6 @@ class BASE_CLASS_EventHandler
         $eventManager->bind(OW_EventManager::ON_USER_REGISTER, array($this, 'setAccountTypeUserRoleOnUserRegister'));
         $eventManager->bind(OW_EventManager::ON_USER_REGISTER, array($this, 'deleteInviteCode'));
         $eventManager->bind('base.before_save_user', array($this, 'setUserRoleOnChangeAccountType'));
-
-        $eventManager->bind('base.questions_field_add_fake_questions', array($this, 'addFakeQuestions'));
 
         $eventManager->bind(OW_EventManager::ON_JOIN_FORM_RENDER, array($this, 'onInviteMembersProcessJoinForm'));
 
@@ -98,6 +97,7 @@ class BASE_CLASS_EventHandler
         $eventManager->bind("base.user_list.get_field_data", array($this, 'onGetUserListFieldValue'));
         $eventManager->bind("base.sitemap.get_urls", array($this, 'onSitemapGetUrls'));
         $eventManager->bind("base.provide_page_meta_info", array($this, 'onProvideMetaInfoForPage'));
+        $eventManager->bind("base.on_after_generate_email_verification_code", array($this, 'generateEmailVerificationCode'));
     }
 
     public function init()
@@ -358,7 +358,7 @@ class BASE_CLASS_EventHandler
         {
             $newToken = UTIL_String::getRandomString(32);
             OW::getConfig()->saveConfig('base', 'admin_cookie', $newToken);
-            setcookie('adminToken', $newToken, time() + 3600 * 24 * 100, '/', null, false, true);
+            setcookie('adminToken', $newToken, time() + 3600 * 24 * 100, '/', '', false, true);
         }
     }
 
@@ -453,6 +453,7 @@ class BASE_CLASS_EventHandler
                         OW::getRequestHandler()->addCatchAllRequestsExclude('base.complete_profile.account_type', 'BASE_CTRL_BaseDocument', 'installCompleted');
                         OW::getRequestHandler()->addCatchAllRequestsExclude('base.complete_profile.account_type', 'BASE_CTRL_AjaxLoader');
                         OW::getRequestHandler()->addCatchAllRequestsExclude('base.complete_profile.account_type', 'BASE_CTRL_AjaxComponentAdminPanel');
+                        $this->excludeStaticPage('base.complete_profile.account_type');
                     }
                     else
                     {
@@ -473,6 +474,7 @@ class BASE_CLASS_EventHandler
                                 OW::getRequestHandler()->addCatchAllRequestsExclude('base.complete_profile', 'BASE_CTRL_BaseDocument', 'installCompleted');
                                 OW::getRequestHandler()->addCatchAllRequestsExclude('base.complete_profile', 'BASE_CTRL_AjaxLoader');
                                 OW::getRequestHandler()->addCatchAllRequestsExclude('base.complete_profile', 'BASE_CTRL_AjaxComponentAdminPanel');
+                                $this->excludeStaticPage('base.complete_profile');
                             }
                             else
                             {
@@ -581,7 +583,6 @@ class BASE_CLASS_EventHandler
         }
         catch ( Exception $e )
         {
-            //printVar($e);
             //Skip invalid notification
         }
     }
@@ -939,6 +940,7 @@ class BASE_CLASS_EventHandler
         $event->add(array('controller' => 'BASE_CTRL_User', 'action' => 'resetPasswordCodeExpired'));
         $event->add(array('controller' => 'BASE_CTRL_User', 'action' => 'resetPasswordRequest'));
         $event->add(array('controller' => 'BASE_CTRL_ApiServer', 'action' => 'request'));
+        $event->add(array('controller' => 'BASE_CTRL_Base', 'action' => 'sitemap'));
     }
 
     public function onAddPasswordProtectedExceptions( BASE_CLASS_EventCollector $event )
@@ -953,6 +955,7 @@ class BASE_CLASS_EventHandler
         $event->add(array('controller' => 'BASE_CTRL_ApiServer', 'action' => 'request'));
         $event->add(array('controller' => 'BASE_CTRL_Unsubscribe', 'action' => 'index'));
         $event->add(array('controller' => 'BASE_CTRL_BaseDocument', 'action' => 'redirectToMobile'));
+        $event->add(array('controller' => 'BASE_CTRL_Base', 'action' => 'sitemap'));
     }
 
     public function onAddMembersOnlyException( BASE_CLASS_EventCollector $event )
@@ -972,6 +975,12 @@ class BASE_CLASS_EventHandler
         $event->add(array('controller' => 'BASE_CTRL_AjaxLoader', 'action' => 'init'));
         $event->add(array('controller' => 'BASE_CTRL_AjaxLoader', 'action' => 'component'));
         $event->add(array('controller' => 'BASE_CTRL_Avatar', 'action' => 'ajaxResponder'));
+        $event->add(array('controller' => 'BASE_CTRL_Base', 'action' => 'sitemap'));
+    }
+
+    public function onAddSplashScreenExceptions( BASE_CLASS_EventCollector $event )
+    {
+        $event->add(array('controller' => 'BASE_CTRL_Base', 'action' => 'sitemap'));
     }
 
     public function onPreferenceMenuItem( BASE_CLASS_EventCollector $event )
@@ -1873,16 +1882,6 @@ class BASE_CLASS_EventHandler
         }
     }
 
-    public function addFakeQuestions( OW_Event $e )
-    {
-        $params = $e->getParams();
-
-        if ( !empty($params['name']) && $params['name'] == 'email' )
-        {
-            $e->setData(false);
-        }
-    }
-
     public function onAfterAvatarUpdate( OW_Event $e )
     {
         $params = $e->getParams();
@@ -2041,6 +2040,32 @@ class BASE_CLASS_EventHandler
         {
             $parts = explode("+", $params["title"]);
             $title = $this->processMetaText($language->text($parts[0], $parts[1], $vars), false, BOL_SeoService::META_TITLE_MAX_LENGTH);
+
+            if (!empty($parts[1]) && $parts[1] === 'meta_title_user_page')
+            {
+                if (empty($vars['user_gender']) || empty($vars['user_age']) || empty($vars['user_age'])
+                        || empty($vars['user_location']))
+                {
+                    $delimiter = ', ';
+                    $alterDelimiter = ' | ';
+
+                    $profileTitle = !empty($vars['user_name']) ? $vars['user_name'] : '';
+
+                    $profileTitle = !empty($vars['user_gender']) &&  !empty($vars['user_age'])
+                        ? $profileTitle . $delimiter . $vars['user_gender'] . $delimiter . $vars['user_age']
+                        : $profileTitle;
+
+                    $profileTitle = !empty($vars['user_location'])
+                        ? $profileTitle . $alterDelimiter . $vars['user_location']
+                        : $profileTitle;
+
+                    $profileTitle = $profileTitle . $alterDelimiter . OW::getConfig()->getValue('base', 'site_name');
+
+                    $profileTitle = trim($profileTitle, $delimiter);
+
+                    $title = $this->processMetaText(trim($profileTitle, $alterDelimiter), false, BOL_SeoService::META_TITLE_MAX_LENGTH);
+                }
+            }
         }
 
         if( !empty($params["description"]) )
@@ -2130,5 +2155,54 @@ class BASE_CLASS_EventHandler
         }
 
         return $text;
+    }
+
+    public function generateEmailVerificationCode(OW_Event $event)
+    {
+        $min = 10000;
+        $max = 99999;
+        $code = mt_rand($min, $max);
+        $service = BOL_EmailVerifyService::getInstance();
+
+        while ($service->findByHash($code) !== null)
+        {
+            $code = mt_rand($min, $max);
+        }
+
+        $event->setData($code);
+
+        return $code;
+    }
+
+    /**
+     * Exclude tos and privacy pages from request catching.
+     *
+     * @param string $key
+     * @return void
+     */
+    protected function excludeStaticPage($key)
+    {
+        $usedRoute = OW::getRouter()->getUsedRoute();
+
+        if ($usedRoute) {
+            $dispatchAttrs = $usedRoute->getDispatchAttrs();
+
+            if ($dispatchAttrs['controller'] === 'BASE_CTRL_StaticDocument') {
+                $navService = BOL_NavigationService::getInstance();
+                $staticDoc = $navService->findStaticDocument(OW::getRequest()->getRequestUri());
+
+                if ($staticDoc) {
+                    $exclude = in_array(UTIL_String::removeFirstAndLastSlashes($staticDoc->getUri()), [
+                        "terms-of-use", "privacy", "privacy-policy"
+                    ]);
+
+                    if ($exclude) {
+                        OW::getRequestHandler()->addCatchAllRequestsExclude(
+                            $key, $dispatchAttrs['controller'], $dispatchAttrs['action']
+                        );
+                    }
+                }
+            }
+        }
     }
 }

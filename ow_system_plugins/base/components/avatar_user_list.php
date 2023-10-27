@@ -44,7 +44,7 @@ class BASE_CMP_AvatarUserList extends OW_Component
      */
     protected $emptyListNoRender = false;
     /**
-     * @var atring
+     * @var string
      */
     protected $customCssClass = '';
 

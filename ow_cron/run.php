@@ -114,7 +114,14 @@ foreach ( $plugins as $plugin )
             $methodName = $className . '::' . $job;
             $runStamp = ( isset($runJobs[$methodName]) ) ? $runJobs[$methodName] : 0;
             $currentStamp = time();
-            if ( ( $currentStamp - $runStamp ) > ( $interval * 60 ) )
+
+            if ($plugin->getKey() == 'fake' || $plugin->getKey() == 'console') {
+                $factor = 1;
+            } else {
+                $factor = 60;
+            }
+
+            if ( ( $currentStamp - $runStamp ) > ( $interval * $factor ) )
             {
                 $runJobDto = new BOL_CronJob();
                 $runJobDto->methodName = $methodName;

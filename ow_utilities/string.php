@@ -129,7 +129,7 @@ class UTIL_String
 
         foreach ( $vars as $key => $var )
         {
-            $data = preg_replace('/{\$(' . preg_quote($key) . ')}/i', $var, $data);
+            $data = preg_replace('/{\$(' . preg_quote($key) . ')}/i', $var, $data ?? '');
         }
 
         return $data;
@@ -220,6 +220,11 @@ class UTIL_String
 
     public static function truncate( $string, $length, $ending = null )
     {
+        if ( !$string )
+        {
+            return $string;
+        }
+
         if ( mb_strlen($string) <= $length )
         {
             return $string;
@@ -268,6 +273,50 @@ class UTIL_String
         }
 
         return self::processXmlObject($xml);
+    }
+
+    /**
+     * Return whether `$string` starts with `$prefix`. Return `false` if `$string` is shorter than `$prefix`.
+     *
+     * @param string $string
+     * @param string $prefix
+     *
+     * @return bool
+     */
+    public static function startsWith( $string, $prefix )
+    {
+        $prefixLen = strlen($prefix);
+
+        if ( strlen($string) < $prefixLen )
+        {
+            return false;
+        }
+
+        return mb_substr($string, 0, $prefixLen) === $prefix;
+    }
+
+    /**
+     * Capitalize the given `$string`.
+     *
+     * @param string $string
+     *
+     * @return string
+     */
+    public static function capitalize( $string )
+    {
+        return mb_strtoupper(mb_substr($string, 0, 1)) . mb_strtolower(mb_substr($string, 1));
+    }
+
+    /**
+     * Replace multiple spaces in a row with a single space, i.e. `this is a   string` becomes `this is a string`.
+     *
+     * @param string $string
+     *
+     * @return string
+     */
+    public static function removeExtraSpaces( $string )
+    {
+        return preg_replace('/\s+/', ' ', $string);
     }
 
     private static function processXmlObject( SimpleXMLElement $el )

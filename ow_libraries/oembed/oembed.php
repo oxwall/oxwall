@@ -144,8 +144,8 @@ class OEmbedDefaultProvider extends OEmbedProvider
         $content = @UTIL_HttpResource::getContents($url);
 
         $matches = array();
-        preg_match('/<\s*meta\s*[^\>]*?http-equiv=[\'"]content-type[\'"][^\>]*?\s*>/i',$content,$matches);
-        $meta = empty($matches[0]) ? null : $matches[0];
+        preg_match('/<\s*meta\s*[^>]*?http-equiv=[\'"]content-type[\'"][^>]*?\s*>/i',$content,$matches);
+        $meta = empty($matches[0]) ? "" : $matches[0];
 
         preg_match('/content=[\'"][^\'"]*?charset=([\w-]+)(:[^\w-][^\'"])*?[\'"]/i',$meta,$matches);
         $encoding = empty($matches[1]) ? 'UTF-8' : $matches[1];
@@ -155,8 +155,8 @@ class OEmbedDefaultProvider extends OEmbedProvider
 
         $matches = array();
         $meta = "";
-        preg_match('/<\s*meta\s*[^\>]*?name=[\'"]description[\'"][^\>]*?\s*>/i',$content,$matches);
-        $meta = empty($matches[0]) ? null : $matches[0];
+        preg_match('/<\s*meta\s*[^>]*?name=[\'"]description[\'"][^>]*?\s*>/i',$content,$matches);
+        $meta = empty($matches[0]) ? "" : $matches[0];
 
         $matches = array();
         preg_match('/content=[\'"](.*?)[\'"]/i',$meta,$matches);
@@ -164,6 +164,9 @@ class OEmbedDefaultProvider extends OEmbedProvider
 
         $matches = array();
         preg_match_all('/<\s*img\s*.*?src=[\'"](.+?)[\'"].*?>/i',$content, $matches);
+
+        $linkImages = array();
+        preg_match_all('/<\s*link\s*[^>]*?rel=[\'"]image_src[\'"][^>]*?\s*>/i', $content, $linkImages);
 
         $images = array();
 
@@ -200,6 +203,21 @@ class OEmbedDefaultProvider extends OEmbedProvider
 
         $firstImg = reset($images);
         $firstImg = $firstImg ? $firstImg : null;
+
+        if ( empty($firstImg) && isset($linkImages[0]) )
+        {
+            foreach ( $linkImages[0] as $img )
+            {
+                $imageUrl = [];
+                preg_match('/https:\/\/[\w\-.\/]+/', $img, $imageUrl);
+                if ( !empty($imageUrl[0]) )
+                {
+                    $images[] = $imageUrl[0];
+                }
+            }
+            $firstImg = reset($images);
+            $firstImg = $firstImg ? $firstImg : null;
+        }
 
         return array(
             'type' => 'link',

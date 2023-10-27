@@ -22,6 +22,8 @@
  * which combines Covered Code or portions thereof with code not governed by the terms of the CPAL.
  */
 
+use PHPMailer\PHPMailer\Exception as phpMailerException;
+
 /**
  * @author Sardar Madumarov <madumarov@gmail.com>
  * @package ow_system_plugins.base.bol
@@ -48,12 +50,13 @@ final class BOL_UserService
     const USER_CONTEXT_MOBILE = BOL_UserOnlineDao::CONTEXT_VAL_MOBILE;
     const USER_CONTEXT_API = BOL_UserOnlineDao::CONTEXT_VAL_API;
     const USER_CONTEXT_CLI = BOL_UserOnlineDao::CONTEXT_VAL_CLI;
-    const PASSWORD_RESET_CODE_EXPIRATION_TIME = 3600;
+    const PASSWORD_RESET_CODE_EXPIRATION_TIME = 1200;
     const PASSWORD_RESET_CODE_UPDATE_TIME = 600;
     const BEFORE_USER_ONLINE = 'base.before_user_online';
     const EVENT_GET_USER_VIEW_QUESTIONS = 'base.get_user_view_questions';
     
     const EVENT_USER_QUERY_FILTER = BOL_UserDao::EVENT_QUERY_FILTER;
+    const EVENT_ON_GET_DISPLAY_NAME = 'base.get_display_name';
 
     /**
      * @var BOL_UserDao
@@ -168,7 +171,7 @@ final class BOL_UserService
     /**
      * Finds user by id.
      *
-     * @param integer $id
+     * @param int $id
      * @return BOL_User
      */
     public function findUserById( $id )
@@ -198,6 +201,12 @@ final class BOL_UserService
         $questionName = OW::getConfig()->getValue('base', 'display_name_question');
 
         $questionValue = BOL_QuestionService::getInstance()->getQuestionData(array($userId), array($questionName));
+        
+        $event = OW::getEventManager()->trigger(new OW_Event(self::EVENT_ON_GET_DISPLAY_NAME, array(
+            'userIdList' => array($userId),
+            'questionName' => $questionName
+        ), $questionValue));
+        $questionValue = $event->getData();
 
         $displayName = isset($questionValue[$userId]) ? ( isset($questionValue[$userId][$questionName]) ? $questionValue[$userId][$questionName] : '' ) : OW::getLanguage()->text('base', 'deleted_user');
 
@@ -218,6 +227,12 @@ final class BOL_UserService
 
         $questionValues = BOL_QuestionService::getInstance()->getQuestionData($userIdList, array($questionName));
 
+        $event = OW::getEventManager()->trigger(new OW_Event(self::EVENT_ON_GET_DISPLAY_NAME, array(
+            'userIdList' => $userIdList,
+            'questionName' => $questionName
+        ), $questionValues));
+        $questionValues = $event->getData();
+
         $resultArray = array();
         $emptyDisplayNames = array();
 
@@ -227,7 +242,7 @@ final class BOL_UserService
 
             if ( isset($questionValues[$value]) )
             {
-                $resultArray[$value] = isset($questionValues[$value][$questionName]) ? htmlspecialchars($questionValues[$value][$questionName]) : '';
+                $resultArray[$value] = isset($questionValues[$value][$questionName]) ? htmlspecialchars($questionValues[$value][$questionName], ENT_HTML5, 'UTF-8') : '';
 
                 if ( !$resultArray[$value] )
                 {
@@ -718,6 +733,7 @@ final class BOL_UserService
             return;
         }
 
+        /** @var BOL_User $user */
         $user = $this->userDao->findById($userId);
         $userOnline = $this->userOnlineDao->findByUserId($userId);
 
@@ -1234,9 +1250,11 @@ final class BOL_UserService
 
     /**
      *
-     * @param int $userId
-     * return array<BOL_User>
-     *
+     * @param $questionValues
+     * @param $first
+     * @param $count
+     * @param bool $isAdmin
+     * @return array
      */
     public function findUserListByQuestionValues( $questionValues, $first, $count, $isAdmin = false )
     {
@@ -1345,19 +1363,27 @@ final class BOL_UserService
 
     /**
      * @param integer $userId
-     * @return BOL_UserResetPassword
+     * @return string
      */
-    public function getNewResetPassword( $userId )
+    public function getNewResetPasswordCode( $userId )
     {
+    	$code = sha1(UTIL_String::getRandomString(8, 5));
+    	$hashedCode = md5($code);
+
+        $event = new OW_Event('base.on_after_generate_password_reset_code', [], $hashedCode);
+        OW::getEventManager()->trigger($event);
+
+        $hashedCode = $event->getData();
+
         $resetPassword = new BOL_UserResetPassword();
         $resetPassword->setUserId($userId);
         $resetPassword->setExpirationTimeStamp(( time() + self::PASSWORD_RESET_CODE_EXPIRATION_TIME));
         $resetPassword->setUpdateTimeStamp(time() + self::PASSWORD_RESET_CODE_UPDATE_TIME);
-        $resetPassword->setCode(md5(UTIL_String::getRandomString(8, 5)));
+        $resetPassword->setCode($hashedCode);
 
         $this->resetPasswordDao->save($resetPassword);
 
-        return $resetPassword;
+        return $code;
     }
 
     /**
@@ -1366,6 +1392,8 @@ final class BOL_UserService
      */
     public function findResetPasswordByCode( $code )
     {
+        $code = md5(trim($code));
+
         return $this->resetPasswordDao->findByCode($code);
     }
 
@@ -1381,7 +1409,7 @@ final class BOL_UserService
 
     public function sendWellcomeLetter( BOL_User $user )
     {
-        if ( $user === null )
+        if ( $user === null || empty($user->email) )
         {
             return;
         }
@@ -1411,7 +1439,7 @@ final class BOL_UserService
         {
             OW::getMailer()->send($mail);
         }
-        catch ( phpmailerException $e )
+        catch (phpMailerException $e )
         {
             $user->emailVerify = false;
             $this->saveOrUpdate($user);
@@ -1447,26 +1475,26 @@ final class BOL_UserService
      */
     public function getSignInForm( $formName = 'sign-in', $submitDecorator = 'button' )
     {
-        $form = new Form($formName);
+        $form = new Form($formName, 'base');
 
-        $username = new TextField('identity');
+        $username = new TextField('identity', 'base');
         $username->setRequired(true);
         $username->setHasInvitation(true);
         $username->setInvitation(OW::getLanguage()->text('base', 'component_sign_in_login_invitation'));
         $form->addElement($username);
 
-        $password = new PasswordField('password');
+        $password = new PasswordField('password', 'base');
         $password->setHasInvitation(true);
         $password->setInvitation(OW::getLanguage()->text('base', 'component_sign_in_password_invitation'));
         $password->setRequired(true);
         $form->addElement($password);
 
-        $remeberMe = new CheckboxField('remember');
-        $remeberMe->setLabel(OW::getLanguage()->text('base', 'sign_in_remember_me_label'));
-        $remeberMe->setValue(true);
-        $form->addElement($remeberMe);
+        $rememberMe = new CheckboxField('remember', 'base');
+        $rememberMe->setLabel(OW::getLanguage()->text('base', 'sign_in_remember_me_label'));
+        $rememberMe->setValue(true);
+        $form->addElement($rememberMe);
 
-        $submit = new Submit('submit', $submitDecorator);
+        $submit = new Submit('submit', 'base', $submitDecorator);
         $submit->setValue(OW::getLanguage()->text('base', 'sign_in_submit_label'));
         $form->addElement($submit);
 
@@ -1495,7 +1523,7 @@ final class BOL_UserService
             {
                 $loginCookie = $this->saveLoginCookie(OW::getUser()->getId());
 
-                setcookie('ow_login', $loginCookie->getCookie(), (time() + 86400 * 7), '/', null, null, true);
+                setcookie('ow_login', $loginCookie->getCookie(), (time() + 86400 * 7), '/', '', false, true);
             }
         }
 
@@ -1536,31 +1564,32 @@ final class BOL_UserService
 
         if ( $resetPassword !== null )
         {
-            if ( $resetPassword->getUpdateTimeStamp() > time() )
-            {
-                throw new LogicException($language->text('base', 'forgot_password_request_exists_error_message'));
-            }
-            else
-            {
-                $resetPassword->setUpdateTimeStamp($resetPassword->getUpdateTimeStamp() + self::PASSWORD_RESET_CODE_UPDATE_TIME);
-                $this->resetPasswordDao->save($resetPassword);
-            }
+            $this->resetPasswordDao->deleteById($resetPassword->getId());
         }
-        else
+
+        $resetPasswordCode = $this->getNewResetPasswordCode($user->getId());
+
+        try
         {
-            $resetPassword = $this->getNewResetPassword($user->getId());
+            $vars = array(
+                'code' => $resetPasswordCode,
+                'username' => $user->getUsername(),
+                'requestUrl' => OW::getRouter()->urlForRoute('base.reset_user_password_request'),
+                'resetUrl' => OW::getRouter()->urlForRoute('base.reset_user_password', array('code' => $resetPasswordCode))
+            );
+
+            $mail = OW::getMailer()->createMail();
+            $mail->addRecipientEmail($email);
+            $mail->setSubject($language->text('base', 'reset_password_mail_template_subject'));
+            $mail->setTextContent($language->text('base', 'reset_password_mail_template_content_txt', $vars));
+            $mail->setHtmlContent($language->text('base', 'reset_password_mail_template_content_html', $vars));
+
+            OW::getMailer()->send($mail);
         }
+        catch ( Exception $e )
+        {
 
-
-        $vars = array('code' => $resetPassword->getCode(), 'username' => $user->getUsername(), 'requestUrl' => OW::getRouter()->urlForRoute('base.reset_user_password_request'),
-            'resetUrl' => OW::getRouter()->urlForRoute('base.reset_user_password', array('code' => $resetPassword->getCode())));
-
-        $mail = OW::getMailer()->createMail();
-        $mail->addRecipientEmail($email);
-        $mail->setSubject($language->text('base', 'reset_password_mail_template_subject'));
-        $mail->setTextContent($language->text('base', 'reset_password_mail_template_content_txt', $vars));
-        $mail->setHtmlContent($language->text('base', 'reset_password_mail_template_content_html', $vars));
-        OW::getMailer()->send($mail);
+        }
     }
 
     public function getResetPasswordRequestFrom( $formName = 'reset-password-request' )

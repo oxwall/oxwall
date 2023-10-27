@@ -9,7 +9,19 @@ AddEncoding gzip .gzip
 <FilesMatch "\.(css.gz|css.gzip)$">
   ForceType text/css
 </FilesMatch>
+<FilesMatch "\.(jpe?g|png)$">
+  Header set Access-Control-Allow-Origin "*"
+</FilesMatch>
 
+SetEnvIf Authorization "(.*)" HTTP_AUTHORIZATION=$1
+
+# return gzipped files for the mobile app
+RewriteCond %{HTTP:Accept-encoding} gzip
+RewriteCond %{REQUEST_URI} ^/m/(.*.(js|css|map|xml|ttf|otf|json))$
+RewriteRule (.*) ow_static/plugins/skmobileapp/src/%1.gz [END]
+
+RewriteCond %{REQUEST_URI} ^/m/(.*)$
+RewriteRule (.*) ow_static/plugins/skmobileapp/src/%1 [END]
 
 RewriteCond %{REQUEST_URI} !^/index\.php
 RewriteCond %{REQUEST_URI} !/ow_updates/index\.php
@@ -17,6 +29,5 @@ RewriteCond %{REQUEST_URI} !/ow_updates/
 RewriteCond %{REQUEST_URI} !/ow_cron/run\.php
 RewriteCond %{REQUEST_URI} !/e500\.php
 RewriteCond %{REQUEST_URI} !/captcha\.php
-#RewriteCond %{REQUEST_URI} (/|\.php|\.html|\.htm|\.xml|\.feed|robots\.txt|\.raw|/[^.]*)$  [NC]
-RewriteCond %{REQUEST_FILENAME} (/|\.php|\.html|\.htm|\.xml|\.feed|robots\.txt|\.raw|/[^.]*)$  [NC]
+RewriteCond %{REQUEST_FILENAME} (/|\.php|\.htm|\.feed|robots\.txt|sitemap\.xml|\.raw|/[^.]*)$  [NC]
 RewriteRule (.*) index.php

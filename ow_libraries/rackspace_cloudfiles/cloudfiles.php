@@ -242,12 +242,10 @@ class CF_Authentication
         if ( !$storage_url || !$cdnm_url )
         {
             throw new SyntaxException("Missing Required Interface URL's!");
-            return False;
         }
         if ( !$auth_token )
         {
             throw new SyntaxException("Missing Auth Token!");
-            return False;
         }
 
         $this->storage_url = $storage_url;
@@ -388,7 +386,7 @@ class CF_Connection
             $e .= "CF_Authentication instance.";
             throw new AuthenticationException($e);
         }
-        $this->cfs_http->setCFAuth($this->cfs_auth, $servicenet = $servicenet);
+        $this->cfs_http->setCFAuth($this->cfs_auth, $servicenet);
         $this->dbug = False;
     }
 

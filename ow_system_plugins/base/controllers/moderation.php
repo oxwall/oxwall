@@ -173,8 +173,9 @@ class BASE_CTRL_Moderation extends OW_ActionController
         $reporterNames = BOL_UserService::getInstance()->getDisplayNamesForList($reporterIds);
         
         $tplFlags = array();
-        
-        foreach ( $flags as $flag )
+
+        /** @var BOL_Flag $flag */
+        foreach ($flags as $flag )
         {
             $content = $contentData[$flag->entityType . ":" . $flag->entityId];
             $contentPresenter = new BASE_CMP_ContentPresenter($content);

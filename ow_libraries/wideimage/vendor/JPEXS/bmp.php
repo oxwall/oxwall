@@ -58,7 +58,7 @@ function imagebmp($img,$file="",$useRLE=false)
 
 	$Zbytek=(4-($Width/(8/$BitCount))%4)%4;
 
-	if($BitCount<24) $palsize=pow(2,$BitCount)*4;
+	if($BitCount<24) $palsize=(1<<$BitCount)*4;
 
 	$size=(floor($Width/(8/$BitCount))+$Zbytek)*$Height+54;
 	$size+=$palsize;
@@ -243,7 +243,7 @@ function imagecreatefrombmp($file)
 		if($biBitCount<24)
 		{
 			$img=imagecreate($Width,$Height);
-			$Colors=pow(2,$biBitCount);
+			$Colors=(1<<$biBitCount);
 			for($p=0;$p<$Colors;$p++)
 			{
 				$B=jpexs_freadbyte($f);

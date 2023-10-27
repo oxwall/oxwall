@@ -12,7 +12,7 @@ textarea.edit_css{
 {/style}
 {$contentMenu}
 {block_decorator name='box' addClass='ow_stdmargin' langLabel='admin+theme_css_existing_css_box_cap_label'}
-    <div class="css_code">{$code}</div>
+    <textarea readonly spellcheck="false" autocapitalize="off" class="css_code edit_css" style="resize: none">{$code}</textarea>
 {/block_decorator}
 {block_decorator name='box' style='text-align:center;' iconClass="ow_ic_write" langLabel='admin+theme_css_edit_css_box_cap_label'}
 {form name='add-css'}

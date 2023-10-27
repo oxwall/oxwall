@@ -1,5 +1,6 @@
 <?php
 
+
 /**
  * EXHIBIT A. Common Public Attribution License Version 1.0
  * The contents of this file are subject to the Common Public Attribution License Version 1.0 (the “License”);
@@ -21,19 +22,3 @@
  * Display of Attribution Information is required in Larger Works which are defined in the CPAL as a work
  * which combines Covered Code or portions thereof with code not governed by the terms of the CPAL.
  */
-
-/**
- * DEPRECATED CLASS
- *
- * @author Aybat Duyshokov <duyshokov@gmail.com>
- * @package ow_system_plugins.base.classes
- * @since 1.0
- * @deprecated
- */
-
-interface BASE_CLASS_IprofileActionTool
-{
-	function getToolData( $userId );
-	
-//	function isVisible($userId);
-}

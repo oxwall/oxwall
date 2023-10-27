@@ -107,9 +107,7 @@ class ADMIN_CTRL_PagesEditLocal extends ADMIN_CTRL_Abstract
                     $langValue->setLanguageId($languageService->getCurrent()->getId());
                 }
 
-                $languageService->saveValue(
-                    $langValue->setValue($data['name'])
-                );
+                $languageService->saveValue($langValue->setValue($data['name']), false);
             }
 //- title
 
@@ -131,9 +129,7 @@ class ADMIN_CTRL_PagesEditLocal extends ADMIN_CTRL_Abstract
                     $langValue->setLanguageId($languageService->getCurrent()->getId());
                 }
 
-                $languageService->saveValue(
-                    $langValue->setValue($data['title'])
-                );
+                $languageService->saveValue($langValue->setValue($data['title']), false);
             }
 //- meta tags
 
@@ -158,8 +154,8 @@ class ADMIN_CTRL_PagesEditLocal extends ADMIN_CTRL_Abstract
                 $langValue->setLanguageId($languageService->getCurrent()->getId());
             }
 
-            $languageService->saveValue($langValue->setValue($data['meta_desc']));
-/*----------------------------------------------*/
+            $languageService->saveValue($langValue->setValue($data['meta_desc']), false);
+            /*----------------------------------------------*/
 
             $langKey = $languageService->findKey($plugin->getKey(), 'local_page_meta_keywords_' . $menu->getKey());
 
@@ -182,7 +178,7 @@ class ADMIN_CTRL_PagesEditLocal extends ADMIN_CTRL_Abstract
                 $langValue->setLanguageId($languageService->getCurrent()->getId());
             }
 
-            $languageService->saveValue($langValue->setValue($data['meta_keywords']));
+            $languageService->saveValue($langValue->setValue($data['meta_keywords']), false);
 
 //- content
 
@@ -201,9 +197,7 @@ class ADMIN_CTRL_PagesEditLocal extends ADMIN_CTRL_Abstract
                     $langValue->setLanguageId($languageService->getCurrent()->getId());
                 }
 
-                $languageService->saveValue(
-                    $langValue->setValue($data['content'])
-                );
+                $languageService->saveValue($langValue->setValue($data['content']), false);
             }
 
 //~

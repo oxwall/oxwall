@@ -66,7 +66,7 @@ class BASE_CLASS_UserQuestionForm extends Form
      * @param array $questionList
      * @param array $questionValueList
      *
-     * @return BASE_UserQuestionForm
+     * @return BASE_CLASS_UserQuestionForm
      */
     public function addQuestions( $questionList, $questionValueList = array(), $questionData = array() )
     {
@@ -123,6 +123,37 @@ class BASE_CLASS_UserQuestionForm extends Form
     }
 
     /**
+     * Override default randomly generated field ids with static one.
+     *
+     * @param $uniqueId
+     * @return void
+     */
+    public function setStaticIdsForFields($uniqueId)
+    {
+        foreach ($this->getElements() as $element) {
+            /** @var FormElement $element */
+
+            // Change id for elements with multiple options.
+            if (method_exists($element, 'setOptionElementIds')
+                && method_exists($element, 'getOptions')
+            ) {
+                $options = $element->getOptions();
+
+                $ids = array_reduce(array_keys($options), function ($prev, $key) use($element, $uniqueId) {
+                    $prev[$key] = 'input_' . $uniqueId . '_' . $element->getName() . '_' . $key;
+                    return $prev;
+                }, []);
+
+                $element->setOptionElementIds($ids);
+
+            } else {
+                // Change id for element.
+                $element->setId('input_' . $uniqueId . '_' . $element->getName());
+            }
+        }
+    }
+
+    /**
      * Set field value
      *
      * @param FormElement $formField
@@ -173,11 +204,9 @@ class BASE_CLASS_UserQuestionForm extends Form
 
         $accounts = array();
 
-
-
-        /* @var $value BOL_QuestionAccount */
-        foreach ( $accountTypes as $key => $value )
+        foreach ( $accountTypes as $value )
         {
+            /* @var $value BOL_QuestionAccountType */
             $accounts[$value->name] = OW::getLanguage()->text('base', 'questions_account_type_' . $value->name);
         }
 

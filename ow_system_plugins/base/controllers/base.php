@@ -43,7 +43,7 @@ class BASE_CTRL_Base extends OW_ActionController
         
         if( !empty($_GET['back-uri']) )
         {
-            $this->redirect(urldecode($_GET['back-uri']));
+            $this->redirect(OW::getRouter()->getBaseUrl() . urldecode($_GET['back-uri']));
         }
         else
         {

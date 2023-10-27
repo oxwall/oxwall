@@ -51,6 +51,16 @@ class BOL_UserDao extends OW_BaseDao
     private static $classInstance;
 
     /**
+     * @var array
+     */
+    protected $cachedItems = [];
+
+    /**
+     * @var array
+     */
+    protected $cachedIds = [];
+
+    /**
      * Returns an instance of class (singleton pattern implementation).
      *
      * @return BOL_UserDao
@@ -381,6 +391,7 @@ class BOL_UserDao extends OW_BaseDao
             INNER JOIN `" . BOL_UserOnlineDao::getInstance()->getTableName() . "` AS `o`
                 ON(`u`.`id` = `o`.`userId`)
             WHERE {$queryParts["where"]}
+            GROUP by `u`.`id`
             ORDER BY " . ( !empty($queryParts["order"]) ? $queryParts["order"] . ", " : "" ) . " `o`.`activityStamp` DESC
             LIMIT ?, ?";
 
@@ -393,11 +404,14 @@ class BOL_UserDao extends OW_BaseDao
             "method" => "BOL_UserDao::countOnline"
         ));
 
-        $query = "SELECT  COUNT(*) FROM `{$this->getTableName()}` AS `u`
+        $query = "SELECT COUNT(*)
+            FROM (SELECT  COUNT(*) FROM `{$this->getTableName()}` AS `u`
             {$queryParts["join"]}
             INNER JOIN `" . BOL_UserOnlineDao::getInstance()->getTableName() . "` AS `o`
                 ON(`u`.`id` = `o`.`userId`)
-            WHERE {$queryParts["where"]}";
+            WHERE {$queryParts["where"]}
+            GROUP BY `u`.`id`
+            ) AS `t`";
 
         return $this->dbo->queryForColumn($query);
     }
@@ -871,7 +885,7 @@ class BOL_UserDao extends OW_BaseDao
      * @param boolean $isAdmin
      * @param boolean $type
      *
-     * @return BOL_User
+     * @return array
      */
     public function findUserIdListByQuestionValues( $questionValues, $first, $count, $isAdmin = false, $aditionalParams = array() )
     {
@@ -1071,7 +1085,6 @@ class BOL_UserDao extends OW_BaseDao
 
         return $this->dbo->queryForColumnList($sqlString, array('start' => $start, 'count' => $count));
     }
-    protected $cachedItems = array();
 
     public function findById( $id, $cacheLifeTime = 0, $tags = array() )
     {

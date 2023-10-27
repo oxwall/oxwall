@@ -68,7 +68,7 @@ class OW_Entity
         {
             if ( $varName != 'id' && !strstr($varName, '_fieldsHash') )
             {
-                $this->_fieldsHash[$varName] = crc32($varValue);
+                $this->_fieldsHash[$varName] = crc32($varValue ?? '');
             }
         }
     }
@@ -80,7 +80,7 @@ class OW_Entity
         
         foreach ( $vars as $varName => $varValue )
         {
-            if ( !in_array($varName, array('_fieldsHash', 'id')) && (!isset($this->_fieldsHash[$varName]) || $this->_fieldsHash[$varName] !== crc32($varValue) ) )
+            if ( !in_array($varName, array('_fieldsHash', 'id')) && (!isset($this->_fieldsHash[$varName]) || $this->_fieldsHash[$varName] !== crc32($varValue ?? '') ) )
             {
                 $updatedFields[] = $varName;
             }

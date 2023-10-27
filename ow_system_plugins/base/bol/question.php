@@ -42,6 +42,10 @@ class BOL_Question extends OW_Entity
     /**
      * @var string
      */
+    public $accountTypeName;
+    /**
+     * @var string
+     */
     public $type;
     /**
      * @var string

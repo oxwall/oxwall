@@ -47,6 +47,7 @@ class BOL_MenuItemDao extends OW_BaseDao
     const VALUE_TYPE_SETTINGS = 'admin_settings';
     const VALUE_TYPE_PAGES = 'admin_pages';
     const VALUE_TYPE_APPEARANCE = 'admin_appearance';
+    const VALUE_TYPE_CONSOLE = 'admin_console';
     const VALUE_TYPE_USERS = 'admin_users';
     const VALUE_TYPE_PLUGINS = 'admin_plugins';
     const VALUE_TYPE_MOBILE = 'admin_mobile';

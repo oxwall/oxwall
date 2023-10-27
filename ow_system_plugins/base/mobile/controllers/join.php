@@ -107,7 +107,7 @@ class BASE_MCTRL_Join extends BASE_CTRL_Join
         ));
         OW::getEventManager()->trigger($event);
 
-        $avatarSet = $avatarService->setUserAvatar($userId, $path, array('isModerable' => false, 'trackAction' => false ));
+        $avatarSet = $avatarService->setUserAvatar($userId, $path, array('isModerable' => true, 'trackAction' => false ));
 
         if ( $avatarSet )
         {

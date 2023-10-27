@@ -95,7 +95,7 @@ class BOL_AvatarService
      * Find avatar object by userId list
      *
      * @param int $userId
-     * @return BOL_Avatar
+     * @return array
      */
     public function findByUserIdList( $userIdList )
     {
@@ -332,7 +332,7 @@ class BOL_AvatarService
         return true;
     }
 
-    public function setUserAvatar( $userId, $uploadedFileName, array $editionalParams = array() )
+    public function setUserAvatar( $userId, $uploadedFileName, array $editionalParams = array(), $rotateAngle = 0 )
     {
         $avatar = $this->findByUserId($userId);
 
@@ -412,6 +412,22 @@ class BOL_AvatarService
             $storage->copyFile($avatarPFOriginalPath, $avatarOriginalPath);
             $storage->copyFile($avatarPFBigPath, $avatarBigPath);
             $storage->copyFile($avatarPFPath, $avatarPath);
+
+            if ($rotateAngle)
+            {
+                if (file_exists($avatarOriginalPath)) {
+                    $image = new UTIL_Image($avatarOriginalPath);
+                    $image->rotate($rotateAngle)->saveImage($avatarOriginalPath);
+                }
+                if (file_exists($avatarBigPath)) {
+                    $image = new UTIL_Image($avatarBigPath);
+                    $image->rotate($rotateAngle)->saveImage($avatarBigPath);
+                }
+                if (file_exists($avatarPath)) {
+                    $image = new UTIL_Image($avatarPath);
+                    $image->rotate($rotateAngle)->saveImage($avatarPath);
+                }
+            }
 
             @unlink($avatarPFPath);
             @unlink($avatarPFBigPath);
@@ -787,6 +803,13 @@ class BOL_AvatarService
         return $fileName ? $dir . $fileName : null;
     }
 
+    public function getOriginalTempAvatarPath( $key, $format = '.jpg' )
+    {
+        $dir = $this->getAvatarsDir() . 'tmp' . DS;
+
+        return $dir . self::AVATAR_ORIGINAL_PREFIX . $key . $format;
+    }
+
     public function getTempAvatarPath( $key, $size = 1 )
     {
         $dir = $this->getAvatarsDir() . 'tmp' . DS;
@@ -867,7 +890,7 @@ class BOL_AvatarService
         OW::getEventManager()->trigger($event);
     }
 
-    public function getDataForUserAvatars( $userIdList, $src = true, $url = true, $dispName = true, $role = true )
+    public function getDataForUserAvatars( $userIdList, $src = true, $url = true, $dispName = true, $role = true, $size = 1 )
     {
         if ( !count($userIdList) )
         {
@@ -878,7 +901,7 @@ class BOL_AvatarService
 
         if ( $src )
         {
-            $srcArr = $this->getAvatarsUrlList($userIdList);
+            $srcArr = $this->getAvatarsUrlList($userIdList, $size);
         }
 
         $userService = BOL_UserService::getInstance();
@@ -1008,7 +1031,7 @@ class BOL_AvatarService
         }
     }
 
-    public function createAvatar( $userId, $isModerable = true, $trackAction = true)
+    public function createAvatar( $userId, $isModerable = true, $trackAction = true, $rotateAngle = null )
     {
         $key = $this->getAvatarChangeSessionKey();
         $path = $this->getTempAvatarPath($key, 2);
@@ -1032,7 +1055,7 @@ class BOL_AvatarService
         ));
         OW::getEventManager()->trigger($event);
 
-        $avatarSet = $this->setUserAvatar($userId, $path, array('isModerable' => $isModerable, 'trackAction' => $trackAction ));
+        $avatarSet = $this->setUserAvatar($userId, $path, array('isModerable' => $isModerable, 'trackAction' => $trackAction), $rotateAngle);
 
         if ( $avatarSet )
         {
@@ -1040,6 +1063,12 @@ class BOL_AvatarService
 
             if ( $avatar )
             {
+                // copy original avatar
+                $originalPath = $this->getTempAvatarPath($key, 3);
+                $avatarOriginalPath = $this->getAvatarPath($userId, 3, $avatar->hash);
+
+                OW::getStorage()->copyFile($originalPath, $avatarOriginalPath);
+
                 $event = new OW_Event('base.after_avatar_change', array(
                     'userId' => $userId,
                     'avatarId' => $avatar->id,

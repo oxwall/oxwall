@@ -811,12 +811,12 @@ OW_ConsoleList =
     {
         var self = this;
 
-        if ( resp.data )
+        if ( resp && resp.data )
         {
             this.data.set(resp.data);
         }
 
-        if ( resp.items.length )
+        if ( resp && resp.items.length )
         {
             this.addItems(resp.items, false);
         }
@@ -834,7 +834,7 @@ OW_ConsoleList =
             this.hideNoContent();
         }
 
-        if ( resp.markup )
+        if ( resp && resp.markup )
         {
             if (resp.markup.styleSheets)
             {

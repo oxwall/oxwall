@@ -196,7 +196,7 @@ final class UTIL_Debug
     	<style>
     		.ow_debug_cont{padding:15px 0;width:80%;margin:0 auto;}
     		.ow_debug_body{background:#fff;border:4px double;padding:5px;}
-    		.ow_debug_cap{font:bold 13px Tahoma;color:#fff;padding:5px;border:1px solid #000;width:250px;margin-top:-20px;}
+    		.ow_debug_cap{font:bold 13px Tahoma;font-family: sans-serif;color:#fff;padding:5px;border:1px solid #000;width:250px;margin-top:-20px;}
     		.ow_debug_body .notice{background:#fdf403;color:#555;}
     		.ow_debug_body .warning{background:#f8b423;color:#555;}
     		.ow_debug_body .error{background:#c10505;color:#fff;}

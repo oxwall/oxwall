@@ -49,6 +49,8 @@ class BASE_CMP_CommentsList extends OW_Component
     protected $actionArr = array('comments' => array(), 'users' => array());
     protected $commentIdList = array();
     protected $userIdList = array();
+    protected $isOwnerAuthorized;
+    protected $isBaseModerator;
 
     /**
      * Constructor.

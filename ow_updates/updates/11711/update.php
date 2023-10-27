@@ -22,22 +22,11 @@
  * which combines Covered Code or portions thereof with code not governed by the terms of the CPAL.
  */
 
-//TODO delete interface
+Updater::getLanguageService()->importPrefixFromDir(__DIR__ . DS . "langs", true);
 
-/**
- * @deprecated
- *
- * @author Aybat Duyshokov <duyshokov@gmail.com>
- * @package ow_system_plugins.base.classes
- * @since 1.0
- */
-interface BASE_CLASS_IusersPageData
-{
-    public function getMenuItem();
+$configService = Updater::getConfigService();
 
-    public function isCase();
-
-    public function getCase();
-
-    public function getData( $first, $count );
+// Permanently disable mobile context.
+if ($configService->configExists('base', 'disable_mobile_context')) {
+    $configService->saveConfig('base', 'disable_mobile_context', 1);
 }

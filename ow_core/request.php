@@ -43,14 +43,7 @@ class OW_Request
     /**
      * Constructor.
      */
-    private function __construct()
-    {
-        if ( get_magic_quotes_gpc() )
-        {
-            $_GET = $this->stripSlashesRecursive($_GET);
-            $_POST = $this->stripSlashesRecursive($_POST);
-        }
-    }
+    private function __construct() {}
 
     /**
      * @return array
@@ -90,7 +83,23 @@ class OW_Request
      */
     public function getRemoteAddress()
     {
-        return isset($_SERVER['HTTP_X_REAL_IP']) ? $_SERVER['HTTP_X_REAL_IP'] : $_SERVER['REMOTE_ADDR'];
+        $ip = $_SERVER['REMOTE_ADDR'];
+        if (isset($_SERVER['HTTP_X_FORWARDED_FOR']) && preg_match_all('#\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}#s', $_SERVER['HTTP_X_FORWARDED_FOR'], $matches)) {
+            foreach ($matches[0] AS $xip) {
+                if (!preg_match('#^(10|172\.16|192\.168)\.#', $xip)) {
+                    $ip = $xip;
+                    break;
+                }
+            }
+        } elseif (isset($_SERVER['HTTP_CLIENT_IP']) && preg_match('/^([0-9]{1,3}\.){3}[0-9]{1,3}$/', $_SERVER['HTTP_CLIENT_IP'])) {
+            $ip = $_SERVER['HTTP_CLIENT_IP'];
+        } elseif (isset($_SERVER['HTTP_CF_CONNECTING_IP']) && preg_match('/^([0-9]{1,3}\.){3}[0-9]{1,3}$/', $_SERVER['HTTP_CF_CONNECTING_IP'])) {
+            $ip = $_SERVER['HTTP_CF_CONNECTING_IP'];
+        } elseif (isset($_SERVER['HTTP_X_REAL_IP']) && preg_match('/^([0-9]{1,3}\.){3}[0-9]{1,3}$/', $_SERVER['HTTP_X_REAL_IP'])) {
+            $ip = $_SERVER['HTTP_X_REAL_IP'];
+        }
+
+        return $ip;
     }
 
     /**
@@ -216,7 +225,7 @@ class OW_Request
 
         if ( array_key_exists("HTTPS", $_SERVER) )
         {
-            $isHttps = (strtolower($_SERVER["HTTPS"]) == "on");
+            $isHttps = ($_SERVER["HTTPS"] == "on");
         }
         else if ( array_key_exists("REQUEST_SCHEME", $_SERVER) )
         {
@@ -224,11 +233,11 @@ class OW_Request
         }
         else if ( array_key_exists("HTTP_X_FORWARDED_PROTO", $_SERVER) )
         {
-            $isHttps = (strtolower($_SERVER["HTTP_X_FORWARDED_PROTO"]) == "https");
+            $isHttps = ($_SERVER["HTTP_X_FORWARDED_PROTO"] == "https");
         }
         else if ( array_key_exists("SERVER_PORT", $_SERVER) )
         {
-            $isHttps = (strtolower($_SERVER["SERVER_PORT"]) == "443");
+            $isHttps = ($_SERVER["SERVER_PORT"] == "443");
         }
 
         return $isHttps;

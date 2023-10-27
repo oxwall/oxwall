@@ -98,10 +98,17 @@ class Form
      * Constructor.
      * 
      * @param string $name
+     * @param string $id
      */
-    public function __construct( $name )
+    public function __construct( $name, $id = '' )
     {
-        $this->setId(UTIL_HtmlTag::generateAutoId('form'));
+        if (empty($id)) {
+            $id = UTIL_HtmlTag::generateAutoId('form');
+        } else {
+            $id = 'form_' . $id . '_' . $name;
+        }
+
+        $this->setId($id);
         $this->setMethod(self::METHOD_POST);
         $this->setAction('');
         $this->setAjaxResetOnSuccess(true);
@@ -592,7 +599,7 @@ class Form
 
         $hiddenFieldString = '';
 
-        /* @var $value OW_FormElement */
+        /* @var $value FormElement */
         foreach ( $this->elements as $value )
         {
             if ( $value instanceof HiddenField )

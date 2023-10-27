@@ -28,7 +28,7 @@ class BASE_CTRL_MediaPanel extends OW_ActionController
         $pluginKey = $params['pluginKey'];
         $result = array();
 
-        if (OW::getRequest()->isPost())
+        if ( OW::getRequest()->isPost() && OW::getUser()->isAuthenticated() )
         {
             if ( !empty($_POST['command']) && $_POST['command'] == 'image-upload' )
             {
@@ -107,7 +107,7 @@ class BASE_CTRL_MediaPanel extends OW_ActionController
 
         $service = BOL_MediaPanelService::getInstance();
 
-        $list = $service->findGalleryImages($pluginKey, OW::getUser()->getId(), 0, 500);
+        $list = $service->findGalleryImages($pluginKey, 0, 500, OW::getUser()->getId());
         $list = array_reverse($list);
         $images = array();
 

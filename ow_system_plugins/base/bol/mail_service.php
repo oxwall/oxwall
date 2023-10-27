@@ -22,6 +22,9 @@
  * which combines Covered Code or portions thereof with code not governed by the terms of the CPAL.
  */
 
+use PHPMailer\PHPMailer\Exception as PhpMailerException;
+use PHPMailer\PHPMailer\PHPMailer;
+
 /**
  * Mail Service
  *
@@ -183,7 +186,7 @@ class BOL_MailService
         {
             return $mailer->SmtpConnect();
         }
-        catch ( phpmailerException $e )
+        catch (PhpMailerException $e )
         {
             throw new InvalidArgumentException($e->getMessage());
         }
@@ -211,6 +214,7 @@ class BOL_MailService
         $mail->setSentTime($mailDto->sentTime);
         $mail->setPriority($mailDto->priority);
         $mail->setSenderSuffix($mailDto->senderSuffix);
+        $mail->setReplyTo($mailDto->senderEmail);
 
         return $mail;
     }

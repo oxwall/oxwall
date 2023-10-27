@@ -130,6 +130,25 @@ class OW_Example
     }
 
     /**
+     * Adds field like clause to query.
+     *
+     * @param string $field
+     * @param string $value
+     * @return OW_Example
+     */
+    public function andFieldNotLike( $field, $value )
+    {
+        if ( is_bool($value) )
+        {
+            $value = intval($value);
+        }
+
+        $this->criteriaString .= " AND `" . $this->dbo->escapeString($field) . "` NOT LIKE '" . $this->dbo->escapeString($value) . "'";
+
+        return $this;
+    }
+
+    /**
      * Adds field between clause to query.
      *
      * @param string $field
@@ -141,7 +160,7 @@ class OW_Example
     {
         if ( !is_numeric($value1) || !is_numeric($value2) )
         {
-            throw new InvalidArgumentException("Not numeric params were provided! Numbers are expected!");
+            throw new InvalidArgumentException("Not numeric params were provided! Numbers are expected!" . debug_backtrace()[1]['function']);
         }
 
         $this->criteriaString .= " AND `" . $this->dbo->escapeString($field) . "` BETWEEN " . $value1 . " AND " . $value2;
@@ -177,7 +196,7 @@ class OW_Example
     {
         if ( !is_numeric($value) )
         {
-            throw new InvalidArgumentException("Not numeric param was provided! Number is expected!");
+            throw new InvalidArgumentException("Not numeric param was provided! Number is expected!" . debug_backtrace()[1]['function']);
         }
 
         $this->criteriaString .= " AND `" . $this->dbo->escapeString($field) . "` > " . $value;
@@ -213,7 +232,7 @@ class OW_Example
     {
         if ( !is_numeric($value) )
         {
-            throw new InvalidArgumentException("Not numeric param was provided! Number is expected!");
+            throw new InvalidArgumentException("Not numeric param was provided! Number is expected!" . debug_backtrace()[1]['function']);
         }
 
         $this->criteriaString .= " AND `" . $this->dbo->escapeString($field) . "` < " . $value;
@@ -231,7 +250,7 @@ class OW_Example
     {
         if ( !is_numeric($value) )
         {
-            throw new InvalidArgumentException("Not numeric param was provided! Number is expected!");
+            throw new InvalidArgumentException("Not numeric param was provided! Number is expected!" . debug_backtrace()[1]['function']);
         }
 
         $this->criteriaString .= " AND `" . $this->dbo->escapeString($field) . "` <= " . $value;

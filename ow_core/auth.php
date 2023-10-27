@@ -37,7 +37,7 @@ class OW_Auth
     /**
      * @var OW_IAuthenticator
      */
-    private $authenticator;
+    protected $authenticator;
 
     /**
      * @return OW_IAuthenticator
@@ -96,6 +96,10 @@ class OW_Auth
      */
     public function getUserId()
     {
+        if (!$this->authenticator) {
+            return 0;
+        }
+
         return $this->authenticator->getUserId();
     }
 

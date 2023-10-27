@@ -95,7 +95,7 @@ class UTIL_Url
      */
     public static function getRealRequestUri( $urlHome, $requestUri )
     {
-        $urlArray = parse_url($urlHome);
+        $urlArray = parse_url($urlHome ?? '');
 
         $originalUri = UTIL_String::removeFirstAndLastSlashes($requestUri);
         $originalPath = UTIL_String::removeFirstAndLastSlashes($urlArray['path']);
@@ -157,9 +157,7 @@ class UTIL_Url
         $serverProtocol = strtolower($_SERVER["SERVER_PROTOCOL"]);
         $protocol = substr($serverProtocol, 0, strpos($serverProtocol, '/')) . $s;
 
-        $port = ($_SERVER["SERVER_PORT"] == "80") ? "" : (":" . $_SERVER["SERVER_PORT"]);
-
-        return $protocol . "://" . $_SERVER['SERVER_NAME'] . $port . self::secureUri($_SERVER['REQUEST_URI']);
+        return $protocol . "://" . $_SERVER['SERVER_NAME'] . self::secureUri($_SERVER['REQUEST_URI']);
     }
 
     public static function getLocalPath( $uri )
@@ -179,5 +177,26 @@ class UTIL_Url
         }
 
         return $path;
+    }
+
+    public static function ensureHttpScheme( $url )
+    {
+        while( !empty($urlPort = parse_url($url, PHP_URL_PORT)) )
+        {
+            $url = str_replace(":{$urlPort}", "", $url);
+        }
+
+        $urlScheme = parse_url($url, PHP_URL_SCHEME);
+
+        if ( empty($urlScheme) )
+        {
+            $url = 'http://' . $url;
+        }
+        else if ( strpos($urlScheme, 'http') !== 0 )
+        {
+            $url = str_replace($urlScheme, 'http', $url);
+        }
+
+        return $url;
     }
 }

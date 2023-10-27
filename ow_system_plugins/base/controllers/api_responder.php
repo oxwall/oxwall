@@ -49,20 +49,16 @@ class BASE_CTRL_ApiResponder extends OW_ActionController
         }
     }
 
-    public function triggerEvent($params)
+    /**
+     * @deprecated
+     * @param $name
+     * @param $params
+     * @param $data
+     * @return mixed
+     * @throws Exception
+     */
+    public function triggerEvent($name, $params = [], $data = null)
     {
         throw new Exception('This method is deprecated');
-
-        $this->validateParams($params, array('eventName'));
-
-        $eventName = trim($params['eventName']);
-        $eventParams = empty($params['params']) ? array() : $params['params'];
-        $eventData = empty($params['data']) ? array() : $params['data'];
-
-        $event = new OW_Event($eventName, $eventParams, $eventData);
-
-        OW::getEventManager()->trigger($event);
-
-        return $event->getData();
     }
 }

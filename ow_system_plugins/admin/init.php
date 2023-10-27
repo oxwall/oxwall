@@ -38,6 +38,9 @@ OW::getRouter()->addRoute(new OW_Route('admin_settings_language_mod', 'admin/set
 OW::getRouter()->addRoute(new OW_Route('admin_developer_tools_language', 'admin/settings/dev-tools/languages', 'ADMIN_CTRL_Languages', 'index'));
 OW::getRouter()->addRoute(new OW_Route('admin_developer_tools_language_mod', 'admin/settings/dev-tools/languages/mod', 'ADMIN_CTRL_Languages', 'mod'));
 
+OW::getRouter()->addRoute(new OW_Route('admin_developer_tools_logs', 'admin/settings/dev-tools/logs', 'ADMIN_CTRL_Logs', 'index'));
+OW::getRouter()->addRoute(new OW_Route('admin_developer_tools_logs_entry', 'admin/settings/dev-tools/logs/entry/:id', 'ADMIN_CTRL_Logs', 'entry'));
+
 OW::getAutoloader()->addClass('ColorField', $plugin->getClassesDir() . 'form_fields.php');
 OW::getAutoloader()->addClass('ADMIN_UserListParams', $plugin->getCmpDir() . 'user_list.php');
 

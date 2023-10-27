@@ -165,6 +165,7 @@ class BOL_SearchResultDao extends OW_BaseDao
     {
         $example = new OW_Example();
         $example->andFieldEqual('searchId', (int) $listId);
+        $example->andFieldNotInArray('userId', [ OW::getUser()->getId() ]);
 
         return $this->countByExample($example);
     }

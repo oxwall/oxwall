@@ -444,6 +444,8 @@ var OwUtils = function(){
             	{
                     options.onReady.call(this, r);
             	}
+
+                OW.trigger('base.ajax_floatbox_loaded', { cmpClass: cmpClass });
             }
         })
 
@@ -709,6 +711,7 @@ var OwUtils = function(){
       $('*[title]', $context).each( function(i, o){
           $(o).on('mouseenter', function(){ OW.showTip($(this), {timeout:200}); });
           $(o).on('mouseleave', function(){ OW.hideTip($(this)); });
+          $(o).on('mousewheel', function(){ OW.hideTip($(this)); });
       });
     };
 
@@ -938,16 +941,16 @@ function OW_FloatBox(options)
         });
     }
 
-    this.$canvas.click(function(e)
-    {
-        if ( $(e.target).is(this) )
-        {
-            fl_box.close({
-                sender: "canvas",
-                canvas: this
-            });
-        }
-    });
+    // this.$canvas.click(function(e)
+    // {
+    //     if ( $(e.target).is(this) )
+    //     {
+    //         fl_box.close({
+    //             sender: "canvas",
+    //             canvas: this
+    //         });
+    //     }
+    // });
 
     this.$container = jQuery('.floatbox_container', this.$canvas);
 
@@ -1038,6 +1041,8 @@ function OW_FloatBox(options)
     }
 
     window.OWActiveFloatBox = this;
+
+    OW.trigger('base.floatbox_loaded');
 }
 
 OW_FloatBox.version = 3;

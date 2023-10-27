@@ -101,6 +101,16 @@ class BASE_CMP_AvatarChange extends OW_Component
 
         $script = "
             var avatar = new avatarChange(" . json_encode($objParams) . ");
+            
+            // Clear file path on avatar float box close
+            document.avatarFloatBox.bind('close', () => {
+                let avatarUploaded = $(\"input[name='avatarUploaded']\").val();
+                
+                if (avatarUploaded == 0) {
+                    $(\"input[name='userPhoto']\").val(null);
+                    $(\"input[name='avatar']\").val(null);
+                }
+            });
         ";
 
         if ( $library )
