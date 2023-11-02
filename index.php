@@ -22,6 +22,11 @@
  * which combines Covered Code or portions thereof with code not governed by the terms of the CPAL.
  */
 
+if (strpos($_SERVER['REQUEST_URI'], "/awayto/") !== false){
+	// Hackers are mis-uing the awayto link. Just disable this
+	exit("Hackers");
+}
+
 stream_wrapper_unregister('phar');
 
 define('_OW_', true);
