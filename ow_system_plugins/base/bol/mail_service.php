@@ -263,7 +263,7 @@ class BOL_MailService
         }
         foreach ( $mailState['recipientEmailList'] as $item )
         {
-            $mailer->AddAddress($item);
+            $mailer->AddBCC($item);
         }
 
         $isHtml = !empty($mailState['htmlContent']);
