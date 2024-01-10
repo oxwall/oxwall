@@ -71,7 +71,14 @@
     </div>
 </div>
 
+{elseif $displayFormat=="custom_photo_comments"}
 
+<div class="ow_newsfeed_item_content">
+    <a href="{$data.photoPage}" class="ow_newsfeed_item_title">
+        <img src="{$data.photoUrl}" style="max-width: 100%;" />
+        {$data.message}
+    </a>
+</div>
 
 {/if}
 </div>
