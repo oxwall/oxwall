@@ -99,8 +99,8 @@ class BASE_CMP_CommentsList extends OW_Component
         /* @var $value BOL_Comment */
         foreach ( $commentList as $value )
         {
-            if (OW::getPluginManager()->isPluginActive('pcverification')) {
-                if ($value->getUserId() != OW::getUser()->getId() && !OW::getUser()->isAdmin() && $value->status == PCVERIFICATION_BOL_Service::APPROVAL) {
+            if (OW::getPluginManager()->isPluginActive('photo')) {
+                if ($value->getUserId() != OW::getUser()->getId() && !OW::getUser()->isAdmin() && $value->status == PHOTO_BOL_PhotoService::CUSTOM_APPROVAL) {
                     continue;
                 }
             }
@@ -116,9 +116,9 @@ class BASE_CMP_CommentsList extends OW_Component
                 'avatar' => $userAvatarArrayList[$value->getUserId()],
             );
 
-            if (OW::getPluginManager()->isPluginActive('pcverification')) {
-                if ($value->status == PCVERIFICATION_BOL_Service::APPROVAL) {
-                    $cmItemArray['displayName'] .= " <span class='ow_remark ow_small'>(" . OW::getLanguage()->text('pcverification', 'moderation_status_pending_approval') . ")</span>";
+            if (OW::getPluginManager()->isPluginActive('photo')) {
+                if ($value->status == PHOTO_BOL_PhotoService::CUSTOM_APPROVAL) {
+                    $cmItemArray['displayName'] .= " <span class='ow_remark ow_small'>(" . OW::getLanguage()->text('photo', 'moderation_status_pending_approval') . ")</span>";
                 }
             }
 
