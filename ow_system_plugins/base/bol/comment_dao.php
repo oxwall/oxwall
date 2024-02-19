@@ -35,6 +35,8 @@ class BOL_CommentDao extends OW_BaseDao
     const COMMENT_ENTITY_ID = 'commentEntityId';
     const MESSAGE = 'message';
     const CREATE_STAMP = 'createStamp';
+	
+	protected $queryPartsUser;
 
     /**
      * Singleton instance.
@@ -64,6 +66,7 @@ class BOL_CommentDao extends OW_BaseDao
     protected function __construct()
     {
         parent::__construct();
+		$this->queryPartsUser = BOL_UserDao::getInstance()->getUserQueryFilter("c", "userId");
     }
 
     /**
@@ -108,8 +111,14 @@ class BOL_CommentDao extends OW_BaseDao
         $query = "SELECT `c`.* FROM `" . $this->getTableName() . "` AS `c`
 			LEFT JOIN `" . BOL_CommentEntityDao::getInstance()->getTableName() . "` AS `ce` ON ( `c`.`" . self::COMMENT_ENTITY_ID . "` = `ce`.`id` )
 			" . $queryParts['join'] . "
+			
+			" . $this->queryPartsUser['join'] . "
+			
 			WHERE `ce`.`" . BOL_CommentEntityDao::ENTITY_TYPE . "` = :entityType AND `ce`.`" . BOL_CommentEntityDao::ENTITY_ID . "` = :entityId
 			AND " . $queryParts['where'] . "
+			
+			AND " . $this->queryPartsUser['where'] . "
+			
 			ORDER BY `" . self::CREATE_STAMP . "` DESC
 			LIMIT :first, :count";
 
@@ -137,11 +146,18 @@ class BOL_CommentDao extends OW_BaseDao
             BASE_CLASS_QueryBuilderEvent::OPTION_TYPE => $entityType
         ));
 
+
         $query = "SELECT `c`.* FROM `" . $this->getTableName() . "` AS `c`
 			LEFT JOIN `" . BOL_CommentEntityDao::getInstance()->getTableName() . "` AS `ce` ON ( `c`.`" . self::COMMENT_ENTITY_ID . "` = `ce`.`id` )
 			" . $queryParts['join'] . "
+			
+			" . $this->queryPartsUser['join'] . "
+			
 			WHERE `ce`.`" . BOL_CommentEntityDao::ENTITY_TYPE . "` = :entityType AND `ce`.`" . BOL_CommentEntityDao::ENTITY_ID . "` = :entityId
 			AND " . $queryParts['where'] . "
+			
+			AND " . $this->queryPartsUser['where'] . "
+			
 			ORDER BY `" . self::CREATE_STAMP . "`";
 
         $boundParams = array_merge(array('entityType' => $entityType, 'entityId' => $entityId), $queryParts['params']);
@@ -168,11 +184,18 @@ class BOL_CommentDao extends OW_BaseDao
             BASE_CLASS_QueryBuilderEvent::OPTION_TYPE => $entityType
         ));
 
+
         $query = "SELECT COUNT(*) FROM `" . $this->getTableName() . "` AS `c`
 			LEFT JOIN `" . BOL_CommentEntityDao::getInstance()->getTableName() . "` AS `ce` ON ( `c`.`" . self::COMMENT_ENTITY_ID . "` = `ce`.`id` )
 			" . $queryParts['join'] . "
+			
+			" . $this->queryPartsUser['join'] . "
+			
 			WHERE `ce`.`" . BOL_CommentEntityDao::ENTITY_TYPE . "` = :entityType AND `ce`.`" . BOL_CommentEntityDao::ENTITY_ID . "` = :entityId
 			AND " . $queryParts['where'] . "
+			
+			AND " . $this->queryPartsUser['where'] . "
+			
 			";
 
         $boundParams = array_merge(array('entityType' => $entityType, 'entityId' => $entityId), $queryParts['params']);
@@ -191,12 +214,19 @@ class BOL_CommentDao extends OW_BaseDao
             BASE_CLASS_QueryBuilderEvent::OPTION_METHOD => __METHOD__,
             BASE_CLASS_QueryBuilderEvent::OPTION_TYPE => $entityType
         ));
+		
 
         $query = 'SELECT `ce`.`entityId` AS `id`, COUNT(*) AS `commentCount`
             FROM `' . $this->getTableName() . '` AS `c`
 			    LEFT JOIN `' . BOL_CommentEntityDao::getInstance()->getTableName() . '` AS `ce` ON (`c`.`' . self::COMMENT_ENTITY_ID . '` = `ce`.`id`)
 			    ' . $queryParts['join'] . '
+				
+				' . $this->queryPartsUser['join'] . '
+				
 			WHERE `ce`.`' . BOL_CommentEntityDao::ENTITY_TYPE . '` = :entityType AND `ce`.`' . BOL_CommentEntityDao::ACTIVE . '` = 1 AND ' . $queryParts['where'] . '
+			
+			AND ' . $this->queryPartsUser['where'] . '
+			
 			GROUP BY `ce`.`' . BOL_CommentEntityDao::ENTITY_ID . '`
 			ORDER BY `commentCount` DESC, `id` DESC
 			LIMIT :first, :count';
@@ -223,13 +253,20 @@ class BOL_CommentDao extends OW_BaseDao
             BASE_CLASS_QueryBuilderEvent::OPTION_TYPE => $entityType
         ));
 
+
         $query = "SELECT `ce`.`entityId` AS `id`, COUNT(*) AS `commentCount` FROM `" . $this->getTableName() . "` AS `c`
 			INNER JOIN `" . BOL_CommentEntityDao::getInstance()->getTableName() . "` AS `ce`
 				ON ( `c`.`" . self::COMMENT_ENTITY_ID . "` = `ce`.`id` )
 				" . $queryParts['join'] . "
+				
+				" . $this->queryPartsUser['join'] . "
+				
 			WHERE `ce`.`" . BOL_CommentEntityDao::ENTITY_TYPE . "` = :entityType AND `ce`.`" . BOL_CommentEntityDao::ENTITY_ID . "` IN  ( " . $this->dbo->mergeInClause($idList) . " )
 			AND " . $queryParts['where'] . "
-			GROUP BY `ce`.`" . BOL_CommentEntityDao::ENTITY_ID . "`";
+			
+			AND " . $this->queryPartsUser['where'] . "
+			
+			GROUP BY `" . BOL_CommentEntityDao::ENTITY_ID . "`";
 
         $boundParams = array_merge(array('entityType' => $entityType), $queryParts['params']);
 
@@ -274,6 +311,8 @@ class BOL_CommentDao extends OW_BaseDao
     {
         $queryStr = '';
         $params = array();
+		
+		
         foreach ( $entities as $entity )
         {
             $queryStr .= " (`ce`.`" . BOL_CommentEntityDao::ENTITY_TYPE . "` = ? AND `ce`.`" . BOL_CommentEntityDao::ENTITY_ID . "` = ? ) OR";
@@ -284,7 +323,13 @@ class BOL_CommentDao extends OW_BaseDao
 
         $query = "SELECT `ce`.`entityType`, `ce`.`entityId`, COUNT(*) AS `count` FROM `" . $this->getTableName() . "` AS `c`
 			LEFT JOIN `" . BOL_CommentEntityDao::getInstance()->getTableName() . "` AS `ce` ON ( `c`.`" . self::COMMENT_ENTITY_ID . "` = `ce`.`id` )
-			WHERE " . $queryStr . " GROUP BY `ce`.`id`";
+			
+			" . $this->queryPartsUser['join'] . "
+			
+			WHERE " . $this->queryPartsUser['where'] . " AND 
+			" . $queryStr . " 
+			
+			GROUP BY `ce`.`id`";
 
         return $this->dbo->queryForList($query, $params);
     }
@@ -299,11 +344,18 @@ class BOL_CommentDao extends OW_BaseDao
         $queryParts = array();
         $queryParams = array();
         $genId = 1;
+		
         foreach ( $entities as $entity )
         {
             $queryParts[] = " SELECT * FROM ( SELECT `c`.*, `ce`.`entityType`, `ce`.`entityId` FROM `" . $this->getTableName() . "` AS `c`
 			LEFT JOIN `" . BOL_CommentEntityDao::getInstance()->getTableName() . "` AS `ce` ON ( `c`.`" . self::COMMENT_ENTITY_ID . "` = `ce`.`id` )
+			
+			" . $this->queryPartsUser['join'] . "
+			
 			WHERE `ce`.`" . BOL_CommentEntityDao::ENTITY_TYPE . "` = ? AND `ce`.`" . BOL_CommentEntityDao::ENTITY_ID . "` = ?
+			
+			AND " . $this->queryPartsUser['where'] . "
+			
 			ORDER BY `" . self::CREATE_STAMP . "` DESC
 			LIMIT 0, ? ) AS `al" . $genId++ . "` ".PHP_EOL;
             $queryParams[] = $entity['entityType'];
