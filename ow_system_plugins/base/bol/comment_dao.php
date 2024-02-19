@@ -36,7 +36,7 @@ class BOL_CommentDao extends OW_BaseDao
     const MESSAGE = 'message';
     const CREATE_STAMP = 'createStamp';
 	
-	protected $queryPartsUser;
+    protected $queryPartsUser;
 
     /**
      * Singleton instance.
