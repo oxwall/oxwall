@@ -847,12 +847,17 @@ final class BOL_UserService
 
     public function deleteUser( $userId, $deleteContent = true )
     {
+        if ( OW::getPluginManager()->isPluginActive('skcsubs') )
+        {
+            SKCSUBS_BOL_Service::getInstance()->cancelSubscriptionByUserId($userId);
+        }
+
         $event = new OW_Event(OW_EventManager::ON_USER_UNREGISTER, array('userId' => $userId, 'deleteContent' => $deleteContent));
         OW::getEventManager()->trigger($event);
 
-        BOL_QuestionService::getInstance()->deleteQuestionDataByUserId((int) $userId);
-        BOL_AvatarService::getInstance()->deleteUserAvatar($userId);
-        
+//        BOL_QuestionService::getInstance()->deleteQuestionDataByUserId((int) $userId);
+//        BOL_AvatarService::getInstance()->deleteUserAvatar($userId);
+
         $this->userSuspendDao->deleteById($userId);
         $this->userBlockDao->deleteByUserId($userId);
         
@@ -931,6 +936,15 @@ final class BOL_UserService
 
         $event = new OW_Event(OW_EventManager::ON_USER_SUSPEND, array('userId' => $userId, 'message' => $message));
         OW::getEventManager()->trigger($event);
+
+        if ( OW::getPluginManager()->isPluginActive('skmixpanel') )
+        {
+            /** @var SKMIXPANEL_BOL_Service $service */
+            $service = SKMIXPANEL_BOL_Service::getInstance();
+            $service->trackUserEvent($userId, 'Suspended', [
+                'Profile' => BOL_UserService::getInstance()->findUserById($userId)->email]
+            );
+        }
     }
 
     public function unsuspend( $userId )
@@ -961,6 +975,15 @@ final class BOL_UserService
         $dto->setBlockedUserId($userId);
 
         $this->userBlockDao->save($dto);
+
+        if ( OW::getPluginManager()->isPluginActive('skmixpanel') )
+        {
+            /** @var SKMIXPANEL_BOL_Service $service */
+            $service = SKMIXPANEL_BOL_Service::getInstance();
+            $service->trackUserEvent(OW::getUser()->getId(), 'Profile Blocked', [
+                    'Profile' => BOL_UserService::getInstance()->findUserById($userId)->email]
+            );
+        }
 
         $event = new OW_Event(OW_EventManager::ON_USER_BLOCK, array('userId' => OW::getUser()->getId(), 'blockedUserId' => $userId));
         OW::getEventManager()->trigger($event);
@@ -1071,7 +1094,8 @@ final class BOL_UserService
         $user->joinStamp = time();
         $user->activityStamp = time();
         $user->accountType = $userAccountType;
-        $user->joinIp = $ip ? $ip : ip2long(OW::getRequest()->getRemoteAddress());
+//        $user->joinIp = $ip ? $ip : ip2long(OW::getRequest()->getRemoteAddress());
+        $user->joinIp = $ip ? $ip : $this->getRemoteAddress();
 
         if ( $emailVerify === true )
         {
@@ -1083,6 +1107,17 @@ final class BOL_UserService
         BOL_AuthorizationService::getInstance()->assignDefaultRoleToUser($user->id);
 
         return $user;
+    }
+
+    public function getRemoteAddress()
+    {
+        $ip_address = OW::getRequest()->getRemoteAddress();
+        if( !empty($ip_address) && filter_var($ip_address, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6) )
+        {
+            return $ip_address;
+        }
+
+        return ip2long($ip_address);
     }
 
     /**
@@ -1887,6 +1922,10 @@ final class BOL_UserService
                                 $questionData[$userId][$question['name']] = date("m/d/Y", $value);
                             }
 
+                            if (OW::getPluginManager()->isPluginActive('advancedmoderation') && ($question['name'] == 'activityStamp' || $question['name'] == 'joinStamp')) {
+                                $questionData[$userId][$question['name']] = ADVANCEDMODERATION_BOL_Service::getInstance()->customFormatDate($value) . ', ' . $questionData[$userId][$question['name']];
+                            }
+
                             break;
 
                         case BOL_QuestionService::QUESTION_PRESENTATION_BIRTHDATE:
@@ -2011,6 +2050,12 @@ final class BOL_UserService
                             else
                             {
                                 unset($questionArray[$sectionKey]);
+                            }
+
+                            if ($question['name'] == 'joinIp' && OW::getPluginManager()->isPluginActive('showip')) {
+                                if (is_numeric($value) && ctype_digit($value)) {
+                                    $questionData[$userId][$question['name']] = SHOWIP_BOL_Service::getInstance()->intToIPv4($value);
+                                }
                             }
 
                             break;

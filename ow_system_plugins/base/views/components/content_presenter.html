@@ -29,9 +29,9 @@
 
 
 <div class="ow_newsfeed_oembed_atch clearfix">
-    <div class="ow_newsfeed_item_picture">
-        <a href="{$data.url}">
-            <img src="{$data.image.thumbnail}" style="max-width: 100%;" />
+    <div class="ow_newsfeed_item_picture custom_approve_avatar" style="width: 250px;height: 250px;">
+        <a href="{$data.url}" data-src="{$data.image.view}" onclick="OW.showImageInFloatBox($(this).data('src')); return false;">
+            <img src="{$data.image.thumbnail}" style="width: 100%; height: 100%; object-fit: cover;" />
         </a>
     </div>
     <div class="ow_newsfeed_item_content">
@@ -51,9 +51,9 @@
 
 
 <div class="ow_newsfeed_large_image clearfix">
-    <div class="ow_newsfeed_item_picture">
+    <div class="ow_newsfeed_item_picture custom_approve_avatar" style="width: 250px;height: 250px;">
         <a href="{$data.image.preview}" data-src="{$data.image.view}" onclick="OW.showImageInFloatBox($(this).data('src')); return false;">
-            <img style="max-width: 100%;" src="{$data.image.preview}" />
+            <img src="{$data.image.preview}" style="width: 100%; height: 100%; object-fit: cover;" />
         </a>
     </div>
 </div>
@@ -74,11 +74,19 @@
 {elseif $displayFormat=="custom_photo_comments"}
 
 <div class="ow_newsfeed_item_content">
-    <a href="{$data.photoPage}" class="ow_newsfeed_item_title">
-        <img src="{$data.photoUrl}" style="max-width: 100%;" />
-        {$data.message}
-    </a>
+    <div class="ow_newsfeed_item_picture custom_approve_avatar" style="width: 250px;height: 250px;">
+        <a href="{$data.photoPage}" class="ow_newsfeed_item_title" data-src="{$data.photoUrl}" onclick="OW.showImageInFloatBox($(this).data('src')); return false;">
+            <img src="{$data.photoUrl}" style="width: 100%; height: 100%; object-fit: cover;" />
+        </a>
+    </div>
+
+    <div class="ow_newsfeed_item_content">
+        <a href="{$data.photoPage}" class="ow_newsfeed_item_title">
+            {$data.message}
+        </a>
+    </div>
 </div>
+
 
 {/if}
 </div>
