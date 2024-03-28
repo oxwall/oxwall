@@ -1012,6 +1012,25 @@ function OW_FloatBox(options)
             return false;
         });
 
+    jQuery('.floatbox_canvas', this.$header).on('click', function()     {
+        let targetElement = event.target;
+        let classes = ['floatbox_body'];
+
+        let fl_body = $(targetElement).find('.floatbox_body').prop('className');
+
+        if (fl_body !== undefined) {
+            fl_body = fl_body.toLowerCase();
+        }
+
+        if (classes.includes(fl_body)) {
+            fl_box.close({
+                sender: "button",
+                button: this
+            });
+            return false;
+        }
+    });
+
     this.esc_listener =
     function(event) {
             if (event.keyCode == 27) {

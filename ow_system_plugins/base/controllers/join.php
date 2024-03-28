@@ -226,6 +226,9 @@ class BASE_CTRL_Join extends OW_ActionController
 
                     $step++;
 
+                    $actionEvent = new OW_Event('base.on_after_first_step', array('stepData' => $joinData));
+                    OW::getEventManager()->trigger($actionEvent);
+
                     $session->set(JoinForm::SESSION_JOIN_DATA, $joinData);
                     $session->set(JoinForm::SESSION_JOIN_STEP, $step);
 

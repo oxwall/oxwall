@@ -237,6 +237,10 @@ class ADMIN_CTRL_Permissions extends ADMIN_CTRL_Abstract
 
         foreach ( $groups as $key => $group )
         {
+            if ($group->name == 'customphotocomments') {
+                continue;
+            }
+
             if ( !OW::getPluginManager()->isPluginActive($group->name) )
             {
                 unset($groups[$key]);

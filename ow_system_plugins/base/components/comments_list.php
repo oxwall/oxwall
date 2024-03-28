@@ -99,6 +99,12 @@ class BASE_CMP_CommentsList extends OW_Component
         /* @var $value BOL_Comment */
         foreach ( $commentList as $value )
         {
+            if (OW::getPluginManager()->isPluginActive('photo')) {
+                if ($value->getUserId() != OW::getUser()->getId() && !OW::getUser()->isAdmin() && $value->status == PHOTO_BOL_PhotoService::CUSTOM_APPROVAL) {
+                    continue;
+                }
+            }
+
             $cmItemArray = array(
                 'displayName' => $userAvatarArrayList[$value->getUserId()]['title'],
                 'avatarUrl' => $userAvatarArrayList[$value->getUserId()]['src'],
@@ -109,6 +115,12 @@ class BASE_CMP_CommentsList extends OW_Component
                 'commentId' => $value->getId(),
                 'avatar' => $userAvatarArrayList[$value->getUserId()],
             );
+
+            if (OW::getPluginManager()->isPluginActive('photo')) {
+                if ($value->status == PHOTO_BOL_PhotoService::CUSTOM_APPROVAL) {
+                    $cmItemArray['displayName'] .= " <span class='ow_remark ow_small'>(" . OW::getLanguage()->text('photo', 'moderation_status_pending_approval') . ")</span>";
+                }
+            }
 
             $contentAdd = '';
 

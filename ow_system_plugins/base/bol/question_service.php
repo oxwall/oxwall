@@ -1237,7 +1237,9 @@ class BOL_QuestionService
         {
             if ( $question->base == 1 || (int) $question->removable == 0 )
             {
-                continue;
+                if ($question->name != 'id' && $question->name != 'joinIp' && $question->name != 'activityStamp') {
+                    continue;
+                }
             }
 
             $questionsNameList[] = $question->name;
