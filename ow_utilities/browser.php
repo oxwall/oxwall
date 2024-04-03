@@ -40,6 +40,16 @@ class UTIL_Browser
         return (bool) self::getUagentInfoObj()->DetectSmartphone();
     }
 
+    public static function isAndroidPhone()
+    {
+        return (bool) self::getUagentInfoObj()->DetectAndroidPhone() || (bool) self::getUagentInfoObj()->DetectAndroidTablet();
+    }
+
+    public static function isIosPhone()
+    {
+        return (bool) self::getUagentInfoObj()->DetectIos();
+    }
+
     /**
      * Is tier tablet
      *

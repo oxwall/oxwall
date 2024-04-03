@@ -76,6 +76,9 @@ class BOL_FlagService
         $flagDto->timeStamp = time();
         
         $this->flagDao->save($flagDto);
+
+        $actionEvent = new OW_Event('base.on_after_add_flag', array('flagDto' => $flagDto));
+        OW::getEventManager()->trigger($actionEvent);
     }
 
     public function isFlagged( $entityType, $entityId, $userId )

@@ -280,7 +280,13 @@ class BASE_CTRL_Moderation extends OW_ActionController
 
             if ( $command == "unflag" )
             {
-                // Pass
+                if ($entityType == 'user_join' && OW::getPluginManager()->isPluginActive('advancedmoderation')) {
+                    $where = ADVANCEDMODERATION_BOL_Service::getInstance()->getCustomWhere($entityIds[0], [$entityType]);
+
+                    OW::getDbo()->query("DELETE FROM `" . BOL_FlagDao::getInstance()->getTableName() . "`
+                        $where
+                    ");
+                }
             }
             
             BOL_FlagService::getInstance()->deleteFlagList($entityType, $entityIds);

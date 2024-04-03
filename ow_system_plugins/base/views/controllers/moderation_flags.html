@@ -97,7 +97,7 @@ function MODERATION_FlagsInit( uniqId, options )
         </div>
         <table class="ow_table_2">
             <tbody>
-            <tr class="ow_tr_first ow_tr_last ow_alt1">
+            <tr class="ow_tr_first ow_tr_last ow_alt1" onclick="checkAll(event, this)">
                 <td class="ow_txtleft" style="border-right: none;">
                     <input type="checkbox" data-checkall="">
                 </td>
@@ -132,7 +132,7 @@ function MODERATION_FlagsInit( uniqId, options )
             {foreach from=$flags item="item"}
             <tr class="ow_alt1">
                 <td>
-                    <div class="clearfix ow_moderation_content_wrap">
+                    <div class="clearfix ow_moderation_content_wrap" onclick="checkFlag(event, this)">
                         <input type="checkbox" class="ow_left" data-item="{$item.entityType}:{$item.entityId}" name="items[]" value="{$item.entityType}:{$item.entityId}">
                        <div class="ow_user_list_picture">
                            {decorator name="avatar_item" data=$item.avatar}
@@ -181,3 +181,28 @@ function MODERATION_FlagsInit( uniqId, options )
 
     </div>
 </div>
+
+<script>
+    function checkFlag(event, context) {
+        let targetElement = event.target;
+        let tags = ['img', 'video', 'input', 'a'];
+
+        if (!tags.includes($(targetElement).prop('tagName').toLowerCase())) {
+            let checkbox = $(context).find('input[type="checkbox"].ow_left');
+            let checked = checkbox.prop('checked');
+            checkbox.prop('checked', !checked);
+        }
+    }
+    function checkAll(event, context) {
+        let targetElement = event.target;
+        let tags = ['img', 'video', 'input', 'a'];
+
+        if (!tags.includes($(targetElement).prop('tagName').toLowerCase())) {
+            let checkbox = $(context).find('input[type="checkbox"]');
+            let checked = checkbox.prop('checked');
+            checkbox.prop('checked', !checked);
+
+            $("[data-item]").prop("checked", !checked);
+        }
+    }
+</script>
