@@ -102,7 +102,7 @@ class BOL_UserSuspendDao extends OW_BaseDao
         return $this->dbo->queryForColumnList($query);
     }
     
-public function deleteById( $userId )
+    public function deleteById( $userId )
     {
         $example = new OW_Example();
         $example->andFieldEqual('userId', (int) $userId);
