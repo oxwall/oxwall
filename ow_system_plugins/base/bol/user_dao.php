@@ -947,7 +947,7 @@ class BOL_UserDao extends OW_BaseDao
                     return;
                 }
                 
-                $result = " LCASE(`" . $prefix . "`.`textValue`) LIKE '" . $this->dbo->escapeString(strtolower($value)) . "%'";
+                $result = " (LCASE(`" . $prefix . "`.`textValue`) LIKE '" . $this->dbo->escapeString(mb_strtolower($value)) . "%' OR LCASE(`" . $prefix . "`.`textValue`) LIKE '%" . $this->dbo->escapeString(mb_strtolower($value)) . "')";
                 break;
 
             case BOL_QuestionService::QUESTION_PRESENTATION_CHECKBOX :
