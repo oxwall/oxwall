@@ -55,6 +55,12 @@ class BASE_CTRL_Avatar extends OW_ActionController
      */
     public function ajaxResponder()
     {
+
+if (!OW::getUser()->isAuthenticated()) 
+{
+throw new AuthenticateException();
+}
+        
         $request = $_POST;
 
         if ( isset($request['ajaxFunc']) && OW::getRequest()->isAjax() )
