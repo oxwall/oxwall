@@ -113,6 +113,7 @@ class BASE_CMP_ChangePassword extends OW_Component
             $language->addKeyForJs('base', 'join_error_password_not_valid');
             $language->addKeyForJs('base', 'join_error_password_too_short');
             $language->addKeyForJs('base', 'join_error_password_too_long');
+            $language->addKeyForJs('base', 'join_error_password_not_matching');
 
             //include js
             $onLoadJs = " window.changePassword = new OW_BaseFieldValidators( " .
