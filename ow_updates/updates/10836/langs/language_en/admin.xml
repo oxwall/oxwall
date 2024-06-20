@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<prefix name="admin" label="Admin" language_tag="en" language_label="English">
+    <key name="questions_question_name_join_label">
+        <value>Question name on join</value>
+    </key>
+    <key name="questions_question_name_join_desc_label">
+        <value>Question description on join</value>
+    </key>
+    <key name="questions_question_name_edit_label">
+        <value>Question name on edit</value>
+    </key>
+    <key name="questions_question_name_edit_desc_label">
+        <value>Question description on edit</value>
+    </key>
+    <key name="questions_question_name_search_label">
+        <value>Question name on search</value>
+    </key>
+    <key name="questions_edit_search_label_title">
+        <value>Edit question label on search</value>
+    </key>
+    <key name="questions_edit_edit_description_title">
+        <value>Edit question description on edit</value>
+    </key>
+    <key name="questions_edit_edit_label_title">
+        <value>Edit question label on edit</value>
+    </key>
+    <key name="questions_edit_join_description_title">
+        <value>Edit question description on join</value>
+    </key>
+    <key name="questions_edit_join_label_title">
+        <value>Edit question label on join</value>
+    </key>
+    <key name="optional_question">
+        <value>Optional</value>
+    </key>
+    <key name="questions_question_name_view_label">
+        <value>Question name on view</value>
+    </key>
+    <key name="questions_edit_view_label_title">
+        <value>Edit question label on view</value>
+    </key>
+</prefix>

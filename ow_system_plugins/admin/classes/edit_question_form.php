@@ -58,6 +58,12 @@ class ADMIN_CLASS_EditQuestionForm extends ADMIN_CLASS_AddQuestionForm
 
         $this->deleteElement('qst_name');
         $this->deleteElement('qst_description');
+        $this->deleteElement('qst_name_join');
+        $this->deleteElement('qst_name_join_desc');
+        $this->deleteElement('qst_name_edit');
+        $this->deleteElement('qst_name_edit_desc');
+        $this->deleteElement('qst_name_search');
+        $this->deleteElement('qst_name_view');
 
         /* @var $question BOL_Question*/
         $this->getElement('qst_section')->setValue($question->sectionName);
