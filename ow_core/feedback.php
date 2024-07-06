@@ -81,7 +81,12 @@ class OW_Feedback
         }
 
         $this->feedback[$type][] = $message;
-
+		
+		if ( $this->feedback !== null )
+        {
+            OW::getSession()->set('ow_messages', $this->feedback);
+        }
+		
         return $this;
     }
 
@@ -127,17 +132,6 @@ class OW_Feedback
         $this->feedback = null;
 
         return $feedback;
-    }
-
-    /**
-     * System method. Don't call it.
-     */
-    public function __destruct()
-    {
-        if ( $this->feedback !== null )
-        {
-            OW::getSession()->set('ow_messages', $this->feedback);
-        }
     }
 }
 
