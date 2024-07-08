@@ -133,6 +133,19 @@ class BASE_CTRL_EmailVerify extends OW_ActionController
     public function verifyForm( $params )
     {
         $this->setMasterPage();
+
+        if ( OW::getUser()->isAuthenticated() )
+        {
+            throw new AuthenticateException();
+        }
+
+        $user = BOL_UserService::getInstance()->findUserById(OW::getUser()->getId());
+
+        if ( (int) $user->emailVerify === 1 )
+        {
+            $this->redirect(OW::getRouter()->uriForRoute('base_member_dashboard'));
+        }
+        
         $language = OW::getLanguage();
 
         $this->setPageHeading($language->text('base', 'email_verify_index'));
