@@ -138,13 +138,6 @@ class BASE_CTRL_EmailVerify extends OW_ActionController
         {
             throw new AuthenticateException();
         }
-
-        $user = BOL_UserService::getInstance()->findUserById(OW::getUser()->getId());
-
-        if ( (int) $user->emailVerify === 1 )
-        {
-            $this->redirect(OW::getRouter()->uriForRoute('base_member_dashboard'));
-        }
         
         $language = OW::getLanguage();
 
