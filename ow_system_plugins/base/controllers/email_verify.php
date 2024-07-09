@@ -133,6 +133,12 @@ class BASE_CTRL_EmailVerify extends OW_ActionController
     public function verifyForm( $params )
     {
         $this->setMasterPage();
+
+        if ( OW::getUser()->isAuthenticated())
+        {
+            throw new Redirect403Exception();
+        }
+        
         $language = OW::getLanguage();
 
         $this->setPageHeading($language->text('base', 'email_verify_index'));
