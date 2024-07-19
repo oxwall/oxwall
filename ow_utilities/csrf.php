@@ -55,8 +55,17 @@ class UTIL_Csrf
     public static function isTokenValid( $token )
     {
         $tokenList = self::getTokenList();
-
-        return !empty($tokenList[$token]);
+		
+		if(!empty($tokenList[$token]))
+		{
+		unset($tokenList[$token]); // remove from the list to prevent duble post
+		
+		self::saveTokenList($tokenList);
+		
+		return $token;
+		}
+		
+		return null; 
     }
     /* -------------------------------------------------------------------------------------------------------------- */
 
