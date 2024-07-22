@@ -1435,6 +1435,12 @@ OwForm.prototype = {
     submitForm: function(target){
 
         var self = this;
+		
+	if(window.OwSubmitFormRunning)
+          {
+           OW.error("Please wait a sec. Processing!!!");
+           return false;
+          }
 
         this.removeErrors();
 
@@ -1453,7 +1459,8 @@ OwForm.prototype = {
         }
 
         var buttons = $('input[type=button], input[type=submit], button', '#' + this.id);
-        $(target).addClass('ow_inprogress');
+        $(target).addClass('ow_inprogress');		
+	window.OwSubmitFormRunning = true;
 
         if( this.ajax ){
             OW.inProgressNode(buttons);
@@ -1487,8 +1494,11 @@ OwForm.prototype = {
                 },
                 complete: function(){
                     OW.activateNode(buttons);
+	            window.OwSubmitFormRunning = false;
                 }
             });
+			
+	 // On no ajax or no action keep OwSubmitFormRunning true as form will reload the page
 
             return false;
         }
