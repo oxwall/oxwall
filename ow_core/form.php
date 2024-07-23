@@ -505,12 +505,18 @@ class Form
     public function getErrors()
     {
         $errors = array();
-
+        $errorsCount = 0;
         /* @var $value FormElement */
         foreach ( $this->elements as $key => $value )
         {
             $errors[$key] = $value->getErrors();
+			if(!empty($value->getErrors()))
+			{
+				$errorsCount++;
+			}
         }
+		
+		$errors['errorsCount'] = $errorsCount;
 
         return $errors;
     }
@@ -553,6 +559,8 @@ class Form
             $formElementJS .= "form.addElement(formElement);" . PHP_EOL;
         }
 
+	$getErrors = $this->getErrors();
+
         $formInitParams = array(
             'id' => $this->getId(),
             'name' => $this->getName(),
@@ -560,10 +568,16 @@ class Form
             'ajax' => $this->isAjax(),
             'ajaxDataType' => $this->getAjaxDataType(),
             'validateErrorMessage' => $this->emptyElementsErrorMessage,
+	    'errorsCount'=> $getErrors['errorsCount'],
         );
 
         $jsString = " var form = new OwForm(" . json_encode($formInitParams) . ");window.owForms[form.name] = form;
 			" . PHP_EOL . $formElementJS . "
+
+                        if(form.errorsCount > 0)
+			{
+                       OW.error(form.validateErrorMessage);
+			}
 
 			if ( form.form ) 
 			{
