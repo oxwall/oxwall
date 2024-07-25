@@ -40,6 +40,11 @@ class BASE_CTRL_CompleteProfile extends OW_ActionController
         {
             throw new AuthenticateException();
         }
+
+if ( OW::getRequest()->isAjax() )
+{
+throw new Redirect403Exception();
+}
         
         $user = OW::getUser()->getUserObject();
         $accountType = BOL_QuestionService::getInstance()->findAccountTypeByName($user->accountType);
@@ -108,6 +113,11 @@ class BASE_CTRL_CompleteProfile extends OW_ActionController
         {
             throw new AuthenticateException();
         }
+
+if ( OW::getRequest()->isAjax() )
+{
+throw new Redirect403Exception();
+}
 
         $user = OW::getUser()->getUserObject();
 
