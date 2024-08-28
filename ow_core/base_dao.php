@@ -219,6 +219,8 @@ abstract class OW_BaseDao
         }
 
         $this->clearCache();
+
+        return $entity->id;
     }
 
     /**
