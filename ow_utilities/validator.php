@@ -33,7 +33,7 @@ class UTIL_Validator
 
     const PASSWORD_MAX_LENGTH = 128;
 
-    const USER_NAME_PATTERN = '/^[\w]{1,32}$/';
+    const USER_NAME_PATTERN = '/^(?!_)(?!.*__)[\w]{5,32}(?<!_)$/';
 
     const EMAIL_PATTERN = '/^([\w\-\.\+\%]*[\w])@((?:[A-Za-z0-9\-]+\.)+[A-Za-z]{2,})$/';
 
