@@ -52,11 +52,27 @@ class UTIL_Csrf
      * @param string $token
      * @return bool
      */
-    public static function isTokenValid( $token )
+    public static function isTokenValid( $token, bool $isTimeCheck = false)
     {
-        $tokenList = self::getTokenList();
-
-        return !empty($tokenList[$token]);
+        $tokenList = self::getTokenList();	
+		
+		if(!empty($tokenList[$token]))
+		{
+		//Time check. Token value is time()
+		if($isTimeCheck && $tokenList[$token] > strtotime('-3 seconds'))
+		{
+          OW::getFeedback()->warning("Wait for 3 sec please");
+		  return null;
+		}
+		
+		$tokenList[$token] = time(); //Reset to current time
+		
+		self::saveTokenList($tokenList);
+		
+		return $token;
+		}
+		
+		return null; 
     }
     /* -------------------------------------------------------------------------------------------------------------- */
 
