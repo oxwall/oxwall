@@ -51,4 +51,8 @@ class BOL_EmailVerify extends OW_Entity
      * @var string
      */
     public $type;
+    /**
+     * @var string
+     */
+    public $lastSentStamp = 0;
 }
