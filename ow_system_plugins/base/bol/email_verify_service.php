@@ -146,6 +146,38 @@ class BOL_EmailVerifyService
         $this->emailVerifiedDao->deleteByCreatedStamp($stamp);
     }
 
+    protected function waitBeforeSendNewVerificationMail(int $lastSentStamp)
+{
+
+$lastSentStampLimit = strtotime('-5 minutes');
+
+$lastSentStampDifference = abs($lastSentStamp)-$lastSentStampLimit;
+
+if ($lastSentStampDifference > 0) {
+
+    $minutes = floor($lastSentStampDifference / 60);
+	
+    $seconds = $lastSentStampDifference % 60;
+	
+	$lastSentStampString[] = "Pleae wait";
+	
+	if($minutes>0)
+	{
+		$lastSentStampString[] = "$minutes minutes and";
+	}
+
+    $lastSentStampString[] = "$seconds seconds";
+	
+	$lastSentStampString[] = "before new request";
+
+    return implode(' ', $lastSentStampString);
+	
+} 
+
+return false;
+
+}
+
     public function sendVerificationMail( $type, $params )
     {
         $subject = $params['subject'];
@@ -185,6 +217,17 @@ class BOL_EmailVerifyService
             {
                 $emailVerifiedData = null;
             }
+            else
+			{
+			$waitBeforeSendNewMail = $this->waitBeforeSendNewVerificationMail($emailVerifiedData->lastSentStamp);
+			if(!empty($waitBeforeSendNewMail))
+			{
+				OW::getFeedback()->error($waitBeforeSendNewMail);
+				return;
+			}
+				
+			$this->emailVerifiedDao->updateLastSentStampByUserId($emailVerifiedData->userId);
+			}
         }
 
         if ( $emailVerifiedData === null )
@@ -200,6 +243,7 @@ class BOL_EmailVerifyService
             $emailVerifiedData->email = trim($email);
             $emailVerifiedData->hash = $hash;
             $emailVerifiedData->createStamp = time();
+	    $emailVerifiedData->lastSentStamp = time();
             $emailVerifiedData->type = $type;
 
             BOL_EmailVerifyService::getInstance()->batchReplace(array($emailVerifiedData));
