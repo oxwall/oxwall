@@ -137,6 +137,12 @@ class BOL_EmailVerifyDao extends OW_BaseDao
         $this->dbo->batchInsertOrUpdateObjectList($this->getTableName(), $objects);
     }
 
+    public function updateLastSentStampByUserId( int $userId )
+    {
+        $sql = "UPDATE `{$this->getTableName()}` SET `lastSentStamp`=:timeNow WHERE `userId`=:userId";
+        $this->dbo->update($sql, array('timeNow'=>time(),'userId'=>$userId));
+    }
+
     public function deleteByCreatedStamp( $stamp )
     {
         $timeStamp = (int) $stamp;
