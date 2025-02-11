@@ -853,7 +853,7 @@ final class BOL_UserService
         BOL_QuestionService::getInstance()->deleteQuestionDataByUserId((int) $userId);
         BOL_AvatarService::getInstance()->deleteUserAvatar($userId);
         
-        $this->userSuspendDao->deleteById($userId);
+        $this->userSuspendDao->deleteByUserId($userId);
         $this->userBlockDao->deleteByUserId($userId);
         
         $this->userDao->deleteById($userId);

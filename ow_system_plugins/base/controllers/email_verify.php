@@ -118,6 +118,15 @@ class BASE_CTRL_EmailVerify extends OW_ActionController
 
     public function verify( $params )
     {
+        
+if ( OW::getUser()->isAuthenticated() )
+{
+$user = BOL_UserService::getInstance()->findUserById(OW::getUser()->getId());
+if ( (int) $user->emailVerify === 1)
+{
+throw new Redirect403Exception();
+}
+} 
         $language = OW::getLanguage();
 
         $this->setPageHeading($language->text('base', 'email_verify_index'));
@@ -132,7 +141,17 @@ class BASE_CTRL_EmailVerify extends OW_ActionController
 
     public function verifyForm( $params )
     {
+
+if ( OW::getUser()->isAuthenticated() )
+{
+$user = BOL_UserService::getInstance()->findUserById(OW::getUser()->getId());
+if ( (int) $user->emailVerify === 1)
+{
+throw new Redirect403Exception();
+}
+}     
         $this->setMasterPage();
+        
         $language = OW::getLanguage();
 
         $this->setPageHeading($language->text('base', 'email_verify_index'));
