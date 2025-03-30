@@ -83,7 +83,7 @@ class BASE_CTRL_Captcha extends OW_ActionController
 
                 if ( $result )
                 {
-                    OW::getSession()->set('securimage_code_value', $value);
+                    OW::getSession()->set('securimage_code_value', ''); //reset to prevent re-use
                 }
 
                 echo json_encode(array('result' => $result));
