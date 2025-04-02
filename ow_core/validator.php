@@ -1303,6 +1303,7 @@ class CaptchaValidator extends OW_Validator
                     return false;
                 }
             }
+            OW::getSession()->set('securimage_code_value', ''); //BUG prevent-reuse
             return true;
         }
         else
