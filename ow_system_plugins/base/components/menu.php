@@ -168,7 +168,11 @@ class BASE_CMP_Menu extends OW_Component
         /* @var $menuItem BASE_MenuItem */
         foreach ( $this->menuItems as $menuItem )
         {
-            $menuItem->activate(OW::getRouter()->getBaseUrl() . OW::getRequest()->getRequestUri());
+
+if(!$menuItem->isActive())
+{
+$menuItem->activate(OW::getRouter()->getBaseUrl() . OW::getRequest()->getRequestUri());
+}
             $arrayToAssign[] = $this->getItemViewData($menuItem);
         }
 
