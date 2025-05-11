@@ -277,8 +277,16 @@ class BASE_CTRL_Join extends OW_ActionController
 
     protected function joinUser( $joinData, $accountType, $params )
     {
-        $event = new OW_Event(OW_EventManager::ON_BEFORE_USER_REGISTER, $joinData);
-        OW::getEventManager()->trigger($event);
+try
+{
+$event = new OW_Event(OW_EventManager::ON_BEFORE_USER_REGISTER, $joinData);
+OW::getEventManager()->trigger($event);
+}
+catch ( InvalidArgumentException $e )
+{
+OW::getFeedback()->error($e->getMessage());
+$this->redirect(OW::getRequest()->buildUrlQueryString(OW::getRouter()->urlForRoute('base_join'), $params));
+}
 
         $language = OW::getLanguage();
         // create new user
