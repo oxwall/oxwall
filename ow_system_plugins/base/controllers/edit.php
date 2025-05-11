@@ -345,6 +345,17 @@ class BASE_CTRL_Edit extends OW_ActionController
                 }
             }
 
+try
+{
+$event = new OW_Event('base.before_user_edit_save', $data);
+OW::getEventManager()->trigger($event);
+}
+catch ( InvalidArgumentException $e )
+{
+OW::getFeedback()->error($e->getMessage());
+$this->redirect();
+}
+
             // save user data
             if ( !empty($userId) )
             {
