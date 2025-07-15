@@ -420,6 +420,13 @@ class BASE_CTRL_Edit extends OW_ActionController
             throw new Redirect404Exception();
         }
 
+        $csrf_token = $_POST['csrf_token']??null;
+
+if ( $csrf_token == null || !UTIL_Csrf::isTokenValid($csrf_token) )
+        {
+exit(json_encode(['error'=>OW::getLanguage()->text("base", "invalid_csrf_token_error_message")]));
+}
+
         $editorId = OW::getUser()->getId();
 
         if ( !OW::getUser()->isAuthenticated() || $editorId === null )
