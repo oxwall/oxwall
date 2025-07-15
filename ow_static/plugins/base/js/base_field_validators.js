@@ -11,6 +11,9 @@ var OW_BaseFieldValidators = function($params, $emailPattern, $usernamePattern, 
         this.userId = userId;
         
         this.errors = [];
+
+        var csrf_token_input = $("form[name='" + this.formName + "'] input[name='csrf_token']");
+        var csrf_token = csrf_token_input.length ? csrf_token_input.val() : null;
         
         var username = $("form[name='" + this.formName + "'] input[name='username']");
         var password = $("form[name='" + this.formName + "'] input[name='password']");
@@ -68,11 +71,16 @@ var OW_BaseFieldValidators = function($params, $emailPattern, $usernamePattern, 
                         $.ajax( {
                             url: self.responderUrl,
                             type: 'POST',
-                            data: { command: 'isExistUserName', value: username.val() },
+                            data: { command: 'isExistUserName', value: username.val(), csrf_token:csrf_token },
                             dataType: 'json',
                             // async: isAsync,
                             success: function( data )
                             {
+if(data.error)
+{
+element.showError( data.error );
+return;
+}
                                 if( data.result == false )
                                 {
                                      self.errors['username']['error'] = OW.getLanguageText('base', 'join_error_username_already_exist');
@@ -109,11 +117,17 @@ var OW_BaseFieldValidators = function($params, $emailPattern, $usernamePattern, 
                         $.ajax( {
                                 url: self.responderUrl,
                                 type: 'POST',
-                                data: { command: 'isExistEmail', value: email.val(), 'userId': self.userId },
+                                data: { command: 'isExistEmail', value: email.val(), 'userId': self.userId, csrf_token:csrf_token },
                                 dataType: 'json',
                                 // async: isAsync,
                                 success: function( data )
                                 {
+                                        
+if(data.error)
+{
+element.showError( data.error );
+return;
+}
                                     if( data.result == false )
                                     {
                                          self.errors['email']['error'] = OW.getLanguageText('base', 'join_error_email_already_exist');
