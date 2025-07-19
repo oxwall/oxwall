@@ -40,7 +40,7 @@ class UTIL_Csrf
     {
         $tokenList = self::getTokenList();
         $token = base64_encode(time() . UTIL_String::getRandomString(32));
-        $tokenList[$token] = time();
+        $tokenList[$token] = ['createTime'=>time(),'lastValidateTime'=>0,'isValidCount'=>0];
         self::saveTokenList($tokenList);
 
         return $token;
@@ -52,12 +52,40 @@ class UTIL_Csrf
      * @param string $token
      * @return bool
      */
-    public static function isTokenValid( $token )
-    {
-        $tokenList = self::getTokenList();
+    public static function isTokenValid($token)
+{
+    $tokenList = self::getTokenList();
 
-        return !empty($tokenList[$token]);
+    if (!isset($tokenList[$token])) {
+        return false;
     }
+
+    $tokenData = $tokenList[$token];
+
+    // delete expired (10 minuted old)
+    if (isset($tokenData['createTime']) && $tokenData['createTime'] < strtotime('-10 minutes')) {
+        unset($tokenList[$token]);
+        self::saveTokenList($tokenList);
+        return false;
+    }
+
+// do not set validation limit. Exp: 3 seconds as in many cases token gets validated by multiple classes it take milliseconds which will make it fail
+
+    // delete by validation count. Keep count_limit relativelly high but not too high. =>50 and =<100
+    if (isset($tokenData['isValidCount']) && $tokenData['isValidCount'] >= 50) {
+        unset($tokenList[$token]);
+        self::saveTokenList($tokenList);
+        return false;
+    }
+
+    // update values
+    $tokenData['lastValidateTime'] = time();
+    $tokenData['isValidCount'] = isset($tokenData['isValidCount']) ? $tokenData['isValidCount'] + 1 : 1;
+    $tokenList[$token] = $tokenData;
+    self::saveTokenList($tokenList);
+
+    return true;
+}
     /* -------------------------------------------------------------------------------------------------------------- */
 
     private static function getTokenList()
